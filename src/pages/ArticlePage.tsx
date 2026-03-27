@@ -49,7 +49,7 @@ export default function ArticlePage() {
             <div className="mt-8">
               <div className="overflow-hidden rounded-2xl border border-ink-100">
                 <img
-                  src={article.coverImage}
+                  src={resolveAssetUrl(article.coverImage)}
                   alt={article.title}
                   className="w-full h-auto object-cover"
                   loading="eager"
@@ -107,7 +107,7 @@ export default function ArticlePage() {
             return (
               <figure key={i} className="my-8 animate-reveal" style={{ animationDelay: `${i * 0.05}s` }}>
                 <div className="overflow-hidden rounded-2xl border border-ink-100">
-                  <img src={imageSrc} alt={altText || article.title} className="w-full h-auto object-cover" loading="lazy" />
+                  <img src={resolveAssetUrl(imageSrc)} alt={altText || article.title} className="w-full h-auto object-cover" loading="lazy" />
                 </div>
                 <figcaption className="mt-3 text-sm text-ink-400 leading-relaxed">
                   해당 이미지는 AI로 제작한, 이해를 돕기 위한 예시 이미지입니다.
@@ -156,4 +156,14 @@ export default function ArticlePage() {
 
 function formatInline(text: string): string {
   return text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+}
+
+function resolveAssetUrl(path: string): string {
+  if (/^https?:\/\//.test(path)) {
+    return path
+  }
+
+  const baseUrl = import.meta.env.BASE_URL
+  const normalizedPath = path.startsWith('/') ? path.slice(1) : path
+  return `${baseUrl}${normalizedPath}`
 }

@@ -1,4 +1,6 @@
 export default function AboutPage() {
+  const profileImageUrl = resolveAssetUrl('/profile-aksae.png')
+
   return (
     <div className="page-enter">
       <section className="max-w-[640px] mx-auto px-6 pt-16 sm:pt-24 pb-20">
@@ -6,7 +8,7 @@ export default function AboutPage() {
         <div className="animate-reveal mb-12">
           <div className="w-20 h-20 rounded-full border border-ink-200 overflow-hidden mb-6">
             <img
-              src="/profile-aksae.png"
+              src={profileImageUrl}
               alt="wildferret 프로필 이미지"
               className="w-full h-full object-cover"
               loading="eager"
@@ -64,25 +66,17 @@ export default function AboutPage() {
 
         <hr className="ink-divider my-12" />
 
-        {/* Contact */}
-        <div className="animate-reveal delay-3">
-          <h2 className="text-sm font-medium text-ink-400 uppercase tracking-widest mb-6">
-            연락처
-          </h2>
-          <div className="space-y-3">
-            {[
-              { label: 'LinkedIn', value: 'https://www.linkedin.com/in/cheeeunahn/', href: 'https://www.linkedin.com/in/cheeeunahn/' },
-            ].map((item) => (
-              <div key={item.label} className="flex items-center gap-4">
-                <span className="text-xs text-ink-300 w-16">{item.label}</span>
-                <a href={item.href} target="_blank" rel="noopener noreferrer" className="text-sm text-ink-600 hover:text-ink-900 transition-colors no-underline">
-                  {item.value}
-                </a>
-              </div>
-            ))}
-          </div>
-        </div>
       </section>
     </div>
   )
+}
+
+function resolveAssetUrl(path: string): string {
+  if (/^https?:\/\//.test(path)) {
+    return path
+  }
+
+  const baseUrl = import.meta.env.BASE_URL
+  const normalizedPath = path.startsWith('/') ? path.slice(1) : path
+  return `${baseUrl}${normalizedPath}`
 }
