@@ -48,11 +48,6 @@ export default function AboutPage() {
             {[
               'Product Management',
               'UX Research',
-              'Design Systems',
-              'Data-driven Decision',
-              'Writing',
-              'Reading',
-              'Side Projects',
             ].map((tag) => (
               <span
                 key={tag}
