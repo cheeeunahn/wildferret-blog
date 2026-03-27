@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+@theme {
+  --font-pretendard: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+
+  --color-ink-950: #0a0a0a;
+  --color-ink-900: #171717;
+  --color-ink-800: #262626;
+  --color-ink-700: #404040;
+  --color-ink-600: #525252;
+  --color-ink-500: #737373;
+  --color-ink-400: #a3a3a3;
+  --color-ink-300: #d4d4d4;
+  --color-ink-200: #e5e5e5;
+  --color-ink-100: #f0f0f0;
+  --color-ink-50: #fafafa;
+
+  --color-paper: #ffffff;
+  --color-paper-warm: #f9f8f6;
+}
+
+/* Base styles */
+html {
+  font-family: var(--font-pretendard);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  color: var(--color-ink-900);
+  background-color: var(--color-paper);
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+}
+
+/* Ink wash grain texture overlay */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.02;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* Selection */
+::selection {
+  background-color: var(--color-ink-900);
+  color: var(--color-paper);
+}
+
+/* Article prose */
+.prose-blog h2 {
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--color-ink-900);
+}
+
+.prose-blog p {
+  font-size: 1.0625rem;
+  line-height: 1.85;
+  margin-bottom: 1.5rem;
+  color: var(--color-ink-700);
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.prose-blog blockquote {
+  border-left: 2px solid var(--color-ink-200);
+  padding-left: 1.25rem;
+  margin: 2rem 0;
+  color: var(--color-ink-500);
+  font-style: italic;
+}
+
+.prose-blog img {
+  width: 100%;
+  margin: 2rem 0;
+}
+
+.prose-blog strong {
+  font-weight: 600;
+  color: var(--color-ink-900);
+}
+
+/* Reveal animation */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-reveal {
+  animation: reveal-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.5s; }
+.delay-6 { animation-delay: 0.6s; }
+
+/* Page fade-in */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.page-enter {
+  animation: fade-in 0.4s ease-out both;
+}
+
+/* Ink divider */
+.ink-divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-ink-200) 20%,
+    var(--color-ink-200) 80%,
+    transparent
+  );
+}
