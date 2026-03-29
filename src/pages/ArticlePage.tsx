@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
 import { articles } from '../data/articles'
+import { getDiagram } from '../components/Diagrams'
 
 export default function ArticlePage() {
   const { slug } = useParams()
@@ -18,11 +19,7 @@ export default function ArticlePage() {
     )
   }
 
-  // Parse content into blocks
-  const blocks = article.content
-    .trim()
-    .split('\n\n')
-    .filter((b) => b.trim())
+  const blocks = splitContentIntoBlocks(article.content)
 
   return (
     <div className="page-enter">
@@ -74,6 +71,48 @@ export default function ArticlePage() {
             return <hr key={i} className="ink-divider my-10" />
           }
 
+          const diagramMatch = trimmed.match(/^\[diagram:(.+)\]$/)
+          if (diagramMatch) {
+            const DiagramComponent = getDiagram(diagramMatch[1])
+            if (DiagramComponent) {
+              return (
+                <div key={i} className="animate-reveal" style={{ animationDelay: `${i * 0.05}s` }}>
+                  <DiagramComponent />
+                </div>
+              )
+            }
+          }
+
+          if (trimmed.startsWith('~~~')) {
+            const codeLines = trimmed.split('\n')
+            const langMatch = codeLines[0].match(/^~~~(\w+)?$/)
+            const lang = langMatch?.[1] || ''
+            const code = codeLines.slice(1, codeLines.length - 1).join('\n')
+            const langLabels: Record<string, string> = { bash: 'Terminal', json: 'JSON', js: 'JavaScript', ts: 'TypeScript' }
+            const label = langLabels[lang] || (lang ? lang : '')
+            return (
+              <div key={i} className="my-6 rounded-xl border border-ink-100 overflow-hidden animate-reveal" style={{ animationDelay: `${i * 0.05}s` }}>
+                <div className="flex items-center gap-1.5 px-4 py-2 border-b border-ink-100 bg-ink-50/60">
+                  <div className="w-[7px] h-[7px] rounded-full border border-ink-300/70" />
+                  <div className="w-[7px] h-[7px] rounded-full border border-ink-300/70" />
+                  <div className="w-[7px] h-[7px] rounded-full border border-ink-300/70" />
+                  {label && <span className="ml-2 text-[11px] text-ink-400">{label}</span>}
+                </div>
+                <pre className="px-4 py-3 bg-paper-warm/40 overflow-x-auto">
+                  <code className="text-[13px] text-ink-600 leading-relaxed whitespace-pre block font-mono">{code}</code>
+                </pre>
+              </div>
+            )
+          }
+
+          if (trimmed.startsWith('### ')) {
+            return (
+              <h3 key={i} className="text-lg font-semibold text-ink-900 mt-8 mb-4 animate-reveal" style={{ animationDelay: `${i * 0.05}s` }}>
+                {trimmed.replace('### ', '')}
+              </h3>
+            )
+          }
+
           if (trimmed.startsWith('## ')) {
             return (
               <h2 key={i} className="animate-reveal" style={{ animationDelay: `${i * 0.05}s` }}>
@@ -84,9 +123,18 @@ export default function ArticlePage() {
 
           if (trimmed.startsWith('> ')) {
             return (
-              <blockquote key={i} className="animate-reveal" style={{ animationDelay: `${i * 0.05}s` }}>
-                {trimmed.replace('> ', '').replace(/^"/, '').replace(/"$/, '')}
-              </blockquote>
+              <blockquote key={i} className="animate-reveal" style={{ animationDelay: `${i * 0.05}s` }} dangerouslySetInnerHTML={{ __html: formatInline(trimmed.replace('> ', '').replace(/^"/, '').replace(/"$/, '')) }} />
+            )
+          }
+
+          if (trimmed.startsWith('- ')) {
+            const items = trimmed.split('\n').filter((l: string) => l.trim().startsWith('- ')).map((l: string) => l.replace(/^-\s+/, ''))
+            return (
+              <ul key={i} className="list-disc pl-5 mb-6 space-y-2 text-ink-700 text-[17px] leading-relaxed animate-reveal" style={{ animationDelay: `${i * 0.05}s` }}>
+                {items.map((item: string, j: number) => (
+                  <li key={j} dangerouslySetInnerHTML={{ __html: formatInline(item) }} />
+                ))}
+              </ul>
             )
           }
 
@@ -155,7 +203,10 @@ export default function ArticlePage() {
 }
 
 function formatInline(text: string): string {
-  return text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-ink-600 underline underline-offset-4 decoration-ink-200 hover:text-ink-900 hover:decoration-ink-400 transition-colors">$1</a>')
+    .replace(/`(.+?)`/g, '<code class="px-1.5 py-0.5 bg-ink-50 rounded text-[14px] font-mono text-ink-600">$1</code>')
 }
 
 function resolveAssetUrl(path: string): string {
@@ -166,4 +217,40 @@ function resolveAssetUrl(path: string): string {
   const baseUrl = import.meta.env.BASE_URL
   const normalizedPath = path.startsWith('/') ? path.slice(1) : path
   return `${baseUrl}${normalizedPath}`
+}
+
+function splitContentIntoBlocks(content: string): string[] {
+  const blocks: string[] = []
+  const lines = content.trim().split('\n')
+  let buffer = ''
+  let inCode = false
+
+  for (const line of lines) {
+    if (line.trim().startsWith('~~~')) {
+      if (inCode) {
+        buffer += '\n' + line
+        blocks.push(buffer.trim())
+        buffer = ''
+        inCode = false
+      } else {
+        if (buffer.trim()) {
+          buffer.trim().split('\n\n').filter((b) => b.trim()).forEach((b) => blocks.push(b))
+        }
+        buffer = line
+        inCode = true
+      }
+    } else {
+      buffer += (buffer ? '\n' : '') + line
+    }
+  }
+
+  if (buffer.trim()) {
+    if (inCode) {
+      blocks.push(buffer.trim())
+    } else {
+      buffer.trim().split('\n\n').filter((b) => b.trim()).forEach((b) => blocks.push(b))
+    }
+  }
+
+  return blocks
 }
