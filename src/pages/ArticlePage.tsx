@@ -26,7 +26,7 @@ export default function ArticlePage() {
       {/* Article Header */}
       <header className="max-w-[720px] mx-auto px-6 pt-16 sm:pt-24 pb-10">
         <div className="animate-reveal">
-          <div className="flex items-center gap-3 mb-5">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-5">
             <span className="text-xs font-medium text-ink-400 uppercase tracking-widest">
               {article.category}
             </span>
@@ -146,6 +146,35 @@ export default function ArticlePage() {
                   <li key={j} dangerouslySetInnerHTML={{ __html: formatInline(item) }} />
                 ))}
               </ol>
+            )
+          }
+
+          if (trimmed.includes('\n') && trimmed.split('\n').every((l: string) => l.trim().startsWith('|') && l.trim().endsWith('|'))) {
+            const rows = trimmed.split('\n').map((l: string) => l.trim())
+            const dataRows = rows.filter((r: string) => !r.match(/^\|[\s\-:|]+\|$/))
+            const headerCells = dataRows[0].split('|').filter((c: string) => c.trim()).map((c: string) => c.trim())
+            const bodyRows = dataRows.slice(1).map((r: string) => r.split('|').filter((c: string) => c.trim() !== '').map((c: string) => c.trim()))
+            return (
+              <div key={i} className="my-6 overflow-x-auto rounded-xl border border-ink-100 animate-reveal" style={{ animationDelay: `${i * 0.05}s` }}>
+                <table className="w-full min-w-[560px] text-[15px]">
+                  <thead>
+                    <tr className="border-b border-ink-100 bg-ink-50/60">
+                      {headerCells.map((cell: string, j: number) => (
+                        <th key={j} className="px-4 py-2.5 text-left text-xs font-semibold text-ink-500 uppercase tracking-wide">{cell}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {bodyRows.map((cells: string[], j: number) => (
+                      <tr key={j} className={j < bodyRows.length - 1 ? 'border-b border-ink-50' : ''}>
+                        {cells.map((cell: string, k: number) => (
+                          <td key={k} className="px-4 py-2.5 text-ink-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: formatInline(cell) }} />
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )
           }
 

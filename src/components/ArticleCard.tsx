@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import type { Article } from '../data/articles'
+import type { Article } from '../data/articleTypes'
 
 interface ArticleCardProps {
   article: Article

@@ -1,0 +1,478 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" shape-rendering="crispEdges">
+  <defs>
+    <style>
+      @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+      @keyframes floatSlow { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-2px)} }
+      @keyframes blink { 0%,42%,46%,100%{opacity:1} 44%{opacity:0} }
+      @keyframes sparkle { 0%,100%{opacity:0} 50%{opacity:1} }
+      @keyframes glow { 0%,100%{opacity:0.3} 50%{opacity:0.7} }
+      @keyframes dataFlow { 0%{opacity:0;transform:translateX(-8px)} 50%{opacity:1} 100%{opacity:0;transform:translateX(8px)} }
+      @keyframes pulse { 0%,100%{opacity:0.5} 50%{opacity:1} }
+      @keyframes zzz { 0%,100%{opacity:0;transform:translate(0,0)} 20%{opacity:1} 80%{opacity:0.6;transform:translate(6px,-12px)} }
+      @keyframes twinkle { 0%,100%{opacity:0.2;transform:scale(1)} 50%{opacity:1;transform:scale(1.3)} }
+      @keyframes robotWork { 0%,100%{transform:translateY(0)} 25%{transform:translateY(-2px)} 75%{transform:translateY(1px)} }
+      @keyframes catTail { 0%,100%{transform:rotate(0deg)} 50%{transform:rotate(8deg)} }
+      @keyframes screenGlow { 0%,100%{opacity:0.15} 50%{opacity:0.3} }
+      .float { animation: float 3s ease-in-out infinite; }
+      .float-slow { animation: floatSlow 4s ease-in-out infinite; }
+      .blink { animation: blink 5s ease-in-out infinite; }
+      .sparkle { animation: sparkle 2s ease-in-out infinite; }
+      .sparkle-d1 { animation: sparkle 2.5s ease-in-out 0.3s infinite; }
+      .sparkle-d2 { animation: sparkle 1.8s ease-in-out 0.8s infinite; }
+      .sparkle-d3 { animation: sparkle 2.2s ease-in-out 1.2s infinite; }
+      .glow { animation: glow 2s ease-in-out infinite; }
+      .data1 { animation: dataFlow 2s ease-in-out infinite; }
+      .data2 { animation: dataFlow 2s ease-in-out 0.5s infinite; }
+      .data3 { animation: dataFlow 2s ease-in-out 1s infinite; }
+      .data4 { animation: dataFlow 2s ease-in-out 1.5s infinite; }
+      .pulse { animation: pulse 1.5s ease-in-out infinite; }
+      .zzz1 { animation: zzz 3s ease-in-out infinite; }
+      .zzz2 { animation: zzz 3s ease-in-out 1s infinite; }
+      .zzz3 { animation: zzz 3s ease-in-out 2s infinite; }
+      .twinkle { animation: twinkle 3s ease-in-out infinite; }
+      .twinkle-d1 { animation: twinkle 2.5s ease-in-out 0.5s infinite; }
+      .twinkle-d2 { animation: twinkle 3.5s ease-in-out 1.2s infinite; }
+      .twinkle-d3 { animation: twinkle 2.8s ease-in-out 1.8s infinite; }
+      .robot { animation: robotWork 1s ease-in-out infinite; }
+      .cat-tail { animation: catTail 2s ease-in-out infinite; transform-origin: 472px 262px; }
+      .screen-glow { animation: screenGlow 3s ease-in-out infinite; }
+    </style>
+  </defs>
+
+  <!-- ══════ NIGHT SKY BACKGROUND ══════ -->
+  <rect width="800" height="450" fill="#0f0e2a"/>
+  <!-- Gradient sky layers -->
+  <rect width="800" height="80" fill="#161440"/>
+  <rect y="80" width="800" height="60" fill="#1a1848"/>
+  <rect y="140" width="800" height="310" fill="#1e1c50"/>
+
+  <!-- Stars -->
+  <rect x="50" y="20" width="2" height="2" fill="#fff" class="twinkle"/>
+  <rect x="120" y="45" width="3" height="3" fill="#ffe8a0" class="twinkle-d1"/>
+  <rect x="200" y="15" width="2" height="2" fill="#fff" class="twinkle-d2"/>
+  <rect x="310" y="35" width="2" height="2" fill="#c8d8ff" class="twinkle-d3"/>
+  <rect x="420" y="22" width="3" height="3" fill="#ffe8a0" class="twinkle"/>
+  <rect x="530" y="40" width="2" height="2" fill="#fff" class="twinkle-d1"/>
+  <rect x="610" y="18" width="2" height="2" fill="#c8d8ff" class="twinkle-d2"/>
+  <rect x="700" y="30" width="3" height="3" fill="#ffe8a0" class="twinkle-d3"/>
+  <rect x="760" y="50" width="2" height="2" fill="#fff" class="twinkle"/>
+  <rect x="80" y="60" width="2" height="2" fill="#fff" class="twinkle-d3"/>
+  <rect x="350" y="55" width="2" height="2" fill="#c8d8ff" class="twinkle-d1"/>
+  <rect x="480" y="12" width="2" height="2" fill="#fff" class="twinkle-d2"/>
+  <rect x="660" y="55" width="2" height="2" fill="#ffe8a0" class="twinkle"/>
+
+  <!-- Moon (large, cute) -->
+  <rect x="680" y="30" width="40" height="40" fill="#ffe8a0"/>
+  <rect x="676" y="34" width="4" height="32" fill="#ffe8a0"/>
+  <rect x="720" y="34" width="4" height="32" fill="#ffe8a0"/>
+  <rect x="684" y="26" width="32" height="4" fill="#ffe8a0"/>
+  <rect x="684" y="70" width="32" height="4" fill="#ffe8a0"/>
+  <!-- Moon face (kawaii) -->
+  <rect x="690" y="44" width="4" height="4" fill="#e8c860" opacity="0.6"/>
+  <rect x="706" y="44" width="4" height="4" fill="#e8c860" opacity="0.6"/>
+  <rect x="696" y="54" width="8" height="2" fill="#e8c860" opacity="0.4"/>
+  <!-- Moon glow -->
+  <rect x="674" y="38" width="2" height="24" fill="#ffe8a0" opacity="0.3"/>
+  <rect x="724" y="38" width="2" height="24" fill="#ffe8a0" opacity="0.3"/>
+  <rect x="688" y="24" width="24" height="2" fill="#ffe8a0" opacity="0.3"/>
+  <rect x="688" y="74" width="24" height="2" fill="#ffe8a0" opacity="0.3"/>
+
+  <!-- ══════ ROOM / FLOOR ══════ -->
+  <!-- Floor -->
+  <rect y="320" width="800" height="130" fill="#2a2248"/>
+  <rect y="320" width="800" height="3" fill="#3a326a"/>
+  <!-- Floor wood grain hints -->
+  <rect x="0" y="360" width="800" height="1" fill="#322a58" opacity="0.5"/>
+  <rect x="0" y="400" width="800" height="1" fill="#322a58" opacity="0.5"/>
+
+  <!-- Wall accent stripe -->
+  <rect y="300" width="800" height="20" fill="#1a1848"/>
+
+  <!-- ══════ DESK ══════ -->
+  <rect x="40" y="260" width="720" height="16" fill="#4a3a28"/>
+  <rect x="40" y="260" width="720" height="4" fill="#5c4a36"/>
+  <rect x="40" y="276" width="720" height="44" fill="#3a2a1c"/>
+  <!-- Desk legs -->
+  <rect x="60" y="320" width="12" height="90" fill="#3a2a1c"/>
+  <rect x="728" y="320" width="12" height="90" fill="#3a2a1c"/>
+
+  <!-- ══════ MAIN MONITOR ══════ -->
+  <rect x="240" y="80" width="300" height="170" fill="#1a1210" stroke="#2a1e14" stroke-width="4"/>
+  <rect x="252" y="92" width="276" height="146" fill="#0a1628"/>
+  <!-- Monitor stand -->
+  <rect x="370" y="250" width="40" height="12" fill="#2a1e14"/>
+  <rect x="350" y="258" width="80" height="6" fill="#2a1e14"/>
+  <!-- Screen glow effect -->
+  <rect x="250" y="90" width="280" height="150" fill="#4a90c0" opacity="0.05" class="screen-glow"/>
+
+  <!-- ══════ DASHBOARD ON SCREEN ══════ -->
+  <!-- Title bar with tabs -->
+  <rect x="254" y="94" width="272" height="12" fill="#162040"/>
+  <rect x="258" y="96" width="40" height="8" fill="#2a3a5a"/>
+  <rect x="300" y="96" width="40" height="8" fill="#1a2a48"/>
+  <text x="278" y="103" text-anchor="middle" font-family="'Courier New', monospace" font-size="5" fill="#7dbf7d">NPS</text>
+  <text x="320" y="103" text-anchor="middle" font-family="'Courier New', monospace" font-size="5" fill="#5a6a8a">Trend</text>
+  <!-- Traffic light dots -->
+  <rect x="500" y="98" width="4" height="4" fill="#e85050"/>
+  <rect x="508" y="98" width="4" height="4" fill="#e8c060"/>
+  <rect x="516" y="98" width="4" height="4" fill="#50c850"/>
+
+  <!-- NPS Score Cards -->
+  <rect x="258" y="110" width="82" height="34" fill="#0e2218" stroke="#2a5a3a" stroke-width="1"/>
+  <text x="299" y="122" text-anchor="middle" font-family="'Courier New', monospace" font-size="5" fill="#5a9a6a">SCORE A</text>
+  <text x="292" y="138" text-anchor="middle" font-family="'Courier New', monospace" font-size="14" font-weight="bold" fill="#7df07d">72</text>
+  <rect x="308" y="130" width="16" height="8" fill="#1a3a22"/>
+  <text x="316" y="137" text-anchor="middle" font-family="'Courier New', monospace" font-size="6" fill="#50e850">+3</text>
+
+  <rect x="346" y="110" width="82" height="34" fill="#221018" stroke="#5a2a3a" stroke-width="1"/>
+  <text x="387" y="122" text-anchor="middle" font-family="'Courier New', monospace" font-size="5" fill="#9a5a6a">SCORE B</text>
+  <text x="380" y="138" text-anchor="middle" font-family="'Courier New', monospace" font-size="14" font-weight="bold" fill="#f07088">48</text>
+  <rect x="396" y="130" width="16" height="8" fill="#3a1a22"/>
+  <text x="404" y="137" text-anchor="middle" font-family="'Courier New', monospace" font-size="6" fill="#e85060">-5</text>
+
+  <rect x="434" y="110" width="82" height="34" fill="#1e1a0e" stroke="#5a5a2a" stroke-width="1"/>
+  <text x="475" y="122" text-anchor="middle" font-family="'Courier New', monospace" font-size="5" fill="#9a9a5a">SCORE C</text>
+  <text x="468" y="138" text-anchor="middle" font-family="'Courier New', monospace" font-size="14" font-weight="bold" fill="#f0e060">61</text>
+  <rect x="484" y="130" width="16" height="8" fill="#3a3a1a"/>
+  <text x="492" y="137" text-anchor="middle" font-family="'Courier New', monospace" font-size="6" fill="#c8e050">+1</text>
+
+  <!-- Chart area -->
+  <rect x="258" y="150" width="130" height="76" fill="#060e1a" stroke="#1a2a48" stroke-width="1"/>
+  <!-- Grid -->
+  <line x1="264" y1="165" x2="384" y2="165" stroke="#0e1a2e" stroke-width="0.5"/>
+  <line x1="264" y1="180" x2="384" y2="180" stroke="#0e1a2e" stroke-width="0.5"/>
+  <line x1="264" y1="195" x2="384" y2="195" stroke="#0e1a2e" stroke-width="0.5"/>
+  <line x1="264" y1="210" x2="384" y2="210" stroke="#0e1a2e" stroke-width="0.5"/>
+  <!-- Chart lines -->
+  <polyline points="268,208 280,202 292,196 304,192 316,186 328,182 340,176 352,170 364,166 376,160"
+    fill="none" stroke="#7df07d" stroke-width="2"/>
+  <polyline points="268,204 280,208 292,200 304,206 316,210 328,204 340,208 352,200 364,204 376,198"
+    fill="none" stroke="#f07088" stroke-width="1.5"/>
+  <polyline points="268,212 280,210 292,206 304,204 316,200 328,198 340,194 352,190 364,188 376,184"
+    fill="none" stroke="#f0e060" stroke-width="1.5"/>
+
+  <!-- Feedback panel -->
+  <rect x="394" y="150" width="122" height="76" fill="#060e1a" stroke="#1a2a48" stroke-width="1"/>
+  <text x="455" y="160" text-anchor="middle" font-family="'Courier New', monospace" font-size="5" fill="#5a6a8a">FEEDBACK</text>
+  <rect x="400" y="166" width="5" height="5" fill="#7df07d"/>
+  <rect x="408" y="167" width="48" height="3" fill="#1a2a48"/>
+  <rect x="400" y="176" width="5" height="5" fill="#7df07d"/>
+  <rect x="408" y="177" width="40" height="3" fill="#1a2a48"/>
+  <rect x="400" y="186" width="5" height="5" fill="#f07088"/>
+  <rect x="408" y="187" width="56" height="3" fill="#1a2a48"/>
+  <rect x="400" y="196" width="5" height="5" fill="#f0e060"/>
+  <rect x="408" y="197" width="36" height="3" fill="#1a2a48"/>
+  <rect x="400" y="206" width="5" height="5" fill="#7df07d"/>
+  <rect x="408" y="207" width="44" height="3" fill="#1a2a48"/>
+  <rect x="400" y="216" width="5" height="5" fill="#f07088"/>
+  <rect x="408" y="217" width="52" height="3" fill="#1a2a48"/>
+
+  <!-- ══════ ANIME CHIBI CHARACTER (sleeping at desk) ══════ -->
+  <g class="float-slow">
+    <!-- ── TWIN-TAILS (long, flowing down behind) ── -->
+    <!-- Left twin-tail -->
+    <rect x="148" y="210" width="10" height="6" fill="#40d8d8"/>
+    <rect x="142" y="216" width="12" height="8" fill="#40d8d8"/>
+    <rect x="138" y="224" width="12" height="10" fill="#3cc8c8"/>
+    <rect x="134" y="234" width="12" height="12" fill="#38b8b8"/>
+    <rect x="132" y="246" width="10" height="10" fill="#34a8a8"/>
+    <rect x="130" y="256" width="10" height="8" fill="#309898"/>
+    <rect x="130" y="264" width="8" height="6" fill="#2c8888"/>
+    <!-- Left tail highlight -->
+    <rect x="144" y="218" width="4" height="4" fill="#80f0f0" opacity="0.5"/>
+    <rect x="140" y="230" width="4" height="4" fill="#80f0f0" opacity="0.4"/>
+    <rect x="136" y="248" width="4" height="4" fill="#70e0e0" opacity="0.3"/>
+
+    <!-- Right twin-tail -->
+    <rect x="222" y="210" width="10" height="6" fill="#40d8d8"/>
+    <rect x="226" y="216" width="12" height="8" fill="#40d8d8"/>
+    <rect x="228" y="224" width="12" height="10" fill="#3cc8c8"/>
+    <rect x="232" y="234" width="12" height="12" fill="#38b8b8"/>
+    <rect x="234" y="246" width="10" height="10" fill="#34a8a8"/>
+    <rect x="236" y="256" width="10" height="8" fill="#309898"/>
+    <rect x="238" y="264" width="8" height="6" fill="#2c8888"/>
+    <!-- Right tail highlight -->
+    <rect x="232" y="218" width="4" height="4" fill="#80f0f0" opacity="0.5"/>
+    <rect x="234" y="230" width="4" height="4" fill="#80f0f0" opacity="0.4"/>
+    <rect x="238" y="248" width="4" height="4" fill="#70e0e0" opacity="0.3"/>
+
+    <!-- ── ARMS on desk (sleeping pose) ── -->
+    <rect x="166" y="242" width="48" height="10" fill="#3a4a6a"/>
+    <!-- Sleeves -->
+    <rect x="162" y="242" width="8" height="10" fill="#4a5a7a"/>
+    <rect x="210" y="242" width="8" height="10" fill="#4a5a7a"/>
+    <!-- Hands -->
+    <rect x="158" y="244" width="6" height="6" fill="#f4d0b0"/>
+    <rect x="216" y="244" width="6" height="6" fill="#f4d0b0"/>
+
+    <!-- ── HEAD resting on arms ── -->
+    <rect x="170" y="208" width="40" height="34" fill="#f4d0b0"/>
+    <!-- Ear peeks -->
+    <rect x="166" y="218" width="4" height="8" fill="#f4d0b0"/>
+    <rect x="210" y="218" width="4" height="8" fill="#f4d0b0"/>
+
+    <!-- ── HAIR — big anime style with bangs ── -->
+    <!-- Main hair volume (top + sides) -->
+    <rect x="162" y="196" width="56" height="16" fill="#40d8d8"/>
+    <rect x="158" y="200" width="8" height="24" fill="#40d8d8"/>
+    <rect x="214" y="200" width="8" height="24" fill="#40d8d8"/>
+    <!-- Extra volume top -->
+    <rect x="166" y="192" width="48" height="8" fill="#40d8d8"/>
+    <rect x="172" y="188" width="36" height="6" fill="#40d8d8"/>
+    <!-- Bangs (fringe pieces) -->
+    <rect x="164" y="210" width="8" height="10" fill="#3cc8c8"/>
+    <rect x="172" y="208" width="6" height="14" fill="#40d8d8"/>
+    <rect x="178" y="210" width="6" height="8" fill="#3cc8c8"/>
+    <rect x="196" y="210" width="6" height="8" fill="#3cc8c8"/>
+    <rect x="202" y="208" width="6" height="14" fill="#40d8d8"/>
+    <rect x="208" y="210" width="8" height="10" fill="#3cc8c8"/>
+    <!-- Hair shine highlights -->
+    <rect x="178" y="194" width="8" height="4" fill="#80f0f0" opacity="0.6"/>
+    <rect x="192" y="196" width="6" height="4" fill="#80f0f0" opacity="0.4"/>
+    <rect x="170" y="200" width="4" height="4" fill="#80f0f0" opacity="0.3"/>
+
+    <!-- ── AHOGE (signature anime hair antenna) ── -->
+    <rect x="186" y="180" width="4" height="8" fill="#40d8d8"/>
+    <rect x="190" y="176" width="4" height="8" fill="#40d8d8"/>
+    <rect x="194" y="174" width="4" height="6" fill="#50e8e8"/>
+    <rect x="198" y="176" width="4" height="4" fill="#50e8e8"/>
+
+    <!-- ── HAIR TIES (red ribbons at twin-tail base) ── -->
+    <rect x="152" y="208" width="8" height="6" fill="#f06080"/>
+    <rect x="154" y="206" width="4" height="2" fill="#f08098"/>
+    <rect x="220" y="208" width="8" height="6" fill="#f06080"/>
+    <rect x="222" y="206" width="4" height="2" fill="#f08098"/>
+
+    <!-- ── FACE (closed eyes — sleeping) ── -->
+    <!-- Left eye (cute anime curve) -->
+    <rect x="178" y="222" width="2" height="2" fill="#2a1a2a"/>
+    <rect x="180" y="224" width="8" height="2" fill="#2a1a2a"/>
+    <rect x="188" y="222" width="2" height="2" fill="#2a1a2a"/>
+    <!-- Right eye (cute anime curve) -->
+    <rect x="194" y="222" width="2" height="2" fill="#2a1a2a"/>
+    <rect x="196" y="224" width="8" height="2" fill="#2a1a2a"/>
+    <rect x="204" y="222" width="2" height="2" fill="#2a1a2a"/>
+    <!-- Eyelashes -->
+    <rect x="176" y="220" width="2" height="2" fill="#2a1a2a"/>
+    <rect x="206" y="220" width="2" height="2" fill="#2a1a2a"/>
+
+    <!-- Blush cheeks (bigger, more anime) -->
+    <rect x="172" y="228" width="8" height="4" fill="#f0a0a0" opacity="0.6"/>
+    <rect x="202" y="228" width="8" height="4" fill="#f0a0a0" opacity="0.6"/>
+    <!-- Tiny sleeping mouth -->
+    <rect x="190" y="232" width="4" height="2" fill="#d8a080"/>
+
+    <!-- ── BODY (sailor-style uniform) ── -->
+    <rect x="172" y="252" width="36" height="20" fill="#3a4a6a"/>
+    <!-- Sailor collar -->
+    <rect x="172" y="252" width="36" height="6" fill="#4a5a8a"/>
+    <rect x="186" y="252" width="8" height="8" fill="#f0f0f0"/>
+    <!-- Collar stripe -->
+    <rect x="172" y="256" width="36" height="2" fill="#f0f0f0" opacity="0.4"/>
+    <!-- Tie / ribbon -->
+    <rect x="188" y="258" width="4" height="6" fill="#f06080"/>
+    <rect x="186" y="260" width="8" height="2" fill="#f06080"/>
+  </g>
+
+  <!-- Zzz bubbles -->
+  <g class="zzz1">
+    <text x="228" y="196" font-family="'Courier New', monospace" font-size="8" fill="#80f0f0" opacity="0.8">z</text>
+  </g>
+  <g class="zzz2">
+    <text x="238" y="184" font-family="'Courier New', monospace" font-size="10" fill="#80f0f0" opacity="0.6">z</text>
+  </g>
+  <g class="zzz3">
+    <text x="250" y="170" font-family="'Courier New', monospace" font-size="12" fill="#80f0f0" opacity="0.4">z</text>
+  </g>
+
+  <!-- ══════ CUTE CAT on desk (right side) ══════ -->
+  <!-- Cat body -->
+  <rect x="460" y="244" width="24" height="16" fill="#e8c8a0"/>
+  <rect x="458" y="248" width="4" height="12" fill="#e8c8a0"/>
+  <!-- Cat head -->
+  <rect x="450" y="234" width="16" height="14" fill="#e8c8a0"/>
+  <!-- Cat ears -->
+  <rect x="448" y="228" width="6" height="8" fill="#e8c8a0"/>
+  <rect x="462" y="228" width="6" height="8" fill="#e8c8a0"/>
+  <rect x="450" y="230" width="4" height="4" fill="#f0a0a0"/>
+  <rect x="464" y="230" width="4" height="4" fill="#f0a0a0"/>
+  <!-- Cat eyes (closed, sleeping) -->
+  <rect x="454" y="240" width="4" height="2" fill="#2a1810"/>
+  <rect x="462" y="240" width="4" height="2" fill="#2a1810"/>
+  <!-- Cat tail -->
+  <g class="cat-tail" style="transform-origin: 472px 262px;">
+    <rect x="484" y="248" width="12" height="4" fill="#e8c8a0"/>
+    <rect x="494" y="244" width="4" height="8" fill="#e8c8a0"/>
+    <rect x="496" y="242" width="4" height="4" fill="#d8b890"/>
+  </g>
+
+  <!-- ══════ PIPELINE MAGIC STREAM ══════ -->
+  <!-- Google Sheets icon (floating, left side) -->
+  <g class="float">
+    <rect x="42" y="140" width="40" height="32" fill="#34a853" stroke="#2a8a42" stroke-width="2"/>
+    <rect x="48" y="146" width="28" height="4" fill="#6aca88"/>
+    <rect x="48" y="154" width="28" height="4" fill="#6aca88"/>
+    <rect x="48" y="162" width="28" height="4" fill="#6aca88"/>
+    <line x1="62" y1="146" x2="62" y2="168" stroke="#2a8a42" stroke-width="1"/>
+  </g>
+  <text x="62" y="184" text-anchor="middle" font-family="'Courier New', monospace" font-size="7" fill="#6aca88">Sheets</text>
+
+  <!-- Data particles flowing from Sheets to Monitor -->
+  <rect x="90" y="148" width="6" height="6" fill="#7df07d" class="data1" opacity="0.8"/>
+  <rect x="110" y="138" width="4" height="4" fill="#f0e060" class="data2" opacity="0.7"/>
+  <rect x="130" y="145" width="5" height="5" fill="#70c0f0" class="data3" opacity="0.8"/>
+  <rect x="150" y="135" width="4" height="4" fill="#7df07d" class="data4" opacity="0.6"/>
+  <rect x="100" y="155" width="4" height="4" fill="#f07088" class="data3" opacity="0.7"/>
+  <rect x="140" y="158" width="3" height="3" fill="#f0e060" class="data1" opacity="0.6"/>
+
+  <!-- JSON crystal (floating, transforms data) -->
+  <g class="float" style="animation-delay: 0.5s">
+    <rect x="96" y="100" width="28" height="28" fill="#2a2a5e" stroke="#6a6ae0" stroke-width="2" transform="rotate(45, 110, 114)"/>
+    <text x="110" y="118" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" font-weight="bold" fill="#a0a0ff">{ }</text>
+  </g>
+  <!-- Crystal glow -->
+  <rect x="104" y="92" width="12" height="2" fill="#6a6ae0" class="glow" opacity="0.4"/>
+  <rect x="104" y="134" width="12" height="2" fill="#6a6ae0" class="glow" opacity="0.4"/>
+
+  <!-- More data particles (from JSON to monitor) -->
+  <rect x="168" y="120" width="5" height="5" fill="#a0a0ff" class="data2" opacity="0.7"/>
+  <rect x="190" y="110" width="4" height="4" fill="#7df07d" class="data4" opacity="0.6"/>
+  <rect x="210" y="125" width="3" height="3" fill="#f0e060" class="data1" opacity="0.5"/>
+  <rect x="230" y="115" width="4" height="4" fill="#70c0f0" class="data3" opacity="0.7"/>
+
+  <!-- ══════ CUTE ROBOT (GitHub Actions) ══════ -->
+  <g class="robot">
+    <!-- Robot body -->
+    <rect x="580" y="220" width="28" height="24" fill="#3a3a5a" stroke="#5a5a8a" stroke-width="1"/>
+    <!-- Robot head -->
+    <rect x="582" y="204" width="24" height="18" fill="#4a4a7a" stroke="#6a6aaa" stroke-width="1"/>
+    <!-- Antenna -->
+    <rect x="592" y="196" width="4" height="10" fill="#5a5a8a"/>
+    <rect x="590" y="192" width="8" height="6" fill="#7df07d" class="pulse"/>
+    <!-- Eyes (LED style) -->
+    <rect x="588" y="210" width="4" height="4" fill="#7df07d"/>
+    <rect x="596" y="210" width="4" height="4" fill="#7df07d"/>
+    <!-- Mouth (LED bar) -->
+    <rect x="588" y="216" width="12" height="2" fill="#50a0f0"/>
+    <!-- Arms -->
+    <rect x="572" y="226" width="8" height="6" fill="#3a3a5a"/>
+    <rect x="608" y="226" width="8" height="6" fill="#3a3a5a"/>
+    <!-- Legs -->
+    <rect x="584" y="244" width="6" height="10" fill="#3a3a5a"/>
+    <rect x="598" y="244" width="6" height="10" fill="#3a3a5a"/>
+    <!-- Feet -->
+    <rect x="582" y="252" width="10" height="4" fill="#4a4a7a"/>
+    <rect x="596" y="252" width="10" height="4" fill="#4a4a7a"/>
+    <!-- Wrench in hand -->
+    <rect x="614" y="222" width="10" height="4" fill="#c8c8c8"/>
+    <rect x="622" y="220" width="6" height="8" fill="#c8c8c8"/>
+    <rect x="624" y="222" width="2" height="4" fill="#3a3a5a"/>
+    <!-- Chest emblem -->
+    <rect x="590" y="228" width="8" height="8" fill="#2a2a48"/>
+    <text x="594" y="235" text-anchor="middle" font-family="'Courier New', monospace" font-size="5" fill="#50a0f0">CI</text>
+  </g>
+  <text x="594" y="268" text-anchor="middle" font-family="'Courier New', monospace" font-size="6" fill="#5a6a8a">Actions</text>
+
+  <!-- ══════ DEPLOY CLOUD (S3) ══════ -->
+  <g class="float" style="animation-delay: 1s">
+    <rect x="650" y="170" width="50" height="24" fill="#4a6a8a"/>
+    <rect x="644" y="176" width="8" height="14" fill="#4a6a8a"/>
+    <rect x="700" y="176" width="8" height="14" fill="#4a6a8a"/>
+    <rect x="656" y="164" width="36" height="10" fill="#4a6a8a"/>
+    <rect x="660" y="160" width="28" height="8" fill="#4a6a8a"/>
+    <text x="675" y="186" text-anchor="middle" font-family="'Courier New', monospace" font-size="7" font-weight="bold" fill="#c8e0f0">S3</text>
+    <!-- Upload arrow -->
+    <rect x="672" y="148" width="6" height="12" fill="#7df07d" class="pulse"/>
+    <rect x="668" y="148" width="14" height="4" fill="#7df07d" class="pulse"/>
+    <rect x="672" y="140" width="6" height="10" fill="#7df07d" class="pulse"/>
+  </g>
+
+  <!-- ══════ CLOCK on wall ══════ -->
+  <rect x="560" y="90" width="36" height="36" fill="#2a2248" stroke="#4a3a6a" stroke-width="2"/>
+  <rect x="564" y="94" width="28" height="28" fill="#1a1840"/>
+  <!-- Clock face -->
+  <rect x="577" y="98" width="2" height="4" fill="#8a8aaa"/>
+  <rect x="577" y="118" width="2" height="4" fill="#8a8aaa"/>
+  <rect x="567" y="108" width="4" height="2" fill="#8a8aaa"/>
+  <rect x="585" y="108" width="4" height="2" fill="#8a8aaa"/>
+  <!-- Clock hands (00:03) -->
+  <rect x="577" y="100" width="2" height="10" fill="#e8e0e4"/>
+  <rect x="577" y="108" width="10" height="2" fill="#f07088"/>
+  <text x="578" y="140" text-anchor="middle" font-family="'Courier New', monospace" font-size="6" fill="#5a5a8a">00:03</text>
+
+  <!-- ══════ DESK LAMP (warm glow) ══════ -->
+  <!-- Lamp base -->
+  <rect x="658" y="254" width="20" height="6" fill="#c8a060"/>
+  <!-- Lamp arm -->
+  <rect x="666" y="220" width="4" height="34" fill="#c8a060"/>
+  <rect x="654" y="218" width="24" height="6" fill="#c8a060"/>
+  <!-- Lamp shade -->
+  <rect x="648" y="210" width="36" height="10" fill="#e8c060"/>
+  <rect x="652" y="206" width="28" height="6" fill="#e8c060"/>
+  <!-- Lamp light cone (warm glow) -->
+  <rect x="640" y="220" width="52" height="40" fill="#ffe8a0" opacity="0.04"/>
+  <rect x="648" y="220" width="36" height="30" fill="#ffe8a0" opacity="0.06"/>
+  <rect x="654" y="220" width="24" height="20" fill="#ffe8a0" opacity="0.08"/>
+
+  <!-- ══════ COFFEE MUG on desk ══════ -->
+  <rect x="640" y="248" width="14" height="12" fill="#c47048"/>
+  <rect x="638" y="246" width="18" height="4" fill="#a05830"/>
+  <!-- Handle -->
+  <rect x="654" y="250" width="4" height="8" fill="#a05830"/>
+  <rect x="654" y="250" width="6" height="2" fill="#a05830"/>
+  <rect x="654" y="256" width="6" height="2" fill="#a05830"/>
+  <!-- Steam -->
+  <rect x="644" y="238" width="2" height="6" fill="#a0b8e0" opacity="0.3" class="sparkle"/>
+  <rect x="650" y="236" width="2" height="6" fill="#a0b8e0" opacity="0.2" class="sparkle-d1"/>
+
+  <!-- ══════ STICKY NOTES on wall ══════ -->
+  <!-- Note: Pipeline -->
+  <rect x="28" y="86" width="48" height="36" fill="#ff9eb0"/>
+  <rect x="28" y="86" width="48" height="4" fill="#e8808e"/>
+  <text x="52" y="106" text-anchor="middle" font-family="'Courier New', monospace" font-size="6" fill="#5a2030">pipeline</text>
+  <text x="52" y="116" text-anchor="middle" font-family="'Courier New', monospace" font-size="6" fill="#5a2030">done!</text>
+
+  <!-- Note: auto deploy -->
+  <rect x="544" y="148" width="44" height="32" fill="#a0e8b0"/>
+  <rect x="544" y="148" width="44" height="4" fill="#80c890"/>
+  <text x="566" y="166" text-anchor="middle" font-family="'Courier New', monospace" font-size="5" fill="#1a4a28">auto</text>
+  <text x="566" y="174" text-anchor="middle" font-family="'Courier New', monospace" font-size="5" fill="#1a4a28">deploy</text>
+
+  <!-- ══════ SPARKLE EFFECTS ══════ -->
+  <!-- Cross sparkles around the pipeline -->
+  <g class="sparkle">
+    <rect x="86" y="126" width="6" height="2" fill="#ffe8a0"/>
+    <rect x="88" y="124" width="2" height="6" fill="#ffe8a0"/>
+  </g>
+  <g class="sparkle-d1">
+    <rect x="148" y="96" width="6" height="2" fill="#a0a0ff"/>
+    <rect x="150" y="94" width="2" height="6" fill="#a0a0ff"/>
+  </g>
+  <g class="sparkle-d2">
+    <rect x="220" y="98" width="4" height="2" fill="#7df07d"/>
+    <rect x="221" y="97" width="2" height="4" fill="#7df07d"/>
+  </g>
+  <g class="sparkle-d3">
+    <rect x="620" y="200" width="4" height="2" fill="#ffe8a0"/>
+    <rect x="621" y="199" width="2" height="4" fill="#ffe8a0"/>
+  </g>
+  <g class="sparkle">
+    <rect x="700" y="120" width="6" height="2" fill="#c8d8ff"/>
+    <rect x="702" y="118" width="2" height="6" fill="#c8d8ff"/>
+  </g>
+  <g class="sparkle-d2">
+    <rect x="160" y="80" width="4" height="2" fill="#f07088"/>
+    <rect x="161" y="79" width="2" height="4" fill="#f07088"/>
+  </g>
+
+  <!-- Small heart above sleeping character -->
+  <g class="sparkle-d1">
+    <rect x="196" y="168" width="4" height="4" fill="#f07088"/>
+    <rect x="204" y="168" width="4" height="4" fill="#f07088"/>
+    <rect x="194" y="170" width="4" height="4" fill="#f07088"/>
+    <rect x="206" y="170" width="4" height="4" fill="#f07088"/>
+    <rect x="196" y="174" width="12" height="4" fill="#f07088"/>
+    <rect x="198" y="178" width="8" height="2" fill="#f07088"/>
+    <rect x="200" y="180" width="4" height="2" fill="#f07088"/>
+  </g>
+</svg>
