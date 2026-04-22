@@ -1,0 +1,2101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI &amp; Git 101 — 프로덕트 디자이너를 위한 실전 가이드</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@400;600;800&family=Caveat:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" rel="stylesheet" />
+
+<style>
+  /* ───────── Tokens ───────── */
+  :root {
+    --paper:        #F4EFE3;
+    --paper-2:      #EFE8D8;
+    --ink:          #1A1814;
+    --ink-soft:     #3A332B;
+    --graphite:     #6E6760;
+    --mute:         #A59C8F;
+    --rule:         #1A1814;
+
+    --red:          #D94436;
+    --yellow:       #F2C94C;
+    --sticky:       #FFE27A;
+    --blue:         #2C5AA0;
+    --ink-blue:     #1A3A7A;
+    --green:        #5B8C5A;
+
+    --serif:        'Hahmlet', 'Noto Serif KR', Georgia, serif;
+    --sans:         'Pretendard Variable', Pretendard, -apple-system, system-ui, sans-serif;
+    --hand:         'Caveat', 'Hahmlet', cursive;
+    --mono:         'JetBrains Mono', ui-monospace, monospace;
+
+    --slide-w:      1280px;
+    --slide-h:      720px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: #2A241C;
+    font-family: var(--sans);
+    color: var(--ink);
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+  }
+
+  /* ───────── Paper texture + grain ───────── */
+  .grain {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    opacity: 0.35;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.15  0 0 0 0 0.12  0 0 0 0 0.08  0 0 0 0.35 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  /* ───────── Stage + Slide sizing ───────── */
+  .stage {
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: right 480ms cubic-bezier(.4,0,.2,1);
+  }
+  .deck { transition: transform 480ms cubic-bezier(.4,0,.2,1); }
+
+  .deck {
+    position: relative;
+    width: var(--slide-w);
+    height: var(--slide-h);
+    transform-origin: center center;
+  }
+
+  .slide {
+    position: absolute; inset: 0;
+    background: var(--paper);
+    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow:
+      0 30px 60px -20px rgba(0,0,0,0.55),
+      0 10px 30px -10px rgba(0,0,0,0.35),
+      inset 0 0 140px rgba(120,90,40,0.08);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 420ms cubic-bezier(.4,0,.2,1), transform 520ms cubic-bezier(.4,0,.2,1);
+    transform: translateY(16px) scale(0.995);
+    overflow: hidden;
+  }
+  .slide.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+  }
+
+  /* ruled paper lines baseline (subtle) */
+  .slide::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(to bottom, transparent 0 47px, rgba(26,24,20,0.04) 47px 48px);
+    pointer-events: none;
+    mask-image: linear-gradient(to bottom, transparent 0, black 60px, black calc(100% - 60px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, black 60px, black calc(100% - 60px), transparent 100%);
+  }
+
+  /* margin rule (left red line like a notebook) */
+  .slide::after {
+    content: '';
+    position: absolute;
+    top: 48px; bottom: 48px; left: 96px;
+    width: 1px;
+    background: rgba(217,68,54,0.35);
+  }
+
+  /* ───────── Slide meta (top-left slug, top-right page num) ───────── */
+  .meta {
+    position: absolute;
+    top: 44px; left: 64px; right: 64px;
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--graphite);
+    z-index: 3;
+  }
+  .meta .slug { display: flex; gap: 16px; align-items: baseline; }
+  .meta .dot {
+    display: inline-block; width: 6px; height: 6px;
+    background: var(--red); border-radius: 50%;
+    transform: translateY(-2px);
+  }
+
+  /* ───────── Layout helpers inside slide ───────── */
+  .slide-inner {
+    position: absolute;
+    top: 110px; left: 128px; right: 96px; bottom: 96px;
+    z-index: 2;
+  }
+
+  .eyebrow {
+    font-family: var(--hand);
+    font-size: 28px;
+    color: var(--red);
+    transform: rotate(-1.5deg);
+    display: inline-block;
+    margin-bottom: 8px;
+  }
+
+  h1.display {
+    font-family: var(--serif);
+    font-weight: 800;
+    font-size: 88px;
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+
+  h2.title {
+    font-family: var(--serif);
+    font-weight: 800;
+    font-size: 56px;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 18px;
+  }
+  h2.title em {
+    font-style: normal;
+    background: linear-gradient(180deg, transparent 62%, var(--sticky) 62%, var(--sticky) 92%, transparent 92%);
+    padding: 0 4px;
+  }
+
+  h3.kicker {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--graphite);
+    margin-bottom: 24px;
+  }
+
+  p.body, li.body {
+    font-family: var(--sans);
+    font-weight: 400;
+    font-size: 21px;
+    line-height: 1.62;
+    color: var(--ink-soft);
+    max-width: 64ch;
+  }
+  p.lead {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 1.5;
+    color: var(--ink);
+    max-width: 40ch;
+  }
+
+  ul.list { list-style: none; padding: 0; }
+  ul.list li {
+    font-family: var(--sans);
+    font-size: 20px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    padding-left: 36px;
+    position: relative;
+    margin-bottom: 16px;
+    max-width: 58ch;
+  }
+  ul.list li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 14px;
+    width: 22px; height: 2px;
+    background: var(--red);
+    transform: rotate(-3deg);
+  }
+
+  .highlight-red { color: var(--red); font-weight: 600; }
+  .underline-hand {
+    background: linear-gradient(180deg, transparent 72%, rgba(217,68,54,0.55) 72%, rgba(217,68,54,0.55) 95%, transparent 95%);
+    padding: 0 2px;
+  }
+  .sticky-mark {
+    background: linear-gradient(180deg, transparent 60%, var(--sticky) 60%, var(--sticky) 92%, transparent 92%);
+    padding: 0 4px;
+  }
+
+  code, .mono {
+    font-family: var(--mono);
+    font-size: 0.9em;
+    background: rgba(26,24,20,0.06);
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+
+  /* ───────── Hand-drawn SVG base style ───────── */
+  svg .hand { stroke: var(--ink); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  svg .hand-thin { stroke: var(--ink); fill: none; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+  svg .hand-red { stroke: var(--red); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  svg .hand-blue { stroke: var(--blue); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  svg .fill-paper { fill: var(--paper-2); }
+  svg .fill-sticky { fill: var(--sticky); }
+  svg .fill-red { fill: var(--red); }
+  svg .fill-ink { fill: var(--ink); }
+  svg text.label-hand {
+    font-family: var(--hand);
+    font-size: 22px;
+    fill: var(--ink);
+  }
+  svg text.label-mono {
+    font-family: var(--mono);
+    font-size: 12px;
+    fill: var(--ink);
+    letter-spacing: 0.06em;
+  }
+
+  /* Fix: SVG presentation attrs don't parse var() — map them via CSS instead.
+     CSS properties override matching presentation attributes. */
+  svg text[font-family*="--serif"] { font-family: 'Hahmlet', 'Noto Serif KR', Georgia, serif; }
+  svg text[font-family*="--sans"]  { font-family: 'Pretendard Variable', Pretendard, -apple-system, system-ui, sans-serif; }
+  svg text[font-family*="--hand"]  { font-family: 'Caveat', 'Hahmlet', cursive; }
+  svg text[font-family*="--mono"]  { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+  /* ───────── Sticky note ───────── */
+  .sticky-note {
+    background: var(--sticky);
+    padding: 18px 22px;
+    font-family: var(--hand);
+    font-size: 22px;
+    line-height: 1.35;
+    color: var(--ink);
+    box-shadow:
+      2px 4px 0 rgba(0,0,0,0.08),
+      0 14px 30px -12px rgba(0,0,0,0.25);
+    transform: rotate(-2.2deg);
+    position: relative;
+    max-width: 280px;
+  }
+  .sticky-note::before {
+    content: '';
+    position: absolute; top: -10px; left: 50%;
+    width: 60px; height: 16px;
+    background: rgba(217,68,54,0.4);
+    transform: translateX(-50%) rotate(-4deg);
+    border-radius: 1px;
+  }
+
+  /* ───────── HUD ───────── */
+  .hud {
+    position: fixed;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; gap: 14px; align-items: center;
+    padding: 10px 16px;
+    background: rgba(244, 239, 227, 0.95);
+    border-radius: 999px;
+    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.4);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    z-index: 10;
+    backdrop-filter: blur(6px);
+  }
+  .hud button {
+    appearance: none; border: none; background: transparent;
+    font-family: var(--mono); font-size: 14px;
+    color: var(--ink); cursor: pointer;
+    width: 28px; height: 28px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: background 160ms;
+  }
+  .hud button:hover { background: rgba(26,24,20,0.08); }
+  .hud .counter { color: var(--graphite); min-width: 54px; text-align: center; }
+  .hud .sep { color: var(--mute); }
+
+  .progress {
+    position: fixed; top: 0; left: 0; right: 0; height: 3px;
+    background: rgba(255,255,255,0.06);
+    z-index: 20;
+  }
+  .progress > span {
+    display: block; height: 100%;
+    background: var(--red);
+    transition: width 420ms cubic-bezier(.4,0,.2,1);
+  }
+
+  .hint {
+    position: fixed;
+    bottom: 24px; right: 28px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.15em;
+    z-index: 10;
+    transition: opacity 200ms, transform 200ms;
+  }
+  body.notes-open .hint { opacity: 0; transform: translateY(8px); pointer-events: none; }
+
+  /* ───────── Speaker Notes Panel ───────── */
+  .notes-panel {
+    position: fixed;
+    top: 0; right: 0; bottom: 0;
+    width: 440px;
+    background: #EFE8D8;
+    border-left: 1px solid rgba(0,0,0,0.12);
+    box-shadow: -24px 0 60px -20px rgba(0,0,0,0.55);
+    transform: translateX(100%);
+    transition: transform 480ms cubic-bezier(.4,0,.2,1);
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  body.notes-open .notes-panel { transform: translateX(0); }
+
+  .notes-panel::before {
+    /* lined paper */
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(to bottom, transparent 0 31px, rgba(26,24,20,0.08) 31px 32px);
+    pointer-events: none;
+  }
+  .notes-panel::after {
+    /* left red margin rule + grain */
+    content: '';
+    position: absolute; top: 0; bottom: 0; left: 68px;
+    width: 1px;
+    background: rgba(217,68,54,0.4);
+  }
+
+  .notes-grain {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    opacity: 0.25;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.15  0 0 0 0 0.12  0 0 0 0 0.08  0 0 0 0.35 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  /* tape strip */
+  .notes-tape {
+    position: absolute;
+    top: 12px; left: 50%;
+    width: 120px; height: 22px;
+    background: rgba(217,68,54,0.35);
+    transform: translateX(-50%) rotate(-2.5deg);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    z-index: 3;
+  }
+
+  .notes-header {
+    padding: 44px 40px 18px 88px;
+    position: relative;
+    z-index: 2;
+    border-bottom: 1px dashed rgba(26,24,20,0.25);
+  }
+  .notes-header .kicker {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .notes-header h3 {
+    font-family: var(--serif);
+    font-weight: 800;
+    font-size: 26px;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    line-height: 1.15;
+  }
+  .notes-header .meta-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--graphite);
+  }
+  .notes-header .page-num {
+    font-family: var(--serif);
+    font-weight: 600;
+  }
+
+  /* Tab control (segmented) */
+  .notes-tabs {
+    display: inline-flex;
+    margin-top: 14px;
+    border: 1.5px solid var(--ink);
+    background: rgba(244,239,227,0.7);
+    padding: 3px;
+    gap: 2px;
+  }
+  .notes-tabs .tab {
+    appearance: none; border: none; background: transparent;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    padding: 7px 14px;
+    cursor: pointer;
+    transition: background 160ms, color 160ms;
+    font-weight: 600;
+  }
+  .notes-tabs .tab:hover { background: rgba(26,24,20,0.05); }
+  .notes-tabs .tab.active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .notes-tabs .tab .dot {
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: 2px;
+  }
+  .notes-tabs .tab[data-mode="basic"] .dot { background: var(--red); }
+  .notes-tabs .tab[data-mode="advanced"] .dot { background: var(--blue); }
+
+  /* advanced-mode stylings */
+  .notes-body .script.advanced {
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+  .notes-body .script.advanced p { margin-bottom: 12px; }
+  .notes-body .script.advanced strong {
+    color: var(--ink);
+    background: linear-gradient(180deg, transparent 60%, rgba(242,201,76,0.6) 60%, rgba(242,201,76,0.6) 92%, transparent 92%);
+    padding: 0 2px;
+    font-weight: 700;
+  }
+  .notes-body .script.advanced code {
+    font-family: var(--mono);
+    font-size: 13px;
+    background: rgba(26,24,20,0.07);
+    padding: 1px 6px;
+    border-radius: 2px;
+    color: var(--ink-blue);
+  }
+  .notes-body .script.advanced em {
+    font-style: italic;
+    background: transparent;
+    color: var(--red);
+    padding: 0;
+  }
+  .notes-body .script.advanced ul {
+    list-style: none;
+    padding: 0;
+    margin: 6px 0 14px;
+  }
+  .notes-body .script.advanced li {
+    padding-left: 18px;
+    position: relative;
+    margin-bottom: 6px;
+    font-size: 14.5px;
+  }
+  .notes-body .script.advanced li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--red);
+    font-family: var(--mono);
+    font-weight: 700;
+  }
+  .notes-body .script.advanced h5 {
+    font-family: var(--serif);
+    font-size: 15px;
+    font-weight: 800;
+    margin: 14px 0 6px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .notes-body .script.advanced h5::before {
+    content: '§ ';
+    color: var(--red);
+  }
+
+  .notes-body {
+    flex: 1;
+    padding: 28px 40px 40px 88px;
+    overflow-y: auto;
+    position: relative;
+    z-index: 2;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(26,24,20,0.2) transparent;
+  }
+  .notes-body::-webkit-scrollbar { width: 6px; }
+  .notes-body::-webkit-scrollbar-thumb { background: rgba(26,24,20,0.2); border-radius: 3px; }
+
+  .notes-body .script {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--ink);
+  }
+  .notes-body .script p { margin-bottom: 14px; }
+  .notes-body .script em {
+    font-style: normal;
+    background: linear-gradient(180deg, transparent 60%, rgba(242,201,76,0.55) 60%, rgba(242,201,76,0.55) 92%, transparent 92%);
+    padding: 0 2px;
+  }
+  .notes-body .script strong {
+    font-weight: 700;
+    color: var(--red);
+  }
+  .notes-body .script q {
+    quotes: '“' '”';
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+
+  .notes-body .attrib {
+    margin-top: 24px;
+    padding-top: 14px;
+    border-top: 1px dashed rgba(26,24,20,0.25);
+    font-family: var(--hand);
+    font-size: 20px;
+    color: var(--graphite);
+    transform: rotate(-1deg);
+  }
+
+  .notes-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 1px solid rgba(26,24,20,0.2);
+    background: rgba(244,239,227,0.9);
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--ink);
+    cursor: pointer;
+    z-index: 4;
+    transition: background 160ms;
+  }
+  .notes-close:hover { background: #fff; }
+
+  /* HUD notes button state */
+  .hud button.active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .hud button.active:hover { background: var(--ink); }
+  kbd {
+    font-family: var(--mono); font-size: 10px;
+    padding: 2px 6px; border-radius: 3px;
+    background: rgba(255,255,255,0.14);
+    color: rgba(255,255,255,0.8);
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  /* ───────── Per-slide compositions ───────── */
+
+  /* slide 1 — title */
+  .cover {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 40px;
+    height: 100%;
+  }
+  .cover .left { display: flex; flex-direction: column; justify-content: space-between; }
+  .cover .tag-cluster {
+    display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px;
+  }
+  .tag {
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    border-radius: 999px;
+  }
+  .cover .right { position: relative; }
+  .cover .byline {
+    font-family: var(--serif);
+    font-size: 22px;
+    color: var(--graphite);
+    margin-top: 14px;
+  }
+  .cover .byline strong {
+    color: var(--ink);
+    font-weight: 800;
+  }
+
+  /* slide — two column */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items: start;
+    height: 100%;
+  }
+  .two-col.diag { grid-template-columns: 1.05fr 1fr; }
+
+  /* slide — timeline */
+  .timeline {
+    position: relative;
+    margin-top: 32px;
+    padding-top: 40px;
+  }
+
+  /* probability bars */
+  .prob-row { display: flex; align-items: center; gap: 20px; margin-bottom: 16px; }
+  .prob-row .lbl {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 22px;
+    width: 140px;
+    color: var(--ink);
+  }
+  .prob-bar {
+    flex: 1;
+    height: 26px;
+    background: rgba(26,24,20,0.06);
+    border: 1.5px solid var(--ink);
+    position: relative;
+    overflow: hidden;
+  }
+  .prob-bar > span {
+    display: block; height: 100%;
+    background:
+      repeating-linear-gradient(45deg, var(--ink) 0 6px, transparent 6px 10px);
+    background-color: var(--paper-2);
+  }
+  .prob-row .pct {
+    font-family: var(--mono);
+    font-size: 15px;
+    font-weight: 600;
+    width: 52px;
+    text-align: right;
+  }
+  .prob-row.hi .prob-bar > span {
+    background:
+      repeating-linear-gradient(45deg, var(--red) 0 6px, transparent 6px 10px);
+    background-color: rgba(217,68,54,0.15);
+  }
+  .prob-row.hi .pct { color: var(--red); }
+
+  /* quote bubble */
+  .quote {
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--ink);
+    padding: 22px 26px;
+    background: white;
+    border: 1.5px solid var(--ink);
+    position: relative;
+    display: inline-block;
+    transform: rotate(-0.6deg);
+    box-shadow: 4px 6px 0 var(--ink);
+  }
+  .quote::after {
+    content: '';
+    position: absolute;
+    bottom: -16px; left: 36px;
+    width: 18px; height: 18px;
+    background: white;
+    border-right: 1.5px solid var(--ink);
+    border-bottom: 1.5px solid var(--ink);
+    transform: rotate(45deg);
+  }
+
+  /* number step */
+  .steps { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 36px; margin-top: 20px; }
+  .step {
+    padding: 20px 22px;
+    border: 1.5px solid var(--ink);
+    background: var(--paper-2);
+    position: relative;
+  }
+  .step .num {
+    position: absolute;
+    top: -18px; left: -18px;
+    width: 44px; height: 44px;
+    background: var(--red);
+    color: var(--paper);
+    border-radius: 50%;
+    font-family: var(--serif);
+    font-weight: 800;
+    font-size: 22px;
+    display: flex; align-items: center; justify-content: center;
+    transform: rotate(-5deg);
+    box-shadow: 3px 4px 0 var(--ink);
+  }
+  .step h4 {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .step p {
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+
+  /* compare table */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 24px;
+  }
+  .compare .card {
+    padding: 24px 28px 28px;
+    border: 1.5px solid var(--ink);
+    background: var(--paper-2);
+    position: relative;
+    min-height: 340px;
+  }
+  .compare .card .tag-top {
+    position: absolute; top: -14px; left: 20px;
+    background: var(--paper);
+    padding: 2px 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: 1.5px solid var(--ink);
+  }
+  .compare .card h4 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 800;
+    margin: 8px 0 14px;
+  }
+  .compare .card p {
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+  }
+  .compare .card .abilities {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed rgba(26,24,20,0.3);
+  }
+  .compare .card .ability {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--mono);
+    font-size: 13px;
+    margin-bottom: 6px;
+    color: var(--ink-soft);
+  }
+  .compare .card .ability::before {
+    content: '✓';
+    color: var(--green);
+    font-family: var(--sans);
+    font-weight: 900;
+  }
+  .compare .card .ability.no::before { content: '✕'; color: var(--mute); }
+  .compare .card .ability.no { color: var(--mute); text-decoration: line-through; }
+
+  /* tips list with numbers */
+  .tips {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 28px;
+  }
+  .tip {
+    background: var(--paper-2);
+    border: 1.5px solid var(--ink);
+    padding: 26px 22px;
+    position: relative;
+  }
+  .tip .tip-n {
+    font-family: var(--serif);
+    font-weight: 800;
+    font-size: 64px;
+    line-height: 1;
+    color: var(--red);
+    letter-spacing: -0.04em;
+  }
+  .tip h4 {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 800;
+    margin: 10px 0 8px;
+  }
+  .tip p {
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+
+  /* end slide */
+  .end {
+    display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+    height: 100%;
+    gap: 24px;
+  }
+
+  /* ───────── Motion ───────── */
+  @keyframes riseIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .slide.active .stagger > * {
+    opacity: 0;
+    animation: riseIn 520ms cubic-bezier(.4,0,.2,1) forwards;
+  }
+  .slide.active .stagger > *:nth-child(1) { animation-delay: 80ms; }
+  .slide.active .stagger > *:nth-child(2) { animation-delay: 180ms; }
+  .slide.active .stagger > *:nth-child(3) { animation-delay: 280ms; }
+  .slide.active .stagger > *:nth-child(4) { animation-delay: 380ms; }
+  .slide.active .stagger > *:nth-child(5) { animation-delay: 480ms; }
+  .slide.active .stagger > *:nth-child(6) { animation-delay: 580ms; }
+  .slide.active .stagger > *:nth-child(7) { animation-delay: 680ms; }
+
+  /* animate SVG draw */
+  @keyframes drawLine {
+    from { stroke-dashoffset: var(--dash, 400); }
+    to   { stroke-dashoffset: 0; }
+  }
+
+</style>
+</head>
+
+<body>
+
+<div class="progress"><span id="progress-bar"></span></div>
+
+<div class="stage" id="stage">
+  <div class="deck" id="deck">
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- Slide 1 — COVER                              -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="slide" data-n="1">
+      <div class="grain"></div>
+      <div class="meta">
+        <div class="slug"><span class="dot"></span><span>SESSION · 2026</span><span>선택참여 · 온/오프라인</span></div>
+        <div>JOBIS DESIGN</div>
+      </div>
+      <div class="slide-inner">
+        <div class="cover">
+          <div class="left stagger">
+            <div>
+              <span class="eyebrow">프로덕트 디자이너를 위한 실전 가이드 ✦</span>
+              <h1 class="display">
+                AI &amp;<br/>
+                Git <em style="background: linear-gradient(180deg, transparent 62%, var(--sticky) 62%, var(--sticky) 92%, transparent 92%); font-style: normal; padding: 0 6px;">101</em>
+              </h1>
+              <p class="byline">by <strong>안치은</strong> — 30분 라이트닝 세션</p>
+              <div class="tag-cluster">
+                <span class="tag">AI 원리</span>
+                <span class="tag">프롬프트</span>
+                <span class="tag">Figma MCP</span>
+                <span class="tag">토큰</span>
+                <span class="tag">Skill · MD</span>
+              </div>
+            </div>
+            <div>
+              <div class="sticky-note" style="transform: rotate(-3deg); max-width: 360px;">
+                “AI가 막연하고 무섭게 느껴지는<br/>
+                그 무드를 깨고 싶었어요.” ✎
+              </div>
+            </div>
+          </div>
+
+          <div class="right">
+            <!-- Cover diagram: brain → text autocomplete -->
+            <svg viewBox="0 0 520 600" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+              <!-- big dashed box -->
+              <path class="hand-thin" d="M20 30 C200 18, 360 24, 500 40 C510 180, 498 360, 502 540 C360 548, 200 556, 22 550 C28 380, 18 200, 20 30 Z" stroke-dasharray="6 6" opacity="0.5"/>
+              <!-- brain sketch -->
+              <g transform="translate(140, 80)">
+                <path class="hand" d="M20 80 C10 40, 60 10, 110 18 C150 4, 210 20, 220 70 C250 80, 250 140, 210 160 C200 200, 130 210, 90 190 C40 200, 0 160, 10 120 C-4 100, 4 84, 20 80 Z"/>
+                <path class="hand-thin" d="M40 70 C70 60, 90 80, 110 70"/>
+                <path class="hand-thin" d="M80 100 C100 110, 140 100, 160 120"/>
+                <path class="hand-thin" d="M50 140 C80 150, 130 140, 170 150"/>
+                <path class="hand-thin" d="M120 40 C120 70, 130 100, 125 140 C125 160, 135 180, 130 200"/>
+                <text class="label-hand" x="55" y="240" transform="rotate(-4 110 240)">calculator</text>
+              </g>
+              <!-- arrow -->
+              <path class="hand-red" d="M260 330 C280 340, 300 360, 300 390" marker-end="url(#arrR)"/>
+              <defs>
+                <marker id="arrR" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 Z" fill="#D94436"/>
+                </marker>
+                <marker id="arrB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 Z" fill="#1A1814"/>
+                </marker>
+                <marker id="arrBlue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 Z" fill="#2C5AA0"/>
+                </marker>
+              </defs>
+              <!-- output text box -->
+              <g transform="translate(60, 410)">
+                <path class="hand" d="M0 0 L400 -8 L404 110 L4 116 Z" fill="#EFE8D8"/>
+                <text x="20" y="32" font-family="var(--mono)" font-size="13" fill="#6E6760">› prompt</text>
+                <text x="20" y="58" font-family="var(--serif)" font-size="20" font-weight="600" fill="#1A1814">고양이가</text>
+                <text x="110" y="58" font-family="var(--serif)" font-size="20" font-weight="400" fill="#D94436" font-style="italic">박스 안에 있습니다</text>
+                <path class="hand-red" d="M108 64 Q160 76, 248 64" stroke-dasharray="3 4"/>
+                <text x="20" y="96" font-family="var(--hand)" font-size="18" fill="#6E6760">↑ 자동 완성</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- Slide 2 — SESSION GOALS                      -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="slide" data-n="2">
+      <div class="grain"></div>
+      <div class="meta">
+        <div class="slug"><span class="dot"></span><span>01 · INTRO</span></div>
+        <div>AI &amp; GIT 101</div>
+      </div>
+      <div class="slide-inner">
+        <div class="two-col stagger">
+          <div>
+            <span class="eyebrow">오늘 30분의 지도 ✎</span>
+            <h2 class="title">이 세션의<br/><em>목표</em>는 딱 세 가지.</h2>
+            <p class="body" style="margin-bottom: 24px;">
+              “AI라는 툴이 처음엔 너무 막연하고 무서웠거든요.<br/>그 무드를 깨는 데 도움이 되고 싶어요.”
+            </p>
+          </div>
+          <div>
+            <ul class="list" style="margin-top: 80px;">
+              <li class="body"><strong>AI의 두려움</strong>을 걷어내기 — 얘는 마법이 아니라 <span class="sticky-mark">예측 기계</span>예요.</li>
+              <li class="body"><strong>AI의 동작 원리</strong>를 한 입 크기로 이해하기 — 프롬프트가 왜 먹히고 왜 안 먹히는지.</li>
+              <li class="body"><strong>Figma MCP</strong>를 쓸 때 내부에서 뭔 일이 일어나는지 감 잡기.</li>
+              <li class="body" style="opacity: 0.6;">Git 기초는 참고 문서로 대체합니다 (세션 집중도 ↑).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- Slide 3 — AI misconception + Turing          -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="slide" data-n="3">
+      <div class="grain"></div>
+      <div class="meta">
+        <div class="slug"><span class="dot"></span><span>02 · 오해</span></div>
+        <div>WHAT AI IS <em>NOT</em></div>
+      </div>
+      <div class="slide-inner">
+        <div class="stagger">
+          <span class="eyebrow">먼저, 흔한 오해부터 ✦</span>
+          <h2 class="title">AI는 <em>자아를 가진 마법</em>이<br/>아닙니다.</h2>
+
+          <div class="two-col diag" style="margin-top: 24px;">
+            <div>
+              <p class="body" style="margin-bottom: 18px;">
+                AI는 “어딘가 통제 밖에서 떠도는 무언가”가 아니라, 주어진 질문이나 짜여진 룰에 따라
+                <span class="underline-hand">정해진 답변</span>을 주는 시스템입니다.
+              </p>
+              <p class="body" style="margin-bottom: 18px;">
+                그리고 사실 <strong>아주 오래된 개념</strong>이에요. 1950년대 <strong>튜링 테스트</strong> 시절부터 있었죠.
+              </p>
+              <p class="body">
+                당시엔 컴퓨터 성능과 데이터 저장 용량이 너무 부족해서, 컨셉만 있고 발전이 멈춰 있었어요.
+              </p>
+            </div>
+            <div>
+              <!-- Early AI Q&A sketch -->
+              <svg viewBox="0 0 480 380" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+                <!-- notepad rect -->
+                <path class="hand" d="M30 20 L440 26 L448 330 L38 340 Z" fill="#EFE8D8"/>
+                <text x="60" y="62" font-family="var(--serif)" font-size="22" font-weight="600" fill="#1A1814">Q. 강아지는 무슨 소리를 내나요?</text>
+                <path class="hand-thin" d="M58 76 L340 74" stroke-dasharray="3 4" opacity="0.5"/>
+                <text x="60" y="120" font-family="var(--serif)" font-size="18" fill="#6E6760">A.</text>
+                <text x="90" y="120" font-family="var(--serif)" font-size="22" font-weight="700" fill="#D94436">“멍멍”</text>
+
+                <text x="60" y="180" font-family="var(--serif)" font-size="18" fill="#1A1814">Q. 1 + 1 = ?</text>
+                <text x="60" y="210" font-family="var(--serif)" font-size="18" fill="#6E6760">A. <tspan fill="#D94436" font-weight="700">2</tspan></text>
+
+                <text x="60" y="270" font-family="var(--hand)" font-size="22" fill="#6E6760">— Turing Test · c. 1950</text>
+                <path class="hand-red" d="M60 282 Q180 300, 320 286" stroke-dasharray="4 4"/>
+
+                <!-- corner stamp -->
+                <g transform="translate(340, 250) rotate(-8)">
+                  <path class="hand-red" d="M0 0 L90 0 L90 40 L0 40 Z"/>
+                  <text x="12" y="26" font-family="var(--mono)" font-size="12" fill="#D94436" font-weight="700">OLD NEWS</text>
+                </g>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- Slide 4 — TIMELINE: why AI got smart         -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="slide" data-n="4">
+      <div class="grain"></div>
+      <div class="meta">
+        <div class="slug"><span class="dot"></span><span>03 · 타임라인</span></div>
+        <div>WHY SO SMART, <em>SUDDENLY?</em></div>
+      </div>
+      <div class="slide-inner">
+        <div class="stagger">
+          <span class="eyebrow">왜 갑자기 붐이 됐을까? ✦</span>
+          <h2 class="title">AI는 <em>대중화</em>됐을 뿐,<br/>갑자기 등장한 게 아닙니다.</h2>
+
+          <div style="margin-top: 36px;">
+            <svg viewBox="0 0 1080 280" width="100%" height="auto" preserveAspectRatio="xMidYMid meet">
+              <!-- baseline -->
+              <path class="hand" d="M20 180 C270 172, 540 188, 810 176 C900 172, 980 180, 1060 178" stroke-dasharray="2 6"/>
+
+              <!-- node: 1950s -->
+              <g transform="translate(70, 180)">
+                <circle class="fill-ink" cx="0" cy="0" r="7"/>
+                <text x="-30" y="-26" font-family="var(--mono)" font-size="12" fill="#6E6760" letter-spacing="0.1em">1950s</text>
+                <text x="-56" y="40" font-family="var(--serif)" font-size="18" font-weight="700" fill="#1A1814">Turing Test</text>
+                <text x="-50" y="62" font-family="var(--sans)" font-size="13" fill="#6E6760">AI 개념 등장</text>
+                <text x="-24" y="82" font-family="var(--hand)" font-size="18" fill="#D94436">but…</text>
+              </g>
+
+              <!-- dead zone -->
+              <g transform="translate(260, 160)">
+                <path class="hand-red" d="M0 0 C40 -14, 120 16, 180 4" stroke-dasharray="5 5"/>
+                <text x="50" y="-8" font-family="var(--hand)" font-size="16" fill="#D94436">정체 期</text>
+                <text x="40" y="38" font-family="var(--sans)" font-size="12" fill="#6E6760" font-style="italic">하드웨어 부족 ·<tspan x="40" dy="14">데이터 부족</tspan></text>
+              </g>
+
+              <!-- node: 2010s -->
+              <g transform="translate(500, 180)">
+                <circle class="fill-ink" cx="0" cy="0" r="7"/>
+                <text x="-30" y="-26" font-family="var(--mono)" font-size="12" fill="#6E6760" letter-spacing="0.1em">2010s</text>
+                <text x="-60" y="40" font-family="var(--serif)" font-size="18" font-weight="700" fill="#1A1814">Big Data · GPU</text>
+                <text x="-90" y="62" font-family="var(--sans)" font-size="13" fill="#6E6760">SNS → 텍스트·이미지 폭증</text>
+              </g>
+
+              <!-- node: 2017 -->
+              <g transform="translate(740, 180)">
+                <circle class="fill-red" cx="0" cy="0" r="9"/>
+                <circle class="hand-red" cx="0" cy="0" r="14" fill="none"/>
+                <text x="-20" y="-26" font-family="var(--mono)" font-size="12" fill="#D94436" letter-spacing="0.1em" font-weight="700">2017</text>
+                <text x="-68" y="44" font-family="var(--serif)" font-size="18" font-weight="700" fill="#1A1814">Google · Transformer</text>
+                <text x="-80" y="66" font-family="var(--sans)" font-size="13" fill="#6E6760">자동완성을 훨씬 빠르게</text>
+              </g>
+
+              <!-- node: 2022 -->
+              <g transform="translate(970, 180)">
+                <circle class="fill-red" cx="0" cy="0" r="9"/>
+                <text x="-20" y="-26" font-family="var(--mono)" font-size="12" fill="#D94436" letter-spacing="0.1em" font-weight="700">2022</text>
+                <text x="-54" y="44" font-family="var(--serif)" font-size="18" font-weight="700" fill="#1A1814">OpenAI · ChatGPT</text>
+                <text x="-70" y="66" font-family="var(--sans)" font-size="13" fill="#6E6760">Q&amp;A로 커스텀, 대중화 ⚡</text>
+              </g>
+
+              <!-- marginal annotation -->
+              <g transform="translate(820, 30) rotate(-4)">
+                <path class="hand-red" d="M0 20 C40 4, 100 30, 150 12"/>
+                <text x="16" y="-2" font-family="var(--hand)" font-size="22" fill="#D94436">여기서 붐!</text>
+              </g>
+            </svg>
+          </div>
+
+          <p class="body" style="margin-top: 32px; max-width: 80ch;">
+            빅데이터 + 컴퓨팅 파워 + 더 효율적인 예측 로직 → 이메일 자동완성이 <span class="sticky-mark">대화형 자동완성</span>으로 진화한 것.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- Slide 5 — AI = AUTOCOMPLETE + probabilities -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="slide" data-n="5">
+      <div class="grain"></div>
+      <div class="meta">
+        <div class="slug"><span class="dot"></span><span>04 · 정체</span></div>
+        <div>AI IS A <em>BIG AUTOCOMPLETE</em></div>
+      </div>
+      <div class="slide-inner">
+        <div class="two-col stagger">
+          <div>
+            <span class="eyebrow">AI의 진짜 정체 ✎</span>
+            <h2 class="title"><em>AI는 생각하지 않아요.</em><br/>확률을 <u>계산</u>할 뿐이에요.</h2>
+            <p class="body" style="margin-top: 14px;">
+              “프랑스의 수도는 어디인가요?” → <strong class="highlight-red">“파리입니다”</strong>가 가장 높은 확률의 다음 단어.
+            </p>
+            <p class="body" style="margin-top: 14px;">
+              “고양이가 어디에 있나요?” → 박스 안일 확률이 가장 높으니 <strong>“박스 안에 있어요”</strong>.
+            </p>
+
+            <div class="sticky-note" style="margin-top: 28px; max-width: 320px; transform: rotate(-2deg);">
+              전 인터넷을 다 학습했기 때문에<br/>예측을 <u>기막히게</u> 잘할 뿐!
+            </div>
+          </div>
+          <div>
+            <!-- Probability visualization -->
+            <div style="margin-top: 40px;">
+              <div style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.1em; color: var(--graphite); margin-bottom: 18px;">
+                Q. “고양이가 어디에 있나요?” — 다음 단어 예측
+              </div>
+
+              <div class="prob-row hi">
+                <div class="lbl">박스 안</div>
+                <div class="prob-bar"><span style="width: 80%;"></span></div>
+                <div class="pct">80%</div>
+              </div>
+              <div class="prob-row">
+                <div class="lbl">나무 위</div>
+                <div class="prob-bar"><span style="width: 10%;"></span></div>
+                <div class="pct">10%</div>
+              </div>
+              <div class="prob-row">
+                <div class="lbl">방 안</div>
+                <div class="prob-bar"><span style="width: 5%;"></span></div>
+                <div class="pct">5%</div>
+              </div>
+              <div class="prob-row">
+                <div class="lbl">기타</div>
+                <div class="prob-bar"><span style="width: 5%;"></span></div>
+                <div class="pct">5%</div>
+              </div>
+
+              <svg viewBox="0 0 480 80" width="100%" style="margin-top: 12px;">
+                <path class="hand-red" d="M10 40 C80 20, 160 58, 240 28" stroke-dasharray="4 4" marker-end="url(#arrR)"/>
+                <text x="250" y="30" font-family="var(--hand)" font-size="22" fill="#D94436" transform="rotate(-3 250 30)">→ 가장 높은 확률로 답!</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- Slide 6 — TOKEN & CONTEXT                    -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="slide" data-n="6">
+      <div class="grain"></div>
+      <div class="meta">
+        <div class="slug"><span class="dot"></span><span>05 · 토큰 · 맥락</span></div>
+        <div>CONTEXT &amp; TOKENS</div>
+      </div>
+      <div class="slide-inner">
+        <div class="stagger">
+          <span class="eyebrow">왜 맥락이 토큰을 줄여주나요? ✦</span>
+          <h2 class="title">“<em>어딘가에 있을 거야</em>”<br/>를 알려주세요.</h2>
+
+          <div class="two-col diag" style="margin-top: 28px; align-items: start;">
+            <div>
+              <!-- Two search diagrams -->
+              <svg viewBox="0 0 520 380" width="100%" height="auto" preserveAspectRatio="xMidYMid meet">
+                <!-- Bad: whole computer -->
+                <g transform="translate(0, 0)">
+                  <text x="0" y="14" font-family="var(--mono)" font-size="12" fill="#6E6760" letter-spacing="0.1em">A. 맥락 없음</text>
+                  <path class="hand" d="M8 30 L240 30 L240 160 L8 160 Z" fill="#EFE8D8"/>
+                  <text x="20" y="52" font-family="var(--hand)" font-size="20" fill="#1A1814">“내 피그마 파일 어디 있어?”</text>
+                  <!-- scattered dots = search space -->
+                  <g fill="#D94436" opacity="0.7">
+                    <circle cx="24" cy="78" r="3"/><circle cx="48" cy="92" r="3"/><circle cx="72" cy="72" r="3"/>
+                    <circle cx="100" cy="100" r="3"/><circle cx="132" cy="80" r="3"/><circle cx="160" cy="108" r="3"/>
+                    <circle cx="188" cy="84" r="3"/><circle cx="220" cy="102" r="3"/>
+                    <circle cx="38" cy="120" r="3"/><circle cx="68" cy="132" r="3"/><circle cx="108" cy="122" r="3"/>
+                    <circle cx="148" cy="134" r="3"/><circle cx="188" cy="122" r="3"/><circle cx="220" cy="138" r="3"/>
+                  </g>
+                  <text x="20" y="182" font-family="var(--sans)" font-size="13" fill="#D94436" font-weight="600">전체 컴퓨터 스캔 🔎</text>
+                  <text x="20" y="200" font-family="var(--sans)" font-size="13" fill="#6E6760">→ 토큰 폭발 💥</text>
+                </g>
+
+                <!-- Good: narrowed -->
+                <g transform="translate(270, 0)">
+                  <text x="0" y="14" font-family="var(--mono)" font-size="12" fill="#5B8C5A" letter-spacing="0.1em">B. 맥락 있음</text>
+                  <path class="hand" d="M8 30 L240 30 L240 160 L8 160 Z" fill="#EFE8D8"/>
+                  <text x="20" y="52" font-family="var(--hand)" font-size="17" fill="#1A1814">“데스크탑 어딘가에 있을 거야”</text>
+                  <rect x="30" y="70" width="180" height="70" fill="#FFE27A" stroke="#1A1814" stroke-width="1.5"/>
+                  <text x="50" y="108" font-family="var(--mono)" font-size="11" fill="#1A1814">~/Desktop/</text>
+                  <g fill="#D94436" opacity="0.9">
+                    <circle cx="80" cy="118" r="4"/>
+                    <circle cx="130" cy="110" r="4"/>
+                    <circle cx="170" cy="122" r="4"/>
+                  </g>
+                  <text x="20" y="182" font-family="var(--sans)" font-size="13" fill="#5B8C5A" font-weight="600">좁은 범위만 스캔 ✓</text>
+                  <text x="20" y="200" font-family="var(--sans)" font-size="13" fill="#6E6760">→ 토큰 절약 · 정확도 ↑</text>
+                </g>
+
+                <!-- MD papers below -->
+                <g transform="translate(60, 240)">
+                  <g transform="rotate(-4)">
+                    <path class="hand" d="M0 0 L100 -4 L102 118 L2 122 Z" fill="#F4EFE3"/>
+                    <text x="14" y="24" font-family="var(--mono)" font-size="11" fill="#1A1814" font-weight="700">memory.md</text>
+                    <path class="hand-thin" d="M14 40 L84 40 M14 54 L92 54 M14 68 L78 68 M14 82 L88 82"/>
+                  </g>
+                  <g transform="translate(120, 0) rotate(3)">
+                    <path class="hand" d="M0 0 L100 -4 L102 118 L2 122 Z" fill="#F4EFE3"/>
+                    <text x="14" y="24" font-family="var(--mono)" font-size="11" fill="#1A1814" font-weight="700">claude.md</text>
+                    <path class="hand-thin" d="M14 40 L84 40 M14 54 L92 54 M14 68 L78 68 M14 82 L88 82"/>
+                  </g>
+                  <g transform="translate(240, 0) rotate(-2)">
+                    <path class="hand" d="M0 0 L100 -4 L102 118 L2 122 Z" fill="#F4EFE3"/>
+                    <text x="14" y="24" font-family="var(--mono)" font-size="11" fill="#1A1814" font-weight="700">project.md</text>
+                    <path class="hand-thin" d="M14 40 L84 40 M14 54 L92 54 M14 68 L78 68 M14 82 L88 82"/>
+                  </g>
+                </g>
+              </svg>
+            </div>
+            <div>
+              <p class="body" style="margin-top: 8px;">
+                컴퓨터에서 파일을 찾을 때도, <strong>“데스크탑 어딘가”</strong>라고 범위를 좁혀주면 예측이 훨씬 빨라지죠. AI도 똑같아요.
+              </p>
+              <p class="body" style="margin-top: 16px;">
+                <code>memory.md</code>, <code>claude.md</code> 같은 문서들은 AI에게 <span class="underline-hand">맥락</span>을 제공해서 예측 확률을 높여주는 역할이에요.
+              </p>
+              <p class="body" style="margin-top: 16px;">
+                맥락이 좋으면 → <span class="underline-hand">낭비 토큰 ↓</span> · 응답 정확도 ↑.<br/>
+                <span style="font-size: 14px; color: var(--graphite);">(입력 토큰은 조금 늘어도 전체 왕복 비용은 줄어드는 구조예요.)</span>
+              </p>
+              <div class="sticky-note" style="margin-top: 28px; max-width: 360px; transform: rotate(1.5deg);">
+                프롬프트 엔지니어링이 유행한 이유가<br/>바로 <u>이거</u>예요. 맥락 설계! ✦
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- Slide 7 — CLAUDE vs CLAUDE CODE              -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="slide" data-n="7">
+      <div class="grain"></div>
+      <div class="meta">
+        <div class="slug"><span class="dot"></span><span>06 · 비교</span></div>
+        <div>CLAUDE vs CLAUDE <em>CODE</em></div>
+      </div>
+      <div class="slide-inner">
+        <div class="stagger">
+          <span class="eyebrow">같은 뇌, 다른 몸 ✦</span>
+          <h2 class="title">둘은 <em>같은 계산기</em>를 쓰는<br/>‘다른 사람’이에요.</h2>
+
+          <!-- Shared brain diagram -->
+          <div style="display: grid; grid-template-columns: 1fr; margin-top: 18px;">
+            <svg viewBox="0 0 1080 100" width="100%" height="auto">
+              <g transform="translate(460, 20)">
+                <path class="hand" d="M20 40 C10 10, 60 -8, 110 0 C150 -14, 200 4, 210 50 C240 60, 240 100, 200 110 C190 140, 130 150, 90 130 C40 140, 0 110, 10 80 C-4 60, 4 44, 20 40 Z" fill="#EFE8D8"/>
+                <text x="60" y="72" font-family="var(--serif)" font-size="16" font-weight="700" fill="#1A1814">Sonnet · Opus</text>
+                <text x="78" y="92" font-family="var(--hand)" font-size="18" fill="#D94436">= 계산기</text>
+              </g>
+              <!-- arrows -->
+              <path class="hand-thin" d="M430 60 C380 60, 290 70, 240 70" stroke-dasharray="4 4"/>
+              <path class="hand-thin" d="M710 60 C760 60, 850 70, 900 70" stroke-dasharray="4 4"/>
+            </svg>
+          </div>
+
+          <div class="compare">
+            <div class="card">
+              <span class="tag-top">사람 A</span>
+              <h4>Claude</h4>
+              <p>브라우저로 대화하는 Claude. 가장 익숙한 모습. 문서 작업, 라이팅에 특화돼 있어요.</p>
+              <div class="abilities">
+                <div class="ability">텍스트 응답</div>
+                <div class="ability">문서 · 글쓰기</div>
+                <div class="ability no">터미널 제어</div>
+                <div class="ability no">파일 직접 수정</div>
+                <div class="ability no">MCP 외부 툴 호출</div>
+              </div>
+            </div>
+
+            <div class="card" style="background: var(--sticky); border-color: var(--ink);">
+              <span class="tag-top" style="background: var(--red); color: var(--paper); border-color: var(--red);">사람 B · 이번 세션!</span>
+              <h4>Claude Code</h4>
+              <p>터미널 기반의 AI 에이전트. 같은 뇌를 쓰지만 능력치가 훨씬 높습니다.</p>
+              <div class="abilities">
+                <div class="ability">텍스트 응답</div>
+                <div class="ability">터미널 (까만 창) 제어</div>
+                <div class="ability">컴퓨터 내 파일 접근</div>
+                <div class="ability">JSON 생성 · 실행</div>
+                <div class="ability"><strong>MCP 중간다리 호출</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- Slide 8 — Figma MCP = middleman              -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="slide" data-n="8">
+      <div class="grain"></div>
+      <div class="meta">
+        <div class="slug"><span class="dot"></span><span>07 · Figma MCP</span></div>
+        <div>MCP = <em>중간다리</em></div>
+      </div>
+      <div class="slide-inner">
+        <div class="stagger">
+          <span class="eyebrow">피그마는 어떻게 연결되는 걸까? ✎</span>
+          <h2 class="title"><em>MCP</em>는 AI와 Figma를<br/>잇는 <u>중간다리</u>예요.</h2>
+
+          <div style="margin-top: 32px;">
+            <svg viewBox="0 0 1080 300" width="100%" height="auto" preserveAspectRatio="xMidYMid meet">
+              <!-- Claude Code box -->
+              <g transform="translate(30, 80)">
+                <path class="hand" d="M0 0 L260 -4 L262 150 L2 154 Z" fill="#EFE8D8"/>
+                <text x="20" y="30" font-family="var(--mono)" font-size="11" fill="#6E6760" letter-spacing="0.1em">AI AGENT</text>
+                <text x="20" y="64" font-family="var(--serif)" font-size="26" font-weight="800" fill="#1A1814">Claude Code</text>
+                <text x="20" y="92" font-family="var(--sans)" font-size="13" fill="#3A332B">텍스트만 출력 가능</text>
+                <text x="20" y="112" font-family="var(--sans)" font-size="13" fill="#3A332B">Figma는 건드릴 수 없어요 ✗</text>
+              </g>
+
+              <!-- MCP bridge -->
+              <g transform="translate(410, 40)">
+                <path class="hand-red" d="M0 120 L260 120" stroke-dasharray="8 6"/>
+                <g transform="translate(40, 60)">
+                  <path class="hand" d="M0 0 L180 -2 L180 120 L0 122 Z" fill="#FFE27A"/>
+                  <text x="18" y="28" font-family="var(--mono)" font-size="11" fill="#1A1814" letter-spacing="0.1em" font-weight="700">BRIDGE</text>
+                  <text x="18" y="62" font-family="var(--serif)" font-size="26" font-weight="800" fill="#1A1814">MCP</text>
+                  <text x="18" y="84" font-family="var(--sans)" font-size="13" fill="#3A332B">Model Context</text>
+                  <text x="18" y="100" font-family="var(--sans)" font-size="13" fill="#3A332B">Protocol</text>
+                </g>
+                <text x="30" y="208" font-family="var(--hand)" font-size="22" fill="#D94436" transform="rotate(-3 30 208)">= 중간다리 ✦</text>
+              </g>
+
+              <!-- Figma box -->
+              <g transform="translate(790, 80)">
+                <path class="hand" d="M0 0 L260 -4 L262 150 L2 154 Z" fill="#EFE8D8"/>
+                <text x="20" y="30" font-family="var(--mono)" font-size="11" fill="#6E6760" letter-spacing="0.1em">EXTERNAL TOOL</text>
+                <text x="20" y="64" font-family="var(--serif)" font-size="26" font-weight="800" fill="#1A1814">Figma</text>
+                <text x="20" y="92" font-family="var(--sans)" font-size="13" fill="#3A332B">디자인 실행 · 렌더링</text>
+                <text x="20" y="112" font-family="var(--sans)" font-size="13" fill="#3A332B">기계 언어 해석 가능</text>
+              </g>
+
+              <!-- arrows between -->
+              <path class="hand-red" d="M290 130 C340 120, 380 120, 420 130" marker-end="url(#arrR)"/>
+              <path class="hand-red" d="M660 130 C720 120, 740 120, 790 130" marker-end="url(#arrR)"/>
+
+              <!-- labels under arrows -->
+              <text x="310" y="170" font-family="var(--mono)" font-size="11" fill="#6E6760" letter-spacing="0.08em">JSON 요청</text>
+              <text x="680" y="170" font-family="var(--mono)" font-size="11" fill="#6E6760" letter-spacing="0.08em">JSON 실행</text>
+            </svg>
+          </div>
+
+          <p class="body" style="margin-top: 28px; max-width: 80ch;">
+            AI 모델 자체는 <strong>텍스트 자동완성</strong> 기능뿐이에요. Figma를 직접 건드릴 능력이 없습니다.
+            그래서 MCP가 사이에 껴서 <span class="sticky-mark">통역사 · 배달부</span> 역할을 해주는 것.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- Slide 9 — MCP WORKFLOW (4 steps)             -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="slide" data-n="9">
+      <div class="grain"></div>
+      <div class="meta">
+        <div class="slug"><span class="dot"></span><span>08 · Flow</span></div>
+        <div>“파란 버튼을 흰색으로 바꿔줘”</div>
+      </div>
+      <div class="slide-inner">
+        <div class="stagger">
+          <span class="eyebrow">실제론 무슨 일이? ✦</span>
+          <h2 class="title">MCP <em>동작 원리</em> — 4 steps</h2>
+
+          <div class="steps">
+            <div class="step">
+              <div class="num">1</div>
+              <h4>명령 (Command)</h4>
+              <p>사용자: <span class="mono" style="font-size: 13px;">“피그마에서 파란색 버튼을 흰색으로 바꿔줘”</span><br/>Claude Code가 이 자연어를 받습니다.</p>
+            </div>
+            <div class="step">
+              <div class="num">2</div>
+              <h4>번역 (Translate)</h4>
+              <p>Claude Code가 요청을 <strong>JSON</strong>(기계 언어)으로 번역해 출력합니다. 텍스트 → 구조화된 명령.</p>
+            </div>
+            <div class="step">
+              <div class="num">3</div>
+              <h4>전달 &amp; 실행 (Dispatch)</h4>
+              <p>MCP가 JSON을 Figma로 전달. Figma가 해석해서 버튼 색을 흰색으로 바꿉니다. 실제 파일이 수정되는 순간.</p>
+            </div>
+            <div class="step">
+              <div class="num">4</div>
+              <h4>피드백 (Feedback)</h4>
+              <p>“변경 완료” 메시지가 MCP를 통해 다시 Claude Code로. 사용자에게 <span class="underline-hand">성공했어요</span> 응답.</p>
+            </div>
+          </div>
+
+          <div style="margin-top: 26px;">
+            <svg viewBox="0 0 1020 50" width="100%" height="auto">
+              <path class="hand-red" d="M20 25 C180 5, 340 45, 500 25 C660 5, 820 45, 1000 25" stroke-dasharray="5 6"/>
+              <text x="40" y="20" font-family="var(--hand)" font-size="18" fill="#D94436">한 바퀴 도는 구조예요 ↻</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- Slide 10 — MCP vs SKILL                      -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="slide" data-n="10">
+      <div class="grain"></div>
+      <div class="meta">
+        <div class="slug"><span class="dot"></span><span>09 · 용어 정리</span></div>
+        <div>MCP vs <em>SKILL</em></div>
+      </div>
+      <div class="slide-inner">
+        <div class="stagger">
+          <span class="eyebrow">헷갈리는 두 단어 ✎</span>
+          <h2 class="title">MCP와 Skill은<br/><em>완전히 다른 일</em>을 해요.</h2>
+
+          <div class="compare">
+            <div class="card">
+              <span class="tag-top">외부 연결</span>
+              <h4>MCP</h4>
+              <p>Figma 같은 <strong>외부 툴</strong>과 직접 소통·연결해 주는 <span class="sticky-mark">중간다리</span>.</p>
+              <p style="margin-top: 4px;">토큰 비용은 작지만, 반드시 외부 실행이 필요할 때만 호출됩니다.</p>
+              <div style="margin-top: 14px; padding: 12px; border: 1.5px dashed var(--ink); font-family: var(--mono); font-size: 12px; line-height: 1.6;">
+                Claude Code ↔ <strong style="color: var(--red);">MCP</strong> ↔ Figma
+              </div>
+            </div>
+
+            <div class="card" style="background: var(--paper);">
+              <span class="tag-top">내부 문서</span>
+              <h4>Skill (skill.md)</h4>
+              <p>중간다리가 아니라, AI가 <strong>먼저 읽는 텍스트 맥락</strong> 문서. 일종의 매뉴얼이에요.</p>
+              <p style="margin-top: 4px; color: var(--red);">
+                ⚠︎ 길어질수록 <u>토큰을 많이 먹습니다</u>.
+              </p>
+              <div style="margin-top: 14px; padding: 12px; border: 1.5px dashed var(--ink); font-family: var(--mono); font-size: 12px; line-height: 1.6;">
+                Claude Code ← 먼저 읽음 ← <strong style="color: var(--red);">skill.md</strong><br/>
+                ↳ “필요하면 Figma MCP 써줘”라고 적혀 있으면<br/>
+                &nbsp;&nbsp;그제서야 MCP가 호출됨.
+              </div>
+            </div>
+          </div>
+
+          <p class="body" style="margin-top: 24px; max-width: 84ch;">
+            정리하자면 — <strong>Skill</strong>은 맥락이고, <strong>MCP</strong>는 행동이에요. Skill 안에서 MCP를 불러오는 구조도 자주 씁니다.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- Slide 11 — DESIGNER TIPS                     -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="slide" data-n="11">
+      <div class="grain"></div>
+      <div class="meta">
+        <div class="slug"><span class="dot"></span><span>10 · 실전 팁</span></div>
+        <div>FOR PRODUCT <em>DESIGNERS</em></div>
+      </div>
+      <div class="slide-inner">
+        <div class="stagger">
+          <span class="eyebrow">오늘의 핵심 포인트 ✦</span>
+          <h2 class="title">디자이너를 위한<br/><em>실전 세 가지</em>.</h2>
+
+          <div class="tips">
+            <div class="tip">
+              <div class="tip-n">01</div>
+              <h4>AI = 자동 완성</h4>
+              <p>얘는 신도 만능도 아니에요. “엄청 똑똑한 자동 완성 기계”라는 전제로 프롬프트를 짜세요.</p>
+            </div>
+            <div class="tip" style="background: var(--sticky);">
+              <div class="tip-n">02</div>
+              <h4>맥락 · 타게팅 · 태스크 쪼개기</h4>
+              <p>MD 파일로 맥락 주고, 범위를 좁혀 타게팅하고, 큰 작업을 작은 단위로 자르세요. 이게 품질의 전부예요.</p>
+            </div>
+            <div class="tip">
+              <div class="tip-n">03</div>
+              <h4>무리한 요구 금물</h4>
+              <p>“화면 10장 넘게 그려줘” → 텍스트 과생성 → 토큰 초과 → MCP에 닿기도 전에 실패. <strong>작게 자르기</strong>가 답.</p>
+            </div>
+          </div>
+
+          <div style="margin-top: 36px; display: flex; gap: 18px; align-items: flex-start;">
+            <div class="sticky-note" style="max-width: 340px; transform: rotate(-2deg);">
+              AI는 신이 아닙니다.<br/>하지만 맥락을 잘 주면<br/><u>정말 똑똑해져요.</u> ✎
+            </div>
+            <p class="body" style="flex: 1;">
+              피그마 MCP 세팅법은 그냥 Claude에게 <span class="mono">“피그마 MCP 연결 방법 알려줘”</span>라고 물어보면 가장 정확해요.
+              AI는 웹서치와 메모리, 최신 문서를 조합해 답을 예측합니다. 굳이 구글링하지 마세요.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- Slide 12 — GIT note                          -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="slide" data-n="12">
+      <div class="grain"></div>
+      <div class="meta">
+        <div class="slug"><span class="dot"></span><span>11 · 부록</span></div>
+        <div>GIT · 참고 문서</div>
+      </div>
+      <div class="slide-inner">
+        <div class="stagger" style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: center; height: 100%;">
+          <div>
+            <span class="eyebrow">원래는 이것도 다룰 예정이었지만… ✎</span>
+            <h2 class="title"><em>Git</em>은 문서로 대체했어요.</h2>
+            <p class="body" style="margin-top: 14px;">
+              개발자와 협업하려면 꼭 필요한 내용이지만, 30분 세션의 집중도를 위해 공유드린 HTML 문서로 대신합니다.
+            </p>
+            <p class="body" style="margin-top: 14px;">
+              “<span class="mono">git pull / commit / push</span> 이런 애들이 뭔지”부터 브랜치 개념까지 — 디자이너 관점에서 정리된 버전이에요.
+            </p>
+            <div class="sticky-note" style="margin-top: 28px; max-width: 360px; transform: rotate(1deg);">
+              질문 많으면 후속 세션 잡읍시다!<br/>— 안치은
+            </div>
+          </div>
+
+          <div>
+            <svg viewBox="0 0 440 420" width="100%" height="auto">
+              <!-- document sketch -->
+              <g transform="rotate(-3 220 210)">
+                <path class="hand" d="M40 30 L380 22 L388 380 L48 390 Z" fill="#EFE8D8"/>
+                <text x="70" y="70" font-family="var(--serif)" font-size="22" font-weight="800" fill="#1A1814">Git 101 for Designers</text>
+                <path class="hand-red" d="M70 82 L300 80"/>
+
+                <text x="70" y="120" font-family="var(--mono)" font-size="13" fill="#3A332B">§ 1. git clone</text>
+                <text x="70" y="144" font-family="var(--mono)" font-size="13" fill="#3A332B">§ 2. git pull · push</text>
+                <text x="70" y="168" font-family="var(--mono)" font-size="13" fill="#3A332B">§ 3. branch 개념</text>
+                <text x="70" y="192" font-family="var(--mono)" font-size="13" fill="#3A332B">§ 4. 충돌 해결</text>
+                <text x="70" y="216" font-family="var(--mono)" font-size="13" fill="#3A332B">§ 5. PR 워크플로우</text>
+
+                <path class="hand-thin" d="M70 240 L340 240" stroke-dasharray="3 4"/>
+                <text x="70" y="266" font-family="var(--hand)" font-size="20" fill="#D94436">→ HTML 파일 참조</text>
+
+                <!-- paperclip -->
+                <g transform="translate(300, 40) rotate(20)">
+                  <path class="hand" d="M0 0 C20 -4, 40 8, 40 30 C40 60, 10 70, 6 44"/>
+                </g>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- Slide 13 — END                               -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="slide" data-n="13">
+      <div class="grain"></div>
+      <div class="meta">
+        <div class="slug"><span class="dot"></span><span>END</span></div>
+        <div>THANKS — 2026</div>
+      </div>
+      <div class="slide-inner">
+        <div class="end stagger">
+          <span class="eyebrow">그래서 오늘 한 줄 요약 ✎</span>
+          <h1 class="display" style="font-size: 104px;">
+            AI는 <em style="background: linear-gradient(180deg, transparent 62%, var(--sticky) 62%, var(--sticky) 92%, transparent 92%); font-style: normal; padding: 0 8px;">자동 완성</em>이다.<br/>
+            무서워 말고<br/>
+            <span style="color: var(--red);">맥락을 설계하세요.</span>
+          </h1>
+
+          <div style="display: flex; gap: 32px; align-items: center; margin-top: 36px;">
+            <div class="sticky-note" style="transform: rotate(-3deg);">
+              질문 환영!<br/>
+              — 안치은 ✦
+            </div>
+            <div>
+              <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.15em; color: var(--graphite); text-transform: uppercase; margin-bottom: 6px;">Session deck</div>
+              <div style="font-family: var(--serif); font-size: 22px; font-weight: 600; color: var(--ink);">AI &amp; Git 101 — for Product Designers</div>
+              <div style="font-family: var(--sans); font-size: 14px; color: var(--graphite); margin-top: 4px;">약 30분 · 2026 · Jobis Design</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- Speaker Notes Panel -->
+<aside class="notes-panel" id="notes-panel" aria-hidden="true">
+  <div class="notes-grain"></div>
+  <div class="notes-tape"></div>
+  <button class="notes-close" id="notes-close" title="닫기 (N · Esc)">✕</button>
+  <header class="notes-header">
+    <div class="kicker">Speaker Notes · 발표 노트</div>
+    <h3 id="notes-title">슬라이드 제목</h3>
+    <div class="meta-row">
+      <span id="notes-slug">SECTION</span>
+      <span class="page-num"><span id="notes-num">01</span> / 13</span>
+    </div>
+    <div class="notes-tabs" role="tablist" aria-label="Notes mode">
+      <button class="tab active" data-mode="basic" role="tab" aria-selected="true">
+        <span class="dot"></span>스크립트
+      </button>
+      <button class="tab" data-mode="advanced" role="tab" aria-selected="false">
+        <span class="dot"></span>기술 심화
+      </button>
+    </div>
+  </header>
+  <div class="notes-body">
+    <div class="script" id="notes-body"></div>
+    <div class="attrib">— 안치은, 2026 라이트닝 세션 중 ✎</div>
+  </div>
+</aside>
+
+<!-- HUD -->
+<div class="hud">
+  <button id="prev" title="이전 (←)">‹</button>
+  <span class="counter"><span id="cur">01</span><span class="sep"> / </span><span id="total">13</span></span>
+  <button id="next" title="다음 (→ · space)">›</button>
+  <span style="color: var(--mute); padding: 0 4px;">·</span>
+  <button id="notes-btn" title="스크립트 보기 (N)" style="font-size: 12px; width: auto; padding: 0 12px; border-radius: 14px; letter-spacing: 0.12em; font-family: var(--mono); font-weight: 600;">NOTES</button>
+  <button id="fs" title="전체화면 (F)" style="font-size: 13px;">⛶</button>
+</div>
+
+<div class="hint">
+  <kbd>←</kbd> <kbd>→</kbd> 이동 &nbsp; <kbd>Space</kbd> 다음 &nbsp; <kbd>N</kbd> 노트 &nbsp; <kbd>T</kbd> 모드 전환 &nbsp; <kbd>F</kbd> 전체화면
+</div>
+
+<script>
+  // ───────── Speaker Notes Data ─────────
+  // Pulled from the actual transcript — speaker's voice preserved.
+  const notes = [
+    {
+      title: 'AI & Git 101 — 커버',
+      slug: 'SESSION · 2026',
+      body: `
+        <p>오늘 세션은 AI라는 툴이 처음엔 너무 막연하고 무섭게 느껴지는 <em>그 무드를 깨고 싶어서</em> 준비했어요.</p>
+        <p>30분 안에 AI가 어떻게 동작하는지, 그리고 피그마 MCP를 쓸 때 내부에서 무슨 일이 일어나는지 감을 잡고 가시면 좋겠어요.</p>
+        <p>Git 기초는 따로 HTML 문서로 공유드렸으니 거기 참고해 주세요. 세션 집중도 때문에 오늘은 생략합니다.</p>
+      `,
+      advanced: `
+        <p>프로덕트 디자이너 대상 <strong>Claude Code + Figma MCP</strong> 워크플로우를 위한 프리레퀴지트 세션.</p>
+        <h5>다루는 개념</h5>
+        <ul>
+          <li>트랜스포머 기반 <strong>자기회귀 LM</strong>의 추론 원리</li>
+          <li><strong>컨텍스트 윈도우</strong> · 토큰 이코노믹스 · 프롬프트 캐싱</li>
+          <li><strong>MCP 프로토콜</strong> — JSON-RPC 2.0 기반 툴/리소스 표준</li>
+          <li><strong>Skills 프레임워크</strong> — 에이전트 재사용 단위</li>
+        </ul>
+        <p>실습 환경은 macOS · Claude Code CLI. 사전 지식 없이 따라올 수 있도록 구성되어 있지만, 이 '기술 심화' 트랙은 엔지니어 리뷰용으로 별도 작성됨.</p>
+      `
+    },
+    {
+      title: '세션의 목표',
+      slug: '01 · INTRO',
+      body: `
+        <p>제가 처음에 AI를 접했을 때 얘한테 <q>뭘 시켜야 될지도 모르겠고</q>, 뭘 질문해야 답해주는지도 몰라서 좀 무서웠거든요.</p>
+        <p>그 무드를 깨는 데 도움이 되고자, 오늘은 <strong>AI가 어떻게 동작하는지</strong>, 그리고 <strong>피그마 MCP를 실제로 사용할 때 얘가 무슨 일을 하는지</strong> — 이 두 가지 원리 정도만 말씀드릴게요.</p>
+        <p>피그마 MCP 세팅하는 방법 자체는 그냥 Claude한테 물어보면 되게 잘 답해줘요. 그래서 그건 따로 다루지 않을게요.</p>
+      `,
+      advanced: `
+        <h5>세션 목표 (기술 관점)</h5>
+        <ul>
+          <li>LLM이 <strong>결정론적이지 않고</strong> 확률 분포에서 샘플링한다는 점을 체감.</li>
+          <li>에이전트형 AI(Claude Code)와 챗봇형 AI(Claude.ai)의 <strong>하네스 아키텍처</strong> 차이 이해.</li>
+          <li><strong>툴 콜링(tool_use)</strong> 메커니즘이 모델과 외부 시스템을 어떻게 연결하는지 직관 형성.</li>
+        </ul>
+        <p>Non-goal: 프롬프트 엔지니어링 레시피 암기, 특정 모델 벤치마크 비교. 원리 이해 중심.</p>
+        <p><em>Why this matters</em>: 디자이너가 모델의 확률적 특성과 컨텍스트 비용 구조를 이해하지 못하면, 디자인 산출물 품질이 프롬프트 운에 좌우됨.</p>
+      `
+    },
+    {
+      title: 'AI에 대한 흔한 오해',
+      slug: '02 · 오해',
+      body: `
+        <p>AI라는 텀은 사실 <strong>1950년대부터 있었어요</strong>. 튜링 테스트 들어보셨죠? AI인지 사람인지 구별하는 질문 셋이 등장한 게 50년대예요.</p>
+        <p>그래서 인공지능은 갑자기 나타난 마법이 아니라 정말 옛날부터 있었던 개념이에요.</p>
+        <p>당시엔 <q>강아지는 무슨 소리를 내나요? → 멍멍</q> 이런 수준이었죠. 정해진 룰대로 답변을 주는 시스템. 얘가 자아를 가지고 저희 통제 밖에서 떠돌아다니는 게 <em>아니에요</em>.</p>
+      `,
+      advanced: `
+        <h5>정확한 연표</h5>
+        <ul>
+          <li><strong>1950</strong> — Alan Turing, <em>"Computing Machinery and Intelligence"</em>에서 Imitation Game(튜링 테스트) 제안.</li>
+          <li><strong>1956</strong> — Dartmouth Workshop. John McCarthy가 <em>"Artificial Intelligence"</em>라는 용어를 공식화.</li>
+          <li><strong>1966</strong> — ELIZA(Weizenbaum), 패턴 매칭 기반 챗봇.</li>
+          <li><strong>1970s–80s</strong> — 전문가 시스템(MYCIN 등). 규칙 기반 심볼릭 AI 전성기.</li>
+          <li><strong>1974–80 · 1987–93</strong> — 두 번의 <strong>AI Winter</strong>. 기대와 투자 축소.</li>
+        </ul>
+        <h5>'룰 기반' vs '학습 기반'</h5>
+        <p>초창기 AI는 <strong>심볼릭 · 규칙 기반</strong>이었음(If-Then). 현재의 LLM은 규칙을 명시하지 않고 <strong>대규모 코퍼스에서 통계적 패턴을 학습</strong>하는 <em>connectionist</em> 접근. 패러다임이 근본적으로 다름.</p>
+      `
+    },
+    {
+      title: '왜 갑자기 똑똑해졌나?',
+      slug: '03 · 타임라인',
+      body: `
+        <p>왜 갑자기 최근에 붐이 된 거냐. 1950년대엔 컴퓨터 성능이 너무 떨어지고 데이터 저장 용량도 작아서 <strong>정체기</strong>가 왔어요.</p>
+        <p>그러다가 2010년대에 빅데이터가 등장하고 컴퓨터 성능이 급격히 좋아지면서, SNS를 통해 사람들이 텍스트·이미지 데이터를 막 올리기 시작했죠.</p>
+        <p><strong>2017년쯤 구글</strong>이 텍스트 자동완성 같은 기술을 훨씬 빠르고 효율적으로 개선했고, <strong>2022년 OpenAI</strong>가 그걸 일상적인 Q&amp;A 컨텍스트에 맞춰 커스텀한 게 바로 ChatGPT예요.</p>
+        <p>그래서 <em>원래부터 있던 기술이 대중화된 것뿐</em>입니다. 갑자기 등장한 게 아니에요.</p>
+      `,
+      advanced: `
+        <h5>딥러닝 시대를 연 변곡점</h5>
+        <ul>
+          <li><strong>2006</strong> — Hinton의 Deep Belief Networks 논문. 딥러닝 재부흥.</li>
+          <li><strong>2012</strong> — <strong>AlexNet</strong>이 ImageNet 대회 압승(GPU 기반 CNN). 현대 DL 시대 개막.</li>
+          <li><strong>2017</strong> — Vaswani et al. <em>"Attention Is All You Need"</em>. <strong>Transformer</strong> 아키텍처 — self-attention 도입으로 RNN/LSTM의 순차 학습 한계를 깨고 <em>병렬 학습</em> 가능.</li>
+          <li><strong>2018</strong> — BERT(Google, encoder-only) · <strong>GPT-1</strong>(OpenAI, decoder-only causal LM) — 같은 트랜스포머에서 갈라진 두 계보.</li>
+          <li><strong>2020</strong> — GPT-3(175B). <em>in-context learning</em> 창발성 확인.</li>
+          <li><strong>2022.11.30</strong> — <strong>ChatGPT</strong>. GPT-3.5 기반, <strong>RLHF</strong>(InstructGPT) 튜닝으로 Q&amp;A에 적합화.</li>
+          <li><strong>2024.11</strong> — Anthropic, <strong>MCP</strong> 프로토콜 공개.</li>
+        </ul>
+        <h5>정정</h5>
+        <p>"OpenAI가 Google 자동완성을 커스텀했다"는 비유는 단순화예요. GPT는 OpenAI의 <em>자체 decoder-only 아키텍처</em>(2018~). Transformer <strong>아이디어</strong>는 Google 것이지만 GPT 구현과 학습은 OpenAI 것.</p>
+      `
+    },
+    {
+      title: 'AI = 고성능 자동 완성 기계',
+      slug: '04 · 정체',
+      body: `
+        <p>AI는 질문에 답을 '생각'하는 게 아니라, <strong>확률적으로 가장 적절한 다음 단어</strong>를 계산해서 예측하는 거예요.</p>
+        <p><q>고양이가 어디에 있나요?</q>라고 물으면 박스 안일 확률이 80%, 나무가 10%… 이런 식으로 계산해서 가장 높은 확률의 답을 내는 거죠.</p>
+        <p><q>프랑스의 수도는 어디인가요? → 파리입니다</q>도 마찬가지예요. 예측을 되게 잘하는 이유는 얘가 <em>전 인터넷 전체 데이터</em>를 다 학습했기 때문이에요.</p>
+        <p>뭔가 자아를 가지고 사람이 된 건 아닙니다. 그냥 엄청나게 성능 좋은 <strong>자동 완성 기계</strong>라고 생각하시면 돼요.</p>
+      `,
+      advanced: `
+        <h5>자기회귀 언어 모델(Autoregressive LM)</h5>
+        <p>시퀀스 t₁..tₙ이 주어졌을 때 <code>P(tₙ₊₁ | t₁..tₙ)</code>를 출력. 출력은 <strong>어휘(vocab) 위의 확률분포</strong>(보통 50K–100K 서브워드 토큰).</p>
+        <p>학습 목적: 대규모 코퍼스에서 <em>next-token prediction</em>의 cross-entropy 손실 최소화.</p>
+        <h5>샘플링 전략</h5>
+        <ul>
+          <li><code>greedy</code> — 가장 확률 높은 토큰만. 반복적이고 지루함.</li>
+          <li><code>top-k</code> · <code>top-p (nucleus)</code> — 상위 확률 영역에서만 샘플링.</li>
+          <li><code>temperature</code> — 분포 평탄화 정도. 0에 가까울수록 결정론적, 높을수록 창의적/산발적.</li>
+        </ul>
+        <h5>정정</h5>
+        <p>"전 인터넷을 학습했다"는 비유는 틀림. 실제로는 <strong>큐레이션된 웹 코퍼스</strong>(Common Crawl, C4, The Pile), 서적, GitHub 코드, Wikipedia 등 — 품질 · 라이선스 · 중복 필터링을 거친 데이터셋.</p>
+        <p><strong>스케일링 법칙</strong>(Kaplan et al. 2020): 모델/데이터/컴퓨트 스케일에 따라 손실이 예측 가능하게 감소. 능력은 규모에서 <em>창발(emergent)</em>.</p>
+      `
+    },
+    {
+      title: '토큰과 맥락',
+      slug: '05 · 토큰 · 맥락',
+      body: `
+        <p>컴퓨터에서 파일 찾을 때, <q>내 피그마 파일 어디 있어?</q>라고만 하면 얘가 전체 컴퓨터를 다 뒤져야 돼요. 그만큼 <strong>토큰을 많이 써요</strong>.</p>
+        <p>근데 <q>데스크탑 어딘가에 있을 거야</q>라고 맥락을 주면 범위가 좁아지니까 예측이 훨씬 정확하고 토큰도 덜 써요.</p>
+        <p><code>memory.md</code>, <code>claude.md</code> 같은 MD 파일들은 AI에게 <em>맥락을 제공하는 역할</em>이에요. 얘가 기본적으로 먼저 읽고 가는 문서들.</p>
+        <p>프롬프트 엔지니어링이 유행한 이유도 바로 이거예요. 맥락을 잘 설계해야 토큰 적게 쓰면서 좋은 답이 나옵니다.</p>
+      `,
+      advanced: `
+        <h5>토큰 기초</h5>
+        <ul>
+          <li>토큰은 <strong>BPE</strong>(Byte Pair Encoding) 기반 서브워드 단위. 한글은 토크나이저별로 문자당 <strong>1.5–3 토큰</strong> 소비.</li>
+          <li><strong>컨텍스트 윈도우</strong> = 한 번에 처리 가능한 최대 토큰 수. Claude Sonnet 4.6: <strong>200K</strong>, Opus 4.7: <strong>1M</strong>.</li>
+        </ul>
+        <h5>중요한 정정</h5>
+        <p>"맥락을 주면 토큰이 준다"는 직관은 정확히는 틀림. <strong>입력 토큰은 증가</strong>하지만, 에이전트의 탐색 사이클 · 잘못된 툴콜 · 재시도가 줄어 <strong>전체 세션 토큰</strong>이 감소하는 구조.</p>
+        <h5>프롬프트 캐싱</h5>
+        <p>Anthropic API는 시스템 프롬프트 · 컨텍스트 블록 캐싱 지원(기본 5분 TTL, 1시간 연장 가능). <strong>캐시 히트 토큰은 입력 토큰 비용의 ~10%</strong>. CLAUDE.md · 시스템 프롬프트를 재사용하면 비용과 지연 시간을 크게 줄일 수 있음.</p>
+        <h5>KV 캐시 · 장문 컨텍스트의 비용</h5>
+        <p>트랜스포머 어텐션은 token별 key/value를 캐시함. 긴 컨텍스트는 메모리와 지연을 <em>비선형</em>으로 증가시킴. 1M 컨텍스트라도 실제 사용 품질은 컨텍스트 길이에 따라 <em>attention 희석</em>으로 저하 가능.</p>
+        <p>Claude Code는 <code>CLAUDE.md</code>, <code>AGENTS.md</code>, <code>memory/</code>, <code>skills/</code>를 자동 주입.</p>
+      `
+    },
+    {
+      title: 'Claude vs Claude Code',
+      slug: '06 · 비교',
+      body: `
+        <p>둘 다 소넷이나 오퍼스 같은 <strong>같은 모델</strong>을 써요. 그 모델은 <em>계산기</em>라고 생각하시면 돼요. 같은 계산기를 쓰는 '다른 사람'이에요.</p>
+        <p><strong>Claude</strong>는 그냥 텍스트만 출력 가능한 모델이라 문서 작업이나 라이팅에 특화됐어요.</p>
+        <p><strong>Claude Code</strong>는 AI 에이전트인데, 터미널—그 <q>까만 창</q>—을 직접 제어할 수 있고, 컴퓨터 내부 파일에도 접근할 수 있어요. MCP 같은 외부 도구도 불러올 수 있고, JSON 코드도 만들어서 실행할 수 있어요.</p>
+        <p>지난번 세션에서 다 같이 Claude Code를 다운받은 이유가 바로 <em>피그마 MCP를 쓰려면 얘가 무조건 필요</em>하기 때문이에요. 중간다리 역할을 걔가 해주거든요.</p>
+      `,
+      advanced: `
+        <h5>Model · Client · Harness</h5>
+        <p>같은 <strong>모델 계열</strong>(Opus/Sonnet/Haiku 4.x)을 쓰지만 <em>하네스</em>가 다름. 하네스 = 모델 주변의 툴 · 메모리 · 루프 · I/O 인프라.</p>
+        <h5>Claude.ai · Anthropic API</h5>
+        <ul>
+          <li>대화형 인터페이스 / REST API. 텍스트 · 비전 · <code>tool_use</code> 지원.</li>
+          <li>최근 Claude Desktop은 <strong>MCP 클라이언트</strong> 역할 수행. 즉 "Claude는 MCP를 쓸 수 없다"는 말은 오늘 기준 <em>부분적으로만 참</em>.</li>
+        </ul>
+        <h5>Claude Code (CLI 하네스)</h5>
+        <ul>
+          <li>내장 툴: 파일 <code>Read/Write/Edit</code> · <code>Bash</code> · <code>Glob/Grep</code> · <code>TodoWrite</code> · 서브에이전트(<code>Task</code>).</li>
+          <li><strong>MCP 클라이언트</strong> · <strong>Skills 프레임워크</strong> · <strong>Hooks</strong>(이벤트 기반 셸 명령).</li>
+          <li>자율 <em>멀티스텝 루프</em>: 사용자 프롬프트 → 툴콜 N회 → 최종 응답.</li>
+        </ul>
+        <h5>Claude Agent SDK</h5>
+        <p>같은 하네스를 프로그래머블하게 호출해 커스텀 에이전트를 빌드하는 SDK. Claude Code는 이 SDK 위에 제작됨.</p>
+      `
+    },
+    {
+      title: 'Figma MCP의 역할',
+      slug: '07 · Figma MCP',
+      body: `
+        <p>AI 모델 자체는 <strong>텍스트 자동완성 기능뿐</strong>이에요. Figma라는 외부 툴을 직접 제어할 능력이 없어요. 접근할 방법이 없단 말이죠.</p>
+        <p>그래서 <em>MCP라는 중간다리</em>가 필요해요.</p>
+        <p>사용자가 지시를 내리면, Claude Code가 만든 결과물을 MCP가 Figma로 가져가서 실행하도록 돕는 역할이에요. 피그마한테 <q>얘 좀 읽어봐, 해석해봐</q> 하는 통역사·배달부라고 보시면 돼요.</p>
+      `,
+      advanced: `
+        <h5>MCP (Model Context Protocol)</h5>
+        <p>Anthropic이 <strong>2024년 11월</strong> 공개한 <strong>오픈 프로토콜</strong>. AI 모델과 외부 툴/데이터를 표준화된 방식으로 연결. Anthropic 전용 아님 — 다른 AI 클라이언트도 소비 가능.</p>
+        <h5>엄밀한 정의 (정정)</h5>
+        <p>"MCP는 중간다리"라는 표현은 교육적으로 유용하지만 엄밀히는 <strong>프로토콜(명세)</strong>이에요. 실제 다리 역할을 하는 건 <strong>MCP 서버</strong>(Figma가 직접 제공하는 MCP 서버). MCP는 그 다리를 짓는 <em>규격</em>.</p>
+        <h5>아키텍처</h5>
+        <ul>
+          <li><strong>MCP Client</strong>: Claude Code, Claude Desktop, Cursor 등.</li>
+          <li><strong>MCP Server</strong>: Figma · GitHub · Slack · Postgres 등. 서버가 <code>tools</code> · <code>resources</code> · <code>prompts</code>를 expose.</li>
+          <li><strong>Transport</strong>: 로컬은 <code>stdio</code>, 원격은 <code>HTTP + SSE</code>(최근 <code>Streamable HTTP</code>도 지원).</li>
+          <li><strong>Wire format</strong>: JSON-RPC 2.0.</li>
+        </ul>
+        <p>Figma MCP 서버는 Figma 측에서 공식 제공(<code>claude.ai Figma</code> MCP). 설치: <code>claude mcp add</code> 또는 <code>~/.claude/settings.json</code>.</p>
+      `
+    },
+    {
+      title: 'MCP 동작 원리 — 4 steps',
+      slug: '08 · Flow',
+      body: `
+        <p>예를 들어 <q>피그마에서 파란색 버튼을 흰색으로 바꿔줘</q>라고 입력하면 이런 일이 일어나요.</p>
+        <p><strong>1.</strong> Claude Code가 이 요청을 <code>JSON</code>(기계 언어)으로 번역해서 출력해요.</p>
+        <p><strong>2.</strong> MCP가 그 JSON을 Figma한테 전달해요. <q>얘 좀 읽어봐.</q></p>
+        <p><strong>3.</strong> Figma가 해석해서 실제로 버튼을 흰색으로 바꿔요.</p>
+        <p><strong>4.</strong> <q>완료됐어</q> 메시지가 MCP를 통해 다시 Claude Code로 돌아오고, 사용자한테 성공 메시지가 출력되는 거예요.</p>
+        <p>이렇게 <em>한 바퀴 도는 구조</em>예요. 그래서 MCP가 꼭 필요한 거예요.</p>
+      `,
+      advanced: `
+        <h5>정밀한 플로우</h5>
+        <ul>
+          <li><strong>1.</strong> 세션 초기화: 클라이언트가 <code>tools/list</code>로 서버 툴 스키마 수집 → 시스템 프롬프트에 주입.</li>
+          <li><strong>2.</strong> 모델이 추론 중 <code>tool_use</code> 블록 생성(툴 이름 + JSON 인자 schema에 맞춘 payload).</li>
+          <li><strong>3.</strong> MCP 클라이언트가 <code>tools/call</code> JSON-RPC 요청을 서버로 디스패치.</li>
+          <li><strong>4.</strong> 서버가 실제 API 호출(Figma REST · Plugin API)하고 <code>tool_result</code> 반환. 결과는 텍스트, 이미지, 구조화된 content 가능.</li>
+          <li><strong>5.</strong> 결과가 컨텍스트에 삽입되고 모델이 다시 디코딩. 추가 <code>tool_use</code> or 최종 응답.</li>
+        </ul>
+        <h5>에이전트 루프 (multi-step)</h5>
+        <p>2~5 단계는 <em>여러 번</em> 반복 가능. 디자이너가 의도하는 "화면 10장 생성"이 내부적으론 수십 차례의 tool_use 루프로 분해됨.</p>
+        <h5>비용 구조</h5>
+        <p>매 <code>tool_result</code>가 컨텍스트에 쌓이므로 <strong>토큰이 누적</strong>됨. 긴 루프에서 컨텍스트가 빠르게 소진됨 → <em>compaction</em>(자동 요약) 트리거 시 정보 손실.</p>
+        <p>Claude Code의 <code>Task</code> 서브에이전트는 이 루프를 <em>격리된 컨텍스트</em>에서 실행 → 부모 컨텍스트 보호.</p>
+      `
+    },
+    {
+      title: 'MCP vs Skill — 헷갈리는 두 단어',
+      slug: '09 · 용어 정리',
+      body: `
+        <p>MCP랑 Skill이 헷갈리시는 분들 많은데, <strong>완전히 다른 거예요</strong>. 저도 처음엔 똑같은 건 줄 알았거든요.</p>
+        <p><strong>MCP</strong>는 외부 툴이랑 직접 소통하는 <em>중간다리</em>예요. 행동을 실행해주는 애.</p>
+        <p><strong>Skill</strong>은 AI가 먼저 읽는 <em>텍스트 맥락 문서</em>예요. 매뉴얼 같은 거죠.</p>
+        <p>그래서 Skill은 <strong>토큰을 많이 먹어요</strong>. 글자로 되어 있다 보니. 문서가 길어지면 용량 꽉 찰 수 있어요. 인터넷에 <q>MD 문서를 줄여야 된다</q>는 얘기가 떠도는 이유가 이거예요.</p>
+        <p>근데 Skill 안에 <q>피그마 MCP를 이용해 줘</q>라고 써두면, AI가 텍스트 맥락을 먼저 읽고 나서 MCP를 부르는 구조로 <em>같이 쓸 수 있어요</em>.</p>
+      `,
+      advanced: `
+        <h5>두 레이어가 서로 직교한다</h5>
+        <ul>
+          <li><strong>MCP</strong> = 런타임 툴/리소스 커넥터. 외부 시스템과의 <em>실행 계약</em>. 프로토콜 기반.</li>
+          <li><strong>Skills</strong> = <code>SKILL.md</code>(YAML 프론트매터 + 마크다운) 기반의 <em>재사용 단위</em>. Anthropic Agent Skills 프레임워크(2025).</li>
+        </ul>
+        <h5>Skills 메커니즘</h5>
+        <p><code>name</code> · <code>description</code> 메타데이터로 모델이 태스크에 적합한 스킬을 <strong>자율 선택 · 로드</strong>. 스킬은 프롬프트 · 지시문 · 스크립트(Bash, Python)를 패키징.</p>
+        <p>스킬이 로드되면 시스템 프롬프트에 주입 → <strong>입력 토큰 소비</strong>. 많은 스킬 설치 = 컨텍스트 팽창. <em>지연 로딩(lazy loading)</em>이 권장되는 이유.</p>
+        <h5>조합</h5>
+        <p>Skills는 내부에서 MCP 툴, <code>Bash</code>, 다른 Skills를 자유롭게 호출 가능. 실전 구조:</p>
+        <ul>
+          <li><strong>Skill</strong> = 의도 · 워크플로우 기술("Figma에서 컴포넌트를 리뷰하고 토큰 이슈를 보고하라").</li>
+          <li><strong>MCP</strong> = 실행 주체(실제로 Figma API를 호출).</li>
+        </ul>
+        <h5>실무 팁</h5>
+        <p>스킬 description은 <strong>트리거 조건</strong>을 명확히. 모호하면 모델이 필요할 때 스킬을 발견하지 못함. <code>~/.claude/skills/*/SKILL.md</code>에서 관리.</p>
+      `
+    },
+    {
+      title: '디자이너를 위한 실전 팁',
+      slug: '10 · 실전 팁',
+      body: `
+        <p>핵심은 딱 하나. <strong>AI는 엄청 똑똑한 자동완성 기계</strong>라는 전제를 항상 염두에 두고 프롬프트를 짜세요.</p>
+        <p><q>화면을 10장 넘게 그려줘</q>처럼 한 번에 무리한 요구를 하면, 텍스트를 <em>와장창 생성</em>하다가 용량이 꽉 차서 MCP에 전달하기도 전에 실패해요.</p>
+        <p>좋은 결과물을 얻으려면 <strong>맥락을 제공하고, 타게팅을 명확히 하고, 태스크를 작게 쪼개는 것</strong>이 가장 중요해요.</p>
+        <p>그리고 피그마 MCP 세팅법은 그냥 Claude한테 <q>피그마 MCP 연결 방법 알려줘</q>라고 물어보시면 가장 정확해요. AI는 웹서치랑 메모리, 최신 문서를 다 조합해서 답을 예측하거든요.</p>
+      `,
+      advanced: `
+        <h5>태스크 청킹</h5>
+        <p>컨텍스트 윈도우 대비 태스크 크기 매칭. 10개 화면 일괄 생성 시 출력이 <code>max_tokens</code> 한계 또는 컨텍스트 자동 <em>compaction</em>(lossy summarization)에 부딪쳐 <strong>품질 저하</strong>. 화면 단위로 병렬 서브에이전트(<code>Task</code>)를 띄우는 게 안전.</p>
+        <h5>스코프 타게팅</h5>
+        <p>글롭 패턴 제한, 명시적 파일 경로, 컴포넌트명 직접 호출 → 에이전트의 탐색적 <code>Grep/Read</code> 라운드 감소.</p>
+        <h5>프롬프트 캐싱 활용</h5>
+        <p>동일 시스템 프롬프트 · <code>CLAUDE.md</code>를 반복 호출에서 재사용하면 <strong>캐시 히트율</strong> 최대화. 입력 토큰 비용 · 지연 시간 감소.</p>
+        <h5>컨텍스트 모니터링</h5>
+        <p>Claude Code HUD의 <em>'Context left'</em> 인디케이터 주시. 0에 근접하면 compaction 자동 발동 → 초기 맥락 손실. 중요한 지시문은 <code>CLAUDE.md</code>에 고정 또는 주기적 리마인드.</p>
+        <h5>확률적 특성 인지</h5>
+        <p>같은 프롬프트라도 <strong>결정론적이지 않음</strong>. <code>temperature &gt; 0</code>에서는 매번 다름. 재현성이 필요하면 <code>temperature = 0</code> + seed 고정.</p>
+        <h5>MCP 설치 (Figma)</h5>
+        <p><code>claude mcp add</code> 커맨드 또는 <code>~/.claude/settings.json</code>의 <code>mcpServers</code> 항목에 추가. 공식 MCP 서버 카탈로그는 <code>modelcontextprotocol.io/servers</code>.</p>
+      `
+    },
+    {
+      title: 'Git 기초 — 참고 문서',
+      slug: '11 · 부록',
+      body: `
+        <p>Git도 원래 이번 세션에서 다루려고 했는데, <em>세션 집중도를 위해 공유드린 HTML 문서로 대체</em>했어요.</p>
+        <p>개발자와 협업하려면 필수 내용이니까 꼭 한번 훑어봐 주세요.</p>
+        <p><code>git clone / pull / commit / push</code>, 브랜치 개념, 충돌 해결, PR 워크플로우까지 디자이너 관점에서 정리된 버전이에요.</p>
+        <p>질문 많이 나오면 후속 세션으로 잡을 수 있어요. 편하게 말씀 주세요.</p>
+      `,
+      advanced: `
+        <h5>Git 내부 구조</h5>
+        <p>Git은 <strong>content-addressable object store</strong>. 모든 오브젝트(blob, tree, commit, tag)는 SHA-1/256 해시로 식별. 커밋은 트리 + 부모 포인터 + 메타.</p>
+        <h5>브랜치 모델</h5>
+        <ul>
+          <li><strong>GitFlow</strong> — <code>develop</code>/<code>release</code>/<code>hotfix</code> 분리. 릴리스가 느린 프로덕트에 적합.</li>
+          <li><strong>Trunk-based</strong> — <code>main</code> 중심, 짧은 피처 브랜치. CI/CD 빠른 팀 기본.</li>
+          <li><strong>GitHub Flow</strong> — PR 기반 경량 모델. 디자인 시스템 레포에서 자주 쓰임.</li>
+        </ul>
+        <h5>Merge vs Rebase</h5>
+        <p><code>merge</code>는 히스토리 보존(비선형), <code>rebase</code>는 선형 히스토리 생성(충돌 재현 리스크). <code>squash merge</code>는 피처 브랜치 N개 커밋을 1개로 압축 — 깔끔하지만 원자적 이력 손실.</p>
+        <h5>에이전트 협업 패턴</h5>
+        <p>Claude Code는 커밋 작성 시 <code>Co-Authored-By</code> 트레일러 자동 추가. <code>--no-verify</code> 플래그는 금기(hook 우회). 대규모 레포는 <code>git worktree</code>로 격리 작업 추천.</p>
+      `
+    },
+    {
+      title: '정리 — 한 줄 요약',
+      slug: 'END',
+      body: `
+        <p>오늘 한 줄 요약은 <strong>'AI는 자동완성이다'</strong>예요.</p>
+        <p>무서워하지 마시고, 얘한테 <em>좋은 맥락을 설계</em>해주시면 됩니다. 맥락 · 타게팅 · 태스크 쪼개기. 이 세 가지만 기억하세요.</p>
+        <p>질문 환영이에요. 시간이 좀 오버됐는데, 다들 들어주셔서 감사합니다!</p>
+      `,
+      advanced: `
+        <h5>핵심 모델 이미지 (3가지)</h5>
+        <ul>
+          <li><strong>LLM</strong>은 확률 분포에서 샘플링하는 자기회귀 토큰 생성기. <em>결정론적이지 않음</em>.</li>
+          <li><strong>컨텍스트는 비싸다</strong> — 좋은 맥락은 <em>전체 세션 비용</em>을 줄이지만 <em>단일 호출 입력</em>을 늘린다. 캐싱으로 상쇄 가능.</li>
+          <li><strong>4개 레이어가 직교</strong>: 모델(계산기) · 하네스(Claude Code) · 프로토콜(MCP) · 재사용 단위(Skills).</li>
+        </ul>
+        <h5>추가 학습 리소스</h5>
+        <ul>
+          <li><strong>Anthropic Blog</strong> — "Effective Context Engineering", "Agent Skills", "Building Agents with the Claude Agent SDK".</li>
+          <li><strong>MCP 공식 스펙</strong> — <code>modelcontextprotocol.io</code>.</li>
+          <li><strong>핵심 논문</strong>: Vaswani 2017 (Transformer), Brown 2020 (GPT-3 · in-context learning), Ouyang 2022 (InstructGPT/RLHF), Kaplan 2020 (Scaling Laws).</li>
+          <li><strong>추론 모델</strong> 흐름: OpenAI o1, Claude Extended Thinking, Gemini Deep Think 아티클.</li>
+        </ul>
+        <p>디자이너가 이 4개 레이어를 <em>분리해서 사고</em>할 수 있으면, 에이전트 워크플로우 설계와 디버깅 모두 훨씬 수월해집니다.</p>
+      `
+    }
+  ];
+
+  // ───────── Navigation ─────────
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total = slides.length;
+  let idx = 0;
+
+  const curEl = document.getElementById('cur');
+  const totalEl = document.getElementById('total');
+  const bar = document.getElementById('progress-bar');
+  const notesTitle = document.getElementById('notes-title');
+  const notesSlug  = document.getElementById('notes-slug');
+  const notesNum   = document.getElementById('notes-num');
+  const notesBody  = document.getElementById('notes-body');
+  totalEl.textContent = String(total).padStart(2, '0');
+
+  let notesMode = 'basic'; // 'basic' | 'advanced'
+
+  function render() {
+    slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+    curEl.textContent = String(idx + 1).padStart(2, '0');
+    bar.style.width = ((idx + 1) / total * 100) + '%';
+
+    const note = notes[idx] || { title: '—', slug: '', body: '<p>스크립트 없음</p>', advanced: '<p>—</p>' };
+    notesTitle.textContent = note.title;
+    notesSlug.textContent  = note.slug;
+    notesNum.textContent   = String(idx + 1).padStart(2, '0');
+
+    const content = notesMode === 'advanced' ? (note.advanced || '<p>—</p>') : note.body;
+    notesBody.className = notesMode === 'advanced' ? 'script advanced' : 'script';
+    notesBody.innerHTML = content;
+
+    // reset scroll to top when slide/mode changes
+    const body = document.querySelector('.notes-body');
+    if (body) body.scrollTop = 0;
+
+    document.getElementById('notes-panel').setAttribute('aria-hidden', document.body.classList.contains('notes-open') ? 'false' : 'true');
+  }
+
+  function setMode(mode) {
+    notesMode = mode;
+    document.querySelectorAll('.notes-tabs .tab').forEach(t => {
+      const active = t.dataset.mode === mode;
+      t.classList.toggle('active', active);
+      t.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    render();
+  }
+  document.querySelectorAll('.notes-tabs .tab').forEach(t => {
+    t.addEventListener('click', () => setMode(t.dataset.mode));
+  });
+
+  // ───────── Notes Panel Toggle ─────────
+  function toggleNotes(force) {
+    const open = force !== undefined ? force : !document.body.classList.contains('notes-open');
+    document.body.classList.toggle('notes-open', open);
+    document.getElementById('notes-btn').classList.toggle('active', open);
+    document.getElementById('notes-panel').setAttribute('aria-hidden', open ? 'false' : 'true');
+    fit();
+  }
+  document.getElementById('notes-btn').addEventListener('click', () => toggleNotes());
+  document.getElementById('notes-close').addEventListener('click', () => toggleNotes(false));
+
+  function go(n) {
+    idx = Math.max(0, Math.min(total - 1, n));
+    render();
+  }
+
+  document.getElementById('prev').addEventListener('click', () => go(idx - 1));
+  document.getElementById('next').addEventListener('click', () => go(idx + 1));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); go(idx + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(idx - 1); }
+    else if (e.key === 'Home') { go(0); }
+    else if (e.key === 'End') { go(total - 1); }
+    else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+    else if (e.key === 'n' || e.key === 'N') { toggleNotes(); }
+    else if (e.key === 't' || e.key === 'T') {
+      if (document.body.classList.contains('notes-open')) setMode(notesMode === 'basic' ? 'advanced' : 'basic');
+    }
+    else if (e.key === 'Escape') { if (document.body.classList.contains('notes-open')) toggleNotes(false); }
+  });
+
+  // click right half → next, left 15% → prev
+  document.getElementById('stage').addEventListener('click', (e) => {
+    const x = e.clientX / window.innerWidth;
+    if (x > 0.7) go(idx + 1);
+    else if (x < 0.15) go(idx - 1);
+  });
+
+  // ───────── Scale to viewport ─────────
+  const deck = document.getElementById('deck');
+  const stage = document.getElementById('stage');
+  function fit() {
+    const pad = 48;
+    const notesOpen = document.body.classList.contains('notes-open');
+    const panelW = notesOpen ? 440 : 0;
+    const availW = window.innerWidth - panelW;
+    const sx = (availW - pad) / 1280;
+    const sy = (window.innerHeight - pad) / 720;
+    const s = Math.min(sx, sy, 1.25);
+    deck.style.transform = `scale(${s})`;
+    // shift stage center to the left half when notes open
+    stage.style.right = panelW + 'px';
+  }
+  window.addEventListener('resize', fit);
+  fit();
+
+  // ───────── Fullscreen ─────────
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+    else document.exitFullscreen?.();
+  }
+  document.getElementById('fs').addEventListener('click', toggleFS);
+
+  render();
+</script>
+
+</body>
+</html>

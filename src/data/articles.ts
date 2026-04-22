@@ -1,11 +1,21 @@
 export type { Article } from './articleTypes'
 import type { Article } from './articleTypes'
+import { aiGit101ForDesignersContent } from './article-content/ai-git-101-for-designers'
 import { agentTeamsAndClaudePeersContent } from './article-content/agent-teams-and-claude-peers'
 import { npsDashboardPipelineContent } from './article-content/nps-dashboard-pipeline'
 import { pmAiWeekContent } from './article-content/pm-ai-week'
 import { weeklyDiary0409Content } from './article-content/weekly-diary-0409'
 
 export const articles: Article[] = [
+  {
+    slug: 'ai-git-101-for-designers',
+    title: 'AI가 막연하고 무서운 디자이너를 위해',
+    subtitle: 'AI & Git 101 세션을 만들면서 생각한 것들',
+    date: '2026.04.23',
+    category: 'AI & PM',
+    readTime: '8분',
+    content: aiGit101ForDesignersContent,
+  },
   {
     slug: 'nps-dashboard-pipeline',
     title: 'NPS 대시보드를 하루 만에 만들고, 자동화까지 붙인 이야기',
