@@ -1,0 +1,15 @@
+{
+  // Static-assets-only Worker: no server code, so no "main" entrypoint.
+  // Build with `npm run build` (BASE_PATH=/ so assets resolve at the root),
+  // then Wrangler uploads ./dist.
+  "name": "wildferret-blog",
+  "compatibility_date": "2026-08-13",
+  "assets": {
+    "directory": "./dist",
+    // Serve index.html for unknown paths so React Router handles /article/:slug.
+    // Must NOT be "404-page" — public/404.html is a GitHub Pages redirect shim
+    // that would bounce Worker traffic to a /wildferret-blog/ path that doesn't
+    // exist here.
+    "not_found_handling": "single-page-application"
+  }
+}
