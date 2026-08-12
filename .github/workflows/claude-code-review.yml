@@ -7,21 +7,13 @@ on:
     # paths:
     #   - "src/**/*.ts"
     #   - "src/**/*.tsx"
-    #   - "src/**/*.js"
-    #   - "src/**/*.jsx"
 
 jobs:
   claude-review:
-    # Optional: Filter by PR author
-    # if: |
-    #   github.event.pull_request.user.login == 'external-contributor' ||
-    #   github.event.pull_request.user.login == 'new-developer' ||
-    #   github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR'
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: read
+      pull-requests: write # Required so Claude can post its review comment
       issues: read
       id-token: write
 
@@ -29,28 +21,59 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          # Full history so the review can diff against the base branch and read
+          # surrounding context, not just the PR's tip commit
+          fetch-depth: 0
 
       - name: Run Claude Code Review
         id: claude-review
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
+          plugins: 'code-review@claude-code-plugins'
           prompt: |
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
 
-            Review this pull request and give feedback on:
-            - Code quality and best practices
-            - Potential bugs or issues
-            - Performance considerations
-            - Security concerns
-            - Test coverage
+            Run `/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}`
+            to review this pull request thoroughly.
 
-            Use `gh pr comment` to leave your review as a comment on the PR.
-          plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
-          plugins: 'code-review@claude-code-plugins'
-          prompt: '/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}'
+            Before judging any changed hunk, read the full file it lives in and the
+            files it calls into, so findings are grounded in how the code is actually
+            used rather than in the diff alone. Read CLAUDE.md and follow the project
+            conventions it documents (asset URLs via `resolveAssetUrl`, the ink/paper
+            Tailwind token scale, the article content format).
+
+            Cover, in this order of priority:
+            1. Correctness — logic errors, unhandled edge cases, null/undefined paths,
+               async and state-update races, incorrect types behind `any` or casts
+            2. Regressions — behavior this PR changes for existing routes, articles,
+               or the GitHub Pages base-path handling
+            3. Project conventions — violations of the rules in CLAUDE.md
+            4. Security — XSS via rendered content, unsafe URL handling, dependency risk
+            5. Performance — unnecessary re-renders, work repeated per render, bundle cost
+            6. Maintainability — duplicated logic, dead code, naming, missing error states
+
+            For every finding give: the `file:line`, what is wrong, a concrete scenario
+            in which it produces the wrong result, and a suggested fix as a code block.
+            Skip nitpicks that do not change behavior, readability, or safety — depth
+            means well-evidenced findings, not a longer list.
+
+            Then post the results back to the PR as a single comment using:
+            `gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body-file <path>`
+            (write the body to a file first so markdown and backticks survive intact).
+
+            Structure the comment as:
+            - **Summary** — a short paragraph on what the PR does and its overall state
+            - **Blocking** / **Should fix** / **Nits** — findings grouped by severity,
+              each with its `file:line`, explanation, and suggested fix
+            - **What looks good** — one or two lines, so the review is not only negative
+
+            If you found nothing worth changing, still leave a comment saying the PR
+            looks good and what you checked. Always leave exactly one comment.
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
-
+          claude_args: >-
+            --allowed-tools "Read,Grep,Glob,Bash(gh pr comment:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(git diff:*),Bash(git log:*)"
+            --max-turns 60
