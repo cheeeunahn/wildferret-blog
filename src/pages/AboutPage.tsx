@@ -1,5 +1,5 @@
 export default function AboutPage() {
-  const profileImageUrl = resolveAssetUrl('/profile-aksae.png')
+  const profileImageUrl = resolveAssetUrl('/assets/images/profile-aksae.png')
 
   return (
     <div className="page-enter">

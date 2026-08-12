@@ -17,7 +17,7 @@ export default function HomePage() {
           </h1>
           <div className="mt-8 overflow-hidden rounded-2xl border border-ink-100 bg-paper-warm/30">
             <img
-              src={`${import.meta.env.BASE_URL}pm-hero-workspace.png`}
+              src={`${import.meta.env.BASE_URL}assets/images/pm-hero-workspace.png`}
               alt="PM workspace illustration with VOC dashboard and kanban board"
               className="w-full h-auto object-cover"
               loading="eager"

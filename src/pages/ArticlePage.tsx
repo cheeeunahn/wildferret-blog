@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
 import { articles } from '../data/articles'
-import { getDiagram } from '../components/Diagrams'
+import { getDiagram } from '../components/diagramRegistry'
 
 export default function ArticlePage() {
   const { slug } = useParams()
