@@ -238,7 +238,9 @@ function escapeHtml(str: string): string {
 function formatInline(text: string): string {
   return text
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-ink-600 underline underline-offset-4 decoration-ink-200 hover:text-ink-900 hover:decoration-ink-400 transition-colors">$1</a>')
+    .replace(/\[(.+?)\]\((.+?)\)/g, (_, label, href) =>
+      `<a href="${href.startsWith('/') ? resolveAssetUrl(href) : href}" class="text-ink-600 underline underline-offset-4 decoration-ink-200 hover:text-ink-900 hover:decoration-ink-400 transition-colors">${label}</a>`,
+    )
     .replace(/`(.+?)`/g, (_, code) => `<code class="px-1.5 py-0.5 bg-ink-50 rounded text-[14px] font-mono text-ink-600">${escapeHtml(code)}</code>`)
 }
 
