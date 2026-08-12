@@ -49,7 +49,7 @@ function StepNum({ n }: { n: number }) {
 
 // ─── 1. VOC Workflow ───
 
-function VocWorkflow() {
+export function VocWorkflow() {
   const steps = [
     { n: 1, title: '데이터 수집', desc: '데이터 웨어하우스에서 VOC 원본 자동 추출 + NPS, 앱 평점, 리서치 자료 수집' },
     { n: 2, title: '독립 분석', desc: null, parallel: true },
@@ -118,7 +118,7 @@ function VocWorkflow() {
 
 // ─── 2. Terminal Team ───
 
-function TerminalTeam() {
+export function TerminalTeam() {
   return (
     <Container>
       <div className="bg-white rounded-lg border border-ink-100 overflow-hidden">
@@ -165,7 +165,7 @@ function TerminalTeam() {
 
 // ─── 3. Peers Architecture ───
 
-function PeersArchitecture() {
+export function PeersArchitecture() {
   const instances = [
     { num: '①', name: '프론트엔드', path: '/services/' },
     { num: '②', name: '노트 정리', path: '/Obsidian/' },
@@ -209,7 +209,7 @@ function PeersArchitecture() {
 
 // ─── 4. tmux Split ───
 
-function TmuxSplit() {
+export function TmuxSplit() {
   const panes = [
     { title: 'Claude ① — 코드 작업', status: '> analyzing files...', detail: '3 files changed, 42 insertions' },
     { title: 'Claude ② — 문서 정리', status: '> updating notes...', detail: 'ObsidianVault/04-Research/' },
@@ -264,7 +264,7 @@ function Pill({ children, dark }: { children: React.ReactNode; dark?: boolean })
   )
 }
 
-function FlowComparison() {
+export function FlowComparison() {
   return (
     <Container>
       <div>
@@ -322,18 +322,4 @@ function FlowComparison() {
       </div>
     </Container>
   )
-}
-
-// ─── Export ───
-
-const diagrams: Record<string, React.FC> = {
-  'voc-workflow': VocWorkflow,
-  'terminal-team': TerminalTeam,
-  'peers-architecture': PeersArchitecture,
-  'tmux-split': TmuxSplit,
-  'comparison': FlowComparison,
-}
-
-export function getDiagram(id: string): React.FC | undefined {
-  return diagrams[id]
 }

@@ -23,7 +23,7 @@ export const articles: Article[] = [
     date: '2026.04.15',
     category: 'AI & PM',
     readTime: '12분',
-    coverImage: '/nps-dashboard-pipeline-cover.png',
+    coverImage: '/assets/images/nps-dashboard-pipeline-cover.png',
     content: npsDashboardPipelineContent,
   },
   {
@@ -33,7 +33,7 @@ export const articles: Article[] = [
     date: '2026.04.09',
     category: 'AI & PM',
     readTime: '10분',
-    coverImage: '/weekly-diary-0409-cover.svg',
+    coverImage: '/assets/images/weekly-diary-0409-cover.svg',
     content: weeklyDiary0409Content,
   },
   {
@@ -43,7 +43,7 @@ export const articles: Article[] = [
     date: '2026.03.29',
     category: 'AI & PM',
     readTime: '20분',
-    coverImage: '/agent-teams-cover-pixel.png',
+    coverImage: '/assets/images/agent-teams-cover-pixel.png',
     content: agentTeamsAndClaudePeersContent,
   },
   {
@@ -53,7 +53,7 @@ export const articles: Article[] = [
     date: '2026.03.27',
     category: 'AI & PM',
     readTime: '15분',
-    coverImage: '/pm-ai-week-cover-pixel.png',
+    coverImage: '/assets/images/pm-ai-week-cover-pixel.png',
     content: pmAiWeekContent,
   },
 ]
