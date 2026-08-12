@@ -50,7 +50,7 @@ export default function Layout() {
           <div>
             <p className="text-ink-900 font-semibold text-sm">wildferret</p>
             <p className="text-ink-400 text-xs mt-1">
-              유저 리서치, 기획, 그리고 PM.
+              Product Manager
             </p>
           </div>
           <p className="text-ink-300 text-xs">
