@@ -1,5 +1,5 @@
 export default function AboutPage() {
-  const profileImageUrl = resolveAssetUrl('/assets/images/profile-aksae.png')
+  const profileImageUrl = resolveAssetUrl('/assets/images/profile-ferret-desk.png')
 
   return (
     <div className="page-enter">
@@ -18,22 +18,19 @@ export default function AboutPage() {
             안녕하세요, wildferret입니다
           </h1>
           <p className="text-ink-400 text-[15px] leading-relaxed">
-            제품을 만들고, 사용자를 연구합니다.
+            사람을 깊이 이해하고, 조용하지만 분명한 차이를 만드는 제품을 만듭니다.
           </p>
         </div>
-
-        <hr className="ink-divider mb-12" />
+      
 
         {/* Bio */}
         <div className="prose-blog animate-reveal delay-1">
           <p>
-            핀테크 스타트업 유저 리서치 기반 PM/기획자. 리서치로 묻고, 데이터로 확인하고, 필요하면 직접 만듭니다.
+            삼쩜삼(자비스앤빌런즈)에서 Product Manager로 일합니다.
           </p>
           <p>
-            유저의 목소리를 듣는 일과 제품을 만드는 일 사이 어딘가에 서 있습니다.
-          </p>
-          <p>
-            진행 중인 생각들을 기록합니다.
+            사용자의 목소리와 데이터로 복잡한 문제를 구조화하고, 일회성 산출물보다 계속 굴러가는 시스템으로 만드는 쪽을 좋아합니다.
+            여기에는 제품과 사용자, 그리고 만드는 과정에서 배운 것들을 기록합니다.
           </p>
         </div>
 
@@ -48,6 +45,8 @@ export default function AboutPage() {
             {[
               'Product Management',
               'UX Research',
+              'Data & AI',
+              'AI Agent Tooling',
             ].map((tag) => (
               <span
                 key={tag}
@@ -61,8 +60,57 @@ export default function AboutPage() {
 
         <hr className="ink-divider my-12" />
 
+        {/* Career */}
+        <div className="animate-reveal delay-3">
+          <h2 className="text-sm font-medium text-ink-400 uppercase tracking-widest mb-6">
+            경력
+          </h2>
+          <ul className="space-y-3">
+            {[
+              { period: '2024 — 현재', role: 'UX Researcher → Product Manager', org: '삼쩜삼 (자비스앤빌런즈)' },
+              { period: '2022 — 2024', role: 'UX Researcher', org: '오늘의집 (버킷플레이스)' },
+              { period: '2022', role: 'UX Researcher', org: 'Asleep' },
+              { period: '2014 — 2022', role: '산업디자인 학·석사 (HCI)', org: 'KAIST' },
+            ].map((item) => (
+              <li key={item.period} className="flex flex-col sm:flex-row sm:gap-4 text-[15px]">
+                <span className="text-ink-400 text-xs sm:text-[13px] sm:w-32 sm:shrink-0 sm:pt-1 tabular-nums">
+                  {item.period}
+                </span>
+                <span className="text-ink-700">
+                  {item.role}
+                  <span className="text-ink-400"> · {item.org}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        
+        <hr className="ink-divider my-12" />
+
+        {/* Skills */}
+        <div className="animate-reveal delay-3">
+          <h2 className="text-sm font-medium text-ink-400 uppercase tracking-widest mb-6">
+            스킬
+          </h2>
+          <ul className="space-y-3">
+            {[
+              { label: '리서치', items: '사용자 인터뷰 · 설문 설계 · 사용성 테스트 · 리서치 시스템 구축' },
+              { label: '데이터', items: 'Databricks SQL · Amplitude · A/B 테스트 · 이벤트 로그 설계' },
+              { label: '빌드', items: 'TypeScript · React · Claude Code (MCP · 에이전트 워크플로우)' },
+              { label: '자격', items: '빅데이터분석기사 · ADsP · SQLD · 세무회계 3급' },
+            ].map((group) => (
+              <li key={group.label} className="flex flex-col sm:flex-row sm:gap-4 text-[15px]">
+                <span className="text-ink-400 text-xs sm:text-[13px] sm:w-32 sm:shrink-0 sm:pt-1">
+                  {group.label}
+                </span>
+                <span className="text-ink-700">{group.items}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </section>
     </div>
+    
   )
 }
 
