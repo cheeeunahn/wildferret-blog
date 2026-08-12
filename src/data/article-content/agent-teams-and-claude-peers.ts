@@ -1,5 +1,5 @@
 export const agentTeamsAndClaudePeersContent = `
-AI를 쓰면 일이 빨라진다고 한다. 내 경험은 조금 달랐다. 빨라진 것보다, 원래는 할 수 없었던 일을 하게 된 것이 더 컸다. [이전 글](/wildferret-blog/article/pm-ai-week)에서 그 이야기를 했다.
+AI를 쓰면 일이 빨라진다고 한다. 내 경험은 조금 달랐다. 빨라진 것보다, 원래는 할 수 없었던 일을 하게 된 것이 더 컸다. [이전 글](/article/pm-ai-week)에서 그 이야기를 했다.
 
 오늘은 그 연장선에서, 최근 발견한 두 가지에 대해 쓴다. AI 에이전트 팀(Agent Teams)과 Claude Peers. 그리고 이번 글은 읽고 끝나는 글이 아니라, 읽고 직접 해볼 수 있는 글로 만들었다.
 
