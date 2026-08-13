@@ -49,7 +49,7 @@ export default function ThemeToggle() {
       onClick={toggle}
       aria-label={isDark ? '밝은 테마로 전환' : '어두운 테마로 전환'}
       title={isDark ? '밝은 테마로 전환' : '어두운 테마로 전환'}
-      className="-mr-1.5 p-1.5 rounded-full text-ink-400 hover:text-ink-900 hover:bg-ink-50 transition-colors cursor-pointer"
+      className="-mr-1.5 p-1.5 rounded-full text-ink-600 hover:text-ink-900 hover:bg-ink-50 transition-colors cursor-pointer"
     >
       <svg
         width="18"

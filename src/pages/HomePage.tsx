@@ -7,7 +7,7 @@ export default function HomePage() {
       {/* Hero */}
       <section className="max-w-[720px] mx-auto px-6 pt-10 sm:pt-14 pb-12">
         <div>
-          <p className="text-sm text-ink-400 mb-4 animate-reveal delay-1">
+          <p className="text-sm text-ink-600 mb-4 animate-reveal delay-1">
             Personal Blog
           </p>
           <h1 className="text-3xl sm:text-[40px] font-bold text-ink-950 leading-tight tracking-tight animate-reveal-soft delay-2">

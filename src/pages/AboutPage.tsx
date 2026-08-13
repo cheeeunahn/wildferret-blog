@@ -17,7 +17,7 @@ export default function AboutPage() {
           <h1 className="text-2xl sm:text-3xl font-bold text-ink-950 tracking-tight mb-3">
             안녕하세요, wildferret입니다
           </h1>
-          <p className="text-ink-400 text-[15px] leading-relaxed">
+          <p className="text-ink-600 text-[15px] leading-relaxed">
             사람을 깊이 이해하고, 조용하지만 분명한 차이를 만드는 제품을 만듭니다.
           </p>
         </div>
@@ -38,7 +38,7 @@ export default function AboutPage() {
 
         {/* Interests */}
         <div className="animate-reveal delay-2">
-          <h2 className="text-sm font-medium text-ink-400 uppercase tracking-widest mb-6">
+          <h2 className="text-sm font-medium text-ink-600 uppercase tracking-widest mb-6">
             관심사
           </h2>
           <div className="flex flex-wrap gap-2">
@@ -62,7 +62,7 @@ export default function AboutPage() {
 
         {/* Career */}
         <div className="animate-reveal delay-3">
-          <h2 className="text-sm font-medium text-ink-400 uppercase tracking-widest mb-6">
+          <h2 className="text-sm font-medium text-ink-600 uppercase tracking-widest mb-6">
             경력
           </h2>
           <ul className="space-y-3">
@@ -73,12 +73,12 @@ export default function AboutPage() {
               { period: '2014 — 2022', role: '산업디자인 학·석사 (HCI)', org: 'KAIST' },
             ].map((item) => (
               <li key={item.period} className="flex flex-col sm:flex-row sm:gap-4 text-[15px]">
-                <span className="text-ink-400 text-xs sm:text-[13px] sm:w-32 sm:shrink-0 sm:pt-1 tabular-nums">
+                <span className="text-ink-600 text-xs sm:text-[13px] sm:w-32 sm:shrink-0 sm:pt-1 tabular-nums">
                   {item.period}
                 </span>
                 <span className="text-ink-700">
                   {item.role}
-                  <span className="text-ink-400"> · {item.org}</span>
+                  <span className="text-ink-600"> · {item.org}</span>
                 </span>
               </li>
             ))}
@@ -89,7 +89,7 @@ export default function AboutPage() {
 
         {/* Skills */}
         <div className="animate-reveal delay-3">
-          <h2 className="text-sm font-medium text-ink-400 uppercase tracking-widest mb-6">
+          <h2 className="text-sm font-medium text-ink-600 uppercase tracking-widest mb-6">
             스킬
           </h2>
           <ul className="space-y-3">
@@ -100,7 +100,7 @@ export default function AboutPage() {
               { label: '자격증', items: '빅데이터분석기사 · ADsP · SQLD · 세무회계 3급' },
             ].map((group) => (
               <li key={group.label} className="flex flex-col sm:flex-row sm:gap-4 text-[15px]">
-                <span className="text-ink-400 text-xs sm:text-[13px] sm:w-32 sm:shrink-0 sm:pt-1">
+                <span className="text-ink-600 text-xs sm:text-[13px] sm:w-32 sm:shrink-0 sm:pt-1">
                   {group.label}
                 </span>
                 <span className="text-ink-700">{group.items}</span>

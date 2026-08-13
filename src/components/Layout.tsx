@@ -11,7 +11,17 @@ export default function Layout() {
   useLayoutEffect(() => {
     if (navigationType === 'POP') return
     // 전역 scroll-behavior가 smooth라 이동 시에는 즉시 점프하도록 덮어쓴다.
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+    // scrollTo가 무시되는 브라우저를 대비해 scrollTop도 직접 0으로 되돌리고,
+    // 첫 페인트 이후 레이아웃이 늘어나며 위치가 복원되는 경우까지 한 프레임 뒤에 한 번 더 확인한다.
+    const jumpToTop = () => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+      document.documentElement.scrollTop = 0
+      document.body.scrollTop = 0
+    }
+
+    jumpToTop()
+    const frame = requestAnimationFrame(jumpToTop)
+    return () => cancelAnimationFrame(frame)
   }, [pathname, navigationType])
 
   return (
@@ -31,7 +41,7 @@ export default function Layout() {
               className={`text-sm no-underline transition-colors ${
                 pathname === '/'
                   ? 'text-ink-900 font-medium'
-                  : 'text-ink-400 hover:text-ink-700'
+                  : 'text-ink-600 hover:text-ink-700'
               }`}
             >
               글
@@ -41,7 +51,7 @@ export default function Layout() {
               className={`text-sm no-underline transition-colors ${
                 pathname === '/about'
                   ? 'text-ink-900 font-medium'
-                  : 'text-ink-400 hover:text-ink-700'
+                  : 'text-ink-600 hover:text-ink-700'
               }`}
             >
               소개
@@ -61,11 +71,11 @@ export default function Layout() {
         <div className="max-w-[720px] mx-auto px-6 py-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <p className="text-ink-900 font-semibold text-sm">wildferret</p>
-            <p className="text-ink-400 text-xs mt-1">
+            <p className="text-ink-600 text-xs mt-1">
               Product Manager
             </p>
           </div>
-          <p className="text-ink-300 text-xs">
+          <p className="text-ink-500 text-xs">
             &copy; {new Date().getFullYear()} wildferret. All rights reserved.
           </p>
         </div>
