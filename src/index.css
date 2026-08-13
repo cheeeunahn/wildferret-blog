@@ -2,8 +2,38 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Nanum Barun Gothic, from Naver's official webfont CDN.
+   Declared here rather than linking hangeul.pstatic.net's own stylesheet: that
+   one exposes every weight as its own family name — and spells two of the four
+   "Bareun" rather than "Barun" — with no font-weight descriptors, so
+   `font-weight: 600` would synthesize a smeared fake bold instead of reaching
+   the real Bold face. Mapping the files to 400/700 here fixes that.
+   font-display: swap matters more than usual: Naver serves no woff2, so these
+   are ~1.6MB each and text would otherwise stay invisible until they land.
+   Only Regular and Bold are loaded; Light and UltraLight would cost another
+   ~1.7MB apiece and nothing in the design calls for them. */
+@font-face {
+  font-family: "NanumBarunGothic";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumBarunGothic/NanumBarunGothicWeb.woff) format("woff"),
+       url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumBarunGothic/NanumBarunGothicWeb.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "NanumBarunGothic";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumBarunGothic/NanumBarunGothicWebBold.woff) format("woff"),
+       url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumBarunGothic/NanumBarunGothicWebBold.ttf) format("truetype");
+}
+
 @theme {
-  --font-pretendard: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  /* Pretendard stays in the stack as the fallback that renders during the swap
+     window — its CSS is already loaded, and its subsets only download if used. */
+  --font-body: "NanumBarunGothic", "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
   --font-sketch: "Gaegu", "Pretendard Variable", cursive;
 
   --color-ink-950: #0a0a0a;
@@ -48,7 +78,7 @@ html.dark {
 
 /* Base styles */
 html {
-  font-family: var(--font-pretendard);
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
