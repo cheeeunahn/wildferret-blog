@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-pretendard: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
   --font-sketch: "Gaegu", "Pretendard Variable", cursive;
@@ -18,6 +20,30 @@
 
   --color-paper: #ffffff;
   --color-paper-warm: #f9f8f6;
+
+  /* Raised surfaces (diagram cards, panels) — brighter than the page in light,
+     lighter than the page in dark, so "raised" reads the same way in both. */
+  --color-surface: #ffffff;
+}
+
+/* Dark theme — the same semantic tokens, inverted.
+   Every component reads these vars, so nothing else needs a dark: variant. */
+html.dark {
+  --color-ink-950: #fcfcfc;
+  --color-ink-900: #f2f2f2;
+  --color-ink-800: #e2e2e2;
+  --color-ink-700: #cbcbcb;
+  --color-ink-600: #b0b0b0;
+  --color-ink-500: #969696;
+  --color-ink-400: #8a8a8a;
+  --color-ink-300: #6e6e6e;
+  --color-ink-200: #3f3f43;
+  --color-ink-100: #2b2b2f;
+  --color-ink-50: #202024;
+
+  --color-paper: #0f0f10;
+  --color-paper-warm: #1b1b1f;
+  --color-surface: #26262b;
 }
 
 /* Base styles */
@@ -31,8 +57,30 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Theme swap should glide, not snap.
+   Deliberately excludes .group/article hovers so their snappier
+   transition-colors timing is not overridden. */
+html,
+body,
+header,
+footer,
+.ink-divider,
+img,
+pre {
+  transition:
+    background-color 0.35s ease,
+    border-color 0.35s ease,
+    color 0.35s ease,
+    filter 0.35s ease;
+}
+
 body {
   margin: 0;
+}
+
+/* Illustrations run bright; take the glare off in dark */
+html.dark img {
+  filter: brightness(0.92);
 }
 
 /* Ink wash grain texture overlay */
@@ -46,6 +94,12 @@ body::before {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 256px 256px;
+}
+
+/* Black-on-black grain reads as nothing — flip it */
+html.dark body::before {
+  opacity: 0.045;
+  filter: invert(1);
 }
 
 /* Selection */
@@ -114,6 +168,77 @@ body::before {
 .delay-4 { animation-delay: 0.4s; }
 .delay-5 { animation-delay: 0.5s; }
 .delay-6 { animation-delay: 0.6s; }
+
+/* ---- Intro (first paint) ----
+   Layout mounts once per page load and never unmounts on route changes,
+   so these play exactly once — when the blog is first opened. */
+
+@keyframes boot-shell {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes boot-header {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.boot-shell {
+  animation: boot-shell 0.5s ease-out both;
+}
+
+.boot-header {
+  animation: boot-header 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
+}
+
+/* Media settles in with a touch of scale so it feels like it lands */
+@keyframes reveal-media {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(1.025);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-reveal-media {
+  animation: reveal-media 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Headline drifts in slightly unfocused, then sharpens */
+@keyframes reveal-soft {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.animate-reveal-soft {
+  animation: reveal-soft 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-reveal,
+  .animate-reveal-soft,
+  .animate-reveal-media,
+  .boot-shell,
+  .boot-header,
+  .page-enter {
+    animation: none !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
 
 /* Page fade-in */
 @keyframes fade-in {

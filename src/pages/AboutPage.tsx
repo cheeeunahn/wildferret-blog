@@ -30,7 +30,7 @@ export default function AboutPage() {
           </p>
           <p>
             사용자의 목소리와 데이터로 복잡한 문제를 구조화하고, 일회성 산출물보다 계속 굴러가는 시스템으로 만드는 쪽을 좋아합니다.
-            여기에는 제품과 사용자, 그리고 만드는 과정에서 배운 것들을 기록합니다.
+            여기에는 제품과 사용자, 그리고 만드는 과정에서 느낀 점과 배운 것들을 기록합니다.
           </p>
         </div>
 
@@ -94,10 +94,10 @@ export default function AboutPage() {
           </h2>
           <ul className="space-y-3">
             {[
-              { label: '리서치', items: '사용자 인터뷰 · 설문 설계 · 사용성 테스트 · 리서치 시스템 구축' },
-              { label: '데이터', items: 'Databricks SQL · Amplitude · A/B 테스트 · 이벤트 로그 설계' },
+              { label: '유저 리서치', items: '사용자 인터뷰 · 설문 설계 · 사용성 테스트 · 리서치 시스템 구축' },
+              { label: '데이터 분석', items: 'Databricks SQL · Amplitude · A/B 테스트 · 이벤트 로그 설계' },
               { label: '빌드', items: 'TypeScript · React · Claude Code (MCP · 에이전트 워크플로우)' },
-              { label: '자격', items: '빅데이터분석기사 · ADsP · SQLD · 세무회계 3급' },
+              { label: '자격증', items: '빅데이터분석기사 · ADsP · SQLD · 세무회계 3급' },
             ].map((group) => (
               <li key={group.label} className="flex flex-col sm:flex-row sm:gap-4 text-[15px]">
                 <span className="text-ink-400 text-xs sm:text-[13px] sm:w-32 sm:shrink-0 sm:pt-1">
@@ -108,8 +108,13 @@ export default function AboutPage() {
             ))}
           </ul>
         </div>
+
+        <hr className="ink-divider my-12" />
+
       </section>
     </div>
+
+    
     
   )
 }

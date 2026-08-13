@@ -75,7 +75,7 @@ export function VocWorkflow() {
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   {['CX 전문가 A', 'CX 전문가 B'].map((name) => (
-                    <div key={name} className="bg-white rounded-lg px-4 py-3.5 border border-ink-100">
+                    <div key={name} className="bg-surface rounded-lg px-4 py-3.5 border border-ink-100">
                       <p className="text-[13px] font-semibold text-ink-700 mb-2.5">{name}</p>
                       <div className="space-y-1.5">
                         {['주제별 분류', '심각도 판단', '핵심 트렌드 3개', '대표 인용 추출'].map((item) => (
@@ -90,7 +90,7 @@ export function VocWorkflow() {
                 </div>
               </div>
             ) : (
-              <div className={`rounded-lg px-5 py-4 ${step.n === 6 ? 'bg-ink-50 text-center' : 'bg-white border border-ink-100'}`}>
+              <div className={`rounded-lg px-5 py-4 ${step.n === 6 ? 'bg-ink-50 text-center' : 'bg-surface border border-ink-100'}`}>
                 <div className={`flex items-center gap-3 ${step.n === 6 ? 'justify-center' : ''} ${step.desc || step.tags ? 'mb-2' : ''}`}>
                   <StepNum n={step.n} />
                   <span className="text-[15px] font-semibold text-ink-800">{step.title}</span>
@@ -121,7 +121,7 @@ export function VocWorkflow() {
 export function TerminalTeam() {
   return (
     <Container>
-      <div className="bg-white rounded-lg border border-ink-100 overflow-hidden">
+      <div className="bg-surface rounded-lg border border-ink-100 overflow-hidden">
         <div className="flex items-center gap-2 px-4 py-2.5 border-b border-ink-100">
           <div className="flex gap-1.5">
             <div className="w-2 h-2 rounded-full bg-ink-200" />
@@ -177,7 +177,7 @@ export function PeersArchitecture() {
       <div className="flex flex-col items-center">
         <div className="grid grid-cols-3 gap-3 w-full max-w-md">
           {instances.map((inst) => (
-            <div key={inst.num} className="bg-white rounded-lg px-3 py-3.5 text-center border border-ink-100">
+            <div key={inst.num} className="bg-surface rounded-lg px-3 py-3.5 text-center border border-ink-100">
               <p className="text-[13px] font-semibold text-ink-700">Claude {inst.num}</p>
               <p className="text-[12px] text-ink-400 mt-1">{inst.name}</p>
               <p className="text-[10px] text-ink-300 mt-0.5 font-mono">{inst.path}</p>
@@ -219,7 +219,7 @@ export function TmuxSplit() {
 
   return (
     <Container>
-      <div className="bg-white rounded-lg border border-ink-100 overflow-hidden">
+      <div className="bg-surface rounded-lg border border-ink-100 overflow-hidden">
         <div className="flex items-center gap-2 px-4 py-2.5 border-b border-ink-100">
           <div className="flex gap-1.5">
             <div className="w-2 h-2 rounded-full bg-ink-200" />
@@ -255,8 +255,8 @@ function Pill({ children, dark }: { children: React.ReactNode; dark?: boolean })
     <span
       className={`inline-flex items-center px-3 py-1 text-[12px] font-medium shrink-0 rounded ${
         dark
-          ? 'bg-ink-800 text-white'
-          : 'bg-white text-ink-600 border border-ink-200'
+          ? 'bg-ink-800 text-paper'
+          : 'bg-surface text-ink-600 border border-ink-200'
       }`}
     >
       {children}

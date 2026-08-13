@@ -1,12 +1,13 @@
 import { Outlet, Link, useLocation } from 'react-router-dom'
+import ThemeToggle from './ThemeToggle'
 
 export default function Layout() {
   const { pathname } = useLocation()
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col boot-shell">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-paper/80 backdrop-blur-md border-b border-ink-100">
+      <header className="sticky top-0 z-50 bg-paper/80 backdrop-blur-md border-b border-ink-100 boot-header">
         <nav className="max-w-[720px] mx-auto px-6 h-16 flex items-center justify-between">
           <Link
             to="/"
@@ -14,7 +15,7 @@ export default function Layout() {
           >
             wildferret's blog
           </Link>
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-6">
             <Link
               to="/"
               className={`text-sm no-underline transition-colors ${
@@ -35,6 +36,7 @@ export default function Layout() {
             >
               소개
             </Link>
+            <ThemeToggle />
           </div>
         </nav>
       </header>
