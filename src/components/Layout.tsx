@@ -1,8 +1,18 @@
-import { Outlet, Link, useLocation } from 'react-router-dom'
+import { useLayoutEffect } from 'react'
+import { Outlet, Link, useLocation, useNavigationType } from 'react-router-dom'
 import ThemeToggle from './ThemeToggle'
 
 export default function Layout() {
   const { pathname } = useLocation()
+  const navigationType = useNavigationType()
+
+  // 새 페이지로 이동하면 항상 맨 위에서 시작한다.
+  // 뒤로/앞으로 가기(POP)는 브라우저가 복원한 위치를 그대로 둔다.
+  useLayoutEffect(() => {
+    if (navigationType === 'POP') return
+    // 전역 scroll-behavior가 smooth라 이동 시에는 즉시 점프하도록 덮어쓴다.
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+  }, [pathname, navigationType])
 
   return (
     <div className="min-h-screen flex flex-col boot-shell">
