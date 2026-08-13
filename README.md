@@ -16,7 +16,7 @@ Thanks for stopping by 👋🏻
 
 ## Prerequisites
 
-- **Node.js 20+** (matches [CI](.github/workflows/deploy.yml))
+- **Node.js 20+**
 - **pnpm 10** — Corepack enables the pinned version automatically with
   `corepack enable`.
 
@@ -128,16 +128,15 @@ The site is served from two places with different path prefixes, so
 
 | Target | Base path | How it's set |
 |--------|-----------|--------------|
-| GitHub Pages | `/wildferret-blog/` | `BASE_PATH` env var in the deploy workflow (also the local default) |
+| GitHub Pages | `/wildferret-blog/` | `BASE_PATH` env var (also the local default) |
 | Cloudflare Worker | `/` | `WORKERS_CI` / `CF_PAGES` set by Cloudflare's build env |
 
 `BASE_PATH` overrides both when set explicitly. `BrowserRouter` uses
 `import.meta.env.BASE_URL` as its basename.
 
-**GitHub Pages** — pushes to `main` run
-[Deploy to GitHub Pages](.github/workflows/deploy.yml): `pnpm install --frozen-lockfile`, `pnpm build`
-with `BASE_PATH=/wildferret-blog/`, then publish `dist/`. `public/404.html` is
-the SPA redirect shim Pages needs for deep links.
+**GitHub Pages** — no longer deployed automatically. To publish there, build
+with `BASE_PATH=/wildferret-blog/ pnpm build` and upload `dist/` yourself.
+`public/404.html` is the SPA redirect shim Pages needs for deep links.
 
 **Cloudflare** — [`wrangler.jsonc`](wrangler.jsonc) configures a static-assets-only
 Worker (no server entrypoint) that uploads `./dist` with

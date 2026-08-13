@@ -36,8 +36,10 @@ jobs:
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
 
-            Run `/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}`
-            to review this pull request thoroughly.
+            Run `/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }} --comment`
+            to review this pull request thoroughly. The `--comment` flag makes the
+            review post each finding as an inline comment anchored to its line in
+            the Files changed tab.
 
             Before judging any changed hunk, read the full file it lives in and the
             files it calls into, so findings are grounded in how the code is actually
@@ -60,20 +62,29 @@ jobs:
             Skip nitpicks that do not change behavior, readability, or safety — depth
             means well-evidenced findings, not a longer list.
 
-            Then post the results back to the PR as a single comment using:
+            If `--comment` fails to place a finding inline — GitHub only accepts
+            comments on lines that appear in the diff — post that finding as an
+            inline comment on the nearest changed line in the same file and say
+            which line it really refers to. If it cannot be anchored at all, carry
+            it into the summary comment below instead of dropping it.
+
+            Then post one summary comment on the PR using:
             `gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body-file <path>`
             (write the body to a file first so markdown and backticks survive intact).
 
-            Structure the comment as:
+            Structure that summary as:
             - **Summary** — a short paragraph on what the PR does and its overall state
-            - **Blocking** / **Should fix** / **Nits** — findings grouped by severity,
-              each with its `file:line`, explanation, and suggested fix
+            - **Findings** — a one-line-per-finding index (`file:line` + severity +
+              a few words), since the detail already lives in the inline comments.
+              Full explanation and suggested fix inline here only for findings that
+              could not be anchored to a line
             - **What looks good** — one or two lines, so the review is not only negative
 
-            If you found nothing worth changing, still leave a comment saying the PR
-            looks good and what you checked. Always leave exactly one comment.
+            If you found nothing worth changing, skip the inline comments and leave
+            only the summary, saying the PR looks good and what you checked. Never
+            leave more than one summary comment.
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
           claude_args: >-
-            --allowed-tools "Read,Grep,Glob,Bash(gh pr comment:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(git diff:*),Bash(git log:*)"
-            --max-turns 60
+            --allowed-tools "Read,Grep,Glob,Write,Bash(gh pr comment:*),Bash(gh pr review:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh api:*),Bash(git diff:*),Bash(git log:*)"
+            --max-turns 80
