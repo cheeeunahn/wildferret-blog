@@ -178,6 +178,21 @@ export default function ArticlePage() {
             )
           }
 
+          const videoMatch = trimmed.match(/^\[video:(.*?)\]$/)
+          if (videoMatch) {
+            const videoSrc = videoMatch[1]
+            return (
+              <figure key={i} className="my-8">
+                <div className="overflow-hidden rounded-2xl border border-ink-100">
+                  <video src={videoSrc} className="w-full h-auto" controls />
+                </div>
+                <figcaption className="mt-3 text-sm text-[#6b7280] leading-relaxed">
+                  {videoSrc.split('/').pop()}
+                </figcaption>
+              </figure>
+            )
+          }
+
           const imageMatch = trimmed.match(/^!\[(.*?)\]\((.*?)\)$/)
           if (imageMatch) {
             const [, altText, imageSrc] = imageMatch
