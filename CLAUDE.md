@@ -25,7 +25,7 @@ No test suite. No single-file build commands.
 
 Articles live entirely in `src/data/`:
 
-- `articleTypes.ts` — `Article` interface (`slug`, `title`, `subtitle`, `date`, `category`, `readTime`, `coverImage?`, `content`)
+- `articleTypes.ts` — `Article` interface (`slug`, `title`, `subtitle`, `date`, `readTime`, `coverImage?`, `content`)
 - `article-content/*.ts` — each article exports its content as a template literal string
 - `articles.ts` — imports content files and assembles the `Article[]` array (newest first)
 

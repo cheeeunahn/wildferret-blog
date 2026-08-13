@@ -3,7 +3,6 @@ export interface Article {
   title: string
   subtitle: string
   date: string
-  category: string
   readTime: string
   coverImage?: string
   content: string

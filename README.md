@@ -73,7 +73,7 @@ Articles live entirely in `src/data/`. To add one:
    ```
 2. Import it in `src/data/articles.ts`.
 3. Prepend an entry to the `articles` array with its metadata (`slug`, `title`,
-   `subtitle`, `date`, `category`, `readTime`, optional `coverImage`) and
+   `subtitle`, `date`, `readTime`, optional `coverImage`) and
    `content: myArticleContent`.
 
 ### Content format
