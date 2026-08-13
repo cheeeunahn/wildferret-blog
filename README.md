@@ -3,7 +3,7 @@
 Hi there, and welcome to my personal blog!
 Thanks for stopping by 👋🏻
 
-**Live site:** [cheeeunahn.github.io/wildferret-blog](https://cheeeunahn.github.io/wildferret-blog/)
+**Live site:** [blog.wildferret.dev](https://blog.wildferret.dev/)
 
 ## Tech stack
 
@@ -17,21 +17,23 @@ Thanks for stopping by 👋🏻
 ## Prerequisites
 
 - **Node.js 20+** (matches [CI](.github/workflows/deploy.yml))
+- **pnpm 10** — Corepack enables the pinned version automatically with
+  `corepack enable`.
 
 ## Setup
 
 ```bash
-npm install
+pnpm install
 ```
 
 ## Scripts
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Dev server (Vite) |
-| `npm run build` | Type-check (`tsc -b`) and production build to `dist/` |
-| `npm run preview` | Serve the production build locally |
-| `npm run lint` | ESLint |
+| `pnpm dev` | Dev server (Vite) |
+| `pnpm build` | Type-check (`tsc -b`) and production build to `dist/` |
+| `pnpm preview` | Serve the production build locally |
+| `pnpm lint` | ESLint |
 
 There is no test suite.
 
@@ -133,7 +135,7 @@ The site is served from two places with different path prefixes, so
 `import.meta.env.BASE_URL` as its basename.
 
 **GitHub Pages** — pushes to `main` run
-[Deploy to GitHub Pages](.github/workflows/deploy.yml): `npm ci`, `npm run build`
+[Deploy to GitHub Pages](.github/workflows/deploy.yml): `pnpm install --frozen-lockfile`, `pnpm build`
 with `BASE_PATH=/wildferret-blog/`, then publish `dist/`. `public/404.html` is
 the SPA redirect shim Pages needs for deep links.
 

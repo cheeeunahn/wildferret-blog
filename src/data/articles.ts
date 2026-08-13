@@ -4,9 +4,29 @@ import { aiGit101ForDesignersContent } from './article-content/ai-git-101-for-de
 import { agentTeamsAndClaudePeersContent } from './article-content/agent-teams-and-claude-peers'
 import { npsDashboardPipelineContent } from './article-content/nps-dashboard-pipeline'
 import { pmAiWeekContent } from './article-content/pm-ai-week'
+import { researchWikiForLlmContent } from './article-content/research-wiki-for-llm'
+import { syntheticUserResearchPanelContent } from './article-content/synthetic-user-research-panel'
 import { weeklyDiary0409Content } from './article-content/weekly-diary-0409'
 
 export const articles: Article[] = [
+  {
+    slug: 'research-wiki-for-llm',
+    title: '리서치를 LLM이 읽는 형태로 바꾸기',
+    subtitle: '흩어진 UX 리서치를 사람은 읽고 에이전트가 쓰는 위키로 정리한 기록',
+    date: '2026.08.13',
+    category: 'AI & PM',
+    readTime: '8분',
+    content: researchWikiForLlmContent,
+  },
+  {
+    slug: 'synthetic-user-research-panel',
+    title: '유저 없이 유저 피드백을 받는다는 것',
+    subtitle: '가상 유저 패널(synthetic user panel)을 만들고, 실무에 쓰이는 도구로 만들어간 이야기',
+    date: '2026.08.13',
+    category: 'AI & PM',
+    readTime: '11분',
+    content: syntheticUserResearchPanelContent,
+  },
   {
     slug: 'ai-git-101-for-designers',
     title: 'AI가 막연하고 무서운 디자이너를 위해',

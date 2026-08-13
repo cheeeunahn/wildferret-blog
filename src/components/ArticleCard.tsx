@@ -11,7 +11,7 @@ export default function ArticleCard({ article, index }: ArticleCardProps) {
     <Link
       to={`/article/${article.slug}`}
       className="group block no-underline animate-reveal"
-      style={{ animationDelay: `${index * 0.1}s` }}
+      style={{ animationDelay: `${0.4 + index * 0.08}s` }}
     >
       <article className="py-8 sm:py-10 border-b border-ink-100 transition-colors hover:bg-ink-50/50 -mx-6 px-6">
         {/* Category & Meta */}

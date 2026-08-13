@@ -6,19 +6,19 @@ export default function HomePage() {
     <div className="page-enter">
       {/* Hero */}
       <section className="max-w-[720px] mx-auto px-6 pt-10 sm:pt-14 pb-12">
-        <div className="animate-reveal">
-          <p className="text-sm text-ink-400 mb-4">
+        <div>
+          <p className="text-sm text-ink-400 mb-4 animate-reveal delay-1">
             Personal Blog
           </p>
-          <h1 className="text-3xl sm:text-[40px] font-bold text-ink-950 leading-tight tracking-tight">
+          <h1 className="text-3xl sm:text-[40px] font-bold text-ink-950 leading-tight tracking-tight animate-reveal-soft delay-2">
             프로덕트와 일상에서
             <br />
             발견한 것들.
           </h1>
-          <div className="mt-8 overflow-hidden rounded-2xl border border-ink-100 bg-paper-warm/30">
+          <div className="mt-8 overflow-hidden rounded-2xl border border-ink-100 bg-paper-warm/30 animate-reveal-media delay-3">
             <img
-              src={`${import.meta.env.BASE_URL}assets/images/pm-hero-workspace.png`}
-              alt="PM workspace illustration with VOC dashboard and kanban board"
+              src={`${import.meta.env.BASE_URL}assets/images/wildferret-hero-coding.jpg`}
+              alt="안경을 쓴 페럿이 책상에서 노트북으로 코드를 작성하는 일러스트"
               className="w-full h-auto object-cover"
               loading="eager"
             />
