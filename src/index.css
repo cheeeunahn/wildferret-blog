@@ -10,12 +10,20 @@
    the real Bold face. Mapping the files to 400/700 here fixes that.
    font-display: swap matters more than usual: Naver serves no woff2, so these
    are ~1.6MB each and text would otherwise stay invisible until they land.
-   Only Regular and Bold are loaded; Light and UltraLight would cost another
-   ~1.7MB apiece and nothing in the design calls for them. */
+
+   Nanum Barun Gothic ships only UltraLight/Light/Regular/Bold — there is no
+   Medium or SemiBold face to load. The weight ranges below say so explicitly
+   rather than leaving it to the browser's matching algorithm: the design uses
+   `font-medium` (500) and `font-semibold` (600) widely, and both collapse —
+   500 renders as Regular, 600 as full Bold. Measured on canvas, 400 and 500
+   put down identical ink, as do 600 and 700. So the four-step weight scale
+   this design was built on renders as two steps. Declaring the ranges keeps
+   that visible here instead of surprising the next person; it does not
+   change what the browser draws. */
 @font-face {
   font-family: "NanumBarunGothic";
   font-style: normal;
-  font-weight: 400;
+  font-weight: 400 500;
   font-display: swap;
   src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumBarunGothic/NanumBarunGothicWeb.woff) format("woff"),
        url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumBarunGothic/NanumBarunGothicWeb.ttf) format("truetype");
@@ -24,7 +32,7 @@
 @font-face {
   font-family: "NanumBarunGothic";
   font-style: normal;
-  font-weight: 700;
+  font-weight: 600 700;
   font-display: swap;
   src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumBarunGothic/NanumBarunGothicWebBold.woff) format("woff"),
        url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumBarunGothic/NanumBarunGothicWebBold.ttf) format("truetype");
