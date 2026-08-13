@@ -27,10 +27,6 @@ export default function ArticlePage() {
       <header className="max-w-[720px] mx-auto px-6 pt-16 sm:pt-24 pb-10">
         <div className="animate-reveal">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-5">
-            <span className="text-xs font-medium text-ink-600 uppercase tracking-widest">
-              {article.category}
-            </span>
-            <span className="w-px h-3 bg-ink-200" />
             <span className="text-xs text-ink-500">{article.date}</span>
             <span className="w-px h-3 bg-ink-200" />
             <span className="text-xs text-ink-500">{article.readTime} 읽기</span>
