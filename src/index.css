@@ -132,7 +132,7 @@ html.dark body::before {
   border-left: 2px solid var(--color-ink-200);
   padding-left: 1.25rem;
   margin: 2rem 0;
-  color: var(--color-ink-500);
+  color: var(--color-ink-600);
   font-style: italic;
 }
 
