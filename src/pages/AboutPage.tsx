@@ -1,3 +1,5 @@
+import { resolveAssetUrl } from '../lib/assetUrl'
+
 export default function AboutPage() {
   const profileImageUrl = resolveAssetUrl('/assets/images/profile-ferret-desk.png')
 
@@ -117,14 +119,4 @@ export default function AboutPage() {
     
     
   )
-}
-
-function resolveAssetUrl(path: string): string {
-  if (/^https?:\/\//.test(path)) {
-    return path
-  }
-
-  const baseUrl = import.meta.env.BASE_URL
-  const normalizedPath = path.startsWith('/') ? path.slice(1) : path
-  return `${baseUrl}${normalizedPath}`
 }

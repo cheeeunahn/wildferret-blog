@@ -1,0 +1,53 @@
+import { resolveAssetUrl } from './assetUrl'
+
+export function splitContentIntoBlocks(content: string): string[] {
+  const blocks: string[] = []
+  const lines = content.trim().split('\n')
+  let buffer = ''
+  let inCode = false
+
+  for (const line of lines) {
+    if (line.trim().startsWith('~~~')) {
+      if (inCode) {
+        buffer += '\n' + line
+        blocks.push(buffer.trim())
+        buffer = ''
+        inCode = false
+      } else {
+        if (buffer.trim()) {
+          blocks.push(...buffer.trim().split('\n\n').filter(Boolean))
+        }
+        buffer = line
+        inCode = true
+      }
+    } else {
+      buffer += (buffer ? '\n' : '') + line
+    }
+  }
+
+  if (buffer.trim()) {
+    blocks.push(...(inCode ? [buffer.trim()] : buffer.trim().split('\n\n').filter(Boolean)))
+  }
+
+  return blocks
+}
+
+export function formatInline(text: string): string {
+  return escapeHtml(text)
+    .replace(/\[(.+?)\]\((.+?)\)/g, (_, label: string, href: string) => {
+      const safeHref = toSafeHref(href)
+      return `<a href="${safeHref}" class="text-ink-600 underline underline-offset-4 decoration-ink-200 hover:text-ink-900 hover:decoration-ink-400 transition-colors">${label}</a>`
+    })
+    .replace(/`(.+?)`/g, (_, code: string) => `<code class="px-1.5 py-0.5 bg-ink-50 rounded text-[14px] font-mono text-ink-600">${code}</code>`)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+}
+
+function escapeHtml(value: string): string {
+  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')
+}
+
+function toSafeHref(href: string): string {
+  if (href.startsWith('/')) return resolveAssetUrl(href)
+  if (/^https?:\/\//.test(href)) return href
+  return '#'
+}

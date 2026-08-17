@@ -5,10 +5,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run dev       # dev server
-npm run build     # tsc -b + vite build → dist/
-npm run lint      # ESLint
-npm run preview   # serve dist/ locally
+pnpm dev       # dev server
+pnpm build     # tsc -b + vite build → dist/
+pnpm lint      # ESLint
+pnpm test      # unit tests
+pnpm preview   # serve dist/ locally
 ```
 
 No test suite. No single-file build commands.
@@ -17,7 +18,7 @@ No test suite. No single-file build commands.
 
 **Stack:** Vite 8, React 19, TypeScript 5 (strict), Tailwind CSS 4 (`@tailwindcss/vite`), React Router 7
 
-**Deployment:** GitHub Pages at `cheeeunahn.github.io/wildferret-blog`. `vite.config.ts` sets `base: '/wildferret-blog/'`. The `BrowserRouter` uses `import.meta.env.BASE_URL` as its basename. All asset URLs must go through `resolveAssetUrl()` in `ArticlePage.tsx` (not raw `/` paths) — it prepends the base URL for relative paths and passes through absolute `https://` URLs unchanged.
+**Deployment:** GitHub Pages at `cheeeunahn.github.io/wildferret-blog` and a root-path Cloudflare static worker. `vite.config.ts` selects the base path from `BASE_PATH` or the Cloudflare build environment. The `BrowserRouter` uses `import.meta.env.BASE_URL` as its basename. All asset URLs must go through `resolveAssetUrl()` in `src/lib/assetUrl.ts` (not raw `/` paths).
 
 **Routing** (`src/App.tsx`): Three routes under a shared `Layout` — `/` (HomePage), `/article/:slug` (ArticlePage), `/about` (AboutPage).
 
@@ -27,11 +28,11 @@ Articles live entirely in `src/data/`:
 
 - `articleTypes.ts` — `Article` interface (`slug`, `title`, `subtitle`, `date`, `readTime`, `coverImage?`, `content`)
 - `article-content/*.ts` — each article exports its content as a template literal string
-- `articles.ts` — imports content files and assembles the `Article[]` array (newest first)
+- `articles.ts` — declares metadata and lazy-loads article bodies (newest first)
 
-**Adding an article:** create a new file in `src/data/article-content/`, export the content string, import it in `articles.ts`, and prepend a new entry to the array.
+**Adding an article:** create a new file in `src/data/article-content/`, export the content string, add a dynamic `loadContent` import in `articles.ts`, and prepend a new entry to the array.
 
-**Content format** (parsed in `ArticlePage.tsx` by `splitContentIntoBlocks`):
+**Content format** (parsed by `src/lib/articleContent.ts`):
 - Blocks are separated by blank lines (`\n\n`)
 - `## Heading`, `### Heading` — section headings
 - `> text` — blockquote
@@ -43,7 +44,7 @@ Articles live entirely in `src/data/`:
 - `[diagram:id]` — renders a React component from `Diagrams.tsx` (see below)
 - Inline: `**bold**`, `` `code` ``, `[text](url)`
 
-**Cover images** go in `public/`. Reference them in `articles.ts` as `/filename.png` (leading slash, no base prefix — `resolveAssetUrl` handles it at render time).
+**Cover images** go in `public/assets/images/`. Reference them in `articles.ts` with a leading slash and no base prefix — `resolveAssetUrl` handles it at render time.
 
 ## Diagram System
 

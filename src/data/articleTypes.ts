@@ -5,5 +5,5 @@ export interface Article {
   date: string
   readTime: string
   coverImage?: string
-  content: string
+  loadContent: () => Promise<string>
 }

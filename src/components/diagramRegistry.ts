@@ -1,20 +1,17 @@
-import type { FC } from 'react'
-import {
-  FlowComparison,
-  PeersArchitecture,
-  TerminalTeam,
-  TmuxSplit,
-  VocWorkflow,
-} from './Diagrams'
+import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
 
-const diagrams: Record<string, FC> = {
-  'voc-workflow': VocWorkflow,
-  'terminal-team': TerminalTeam,
-  'peers-architecture': PeersArchitecture,
-  'tmux-split': TmuxSplit,
-  comparison: FlowComparison,
+type Diagram = LazyExoticComponent<ComponentType>
+
+// Diagrams are only needed by one long-form article. Keeping the registry here
+// makes their ownership explicit while loading the implementation on demand.
+const diagrams: Record<string, Diagram> = {
+  'voc-workflow': lazy(() => import('./Diagrams').then(({ VocWorkflow }) => ({ default: VocWorkflow }))),
+  'terminal-team': lazy(() => import('./Diagrams').then(({ TerminalTeam }) => ({ default: TerminalTeam }))),
+  'peers-architecture': lazy(() => import('./Diagrams').then(({ PeersArchitecture }) => ({ default: PeersArchitecture }))),
+  'tmux-split': lazy(() => import('./Diagrams').then(({ TmuxSplit }) => ({ default: TmuxSplit }))),
+  comparison: lazy(() => import('./Diagrams').then(({ FlowComparison }) => ({ default: FlowComparison }))),
 }
 
-export function getDiagram(id: string): FC | undefined {
+export function getDiagram(id: string): Diagram | undefined {
   return diagrams[id]
 }

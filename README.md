@@ -34,6 +34,7 @@ pnpm install
 | `pnpm build` | Type-check (`tsc -b`) and production build to `dist/` |
 | `pnpm preview` | Serve the production build locally |
 | `pnpm lint` | ESLint |
+| `pnpm test` | Unit tests for article-content utilities |
 
 There is no test suite.
 
@@ -52,15 +53,18 @@ src/
 ├── components/
 │   ├── Layout.tsx             # Shared shell for all routes
 │   ├── ArticleCard.tsx
-│   └── Diagrams.tsx           # Named diagram components + registry
+│   └── Diagrams.tsx           # Article-specific diagram components
 ├── pages/
 │   ├── HomePage.tsx
 │   ├── ArticlePage.tsx        # Content parser + renderer
 │   └── AboutPage.tsx
+├── lib/
+│   ├── articleContent.ts      # Parser, safe inline formatter
+│   └── assetUrl.ts            # Deployment-safe asset URL resolver
 └── data/
     ├── articleTypes.ts        # `Article` interface
     ├── articles.ts            # Article[] (newest first)
-    └── article-content/       # One file per article body
+    └── article-content/       # One file per lazy-loaded article body
 ```
 
 ## Writing articles
@@ -71,10 +75,10 @@ Articles live entirely in `src/data/`. To add one:
    ```ts
    export const myArticleContent = `...`
    ```
-2. Import it in `src/data/articles.ts`.
+2. Add a `loadContent` dynamic import in `src/data/articles.ts`.
 3. Prepend an entry to the `articles` array with its metadata (`slug`, `title`,
-   `subtitle`, `date`, `readTime`, optional `coverImage`) and
-   `content: myArticleContent`.
+   `subtitle`, `date`, `readTime`, optional `coverImage`) and the loader. This
+   keeps article bodies out of the initial homepage bundle.
 
 ### Content format
 
@@ -92,13 +96,13 @@ Blocks are separated by blank lines. Supported syntax:
 | `[diagram:id]` | Embedded React diagram |
 | `**bold**`, `` `code` ``, `[text](url)` | Inline formatting |
 
-Parsing lives in `splitContentIntoBlocks` in `src/pages/ArticlePage.tsx`.
+Parsing and safe inline formatting live in `src/lib/articleContent.ts`.
 
 ### Images
 
 Put images in `public/assets/images/` and reference them in `articles.ts` with a
 leading slash and no base prefix (e.g. `/assets/images/my-cover.png`). Every
-asset URL is resolved at render time by `resolveAssetUrl()` in `ArticlePage.tsx`,
+asset URL is resolved at render time by `resolveAssetUrl()` in `src/lib/assetUrl.ts`,
 which prepends the base path for relative URLs and passes absolute `https://`
 URLs through unchanged. Standalone HTML pages belong under
 `public/presentations/<slug>/index.html` and are linked using that directory
@@ -142,6 +146,11 @@ with `BASE_PATH=/wildferret-blog/ pnpm build` and upload `dist/` yourself.
 Worker (no server entrypoint) that uploads `./dist` with
 `not_found_handling: "single-page-application"` so React Router handles
 `/article/:slug`.
+
+## Tests
+
+`pnpm test` covers block splitting (including fenced code) and the safe inline
+formatter. Add cases here when extending the supported article syntax.
 
 ## Automation
 

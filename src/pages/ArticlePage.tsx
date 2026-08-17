@@ -1,10 +1,31 @@
+import { Suspense, useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { articles } from '../data/articles'
 import { getDiagram } from '../components/diagramRegistry'
+import { formatInline, splitContentIntoBlocks } from '../lib/articleContent'
+import { resolveAssetUrl } from '../lib/assetUrl'
 
 export default function ArticlePage() {
   const { slug } = useParams()
   const article = articles.find((a) => a.slug === slug)
+  const [loadedContent, setLoadedContent] = useState<{ slug: string; value: string } | null>(null)
+  const [failedSlug, setFailedSlug] = useState<string | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+
+    if (!article) return
+
+    article.loadContent()
+      .then((loadedContent) => {
+        if (!cancelled) setLoadedContent({ slug: article.slug, value: loadedContent })
+      })
+      .catch(() => {
+        if (!cancelled) setFailedSlug(article.slug)
+      })
+
+    return () => { cancelled = true }
+  }, [article])
 
   if (!article) {
     return (
@@ -19,7 +40,9 @@ export default function ArticlePage() {
     )
   }
 
-  const blocks = splitContentIntoBlocks(article.content)
+  const content = loadedContent?.slug === article.slug ? loadedContent.value : null
+  const contentError = failedSlug === article.slug
+  const blocks = content ? splitContentIntoBlocks(content) : []
 
   return (
     <div className="page-enter">
@@ -59,7 +82,9 @@ export default function ArticlePage() {
       <hr className="ink-divider max-w-[720px] mx-auto" />
 
       {/* Article Body */}
-      <article className="max-w-[640px] mx-auto px-6 py-12 prose-blog">
+      <article className="max-w-[720px] mx-auto px-6 py-12 prose-blog">
+        {contentError && <p>글을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.</p>}
+        {!content && !contentError && <p aria-live="polite">글을 불러오는 중입니다.</p>}
         {blocks.map((block, i) => {
           const trimmed = block.trim()
 
@@ -73,7 +98,9 @@ export default function ArticlePage() {
             if (DiagramComponent) {
               return (
                 <div key={i} className="animate-reveal" style={{ animationDelay: `${i * 0.05}s` }}>
-                  <DiagramComponent />
+                  <Suspense fallback={<div className="my-10 min-h-32 rounded-xl border border-ink-100 bg-paper-warm/30" />}>
+                    <DiagramComponent />
+                  </Suspense>
                 </div>
               )
             }
@@ -201,7 +228,7 @@ export default function ArticlePage() {
       </article>
 
       {/* Back link */}
-      <div className="max-w-[640px] mx-auto px-6 pb-20">
+      <div className="max-w-[720px] mx-auto px-6 pb-20">
         <hr className="ink-divider mb-10" />
         <Link
           to="/"
@@ -225,63 +252,4 @@ export default function ArticlePage() {
       </div>
     </div>
   )
-}
-
-function escapeHtml(str: string): string {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-}
-
-function formatInline(text: string): string {
-  return text
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\[(.+?)\]\((.+?)\)/g, (_, label, href) =>
-      `<a href="${href.startsWith('/') ? resolveAssetUrl(href) : href}" class="text-ink-600 underline underline-offset-4 decoration-ink-200 hover:text-ink-900 hover:decoration-ink-400 transition-colors">${label}</a>`,
-    )
-    .replace(/`(.+?)`/g, (_, code) => `<code class="px-1.5 py-0.5 bg-ink-50 rounded text-[14px] font-mono text-ink-600">${escapeHtml(code)}</code>`)
-}
-
-function resolveAssetUrl(path: string): string {
-  if (/^https?:\/\//.test(path)) {
-    return path
-  }
-
-  const baseUrl = import.meta.env.BASE_URL
-  const normalizedPath = path.startsWith('/') ? path.slice(1) : path
-  return `${baseUrl}${normalizedPath}`
-}
-
-function splitContentIntoBlocks(content: string): string[] {
-  const blocks: string[] = []
-  const lines = content.trim().split('\n')
-  let buffer = ''
-  let inCode = false
-
-  for (const line of lines) {
-    if (line.trim().startsWith('~~~')) {
-      if (inCode) {
-        buffer += '\n' + line
-        blocks.push(buffer.trim())
-        buffer = ''
-        inCode = false
-      } else {
-        if (buffer.trim()) {
-          buffer.trim().split('\n\n').filter((b) => b.trim()).forEach((b) => blocks.push(b))
-        }
-        buffer = line
-        inCode = true
-      }
-    } else {
-      buffer += (buffer ? '\n' : '') + line
-    }
-  }
-
-  if (buffer.trim()) {
-    if (inCode) {
-      blocks.push(buffer.trim())
-    } else {
-      buffer.trim().split('\n\n').filter((b) => b.trim()).forEach((b) => blocks.push(b))
-    }
-  }
-
-  return blocks
 }
