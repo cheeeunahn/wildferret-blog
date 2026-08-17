@@ -1,0 +1,145 @@
+---
+import Base from '../layouts/Base.astro'
+import { resolveAssetUrl } from '../lib/assetUrl'
+
+const profileImageUrl = resolveAssetUrl('/assets/images/profile-ferret-desk.png')
+
+const interests = [
+  'Product Management',
+  'UX Research',
+  'Data & AI',
+  'AI Agent Tooling',
+]
+
+const career = [
+  { period: '2024 — 현재', role: 'UX Researcher → Product Manager', org: '삼쩜삼 (자비스앤빌런즈)' },
+  { period: '2022 — 2024', role: 'UX Researcher', org: '오늘의집 (버킷플레이스)' },
+  { period: '2022', role: 'UX Researcher', org: 'Asleep' },
+  { period: '2014 — 2022', role: '산업디자인 학·석사 (HCI)', org: 'KAIST' },
+]
+
+const skills = [
+  { label: '유저 리서치', items: '사용자 인터뷰 · 설문 설계 · 사용성 테스트 · 리서치 시스템 구축' },
+  { label: '데이터 분석', items: 'Databricks SQL · Amplitude · A/B 테스트 · 이벤트 로그 설계' },
+  { label: '빌드', items: 'TypeScript · React · Claude Code (MCP · 에이전트 워크플로우)' },
+  { label: '자격증', items: '빅데이터분석기사 · ADsP · SQLD · 세무회계 3급' },
+]
+---
+
+<Base
+  title="소개 — wildferret의 블로그"
+  description="사람을 깊이 이해하고, 조용하지만 분명한 차이를 만드는 제품을 만듭니다."
+>
+  <div class="page-enter">
+    <section class="max-w-[640px] mx-auto px-6 pt-16 sm:pt-24 pb-20">
+      {/* Profile */}
+      <div class="animate-reveal mb-12">
+        <div
+          class="w-20 h-20 rounded-full border border-ink-200 overflow-hidden mb-6"
+        >
+          <img
+            src={profileImageUrl}
+            alt="wildferret 프로필 이미지"
+            class="w-full h-full object-cover"
+            loading="eager"
+          />
+        </div>
+        <h1
+          class="text-2xl sm:text-3xl font-bold text-ink-950 tracking-tight mb-3"
+        >
+          안녕하세요, wildferret입니다
+        </h1>
+        <p class="text-ink-600 text-[15px] leading-relaxed">
+          사람을 깊이 이해하고, 조용하지만 분명한 차이를 만드는 제품을 만듭니다.
+        </p>
+      </div>
+
+      {/* Bio */}
+      <div class="prose-blog animate-reveal delay-1">
+        <p>삼쩜삼(자비스앤빌런즈)에서 Product Manager로 일합니다.</p>
+        <p>
+          사용자의 목소리와 데이터로 복잡한 문제를 구조화하고, 일회성 산출물보다
+          계속 굴러가는 시스템으로 만드는 쪽을 좋아합니다. 여기에는 제품과 사용자,
+          그리고 만드는 과정에서 느낀 점과 배운 것들을 기록합니다.
+        </p>
+      </div>
+
+      <hr class="ink-divider my-12" />
+
+      {/* Interests */}
+      <div class="animate-reveal delay-2">
+        <h2
+          class="text-sm font-medium text-ink-600 uppercase tracking-widest mb-6"
+        >
+          관심사
+        </h2>
+        <div class="flex flex-wrap gap-2">
+          {
+            interests.map((tag) => (
+              <span
+                class="px-3.5 py-1.5 text-xs text-ink-500 border border-ink-200 rounded-full hover:bg-ink-50 transition-colors"
+              >
+                {tag}
+              </span>
+            ))
+          }
+        </div>
+      </div>
+
+      <hr class="ink-divider my-12" />
+
+      {/* Career */}
+      <div class="animate-reveal delay-3">
+        <h2
+          class="text-sm font-medium text-ink-600 uppercase tracking-widest mb-6"
+        >
+          경력
+        </h2>
+        <ul class="space-y-3">
+          {
+            career.map((item) => (
+              <li class="flex flex-col sm:flex-row sm:gap-4 text-[15px]">
+                <span
+                  class="text-ink-600 text-xs sm:text-[13px] sm:w-32 sm:shrink-0 sm:pt-1 tabular-nums"
+                >
+                  {item.period}
+                </span>
+                <span class="text-ink-700">
+                  {item.role}
+                  <span class="text-ink-600">{` · ${item.org}`}</span>
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <hr class="ink-divider my-12" />
+
+      {/* Skills */}
+      <div class="animate-reveal delay-3">
+        <h2
+          class="text-sm font-medium text-ink-600 uppercase tracking-widest mb-6"
+        >
+          스킬
+        </h2>
+        <ul class="space-y-3">
+          {
+            skills.map((group) => (
+              <li class="flex flex-col sm:flex-row sm:gap-4 text-[15px]">
+                <span
+                  class="text-ink-600 text-xs sm:text-[13px] sm:w-32 sm:shrink-0 sm:pt-1"
+                >
+                  {group.label}
+                </span>
+                <span class="text-ink-700">{group.items}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <hr class="ink-divider my-12" />
+    </section>
+  </div>
+</Base>

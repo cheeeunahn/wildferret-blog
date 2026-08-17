@@ -1,0 +1,308 @@
+---
+import type { GetStaticPaths } from 'astro'
+import Base from '../../layouts/Base.astro'
+import { articles } from '../../data/articles'
+import { getDiagram } from '../../components/diagramRegistry'
+import { formatInline, splitContentIntoBlocks } from '../../lib/articleContent'
+import { resolveAssetUrl } from '../../lib/assetUrl'
+import { href } from '../../lib/siteUrl'
+
+export const getStaticPaths = (async () => {
+  return Promise.all(
+    articles.map(async (article) => ({
+      params: { slug: article.slug },
+      // Read the body at build time. loadContent() keeps its interface; it just
+      // runs in Node during the build instead of in the browser after mount.
+      props: { article, content: await article.loadContent() },
+    })),
+  )
+}) satisfies GetStaticPaths
+
+const { article, content } = Astro.props
+const blocks = splitContentIntoBlocks(content)
+
+const langLabels: Record<string, string> = {
+  bash: 'Terminal',
+  json: 'JSON',
+  js: 'JavaScript',
+  ts: 'TypeScript',
+}
+
+const delay = (i: number) => `animation-delay: ${i * 0.05}s`
+---
+
+<Base
+  title={`${article.title} — wildferret의 블로그`}
+  description={article.subtitle}
+>
+  <div class="page-enter">
+    {/* Article Header */}
+    <header class="max-w-[720px] mx-auto px-6 pt-16 sm:pt-24 pb-10">
+      <div class="animate-reveal">
+        <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-5">
+          <span class="text-xs text-ink-500">{article.date}</span>
+          <span class="w-px h-3 bg-ink-200"></span>
+          <span class="text-xs text-ink-500">{article.readTime} 읽기</span>
+        </div>
+
+        <h1
+          class="text-[28px] sm:text-[36px] font-bold text-ink-950 leading-tight tracking-tight mb-3"
+        >
+          {article.title}
+        </h1>
+        <p class="text-ink-600 text-base leading-relaxed">{article.subtitle}</p>
+        {
+          article.coverImage && (
+            <div class="mt-8">
+              <div class="overflow-hidden rounded-2xl border border-ink-100">
+                <img
+                  src={resolveAssetUrl(article.coverImage)}
+                  alt={article.title}
+                  class="w-full h-auto object-cover"
+                  loading="eager"
+                />
+              </div>
+              <p class="mt-3 text-sm text-ink-600 leading-relaxed">
+                해당 이미지는 AI로 제작한, 이해를 돕기 위한 예시 이미지입니다.
+              </p>
+            </div>
+          )
+        }
+      </div>
+    </header>
+
+    <hr class="ink-divider max-w-[720px] mx-auto" />
+
+    {/* Article Body */}
+    <article class="max-w-[720px] mx-auto px-6 py-12 prose-blog">
+      {
+        blocks.map((block, i) => {
+          const trimmed = block.trim()
+
+          if (trimmed === '---') {
+            return <hr class="ink-divider my-10" />
+          }
+
+          const diagramMatch = trimmed.match(/^\[diagram:(.+)\]$/)
+          if (diagramMatch) {
+            const Diagram = getDiagram(diagramMatch[1])
+            // No client:* directive → server-rendered to static HTML, zero JS.
+            if (Diagram) {
+              return (
+                <div class="animate-reveal" style={delay(i)}>
+                  <Diagram />
+                </div>
+              )
+            }
+          }
+
+          if (trimmed.startsWith('~~~')) {
+            const codeLines = trimmed.split('\n')
+            const langMatch = codeLines[0].match(/^~~~(\w+)?$/)
+            const lang = langMatch?.[1] || ''
+            const code = codeLines.slice(1, codeLines.length - 1).join('\n')
+            const label = langLabels[lang] || (lang ? lang : '')
+            return (
+              <div
+                class="my-6 rounded-xl border border-ink-100 overflow-hidden animate-reveal"
+                style={delay(i)}
+              >
+                <div
+                  class="flex items-center gap-1.5 px-4 py-2 border-b border-ink-100 bg-ink-50/60"
+                >
+                  <div
+                    class="w-[7px] h-[7px] rounded-full border border-ink-300/70"
+                  />
+                  <div
+                    class="w-[7px] h-[7px] rounded-full border border-ink-300/70"
+                  />
+                  <div
+                    class="w-[7px] h-[7px] rounded-full border border-ink-300/70"
+                  />
+                  {label && (
+                    <span class="ml-2 text-[11px] text-ink-600">{label}</span>
+                  )}
+                </div>
+                <pre
+                  class="px-4 py-3 bg-paper-warm/40 overflow-x-auto"
+                ><code class="text-[13px] text-ink-600 leading-relaxed whitespace-pre block font-mono">{code}</code></pre>
+              </div>
+            )
+          }
+
+          if (trimmed.startsWith('### ')) {
+            return (
+              <h3
+                class="text-lg font-semibold text-ink-900 mt-8 mb-4 animate-reveal"
+                style={delay(i)}
+              >
+                {trimmed.replace('### ', '')}
+              </h3>
+            )
+          }
+
+          if (trimmed.startsWith('## ')) {
+            return (
+              <h2 class="animate-reveal" style={delay(i)}>
+                {trimmed.replace('## ', '')}
+              </h2>
+            )
+          }
+
+          if (trimmed.startsWith('> ')) {
+            return (
+              <blockquote
+                class="animate-reveal"
+                style={delay(i)}
+                set:html={formatInline(
+                  trimmed.replace('> ', '').replace(/^"/, '').replace(/"$/, ''),
+                )}
+              />
+            )
+          }
+
+          if (trimmed.startsWith('- ')) {
+            const items = trimmed
+              .split('\n')
+              .filter((l) => l.trim().startsWith('- '))
+              .map((l) => l.replace(/^-\s+/, ''))
+            return (
+              <ul
+                class="list-disc pl-5 mb-6 space-y-2 text-ink-700 text-[17px] leading-relaxed animate-reveal"
+                style={delay(i)}
+              >
+                {items.map((item) => (
+                  <li set:html={formatInline(item)} />
+                ))}
+              </ul>
+            )
+          }
+
+          if (trimmed.match(/^\d\.\s/)) {
+            const items = trimmed
+              .split('\n')
+              .map((line) => line.replace(/^\d+\.\s/, ''))
+            return (
+              <ol
+                class="list-decimal pl-5 mb-6 space-y-2 text-ink-700 text-[17px] leading-relaxed animate-reveal"
+                style={delay(i)}
+              >
+                {items.map((item) => (
+                  <li set:html={formatInline(item)} />
+                ))}
+              </ol>
+            )
+          }
+
+          if (
+            trimmed.includes('\n') &&
+            trimmed
+              .split('\n')
+              .every((l) => l.trim().startsWith('|') && l.trim().endsWith('|'))
+          ) {
+            const rows = trimmed.split('\n').map((l) => l.trim())
+            const dataRows = rows.filter((r) => !r.match(/^\|[\s\-:|]+\|$/))
+            const headerCells = dataRows[0]
+              .split('|')
+              .filter((c) => c.trim())
+              .map((c) => c.trim())
+            const bodyRows = dataRows
+              .slice(1)
+              .map((r) =>
+                r
+                  .split('|')
+                  .filter((c) => c.trim() !== '')
+                  .map((c) => c.trim()),
+              )
+            return (
+              <div
+                class="my-6 overflow-x-auto rounded-xl border border-ink-100 animate-reveal"
+                style={delay(i)}
+              >
+                <table class="w-full min-w-[560px] text-[15px]">
+                  <thead>
+                    <tr class="border-b border-ink-100 bg-ink-50/60">
+                      {headerCells.map((cell) => (
+                        <th
+                          class="px-4 py-2.5 text-left text-xs font-semibold text-ink-500 uppercase tracking-wide"
+                        >
+                          {cell}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {bodyRows.map((cells, j) => (
+                      <tr
+                        class={j < bodyRows.length - 1 ? 'border-b border-ink-50' : ''}
+                      >
+                        {cells.map((cell) => (
+                          <td
+                            class="px-4 py-2.5 text-ink-700 leading-relaxed"
+                            set:html={formatInline(cell)}
+                          />
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )
+          }
+
+          const imageMatch = trimmed.match(/^!\[(.*?)\]\((.*?)\)$/)
+          if (imageMatch) {
+            const [, altText, imageSrc] = imageMatch
+            return (
+              <figure class="my-8 animate-reveal" style={delay(i)}>
+                <div class="overflow-hidden rounded-2xl border border-ink-100">
+                  <img
+                    src={resolveAssetUrl(imageSrc)}
+                    alt={altText || article.title}
+                    class="w-full h-auto object-cover"
+                    loading="lazy"
+                  />
+                </div>
+                <figcaption class="mt-3 text-sm text-ink-600 leading-relaxed">
+                  해당 이미지는 AI로 제작한, 이해를 돕기 위한 예시 이미지입니다.
+                </figcaption>
+              </figure>
+            )
+          }
+
+          return (
+            <p
+              class="animate-reveal"
+              style={delay(i)}
+              set:html={formatInline(trimmed)}
+            />
+          )
+        })
+      }
+    </article>
+
+    {/* Back link */}
+    <div class="max-w-[720px] mx-auto px-6 pb-20">
+      <hr class="ink-divider mb-10" />
+      <a
+        href={href('/')}
+        class="inline-flex items-center gap-2 text-sm text-ink-600 no-underline hover:text-ink-700 transition-colors"
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        목록으로 돌아가기
+      </a>
+    </div>
+  </div>
+</Base>

@@ -1,17 +1,27 @@
-import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
-
-type Diagram = LazyExoticComponent<ComponentType>
+import type { ComponentType } from 'react'
+import {
+  VocWorkflow,
+  TerminalTeam,
+  PeersArchitecture,
+  TmuxSplit,
+  FlowComparison,
+} from './Diagrams'
 
 // Diagrams are only needed by one long-form article. Keeping the registry here
-// makes their ownership explicit while loading the implementation on demand.
-const diagrams: Record<string, Diagram> = {
-  'voc-workflow': lazy(() => import('./Diagrams').then(({ VocWorkflow }) => ({ default: VocWorkflow }))),
-  'terminal-team': lazy(() => import('./Diagrams').then(({ TerminalTeam }) => ({ default: TerminalTeam }))),
-  'peers-architecture': lazy(() => import('./Diagrams').then(({ PeersArchitecture }) => ({ default: PeersArchitecture }))),
-  'tmux-split': lazy(() => import('./Diagrams').then(({ TmuxSplit }) => ({ default: TmuxSplit }))),
-  comparison: lazy(() => import('./Diagrams').then(({ FlowComparison }) => ({ default: FlowComparison }))),
+// makes their ownership explicit.
+//
+// They render at build time with no client:* directive, so there is nothing to
+// lazy-load: React.lazy needs a <Suspense> boundary and a client runtime, and
+// these pages ship neither. Adding a hook or an event handler to any diagram
+// breaks that and would require a client:* directive at the call site.
+const diagrams: Record<string, ComponentType> = {
+  'voc-workflow': VocWorkflow,
+  'terminal-team': TerminalTeam,
+  'peers-architecture': PeersArchitecture,
+  'tmux-split': TmuxSplit,
+  comparison: FlowComparison,
 }
 
-export function getDiagram(id: string): Diagram | undefined {
+export function getDiagram(id: string): ComponentType | undefined {
   return diagrams[id]
 }
