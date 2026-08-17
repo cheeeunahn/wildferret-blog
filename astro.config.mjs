@@ -1,5 +1,6 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+// @ts-check
+import { defineConfig } from 'astro/config'
+import react from '@astrojs/react'
 import tailwindcss from '@tailwindcss/vite'
 
 // The site is served from two places with different path prefixes:
@@ -13,5 +14,11 @@ const base =
 
 export default defineConfig({
   base,
-  plugins: [react(), tailwindcss()],
+  outDir: './dist',
+  // One directory per route: dist/about/index.html, dist/article/<slug>/index.html.
+  // Both hosts resolve extensionless paths to the directory index.
+  build: { format: 'directory' },
+  trailingSlash: 'ignore',
+  integrations: [react()],
+  vite: { plugins: [tailwindcss()] },
 })

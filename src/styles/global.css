@@ -207,9 +207,12 @@ html.dark body::before {
 .delay-5 { animation-delay: 0.5s; }
 .delay-6 { animation-delay: 0.6s; }
 
-/* ---- Intro (first paint) ----
-   Layout mounts once per page load and never unmounts on route changes,
-   so these play exactly once — when the blog is first opened. */
+/* ---- Intro (first paint) ---- UNUSED, kept for reference.
+   These were written for the React SPA, where Layout mounted once per page load
+   and never unmounted on route changes, so they played exactly once. Astro does
+   real page navigations, so applying them to the layout chrome would re-run the
+   header slide on every click. Per-page entrance motion is .page-enter plus
+   .animate-reveal on its children instead. */
 
 @keyframes boot-shell {
   from { opacity: 0; }

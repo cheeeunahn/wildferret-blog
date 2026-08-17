@@ -9,14 +9,14 @@ Thanks for stopping by 👋🏻
 
 | Layer | Choice |
 |--------|--------|
-| UI | React 19, TypeScript 5 (strict) |
-| Build | Vite 8 |
+| Framework | Astro 7 (static output) |
+| UI | React 19 islands, TypeScript 5 (strict) |
 | Styling | Tailwind CSS 4 (`@tailwindcss/vite`) |
-| Routing | React Router 7 |
+| Routing | File-based (`src/pages/`) — no client-side router |
 
 ## Prerequisites
 
-- **Node.js 20+**
+- **Node.js 22.12+** — required by Astro 7 (`engines.node: >=22.12.0`).
 - **pnpm 10** — Corepack enables the pinned version automatically with
   `corepack enable`.
 
@@ -30,38 +30,75 @@ pnpm install
 
 | Command | Description |
 |---------|-------------|
-| `pnpm dev` | Dev server (Vite) |
-| `pnpm build` | Type-check (`tsc -b`) and production build to `dist/` |
-| `pnpm preview` | Serve the production build locally |
+| `pnpm dev` | Dev server (`astro dev`) |
+| `pnpm build` | Type-check (`astro check`) and production build to `dist/` |
+| `pnpm preview` | Serve the production build locally, at the configured base path |
 | `pnpm lint` | ESLint |
-
-There is no test suite.
+| `pnpm test` | Unit tests for article-content utilities |
+| `pnpm astro` | The Astro CLI directly |
 
 ## Project layout
 
 ```
 public/
 ├── assets/images/             # Article covers and other site imagery
-├── presentations/             # Standalone HTML presentation pages
-├── 404.html                   # GitHub Pages SPA redirect shim (must stay at root)
 └── favicon.svg                # Site icon (must stay at root)
 src/
-├── App.tsx                    # Routes: / , /article/:slug , /about
-├── main.tsx
-├── index.css                  # Tailwind entry + ink/paper design tokens
+├── layouts/
+│   └── Base.astro             # <head>, header, footer, <slot /> — the shared shell
+├── pages/                     # File-based routes
+│   ├── index.astro            # /
+│   ├── about.astro            # /about
+│   ├── article/[slug].astro   # /article/:slug — getStaticPaths + content renderer
+│   └── 404.astro
 ├── components/
-│   ├── Layout.tsx             # Shared shell for all routes
-│   ├── ArticleCard.tsx
-│   └── Diagrams.tsx           # Named diagram components + registry
-├── pages/
-│   ├── HomePage.tsx
-│   ├── ArticlePage.tsx        # Content parser + renderer
-│   └── AboutPage.tsx
+│   ├── ArticleCard.astro
+│   ├── ThemeToggle.tsx        # The only hydrated island (client:only)
+│   ├── Diagrams.tsx           # Static React diagrams — server-rendered, zero JS
+│   └── diagramRegistry.ts     # id → diagram component map
+├── styles/
+│   └── global.css             # Tailwind entry + ink/paper design tokens
+├── lib/
+│   ├── articleContent.ts      # Parser, safe inline formatter
+│   ├── assetUrl.ts            # Deployment-safe asset URL resolver
+│   └── siteUrl.ts             # href / toAppPath / isActive — base-aware routes
 └── data/
     ├── articleTypes.ts        # `Article` interface
     ├── articles.ts            # Article[] (newest first)
-    └── article-content/       # One file per article body
+    └── article-content/       # One file per article body (+ its own README)
 ```
+
+## Rendering model
+
+Every route is prerendered to a real HTML file at build time, and pages ship no
+JavaScript unless something explicitly asks for it. Two rules keep it that way:
+
+- **`ThemeToggle.tsx` is the only hydrated island.** It is mounted
+  `client:only="react"` because it reads `document.documentElement` in a
+  `useState` initializer, which has no server equivalent. Its fixed-size wrapper
+  in `Base.astro` reserves layout space so the header does not shift on mount.
+- **Diagrams carry no `client:*` directive.** They are React components, but
+  pure static JSX, so Astro server-renders them to HTML. Adding a hook or an
+  event handler to one silently breaks that and would pull a React runtime onto
+  every article page.
+
+Pages, `src/layouts/Base.astro`, and `ArticleCard.astro` are `.astro` files and
+ship zero JavaScript by construction.
+
+## Fonts and theme
+
+Body text is **Nanum Barun Gothic**, declared with `@font-face` in
+`src/styles/global.css` and served from Naver's webfont CDN. It ships only
+UltraLight/Light/Regular/Bold, so the `@theme` stack keeps Pretendard as the
+fallback that renders during the swap; `--font-sketch` (Gaegu) is the accent
+face. Pretendard and Gaegu are loaded via `<link>` in `Base.astro`.
+
+Dark mode is a `.dark` class on `<html>` that reassigns the same ink/paper
+tokens — which is why almost nothing in the codebase needs a `dark:` variant. An
+`is:inline` script in `<head>` resolves the saved or system preference *before*
+first paint, so there is no light flash; `ThemeToggle` only flips the class and
+persists the choice to `localStorage`. Until the reader picks a side themselves,
+the toggle keeps following OS changes live.
 
 ## Writing articles
 
@@ -71,10 +108,12 @@ Articles live entirely in `src/data/`. To add one:
    ```ts
    export const myArticleContent = `...`
    ```
-2. Import it in `src/data/articles.ts`.
+2. Add a `loadContent` dynamic import in `src/data/articles.ts`.
 3. Prepend an entry to the `articles` array with its metadata (`slug`, `title`,
-   `subtitle`, `date`, `readTime`, optional `coverImage`) and
-   `content: myArticleContent`.
+   `subtitle`, `date`, `readTime`, optional `coverImage`) and the loader.
+
+Bodies are read at build time in `getStaticPaths`, so a broken `loadContent`
+fails `pnpm build` instead of degrading in the browser.
 
 ### Content format
 
@@ -86,31 +125,38 @@ Blocks are separated by blank lines. Supported syntax:
 | `> text` | Blockquote |
 | `- item` | Unordered list (consecutive lines in one block) |
 | `1. item` | Ordered list |
+| `\| a \| b \|` | Table (consecutive pipe-delimited lines) |
 | `---` | Horizontal divider |
 | `~~~lang … ~~~` | Fenced code block — use `~~~`, not backticks, to avoid escaping inside template literals |
 | `![alt](path)` | Inline image |
 | `[diagram:id]` | Embedded React diagram |
 | `**bold**`, `` `code` ``, `[text](url)` | Inline formatting |
 
-Parsing lives in `splitContentIntoBlocks` in `src/pages/ArticlePage.tsx`.
+Parsing and safe inline formatting live in `src/lib/articleContent.ts`.
 
 ### Images
 
 Put images in `public/assets/images/` and reference them in `articles.ts` with a
 leading slash and no base prefix (e.g. `/assets/images/my-cover.png`). Every
-asset URL is resolved at render time by `resolveAssetUrl()` in `ArticlePage.tsx`,
+asset URL is resolved at render time by `resolveAssetUrl()` in `src/lib/assetUrl.ts`,
 which prepends the base path for relative URLs and passes absolute `https://`
-URLs through unchanged. Standalone HTML pages belong under
-`public/presentations/<slug>/index.html` and are linked using that directory
-URL (for example, `/presentations/ai-git-101/`).
-Never hardcode a `/wildferret-blog/` prefix.
+URLs through unchanged.
+
+Internal *route* links are a separate concern: Astro does not prefix `<a href>`
+with the base path, so use `href()` from `src/lib/siteUrl.ts` (and `isActive()`
+for nav highlighting). Never write a bare `href="/about"`, and never hardcode a
+`/wildferret-blog/` prefix.
 
 ### Diagrams
 
-`src/components/Diagrams.tsx` holds named React diagram components registered in
-a `diagrams` map. Reference one from article content with `[diagram:id]`. To add
-a new one, write the component, register it in the `diagrams` record at the
-bottom of the file, then use `[diagram:your-id]`.
+`src/components/Diagrams.tsx` holds named React diagram components, mapped by id
+in `src/components/diagramRegistry.ts`. Reference one from article content with
+`[diagram:id]`. To add a new one, write the component, register it in the
+`diagrams` record, then use `[diagram:your-id]`.
+
+They render with no `client:*` directive, so Astro turns them into static HTML
+and ships no JavaScript for them. Adding a hook or an event handler to a diagram
+breaks that and would require hydrating it.
 
 Current diagrams: `voc-workflow`, `terminal-team`, `peers-architecture`,
 `tmux-split`, `comparison`.
@@ -124,24 +170,32 @@ palette colors or arbitrary hex values.
 ## Deployment
 
 The site is served from two places with different path prefixes, so
-[`vite.config.ts`](vite.config.ts) picks `base` from the environment:
+[`astro.config.mjs`](astro.config.mjs) picks `base` from the environment:
 
 | Target | Base path | How it's set |
 |--------|-----------|--------------|
 | GitHub Pages | `/wildferret-blog/` | `BASE_PATH` env var (also the local default) |
 | Cloudflare Worker | `/` | `WORKERS_CI` / `CF_PAGES` set by Cloudflare's build env |
 
-`BASE_PATH` overrides both when set explicitly. `BrowserRouter` uses
-`import.meta.env.BASE_URL` as its basename.
+`BASE_PATH` overrides both when set explicitly. Everything base-aware reads
+`import.meta.env.BASE_URL`, via `resolveAssetUrl()` for assets and `href()` for
+internal links.
 
-**GitHub Pages** — no longer deployed automatically. To publish there, build
-with `BASE_PATH=/wildferret-blog/ pnpm build` and upload `dist/` yourself.
-`public/404.html` is the SPA redirect shim Pages needs for deep links.
+Astro prerenders one HTML file per route (`dist/about/index.html`,
+`dist/article/<slug>/index.html`, …), so deep links resolve directly on both
+hosts and there is no SPA redirect shim to maintain.
+
+**GitHub Pages** — not deployed automatically. To publish there, build with
+`BASE_PATH=/wildferret-blog/ pnpm build` and upload `dist/` yourself.
 
 **Cloudflare** — [`wrangler.jsonc`](wrangler.jsonc) configures a static-assets-only
 Worker (no server entrypoint) that uploads `./dist` with
-`not_found_handling: "single-page-application"` so React Router handles
-`/article/:slug`.
+`not_found_handling: "404-page"`, served by the prerendered `dist/404.html`.
+
+## Tests
+
+`pnpm test` covers block splitting (including fenced code) and the safe inline
+formatter. Add cases here when extending the supported article syntax.
 
 ## Automation
 

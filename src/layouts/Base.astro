@@ -1,0 +1,110 @@
+---
+import '../styles/global.css'
+import ThemeToggle from '../components/ThemeToggle'
+import { href, isActive } from '../lib/siteUrl'
+import { resolveAssetUrl } from '../lib/assetUrl'
+
+interface Props {
+  title?: string
+  description?: string
+}
+
+const { title = 'wildferret의 블로그', description } = Astro.props
+const pathname = Astro.url.pathname
+const year = new Date().getFullYear()
+
+const navLinkClass = (path: string) =>
+  `text-sm no-underline transition-colors ${
+    isActive(pathname, path) ? 'text-ink-900 font-medium' : 'text-ink-600 hover:text-ink-700'
+  }`
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href={resolveAssetUrl('/favicon.svg')} />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+
+    <!-- Resolve the theme before first paint so there is no light flash.
+         is:inline keeps Astro from bundling and deferring this. -->
+    <script is:inline>
+      ;(function () {
+        try {
+          var saved = localStorage.getItem('theme')
+          var dark = saved
+            ? saved === 'dark'
+            : window.matchMedia('(prefers-color-scheme: dark)').matches
+          if (dark) document.documentElement.classList.add('dark')
+          document.documentElement.style.colorScheme = dark ? 'dark' : 'light'
+        } catch (e) {}
+      })()
+    </script>
+
+    <link rel="preconnect" href="https://hangeul.pstatic.net" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Gaegu:wght@300;400;700&display=swap"
+    />
+  </head>
+  <body>
+    {/* boot-shell / boot-header are deliberately not applied: they were
+        once-per-SPA-boot animations and would replay on every real navigation.
+        Per-page entrance motion lives on each page's .page-enter wrapper. */}
+    <div class="min-h-screen flex flex-col">
+      <header
+        class="sticky top-0 z-50 bg-paper/80 backdrop-blur-md border-b border-ink-100"
+      >
+        <nav
+          class="max-w-[720px] mx-auto px-6 h-16 flex items-center justify-between"
+        >
+          <a
+            href={href('/')}
+            class="text-ink-900 text-lg font-semibold tracking-tight no-underline hover:opacity-70 transition-opacity"
+            >wildferret's blog</a
+          >
+          <div class="flex items-center gap-6">
+            <a href={href('/')} class={navLinkClass('/')}>글</a>
+            <a href={href('/about')} class={navLinkClass('/about')}>소개</a>
+            <!-- client:only — ThemeToggle reads document.documentElement in a
+                 useState initializer, which has no server equivalent. The fixed
+                 30px box (p-1.5 + 18px svg) reserves its space so the header
+                 does not shift when the island mounts. -->
+            <span
+              class="inline-flex w-[30px] h-[30px] items-center justify-center -mr-1.5"
+            >
+              <ThemeToggle client:only="react" />
+            </span>
+          </div>
+        </nav>
+      </header>
+
+      <main class="flex-1">
+        <slot />
+      </main>
+
+      <footer class="border-t border-ink-100 bg-paper-warm">
+        <div
+          class="max-w-[720px] mx-auto px-6 py-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+        >
+          <div>
+            <p class="text-ink-900 font-semibold text-sm">wildferret</p>
+            <p class="text-ink-600 text-xs mt-1">Product Manager</p>
+          </div>
+          <p class="text-ink-500 text-xs">
+            &copy; {year} wildferret. All rights reserved.
+          </p>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

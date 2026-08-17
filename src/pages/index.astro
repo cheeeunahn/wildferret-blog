@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro'
+import ArticleCard from '../components/ArticleCard.astro'
+import { articles } from '../data/articles'
+import { resolveAssetUrl } from '../lib/assetUrl'
+---
+
+<Base>
+  <div class="page-enter">
+    {/* Hero */}
+    <section class="max-w-[720px] mx-auto px-6 pt-10 sm:pt-14 pb-12">
+      <div>
+        <p class="text-sm text-ink-600 mb-4 animate-reveal delay-1">
+          Personal Blog
+        </p>
+        <h1
+          class="text-3xl sm:text-[40px] font-bold text-ink-950 leading-tight tracking-tight animate-reveal-soft delay-2"
+        >
+          프로덕트와 일상에서
+          <br />
+          발견한 것들.
+        </h1>
+        <div
+          class="mt-8 overflow-hidden rounded-2xl border border-ink-100 bg-paper-warm/30 animate-reveal-media delay-3"
+        >
+          <img
+            src={resolveAssetUrl('/assets/images/wildferret-hero-coding.jpg')}
+            alt="안경을 쓴 페럿이 책상에서 노트북으로 코드를 작성하는 일러스트"
+            class="w-full h-auto object-cover"
+            loading="eager"
+          />
+        </div>
+      </div>
+    </section>
+
+    <hr class="ink-divider max-w-[720px] mx-auto" />
+
+    {/* Article List */}
+    <section class="max-w-[720px] mx-auto px-6 pb-20">
+      {articles.map((article, i) => <ArticleCard article={article} index={i} />)}
+    </section>
+  </div>
+</Base>

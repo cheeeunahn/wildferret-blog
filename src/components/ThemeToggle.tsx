@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react'
 
 type Theme = 'light' | 'dark'
 
-// The inline script in index.html already resolved the theme before paint,
-// so the DOM is the source of truth on mount.
+// The is:inline script in src/layouts/Base.astro already resolved the theme
+// before paint, so the DOM is the source of truth on mount. Reading `document`
+// during render is why this island is mounted with client:only rather than
+// server-rendered.
 function readTheme(): Theme {
   return document.documentElement.classList.contains('dark') ? 'dark' : 'light'
 }
