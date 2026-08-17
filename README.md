@@ -16,7 +16,7 @@ Thanks for stopping by 👋🏻
 
 ## Prerequisites
 
-- **Node.js 20+**
+- **Node.js 22.12+** — required by Astro 7 (`engines.node: >=22.12.0`).
 - **pnpm 10** — Corepack enables the pinned version automatically with
   `corepack enable`.
 
@@ -61,12 +61,44 @@ src/
 ├── lib/
 │   ├── articleContent.ts      # Parser, safe inline formatter
 │   ├── assetUrl.ts            # Deployment-safe asset URL resolver
-│   └── siteUrl.ts             # Base-aware internal links + nav active state
+│   └── siteUrl.ts             # href / toAppPath / isActive — base-aware routes
 └── data/
     ├── articleTypes.ts        # `Article` interface
     ├── articles.ts            # Article[] (newest first)
-    └── article-content/       # One file per article body
+    └── article-content/       # One file per article body (+ its own README)
 ```
+
+## Rendering model
+
+Every route is prerendered to a real HTML file at build time, and pages ship no
+JavaScript unless something explicitly asks for it. Two rules keep it that way:
+
+- **`ThemeToggle.tsx` is the only hydrated island.** It is mounted
+  `client:only="react"` because it reads `document.documentElement` in a
+  `useState` initializer, which has no server equivalent. Its fixed-size wrapper
+  in `Base.astro` reserves layout space so the header does not shift on mount.
+- **Diagrams carry no `client:*` directive.** They are React components, but
+  pure static JSX, so Astro server-renders them to HTML. Adding a hook or an
+  event handler to one silently breaks that and would pull a React runtime onto
+  every article page.
+
+Pages, `src/layouts/Base.astro`, and `ArticleCard.astro` are `.astro` files and
+ship zero JavaScript by construction.
+
+## Fonts and theme
+
+Body text is **Nanum Barun Gothic**, declared with `@font-face` in
+`src/styles/global.css` and served from Naver's webfont CDN. It ships only
+UltraLight/Light/Regular/Bold, so the `@theme` stack keeps Pretendard as the
+fallback that renders during the swap; `--font-sketch` (Gaegu) is the accent
+face. Pretendard and Gaegu are loaded via `<link>` in `Base.astro`.
+
+Dark mode is a `.dark` class on `<html>` that reassigns the same ink/paper
+tokens — which is why almost nothing in the codebase needs a `dark:` variant. An
+`is:inline` script in `<head>` resolves the saved or system preference *before*
+first paint, so there is no light flash; `ThemeToggle` only flips the class and
+persists the choice to `localStorage`. Until the reader picks a side themselves,
+the toggle keeps following OS changes live.
 
 ## Writing articles
 

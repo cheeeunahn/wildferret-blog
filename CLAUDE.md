@@ -15,6 +15,8 @@ pnpm astro     # the Astro CLI directly
 
 One test file: `src/lib/articleContent.test.ts`, run by vitest via `vitest.config.ts`. No single-file build commands.
 
+Astro 7 requires **Node 22.12+**; pnpm 10 is pinned via `packageManager`.
+
 ## Architecture
 
 **Stack:** Astro 7 (static output), React 19 islands, TypeScript 5 (strict), Tailwind CSS 4 (`@tailwindcss/vite`)
@@ -45,7 +47,10 @@ Astro does **not** prefix `<a href>` with the configured `base`, and there is no
 
 - Internal route hrefs → `href()` from `src/lib/siteUrl.ts`
 - Nav active state → `isActive(Astro.url.pathname, '/about')` from the same module; it strips the base prefix, which a bare `Astro.url.pathname === '/about'` comparison would not
+- Base-prefixed pathname → app path (`'/'`-rooted, no trailing slash) → `toAppPath()`, the normalizer `isActive` is built on
 - Images and in-content links → `resolveAssetUrl()` from `src/lib/assetUrl.ts`
+
+`href()` passes protocol-relative, `https:`, `mailto:`, and `tel:` URLs through untouched; `resolveAssetUrl()` passes `http(s)://` through.
 
 Never write a bare `href="/about"`, and never hardcode a `/wildferret-blog/` prefix.
 
