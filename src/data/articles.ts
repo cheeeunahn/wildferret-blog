@@ -3,6 +3,14 @@ import type { Article } from './articleTypes'
 
 export const articles: Article[] = [
   {
+    slug: 'mgs-2026-play-hall',
+    title: 'MGS 2026에서 들은 5가지 세션 요약',
+    subtitle: '구독 결제, AI 인용, 게임 UA, 크립토 광고, 그리고 워크플로우',
+    date: '2026.08.18',
+    readTime: '24분',
+    loadContent: () => import('./article-content/mgs-2026-play-hall').then(({ mgs2026PlayHallContent }) => mgs2026PlayHallContent),
+  },
+  {
     slug: 'wiki-as-graph',
     title: '위키를 문서 말고 그래프로 짠다면',
     subtitle: 'RAG와 지식 그래프를 들여다보며 배운 것들',
