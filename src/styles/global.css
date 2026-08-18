@@ -166,6 +166,19 @@ html.dark body::before {
   overflow-wrap: break-word;
 }
 
+/* Korean wraps on word boundaries, not mid-word — the same rule <p> already had.
+   Code blocks are excluded: their ASCII diagrams rely on literal line breaks. */
+.prose-blog li,
+.prose-blog blockquote,
+.prose-blog h2,
+.prose-blog h3,
+.prose-blog td,
+.prose-blog th,
+.prose-blog figcaption {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
 .prose-blog blockquote {
   border-left: 2px solid var(--color-ink-200);
   padding-left: 1.25rem;

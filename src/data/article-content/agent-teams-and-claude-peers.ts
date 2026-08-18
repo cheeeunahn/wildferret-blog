@@ -1,4 +1,11 @@
-export const agentTeamsAndClaudePeersContent = `
+export const agentTeamsAndClaudePeersContent = `## 핵심 요약
+
+- 에이전트 팀은 한 프로젝트 안에서 여러 AI가 역할을 나눠 동시에 일하는 구조다. VOC 분석은 분석가 둘이 서로 모르는 상태로 각각 보고 서로 반론하게 했더니, 반나절 걸리던 게 몇 분으로 줄었다.
+- Claude Peers는 프로젝트 경계 밖이다. 서로 다른 폴더에서 돌아가는 Claude들이 서로를 발견하고 메시지를 주고받는다. 이 글 초안도 다른 Claude에게 리뷰를 받았다.
+- 설치 문턱은 낮다. 에이전트 팀은 설정 파일에 환경 변수 한 줄, Peers는 5분짜리 설치로 끝난다. tmux와 iTerm2는 있으면 편하지만 필수는 아니다.
+
+---
+
 [이전 글](/article/pm-ai-week)에서, AI 덕분에 일이 빨라졌다기보다 원래 못 하던 일을 하게 됐다는 이야기를 썼다. 그 연장선에서 최근 써본 두 가지를 적는다. AI 에이전트 팀(Agent Teams)과 Claude Peers다.
 
 둘 다 에이전트를 여러 개 동시에 굴리는 방법이고, 하나는 한 프로젝트 안에서, 다른 하나는 프로젝트 사이에서 그렇게 한다. 읽고 그대로 따라 할 수 있게 설치 과정까지 같이 적었다.

@@ -19,7 +19,30 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths
 
 const { article, content } = Astro.props
-const blocks = splitContentIntoBlocks(content)
+const allBlocks = splitContentIntoBlocks(content)
+
+// A leading summary heading plus its bullet list renders as a card at the top of
+// the body instead of a plain heading + list. The heading text becomes the card
+// label, so renaming it in the content (TL;DR → 핵심 요약) keeps working. The
+// divider that follows it in the source is dropped — the card's border separates it.
+const summaryHeading = allBlocks[0]?.trim().match(/^##\s+(.+)$/)?.[1]?.trim()
+const isSummaryLabel = (label?: string) =>
+  !!label && (/^tl[;,.]?\s?dr$/i.test(label) || label.includes('요약'))
+
+const hasSummary =
+  isSummaryLabel(summaryHeading) && !!allBlocks[1]?.trim().startsWith('- ')
+
+const summaryLabel = hasSummary ? summaryHeading! : ''
+const summaryItems = hasSummary
+  ? allBlocks[1]
+      .trim()
+      .split('\n')
+      .filter((l) => l.trim().startsWith('- '))
+      .map((l) => l.replace(/^-\s+/, ''))
+  : []
+
+let blocks = hasSummary ? allBlocks.slice(2) : allBlocks
+if (hasSummary && blocks[0]?.trim() === '---') blocks = blocks.slice(1)
 
 const langLabels: Record<string, string> = {
   bash: 'Terminal',
@@ -75,6 +98,29 @@ const delay = (i: number) => `animation-delay: ${i * 0.05}s`
 
     {/* Article Body */}
     <article class="max-w-[720px] mx-auto px-6 py-12 prose-blog">
+      {
+        summaryItems.length > 0 && (
+          <aside
+            class="mb-10 rounded-xl border border-ink-100 overflow-hidden animate-reveal"
+            aria-label={summaryLabel}
+          >
+            <div
+              class="px-4 py-2 border-b border-ink-100 bg-ink-50/60 text-[13px] text-ink-600"
+            >
+              {summaryLabel}
+            </div>
+            <div class="px-5 py-4">
+              <ul
+                class="list-disc pl-5 space-y-2.5 marker:text-ink-300 text-ink-700 text-[15px] leading-relaxed"
+              >
+                {summaryItems.map((item) => (
+                  <li set:html={formatInline(item)} />
+                ))}
+              </ul>
+            </div>
+          </aside>
+        )
+      }
       {
         blocks.map((block, i) => {
           const trimmed = block.trim()
@@ -250,9 +296,13 @@ const delay = (i: number) => `animation-delay: ${i * 0.05}s`
             )
           }
 
-          const imageMatch = trimmed.match(/^!\[(.*?)\]\((.*?)\)$/)
+          // ![alt](src) or ![alt](src "caption") — without a caption the image
+          // is assumed to be an AI-made illustration and gets that disclaimer.
+          const imageMatch = trimmed.match(
+            /^!\[(.*?)\]\(([^\s)]+)(?:\s+"([\s\S]+)")?\)$/,
+          )
           if (imageMatch) {
-            const [, altText, imageSrc] = imageMatch
+            const [, altText, imageSrc, caption] = imageMatch
             return (
               <figure class="my-8 animate-reveal" style={delay(i)}>
                 <div class="overflow-hidden rounded-2xl border border-ink-100">
@@ -263,9 +313,16 @@ const delay = (i: number) => `animation-delay: ${i * 0.05}s`
                     loading="lazy"
                   />
                 </div>
-                <figcaption class="mt-3 text-sm text-ink-600 leading-relaxed">
-                  해당 이미지는 AI로 제작한, 이해를 돕기 위한 예시 이미지입니다.
-                </figcaption>
+                {caption ? (
+                  <figcaption
+                    class="mt-3 text-sm text-ink-600 leading-relaxed"
+                    set:html={formatInline(caption)}
+                  />
+                ) : (
+                  <figcaption class="mt-3 text-sm text-ink-600 leading-relaxed">
+                    해당 이미지는 AI로 제작한, 이해를 돕기 위한 예시 이미지입니다.
+                  </figcaption>
+                )}
               </figure>
             )
           }
