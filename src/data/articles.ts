@@ -2,7 +2,7 @@ export type { Article } from './articleTypes'
 import type { Article } from './articleTypes'
 
 export const articles: Article[] = [
-  {
+  /*{
     slug: 'mgs-2026-play-hall',
     title: 'MGS 2026에서 들은 5가지 세션 요약',
     subtitle: '구독 결제, AI 인용, 게임 UA, 크립토 광고, 그리고 워크플로우',
@@ -10,6 +10,7 @@ export const articles: Article[] = [
     readTime: '24분',
     loadContent: () => import('./article-content/mgs-2026-play-hall').then(({ mgs2026PlayHallContent }) => mgs2026PlayHallContent),
   },
+  */
   {
     slug: 'wiki-as-graph',
     title: '위키를 문서 말고 그래프로 짠다면',
@@ -20,7 +21,7 @@ export const articles: Article[] = [
   },
   {
     slug: 'research-wiki-for-llm',
-    title: '리서치를 LLM이 읽을 수 있게 바꿨다',
+    title: 'LLM 친화적인 유저 리서치 위키 만들기',
     subtitle: '사람은 읽고 에이전트가 쓰는 위키를 만든 기록',
     date: '2026.08.13',
     readTime: '5분',
@@ -42,7 +43,7 @@ export const articles: Article[] = [
     readTime: '7분',
     loadContent: () => import('./article-content/ai-git-101-for-designers').then(({ aiGit101ForDesignersContent }) => aiGit101ForDesignersContent),
   },
-  {
+  /*{
     slug: 'weekly-diary-0409',
     title: '이번 주, Claude와 한 일들',
     subtitle: 'GTM 세팅부터 데스크탑 펫까지',
@@ -57,7 +58,7 @@ export const articles: Article[] = [
     date: '2026.03.29',
     readTime: '18분',
     loadContent: () => import('./article-content/agent-teams-and-claude-peers').then(({ agentTeamsAndClaudePeersContent }) => agentTeamsAndClaudePeersContent),
-  },
+  },*/
   {
     slug: 'pm-ai-week',
     title: '빨라진 게 아니라, 가능해진 것들',

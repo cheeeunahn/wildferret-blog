@@ -3,7 +3,11 @@ import type { GetStaticPaths } from 'astro'
 import Base from '../../layouts/Base.astro'
 import { articles } from '../../data/articles'
 import { getDiagram } from '../../components/diagramRegistry'
-import { formatInline, splitContentIntoBlocks } from '../../lib/articleContent'
+import {
+  formatInline,
+  parseImageLine,
+  splitContentIntoBlocks,
+} from '../../lib/articleContent'
 import { resolveAssetUrl } from '../../lib/assetUrl'
 import { href } from '../../lib/siteUrl'
 
@@ -19,7 +23,30 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths
 
 const { article, content } = Astro.props
-const blocks = splitContentIntoBlocks(content)
+const allBlocks = splitContentIntoBlocks(content)
+
+// A leading summary heading plus its bullet list renders as a card at the top of
+// the body instead of a plain heading + list. The heading text becomes the card
+// label, so renaming it in the content (TL;DR → 핵심 요약) keeps working. The
+// divider that follows it in the source is dropped — the card's border separates it.
+const summaryHeading = allBlocks[0]?.trim().match(/^##\s+(.+)$/)?.[1]?.trim()
+const isSummaryLabel = (label?: string) =>
+  !!label && (/^tl[;,.]?\s?dr$/i.test(label) || label.includes('요약'))
+
+const hasSummary =
+  isSummaryLabel(summaryHeading) && !!allBlocks[1]?.trim().startsWith('- ')
+
+const summaryLabel = hasSummary ? summaryHeading! : ''
+const summaryItems = hasSummary
+  ? allBlocks[1]
+      .trim()
+      .split('\n')
+      .filter((l) => l.trim().startsWith('- '))
+      .map((l) => l.replace(/^-\s+/, ''))
+  : []
+
+let blocks = hasSummary ? allBlocks.slice(2) : allBlocks
+if (hasSummary && blocks[0]?.trim() === '---') blocks = blocks.slice(1)
 
 const langLabels: Record<string, string> = {
   bash: 'Terminal',
@@ -29,6 +56,7 @@ const langLabels: Record<string, string> = {
 }
 
 const delay = (i: number) => `animation-delay: ${i * 0.05}s`
+const MAX_CAROUSEL_SLIDES = 6
 ---
 
 <Base
@@ -75,6 +103,29 @@ const delay = (i: number) => `animation-delay: ${i * 0.05}s`
 
     {/* Article Body */}
     <article class="max-w-[720px] mx-auto px-6 py-12 prose-blog">
+      {
+        summaryItems.length > 0 && (
+          <aside
+            class="mb-10 rounded-xl border border-ink-100 overflow-hidden animate-reveal"
+            aria-label={summaryLabel}
+          >
+            <div
+              class="px-4 py-2 border-b border-ink-100 bg-ink-50/60 text-[13px] text-ink-600"
+            >
+              {summaryLabel}
+            </div>
+            <div class="px-5 py-4">
+              <ul
+                class="list-disc pl-5 space-y-2.5 marker:text-ink-300 text-ink-700 text-[15px] leading-relaxed"
+              >
+                {summaryItems.map((item) => (
+                  <li set:html={formatInline(item)} />
+                ))}
+              </ul>
+            </div>
+          </aside>
+        )
+      }
       {
         blocks.map((block, i) => {
           const trimmed = block.trim()
@@ -250,22 +301,133 @@ const delay = (i: number) => `animation-delay: ${i * 0.05}s`
             )
           }
 
-          const imageMatch = trimmed.match(/^!\[(.*?)\]\((.*?)\)$/)
-          if (imageMatch) {
-            const [, altText, imageSrc] = imageMatch
+          // Consecutive image lines in one block (no blank line between them) are
+          // one carousel sharing a single caption, taken from the first line.
+          // Scroll-snap only — no client JS, per the islands policy.
+          const imageLines = trimmed.split('\n').map((l) => l.trim())
+          if (
+            imageLines.length > 1 &&
+            imageLines.every((l) => parseImageLine(l) !== null)
+          ) {
+            const slides = imageLines.map((l) => parseImageLine(l)!)
+            if (slides.length > MAX_CAROUSEL_SLIDES) {
+              throw new Error(
+                `Carousel in ${article.slug} has ${slides.length} images; only up to ${MAX_CAROUSEL_SLIDES} are supported`,
+              )
+            }
+            const caption = slides.find((s) => s.caption)?.caption
+            const cid = `carousel-${i}`
+            return (
+              <figure class="carousel my-8 animate-reveal" style={delay(i)}>
+                {slides.map((_, n) => (
+                  <input
+                    type="radio"
+                    name={cid}
+                    id={`${cid}-${n}`}
+                    class="carousel-input sr-only"
+                    checked={n === 0}
+                    aria-label={`${n + 1}번째 이미지`}
+                  />
+                ))}
+                <div
+                  class="overflow-hidden rounded-2xl border border-ink-100 bg-ink-50/40"
+                >
+                  <div class="carousel-track flex">
+                    {slides.map((slide, n) => (
+                      <div class="relative w-full shrink-0">
+                        <img
+                          src={resolveAssetUrl(slide.src)}
+                          alt={slide.alt || article.title}
+                          class="h-[240px] sm:h-[320px] w-full object-contain"
+                          loading={n === 0 ? 'eager' : 'lazy'}
+                        />
+                        {n > 0 && (
+                          <label
+                            for={`${cid}-${n - 1}`}
+                            class="carousel-arrow carousel-arrow-prev"
+                            aria-hidden="true"
+                          >
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            >
+                              <polyline points="15 18 9 12 15 6" />
+                            </svg>
+                          </label>
+                        )}
+                        {n < slides.length - 1 && (
+                          <label
+                            for={`${cid}-${n + 1}`}
+                            class="carousel-arrow carousel-arrow-next"
+                            aria-hidden="true"
+                          >
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            >
+                              <polyline points="9 6 15 12 9 18" />
+                            </svg>
+                          </label>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div class="carousel-dots mt-3 flex items-center justify-center gap-2">
+                  {slides.map((_, n) => (
+                    <label
+                      for={`${cid}-${n}`}
+                      class="carousel-dot"
+                      aria-hidden="true"
+                    />
+                  ))}
+                </div>
+                {caption && (
+                  <figcaption
+                    class="mt-2 text-center text-sm text-ink-600 leading-relaxed"
+                    set:html={formatInline(caption)}
+                  />
+                )}
+              </figure>
+            )
+          }
+
+          // Without a caption, the image is assumed to be an AI-made
+          // illustration and gets that disclaimer.
+          const image = parseImageLine(trimmed)
+          if (image) {
             return (
               <figure class="my-8 animate-reveal" style={delay(i)}>
                 <div class="overflow-hidden rounded-2xl border border-ink-100">
                   <img
-                    src={resolveAssetUrl(imageSrc)}
-                    alt={altText || article.title}
+                    src={resolveAssetUrl(image.src)}
+                    alt={image.alt || article.title}
                     class="w-full h-auto object-cover"
                     loading="lazy"
                   />
                 </div>
-                <figcaption class="mt-3 text-sm text-ink-600 leading-relaxed">
-                  해당 이미지는 AI로 제작한, 이해를 돕기 위한 예시 이미지입니다.
-                </figcaption>
+                {image.caption ? (
+                  <figcaption
+                    class="mt-3 text-sm text-ink-600 leading-relaxed"
+                    set:html={formatInline(image.caption)}
+                  />
+                ) : (
+                  <figcaption class="mt-3 text-sm text-ink-600 leading-relaxed">
+                    해당 이미지는 AI로 제작한, 이해를 돕기 위한 예시 이미지입니다.
+                  </figcaption>
+                )}
               </figure>
             )
           }

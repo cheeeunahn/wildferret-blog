@@ -166,6 +166,19 @@ html.dark body::before {
   overflow-wrap: break-word;
 }
 
+/* Korean wraps on word boundaries, not mid-word — the same rule <p> already had.
+   Code blocks are excluded: their ASCII diagrams rely on literal line breaks. */
+.prose-blog li,
+.prose-blog blockquote,
+.prose-blog h2,
+.prose-blog h3,
+.prose-blog td,
+.prose-blog th,
+.prose-blog figcaption {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
 .prose-blog blockquote {
   border-left: 2px solid var(--color-ink-200);
   padding-left: 1.25rem;
@@ -174,14 +187,109 @@ html.dark body::before {
   font-style: italic;
 }
 
+/* Spacing lives on the <figure> (my-8), so the image itself carries none — a
+   margin here would open a gap inside the figure's border and inside a
+   carousel slide. */
 .prose-blog img {
   width: 100%;
-  margin: 2rem 0;
 }
 
 .prose-blog strong {
   font-weight: 600;
   color: var(--color-ink-900);
+}
+
+/* Image carousel — the dots and arrows are <label>s for a hidden radio group, and
+   the checked radio slides the track with a transform. No fragment navigation, so
+   the page never jumps, and no client JS, so article pages stay at zero
+   JavaScript. Supports up to six slides. */
+.carousel-track {
+  transition: translate 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.carousel:has(.carousel-input:nth-of-type(2):checked) .carousel-track {
+  translate: -100% 0;
+}
+.carousel:has(.carousel-input:nth-of-type(3):checked) .carousel-track {
+  translate: -200% 0;
+}
+.carousel:has(.carousel-input:nth-of-type(4):checked) .carousel-track {
+  translate: -300% 0;
+}
+.carousel:has(.carousel-input:nth-of-type(5):checked) .carousel-track {
+  translate: -400% 0;
+}
+.carousel:has(.carousel-input:nth-of-type(6):checked) .carousel-track {
+  translate: -500% 0;
+}
+
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  border: 1px solid var(--color-ink-100);
+  background-color: var(--color-paper);
+  color: var(--color-ink-600);
+  opacity: 0.85;
+  cursor: pointer;
+  transition:
+    opacity 0.15s ease,
+    color 0.15s ease;
+}
+
+.carousel-arrow:hover {
+  opacity: 1;
+  color: var(--color-ink-900);
+}
+
+.carousel-arrow-prev {
+  left: 0.75rem;
+}
+
+.carousel-arrow-next {
+  right: 0.75rem;
+}
+
+.carousel-dot {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: var(--color-ink-200);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.carousel-dot:hover {
+  background-color: var(--color-ink-400);
+}
+
+.carousel:has(.carousel-input:nth-of-type(1):checked) .carousel-dot:nth-child(1),
+.carousel:has(.carousel-input:nth-of-type(2):checked) .carousel-dot:nth-child(2),
+.carousel:has(.carousel-input:nth-of-type(3):checked) .carousel-dot:nth-child(3),
+.carousel:has(.carousel-input:nth-of-type(4):checked) .carousel-dot:nth-child(4),
+.carousel:has(.carousel-input:nth-of-type(5):checked) .carousel-dot:nth-child(5),
+.carousel:has(.carousel-input:nth-of-type(6):checked) .carousel-dot:nth-child(6) {
+  background-color: var(--color-ink-600);
+}
+
+/* The radios are visually hidden, so surface keyboard focus on the dots row —
+   the arrow keys move through the group from there. */
+.carousel:has(.carousel-input:focus-visible) .carousel-dots {
+  outline: 2px solid var(--color-ink-300);
+  outline-offset: 6px;
+  border-radius: 9999px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel-track {
+    transition: none;
+  }
 }
 
 /* Reveal animation */
