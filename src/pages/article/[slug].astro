@@ -52,6 +52,9 @@ const langLabels: Record<string, string> = {
 }
 
 const delay = (i: number) => `animation-delay: ${i * 0.05}s`
+
+// ![alt](src) with an optional "caption". Not global, so .test() stays stateless.
+const IMAGE_LINE = /^!\[(.*?)\]\(([^\s)]+)(?:\s+"([\s\S]+)")?\)$/
 ---
 
 <Base
@@ -293,6 +296,107 @@ const delay = (i: number) => `animation-delay: ${i * 0.05}s`
                   </tbody>
                 </table>
               </div>
+            )
+          }
+
+          // Consecutive image lines in one block (no blank line between them) are
+          // one carousel sharing a single caption, taken from the first line.
+          // Scroll-snap only — no client JS, per the islands policy.
+          const imageLines = trimmed.split('\n').map((l) => l.trim())
+          if (
+            imageLines.length > 1 &&
+            imageLines.every((l) => IMAGE_LINE.test(l))
+          ) {
+            const slides = imageLines.map((l) => {
+              const [, alt, src, caption] = l.match(IMAGE_LINE)!
+              return { alt, src, caption }
+            })
+            const caption = slides.find((s) => s.caption)?.caption
+            const cid = `carousel-${i}`
+            return (
+              <figure class="carousel my-8 animate-reveal" style={delay(i)}>
+                {slides.map((_, n) => (
+                  <input
+                    type="radio"
+                    name={cid}
+                    id={`${cid}-${n}`}
+                    class="carousel-input sr-only"
+                    checked={n === 0}
+                    aria-label={`${n + 1}번째 이미지`}
+                  />
+                ))}
+                <div
+                  class="overflow-hidden rounded-2xl border border-ink-100 bg-ink-50/40"
+                >
+                  <div class="carousel-track flex">
+                    {slides.map((slide, n) => (
+                      <div class="relative w-full shrink-0">
+                        <img
+                          src={resolveAssetUrl(slide.src)}
+                          alt={slide.alt || article.title}
+                          class="h-[240px] sm:h-[320px] w-full object-contain"
+                          loading={n === 0 ? 'eager' : 'lazy'}
+                        />
+                        {n > 0 && (
+                          <label
+                            for={`${cid}-${n - 1}`}
+                            class="carousel-arrow carousel-arrow-prev"
+                            aria-hidden="true"
+                          >
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            >
+                              <polyline points="15 18 9 12 15 6" />
+                            </svg>
+                          </label>
+                        )}
+                        {n < slides.length - 1 && (
+                          <label
+                            for={`${cid}-${n + 1}`}
+                            class="carousel-arrow carousel-arrow-next"
+                            aria-hidden="true"
+                          >
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            >
+                              <polyline points="9 6 15 12 9 18" />
+                            </svg>
+                          </label>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div class="carousel-dots mt-3 flex items-center justify-center gap-2">
+                  {slides.map((_, n) => (
+                    <label
+                      for={`${cid}-${n}`}
+                      class="carousel-dot"
+                      aria-hidden="true"
+                    />
+                  ))}
+                </div>
+                {caption && (
+                  <figcaption
+                    class="mt-2 text-center text-sm text-ink-600 leading-relaxed"
+                    set:html={formatInline(caption)}
+                  />
+                )}
+              </figure>
             )
           }
 
