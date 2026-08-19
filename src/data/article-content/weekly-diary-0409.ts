@@ -64,7 +64,7 @@ Claude에게 서비스의 핵심 가치와 주요 기능을 설명하고, "처�
 
 ## PM의 역할이 바뀌고 있다
 
-![이번 주를 돌아보며](/assets/images/weekly-diary-0409-retrospect.png)
+![이번 주를 돌아보며](/assets/images/weekly-diary-0409-retrospect.webp)
 
 GTM 세팅은 "처음 해보는 일"이었고, 소개 문서는 "하기 싫은 일"이었고, 데스크탑 펫은 "하고 싶은 일"이었다. 성격이 이렇게 다른데도 셋 다 진행되는 모양은 비슷했다. 막히면 묻고, 나온 걸 다듬는다.
 

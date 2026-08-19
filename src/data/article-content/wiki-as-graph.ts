@@ -89,7 +89,7 @@ export const wikiAsGraphContent = `## 핵심 요약
 
 문제는 그 잣대를 믿을 수 있느냐다. 같은 사람도 2주 뒤엔 다르게 답한다. 페르소나가 얼마나 벗어나야 "틀렸다"고 할지는 사람이 자기 답을 얼마나 못 지키는지부터 재야 나온다. 그게 상한선이다.
 
-![1차 인터뷰·설문, 2주 뒤 재설문, 그리고 에이전트 응답을 대조하는 연구 설계도](/assets/images/wiki-as-graph-self-reports-study-design.png "출처: [LLM Agents Grounded in Self-Reports Enable General-Purpose Simulation of Individuals](https://arxiv.org/abs/2411.10109)")
+![1차 인터뷰·설문, 2주 뒤 재설문, 그리고 에이전트 응답을 대조하는 연구 설계도](/assets/images/wiki-as-graph-self-reports-study-design.webp "출처: [LLM Agents Grounded in Self-Reports Enable General-Purpose Simulation of Individuals](https://arxiv.org/abs/2411.10109)")
 
 이걸 제대로 잰 [연구](https://arxiv.org/abs/2411.10109)가 있다. 참가자 1,052명에게 2시간짜리 음성 인터뷰와 설문을 돌리고, **2주 뒤에 같은 설문을 한 번 더 돌렸다.** 1차 데이터로 만든 에이전트에게도 같은 걸 물었다.
 

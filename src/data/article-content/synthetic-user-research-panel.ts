@@ -18,9 +18,9 @@ export const syntheticUserResearchPanelContent = `## 핵심 요약
 
 사내 AI 챌린지에서 프로토타입을 만들었다. 주어진 시간은 하루. 나는 기획과 프롬프트 설계, UI 바이브코딩을 맡았고, 동료는 프론트엔드와 배포 전체를 맡았다. 스크린샷을 업로드하면 몇 명의 페르소나가 각자 첫인상, 걸리는 문구, 신뢰도 점수를 남겨주는 형태였다.
 
-![사내 슬랙에 데모 링크와 소개 슬라이드를 공유한 게시물](/assets/images/synthetic-user-research-panel-challenge-share.png "모든 것의 시작이 됐던 AI 챌린지 - 아인이라는 팀 명으로 프론트 플랫폼 엔지니어 동료와 참여하였다")
-![업로드부터 리포트까지 MVP 화면 네 단계를 보여주는 발표 슬라이드](/assets/images/synthetic-user-research-panel-challenge-mvp-slide.png)
-![배포 3일 전의 막막함에서 바로 받는 유저 피드백까지를 네 컷 만화로 설명한 발표 슬라이드](/assets/images/synthetic-user-research-panel-challenge-story-slide.png)
+![사내 슬랙에 데모 링크와 소개 슬라이드를 공유한 게시물](/assets/images/synthetic-user-research-panel-challenge-share.webp "모든 것의 시작이 됐던 AI 챌린지 - 아인이라는 팀 명으로 프론트 플랫폼 엔지니어 동료와 참여하였다")
+![업로드부터 리포트까지 MVP 화면 네 단계를 보여주는 발표 슬라이드](/assets/images/synthetic-user-research-panel-challenge-mvp-slide.webp)
+![배포 3일 전의 막막함에서 바로 받는 유저 피드백까지를 네 컷 만화로 설명한 발표 슬라이드](/assets/images/synthetic-user-research-panel-challenge-story-slide.webp)
 
 미팅은 [Excalidraw](https://excalidraw.com/)에 캔버스를 하나 열어놓고 했다. 말로 설명하는 대신 구조를 그려가며 역할을 나눴더니 그 캔버스가 그대로 설계도가 됐다. 코드는 GitHub에서 합쳤다. 각자 브랜치를 파고, PR을 올리고, 리뷰를 주고받고 머지했다. 직접 제대로된 프로세스로 PR을 올려본 게 사실상 처음이었는데, 내가 쓴 것이 리뷰를 거쳐 main에 들어가는 과정을 겪어보니 엔지니어들이 왜 그 흐름을 그렇게 지키려 하는지 몸으로 이해가 되는 것 같았다.
 
