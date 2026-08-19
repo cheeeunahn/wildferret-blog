@@ -1,5 +1,32 @@
 import { describe, expect, it } from 'vitest'
-import { formatInline, splitContentIntoBlocks } from './articleContent'
+import {
+  formatInline,
+  parseImageLine,
+  splitContentIntoBlocks,
+} from './articleContent'
+
+describe('parseImageLine', () => {
+  it('preserves literal parentheses in image sources', () => {
+    expect(parseImageLine('![diagram](/assets/images/graph_(final).png)')).toEqual(
+      {
+        alt: 'diagram',
+        src: '/assets/images/graph_(final).png',
+      },
+    )
+  })
+
+  it('separates a caption from a source containing parentheses', () => {
+    expect(
+      parseImageLine(
+        '![diagram](/assets/images/graph_(final).png "Source (2026)")',
+      ),
+    ).toEqual({
+      alt: 'diagram',
+      src: '/assets/images/graph_(final).png',
+      caption: 'Source (2026)',
+    })
+  })
+})
 
 describe('splitContentIntoBlocks', () => {
   it('keeps fenced code intact while splitting regular blocks', () => {

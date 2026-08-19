@@ -3,7 +3,11 @@ import type { GetStaticPaths } from 'astro'
 import Base from '../../layouts/Base.astro'
 import { articles } from '../../data/articles'
 import { getDiagram } from '../../components/diagramRegistry'
-import { formatInline, splitContentIntoBlocks } from '../../lib/articleContent'
+import {
+  formatInline,
+  parseImageLine,
+  splitContentIntoBlocks,
+} from '../../lib/articleContent'
 import { resolveAssetUrl } from '../../lib/assetUrl'
 import { href } from '../../lib/siteUrl'
 
@@ -52,9 +56,7 @@ const langLabels: Record<string, string> = {
 }
 
 const delay = (i: number) => `animation-delay: ${i * 0.05}s`
-
-// ![alt](src) with an optional "caption". Not global, so .test() stays stateless.
-const IMAGE_LINE = /^!\[(.*?)\]\(([^\s)]+)(?:\s+"([\s\S]+)")?\)$/
+const MAX_CAROUSEL_SLIDES = 6
 ---
 
 <Base
@@ -305,12 +307,14 @@ const IMAGE_LINE = /^!\[(.*?)\]\(([^\s)]+)(?:\s+"([\s\S]+)")?\)$/
           const imageLines = trimmed.split('\n').map((l) => l.trim())
           if (
             imageLines.length > 1 &&
-            imageLines.every((l) => IMAGE_LINE.test(l))
+            imageLines.every((l) => parseImageLine(l) !== null)
           ) {
-            const slides = imageLines.map((l) => {
-              const [, alt, src, caption] = l.match(IMAGE_LINE)!
-              return { alt, src, caption }
-            })
+            const slides = imageLines.map((l) => parseImageLine(l)!)
+            if (slides.length > MAX_CAROUSEL_SLIDES) {
+              throw new Error(
+                `Carousel in ${article.slug} has ${slides.length} images; only up to ${MAX_CAROUSEL_SLIDES} are supported`,
+              )
+            }
             const caption = slides.find((s) => s.caption)?.caption
             const cid = `carousel-${i}`
             return (
@@ -400,27 +404,24 @@ const IMAGE_LINE = /^!\[(.*?)\]\(([^\s)]+)(?:\s+"([\s\S]+)")?\)$/
             )
           }
 
-          // ![alt](src) or ![alt](src "caption") — without a caption the image
-          // is assumed to be an AI-made illustration and gets that disclaimer.
-          const imageMatch = trimmed.match(
-            /^!\[(.*?)\]\(([^\s)]+)(?:\s+"([\s\S]+)")?\)$/,
-          )
-          if (imageMatch) {
-            const [, altText, imageSrc, caption] = imageMatch
+          // Without a caption, the image is assumed to be an AI-made
+          // illustration and gets that disclaimer.
+          const image = parseImageLine(trimmed)
+          if (image) {
             return (
               <figure class="my-8 animate-reveal" style={delay(i)}>
                 <div class="overflow-hidden rounded-2xl border border-ink-100">
                   <img
-                    src={resolveAssetUrl(imageSrc)}
-                    alt={altText || article.title}
+                    src={resolveAssetUrl(image.src)}
+                    alt={image.alt || article.title}
                     class="w-full h-auto object-cover"
                     loading="lazy"
                   />
                 </div>
-                {caption ? (
+                {image.caption ? (
                   <figcaption
                     class="mt-3 text-sm text-ink-600 leading-relaxed"
-                    set:html={formatInline(caption)}
+                    set:html={formatInline(image.caption)}
                   />
                 ) : (
                   <figcaption class="mt-3 text-sm text-ink-600 leading-relaxed">

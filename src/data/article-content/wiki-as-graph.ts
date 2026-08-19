@@ -10,7 +10,7 @@ export const wikiAsGraphContent = `## 핵심 요약
 
 그런데 RAG, ontology, knowledge graph, graph database 관련 글을 읽다 보니 문서만 늘리는 게 답은 아니었다. 배운 걸 정리해둔다.
 
-![Customer·Order·Product·Refund를 노드로, PLACED·CONTAINS·REFUNDED를 엣지로 그린 온톨로지 예시 슬라이드](/assets/images/wiki-as-graph-ontology-data-as-graphs.png "출처: [Ontology → Data as Graphs](https://www.youtube.com/watch?v=Sir59K8ZDPU) — AI Engineer World's Fair 2026, Track 5 Graphs (2026.07.02)")
+![Customer·Order·Product·Refund를 노드로, PLACED·CONTAINS·REFUNDED를 엣지로 그린 온톨로지 예시 슬라이드](/assets/images/wiki-as-graph-ontology-data-as-graphs.webp "출처: [Ontology → Data as Graphs](https://www.youtube.com/watch?v=Sir59K8ZDPU) — AI Engineer World's Fair 2026, Track 5 Graphs (2026.07.02)")
 
 ---
 
@@ -137,7 +137,7 @@ export const wikiAsGraphContent = `## 핵심 요약
 
 "이 사람은 X다"가 아니라 "A를 겪어서 B를 불신하고, C 상황에서 이렇게 반응했다"로 적는 것이다. 추론을 없애지는 못해도 어떤 근거를 따라 판단할지는 분명해진다.
 
-![합성 페르소나를 일기예보에 빗대 열네 가지 원칙으로 비교한 강연 슬라이드](/assets/images/wiki-as-graph-weather-forecast-personas.png "출처: [The Weather Forecast Model of Synthetic Personas](https://www.youtube.com/watch?v=YnNF55QV0zs) — AI Engineer World's Fair 2026, Track 7 Computer Use (2026.07.01)")
+![합성 페르소나를 일기예보에 빗대 열네 가지 원칙으로 비교한 강연 슬라이드](/assets/images/wiki-as-graph-weather-forecast-personas.webp "출처: [The Weather Forecast Model of Synthetic Personas](https://www.youtube.com/watch?v=YnNF55QV0zs) — AI Engineer World's Fair 2026, Track 7 Computer Use (2026.07.01)")
 
 [한 강연](https://www.youtube.com/watch?v=YnNF55QV0zs)에서 본 문장이 계속 남았다. **"근거 없는 페르소나는 그럴듯한 화자를 지어낸다."** 관계로 적든 속성으로 적든, 결국 실제 데이터에 매여 있느냐가 문제다.
 

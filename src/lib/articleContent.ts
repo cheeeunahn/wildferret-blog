@@ -1,5 +1,29 @@
 import { resolveAssetUrl } from './assetUrl'
 
+export interface ArticleImage {
+  alt: string
+  src: string
+  caption?: string
+}
+
+// Try the caption form first so a source containing literal parentheses remains
+// intact, while the final quoted segment is still separated as the caption.
+export function parseImageLine(line: string): ArticleImage | null {
+  const withCaption = line.match(/^!\[(.*?)\]\((.+)\s+"([\s\S]+)"\)$/)
+  if (withCaption) {
+    const [, alt, src, caption] = withCaption
+    return { alt, src, caption }
+  }
+
+  const withoutCaption = line.match(/^!\[(.*?)\]\((.+)\)$/)
+  if (withoutCaption) {
+    const [, alt, src] = withoutCaption
+    return { alt, src }
+  }
+
+  return null
+}
+
 export function splitContentIntoBlocks(content: string): string[] {
   const blocks: string[] = []
   const lines = content.trim().split('\n')
