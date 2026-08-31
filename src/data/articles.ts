@@ -14,7 +14,7 @@ export const articles: Article[] = [
   {
     slug: 'wiki-as-graph',
     title: '합성 유저(synthetic user)는 실제 사람을 대상으로 하는 유저 리서치를 대체할 수 있을까',
-    subtitle: '가상 유저 리서치 패널을 만들다가 생각나서 적어보는 간단 합성 유저 문헌 리뷰 (literature review)',
+    subtitle: '가상 유저 리서치 패널 만드는 김에 생각나서 해보는 합성 유저 문헌 조사',
     date: '2026.08.17',
     readTime: '12분',
     loadContent: () => import('./article-content/wiki-as-graph').then(({ wikiAsGraphContent }) => wikiAsGraphContent),
@@ -37,8 +37,8 @@ export const articles: Article[] = [
   },
   {
     slug: 'ai-git-101-for-designers',
-    title: 'AI가 아직 막막한 디자이너에게',
-    subtitle: 'AI & Git 101 세션을 준비하며 정리한 것들',
+    title: 'AI는 신이 아니고, 확률 기반으로 움직이는 시스템일 뿐',
+    subtitle: 'AI 101 세션을 준비하며 정리한 내용 요약',
     date: '2026.04.23',
     readTime: '7분',
     loadContent: () => import('./article-content/ai-git-101-for-designers').then(({ aiGit101ForDesignersContent }) => aiGit101ForDesignersContent),
