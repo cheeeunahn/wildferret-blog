@@ -30,7 +30,7 @@ const skills = [
   description="사람을 깊이 이해하고, 조용하지만 분명한 차이를 만드는 제품을 만듭니다."
 >
   <div class="page-enter">
-    <section class="max-w-[640px] mx-auto px-6 pt-16 sm:pt-24 pb-20">
+    <section class="max-w-[640px] mx-auto px-6 pt-10 sm:pt-14 pb-20">
       {/* Profile */}
       <div class="animate-reveal mb-12">
         <div
@@ -67,23 +67,13 @@ const skills = [
         >
           관심사
         </h2>
-        <div class="flex flex-wrap gap-2">
-          {
-            interests.map((tag) => (
-              <span
-                class="px-3.5 py-1.5 text-xs text-ink-500 border border-ink-200 rounded-full hover:bg-ink-50 transition-colors"
-              >
-                {tag}
-              </span>
-            ))
-          }
-        </div>
+        <p class="text-ink-700 text-[15px] leading-relaxed">
+          {interests.join(' · ')}
+        </p>
       </div>
 
-      <hr class="ink-divider my-12" />
-
       {/* Career */}
-      <div class="animate-reveal delay-3">
+      <div class="mt-16 animate-reveal delay-3">
         <h2
           class="text-sm font-medium text-ink-600 uppercase tracking-widest mb-6"
         >
@@ -108,10 +98,8 @@ const skills = [
         </ul>
       </div>
 
-      <hr class="ink-divider my-12" />
-
       {/* Skills */}
-      <div class="animate-reveal delay-3">
+      <div class="mt-16 animate-reveal delay-4">
         <h2
           class="text-sm font-medium text-ink-600 uppercase tracking-widest mb-6"
         >
@@ -133,7 +121,6 @@ const skills = [
         </ul>
       </div>
 
-      <hr class="ink-divider my-12" />
     </section>
   </div>
 </Base>

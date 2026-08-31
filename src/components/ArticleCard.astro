@@ -13,13 +13,18 @@ const { article, index } = Astro.props
 <a
   href={href(`/article/${article.slug}`)}
   class="group block no-underline animate-reveal"
+  data-cat={article.category}
   style={`animation-delay: ${0.4 + index * 0.08}s`}
 >
   <article
-    class="py-8 sm:py-10 border-b border-ink-100 transition-colors hover:bg-ink-50/50 -mx-6 px-6"
+    class="article-card rounded-xl p-6 sm:p-7"
   >
     {/* Meta */}
-    <div class="text-xs text-ink-500 mb-3">{article.date}</div>
+    <div class="flex items-center gap-2 text-xs text-ink-500 mb-3">
+      <span>{article.date}</span>
+      <span class="w-px h-2.5 bg-ink-200"></span>
+      <span class="text-accent">{article.category}</span>
+    </div>
 
     {/* Title */}
     <h2

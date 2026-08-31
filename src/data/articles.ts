@@ -8,6 +8,7 @@ export const articles: Article[] = [
     subtitle: '구독 결제, AI 인용, 게임 UA, 크립토 광고, 그리고 워크플로우',
     date: '2026.08.18',
     readTime: '24분',
+    category: 'Personal',
     loadContent: () => import('./article-content/mgs-2026-play-hall').then(({ mgs2026PlayHallContent }) => mgs2026PlayHallContent),
   },
   */
@@ -17,6 +18,7 @@ export const articles: Article[] = [
     subtitle: '가상 유저 리서치 패널 만드는 김에 생각나서 해보는 합성 유저 문헌 조사',
     date: '2026.08.17',
     readTime: '12분',
+    category: 'Research',
     loadContent: () => import('./article-content/wiki-as-graph').then(({ wikiAsGraphContent }) => wikiAsGraphContent),
   },
   {
@@ -25,6 +27,7 @@ export const articles: Article[] = [
     subtitle: '방대한 유저 리서치 자료를 한 곳에, AI 에이전트가 이해하기 쉬운 방식으로 정리하기',
     date: '2026.08.13',
     readTime: '5분',
+    category: 'Personal',
     loadContent: () => import('./article-content/research-wiki-for-llm').then(({ researchWikiForLlmContent }) => researchWikiForLlmContent),
   },
   {
@@ -33,14 +36,16 @@ export const articles: Article[] = [
     subtitle: '가상 유저 패널(synthetic user panel) 직접 만들어보기',
     date: '2026.08.13',
     readTime: '10분',
+    category: 'Personal',
     loadContent: () => import('./article-content/synthetic-user-research-panel').then(({ syntheticUserResearchPanelContent }) => syntheticUserResearchPanelContent),
   },
   {
     slug: 'ai-git-101-for-designers',
-    title: 'AI는 신이 아니고, 확률 기반으로 움직이는 시스템일 뿐',
-    subtitle: 'AI 101 세션을 준비하며 정리한 내용 요약',
+    title: 'AI는 신이 아니고, 그저 확률 기반으로 움직이는 똑똑한 시스템일 뿐',
+    subtitle: '프로덕트 디자이너 대상으로 AI 101 세션을 준비하며 정리한 내용 요약',
     date: '2026.04.23',
     readTime: '7분',
+    category: 'Personal',
     loadContent: () => import('./article-content/ai-git-101-for-designers').then(({ aiGit101ForDesignersContent }) => aiGit101ForDesignersContent),
   },
   /*{
@@ -49,6 +54,7 @@ export const articles: Article[] = [
     subtitle: 'GTM 세팅부터 데스크탑 펫까지',
     date: '2026.04.09',
     readTime: '6분',
+    category: 'Personal',
     loadContent: () => import('./article-content/weekly-diary-0409').then(({ weeklyDiary0409Content }) => weeklyDiary0409Content),
   },
   {
@@ -57,6 +63,7 @@ export const articles: Article[] = [
     subtitle: 'AI 에이전트 팀과 Claude Peers 이야기',
     date: '2026.03.29',
     readTime: '18분',
+    category: 'Personal',
     loadContent: () => import('./article-content/agent-teams-and-claude-peers').then(({ agentTeamsAndClaudePeersContent }) => agentTeamsAndClaudePeersContent),
   },
   {
@@ -65,6 +72,7 @@ export const articles: Article[] = [
     subtitle: 'Claude Code와 보낸 일주일',
     date: '2026.03.27',
     readTime: '7분',
+    category: 'Personal',
     loadContent: () => import('./article-content/pm-ai-week').then(({ pmAiWeekContent }) => pmAiWeekContent),
   },*/
 ]

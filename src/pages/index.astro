@@ -2,47 +2,253 @@
 import Base from '../layouts/Base.astro'
 import ArticleCard from '../components/ArticleCard.astro'
 import { articles } from '../data/articles'
+import { CATEGORIES } from '../data/articleTypes'
 import { resolveAssetUrl } from '../lib/assetUrl'
+
+// Only offer a pill for a category that actually has articles, in the fixed
+// CATEGORIES order rather than in publication order.
+const usedCategories = CATEGORIES.filter((c) =>
+  articles.some((a) => a.category === c),
+)
+
+// The filter is CSS-only (radio + :has(), like the carousel), so the rule that
+// hides non-matching cards has to exist per category. Generated from the data
+// here so adding a category to articleTypes.ts is the only edit needed.
+// The hero's later frames: same ferret, turned to face the reader, then
+// greeting them properly. Stepped through by the radio group below.
+const GREET_FRAMES = [
+  {
+    src: '/assets/images/wildferret-hero-greeting.webp',
+    alt: '페럿이 고개를 들어 정면을 바라보며 손을 흔들어 인사하는 일러스트',
+  },
+  {
+    src: '/assets/images/wildferret-hero-greeting-2.webp',
+    alt: '페럿이 활짝 웃으며 반갑게 인사하는 일러스트',
+  },
+]
+
+const filterCss = usedCategories
+  .map(
+    (c, i) =>
+      `.cat-scope:has(#cat-${i + 1}:checked) [data-cat]:not([data-cat="${c}"]){display:none}`,
+  )
+  .join('\n')
 ---
 
 <Base>
   <div class="page-enter">
     {/* Hero */}
     <section class="max-w-[720px] mx-auto px-6 pt-10 sm:pt-14 pb-12">
-      <div>
-        <p class="text-sm text-ink-600 mb-4 animate-reveal delay-1">
-          Personal Blog
-        </p>
-        <h1
-          class="text-3xl sm:text-[40px] font-bold text-ink-950 leading-tight tracking-tight animate-reveal-soft delay-2"
-        >
-          프로덕트 매니저 wildferret의
-          <br />
-          소소한 작업 이야기
-        </h1>
-        <h3
-          class="text-sm text-ink-600 animate-reveal-soft delay-2 mt-4"
-        >
-          프로덕트를 만들면서 가볍게 느낀 점들, 배운 점들, 그리고 일상 등을 기록합니다.
-        </h3>
+      <h1
+        class="text-3xl sm:text-[40px] font-bold text-ink-950 leading-tight tracking-tight animate-reveal-soft delay-1"
+      >
+        프로덕트 메이커 wildferret의
+        <br />
+        소소한 작업 이야기
+      </h1>
+        {/* The box is taller than the source's 16:9, so object-cover crops the
+            sides and the ferret renders larger. Its focal point is right of
+            centre and high, hence object-[62%_38%] rather than the default.
+            The <label> makes the whole illustration the click target for the
+            greeting; the checkbox inside it is the state. */}
         <div
-          class="mt-8 overflow-hidden rounded-2xl border border-ink-100 bg-paper-warm/30 animate-reveal-media delay-3"
+          class="hero-greet relative block mt-8 overflow-hidden rounded-2xl border border-ink-100 bg-paper-warm/30 animate-reveal-media delay-2"
         >
+          <input
+            type="radio"
+            name="hero-state"
+            id="hero-s0"
+            class="hero-state sr-only"
+            checked
+            aria-label="작업 중인 페럿"
+          />
+          <input
+            type="radio"
+            name="hero-state"
+            id="hero-s1"
+            class="hero-state sr-only"
+            aria-label="인사하는 페럿"
+          />
+          <input
+            type="radio"
+            name="hero-state"
+            id="hero-s2"
+            class="hero-state sr-only"
+            aria-label="활짝 웃으며 인사하는 페럿"
+          />
+
           <img
             src={resolveAssetUrl('/assets/images/wildferret-hero-coding.webp')}
             alt="안경을 쓴 페럿이 책상에서 노트북으로 코드를 작성하는 일러스트"
-            class="w-full h-auto object-cover"
+            class="w-full h-[260px] sm:h-[440px] object-cover object-[62%_38%]"
             loading="eager"
           />
+          {
+            GREET_FRAMES.map((frame, i) => (
+              <img
+                src={resolveAssetUrl(frame.src)}
+                alt={frame.alt}
+                class={`hero-frame hero-frame-${i + 1} absolute inset-0 w-full h-full object-cover object-[62%_38%]`}
+                loading="eager"
+              />
+            ))
+          }
+
+          {/* Fireflies. Decorative and click-through (pointer-events: none in
+              global.css), so they sit above the frames but below the labels
+              and never block the greeting. Each one carries its own drift and
+              pulse timing — see .hero-firefly-N. */}
+          <div class="hero-fireflies" aria-hidden="true">
+            {
+              Array.from({ length: 7 }, (_, i) => (
+                <span class={`hero-firefly hero-firefly-${i + 1}`} />
+              ))
+            }
+          </div>
+
+          {/* Only the label for the next state is displayed (see global.css),
+              so clicking the same spot again advances the cycle. */}
+          <label for="hero-s1" class="hero-step hero-step-1">
+            <span class="sr-only">페럿에게 인사 건네기</span>
+          </label>
+          <label for="hero-s2" class="hero-step hero-step-2">
+            <span class="sr-only">페럿의 인사 더 보기</span>
+          </label>
+          <label for="hero-s0" class="hero-step hero-step-0">
+            <span class="sr-only">처음 모습으로 돌아가기</span>
+          </label>
+
+          {/* Room tone for the desk scene: office ambience with the ferret's
+              own typing layered over it, started and stopped together. The two
+              loops are different lengths (56s and 8s), so they drift against
+              each other instead of repeating as one fixed bar.
+              Off by default and preload="none", so nothing is fetched until a
+              reader asks for it — and browsers block autoplay without a
+              gesture anyway. The button sits above the step labels so it does
+              not advance the greeting. */}
+          <audio
+            class="hero-audio"
+            src={resolveAssetUrl('/assets/audio/office-ambience.mp3')}
+            data-volume="0.35"
+            loop
+            preload="none"></audio>
+          <audio
+            class="hero-audio"
+            src={resolveAssetUrl('/assets/audio/keyboard-typing.mp3')}
+            data-volume="0.22"
+            loop
+            preload="none"></audio>
+          <button type="button" class="hero-sound" aria-pressed="false" aria-label="주변 소리 켜기">
+            <svg class="hero-sound-icon hero-sound-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M11 5 6 9H3v6h3l5 4z" />
+              <path d="m16 9 5 6" />
+              <path d="m21 9-5 6" />
+            </svg>
+            <svg class="hero-sound-icon hero-sound-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M11 5 6 9H3v6h3l5 4z" />
+              <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+              <path d="M18.5 5.5a9 9 0 0 1 0 13" />
+            </svg>
+          </button>
         </div>
-      </div>
+
+        {/* The one bit the CSS state machine cannot do: drop back to the idle
+            frame when the reader stops clicking. Inline and dependency-free on
+            purpose — see the islands policy in CLAUDE.md; this is not a
+            hydrated component. */}
+        <script is:inline>
+          ;(() => {
+            const idle = document.getElementById('hero-s0')
+            if (idle) {
+              const states = document.querySelectorAll('.hero-state')
+              let timer
+              states.forEach((input) => {
+                input.addEventListener('change', () => {
+                  clearTimeout(timer)
+                  if (input === idle) return
+                  timer = setTimeout(() => {
+                    idle.checked = true
+                  }, 6000)
+                })
+              })
+            }
+
+            // Sound toggle. aria-pressed is the single source of truth: the
+            // CSS swaps the icon off it, so nothing can drift out of sync.
+            const button = document.querySelector('.hero-sound')
+            const tracks = [...document.querySelectorAll('.hero-audio')]
+            if (!button || !tracks.length) return
+            // Mixed here rather than in the files: typing sits under the room
+            // tone, and both sit well under the page.
+            tracks.forEach((track) => {
+              track.volume = Number(track.dataset.volume || 0.3)
+            })
+            const setState = (on) => {
+              button.setAttribute('aria-pressed', String(on))
+              button.setAttribute('aria-label', on ? '주변 소리 끄기' : '주변 소리 켜기')
+            }
+            button.addEventListener('click', () => {
+              if (button.getAttribute('aria-pressed') === 'true') {
+                tracks.forEach((track) => track.pause())
+                setState(false)
+                return
+              }
+              setState(true)
+              // play() rejects if the browser refuses the gesture; if any
+              // layer is blocked, stop them all rather than showing sound
+              // that is only half playing.
+              Promise.all(tracks.map((track) => track.play())).catch(() => {
+                tracks.forEach((track) => track.pause())
+                setState(false)
+              })
+            })
+          })()
+        </script>
     </section>
 
     <hr class="ink-divider max-w-[720px] mx-auto" />
 
-    {/* Article List */}
-    <section class="max-w-[720px] mx-auto px-6 pb-20">
-      {articles.map((article, i) => <ArticleCard article={article} index={i} />)}
-    </section>
+    {/* Category filter + article list. The :has() rules read from .cat-scope,
+        so the radios and the cards must stay inside this one element. */}
+    <div class="cat-scope">
+      <style is:inline set:html={filterCss}></style>
+
+      <section class="max-w-[720px] mx-auto px-6 pt-10">
+        <fieldset class="flex flex-wrap items-center gap-2.5 animate-reveal delay-3">
+          <legend class="sr-only">카테고리로 글 고르기</legend>
+
+          <input
+            type="radio"
+            name="category"
+            id="cat-0"
+            class="cat-input sr-only"
+            checked
+          />
+          <label for="cat-0" class="cat-pill">전체</label>
+
+          {
+            usedCategories.map((c, i) => (
+              <>
+                <input
+                  type="radio"
+                  name="category"
+                  id={`cat-${i + 1}`}
+                  class="cat-input sr-only"
+                />
+                <label for={`cat-${i + 1}`} class="cat-pill">
+                  {c}
+                </label>
+              </>
+            ))
+          }
+        </fieldset>
+      </section>
+
+      {/* flex + gap, not space-y: a card the filter hides is display:none, and
+          gap collapses around it where a sibling margin would leave a hole. */}
+      <section class="max-w-[720px] mx-auto px-6 pt-8 pb-20 flex flex-col gap-5 sm:gap-6">
+        {articles.map((article, i) => <ArticleCard article={article} index={i} />)}
+      </section>
+    </div>
   </div>
 </Base>

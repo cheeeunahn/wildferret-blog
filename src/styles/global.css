@@ -44,44 +44,70 @@
   --font-body: "NanumBarunGothic", "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
   --font-sketch: "Gaegu", "Pretendard Variable", cursive;
 
-  --color-ink-950: #0a0a0a;
-  --color-ink-900: #171717;
-  --color-ink-800: #262626;
-  --color-ink-700: #404040;
-  --color-ink-600: #525252;
-  --color-ink-500: #737373;
-  --color-ink-400: #a3a3a3;
-  --color-ink-300: #d4d4d4;
-  --color-ink-200: #e5e5e5;
-  --color-ink-100: #f0f0f0;
-  --color-ink-50: #fafafa;
+  /* Blue-cast neutral scale, keyed to the navy/periwinkle/off-white palette.
+     These are not gray: every step carries the same blue hue, so black text,
+     hairlines and panels all read as part of one family instead of as the
+     framework default. */
+  --color-ink-950: #0b1524;
+  --color-ink-900: #15233a;
+  --color-ink-800: #22304c;
+  --color-ink-700: #33425f;
+  --color-ink-600: #4e5e7c;
+  --color-ink-500: #6f7e9b;
+  --color-ink-400: #93a0ba;
+  --color-ink-300: #bcc6da;
+  --color-ink-200: #d8dfec;
+  --color-ink-100: #e7ecf4;
+  --color-ink-50: #f2f5fa;
 
-  --color-paper: #ffffff;
-  --color-paper-warm: #f9f8f6;
+  /* The page is faintly tinted and the card is pure white, so a card reads as
+     paper laid on a surface. Inverting these (white page, tinted card) makes
+     the card read as a recess instead. */
+  --color-paper: #f3f6fb;
+  --color-paper-warm: #e8edf7;
 
-  /* Raised surfaces (diagram cards, panels) — brighter than the page in light,
-     lighter than the page in dark, so "raised" reads the same way in both. */
+  /* Raised surfaces (article cards, diagram panels) — brighter than the page in
+     light, lighter than the page in dark, so "raised" reads the same way both
+     ways round. */
   --color-surface: #ffffff;
+  --color-surface-hover: #ffffff;
+
+  /* The one saturated blue: links, active nav, focus. Used sparingly and never
+     for large fills — the ink scale already carries the hue. */
+  --color-accent: #2c6ca8;
+  --color-accent-strong: #1f4f80;
+  --color-accent-soft: #cfe0f1;
+
+  /* The warm counterweight (the copper lamp). One accent only — inline code and
+     list markers. Never a background, never next to the blue accent. */
+  --color-copper: #b06e45;
 }
 
 /* Dark theme — the same semantic tokens, inverted.
    Every component reads these vars, so nothing else needs a dark: variant. */
 html.dark {
-  --color-ink-950: #fcfcfc;
-  --color-ink-900: #f2f2f2;
-  --color-ink-800: #e2e2e2;
-  --color-ink-700: #cbcbcb;
-  --color-ink-600: #b0b0b0;
-  --color-ink-500: #969696;
-  --color-ink-400: #8a8a8a;
-  --color-ink-300: #6e6e6e;
-  --color-ink-200: #3f3f43;
-  --color-ink-100: #2b2b2f;
-  --color-ink-50: #202024;
+  --color-ink-950: #f4f7fc;
+  --color-ink-900: #e6ecf6;
+  --color-ink-800: #d3dcea;
+  --color-ink-700: #bcc7da;
+  --color-ink-600: #9dabc4;
+  --color-ink-500: #8291ab;
+  --color-ink-400: #74829b;
+  --color-ink-300: #5d6b85;
+  --color-ink-200: #2e3c56;
+  --color-ink-100: #223047;
+  --color-ink-50: #1a2637;
 
-  --color-paper: #0f0f10;
-  --color-paper-warm: #1b1b1f;
-  --color-surface: #26262b;
+  --color-paper: #0d1524;
+  --color-paper-warm: #151f31;
+  --color-surface: #1d2a3f;
+  --color-surface-hover: #26364f;
+
+  --color-accent: #7fb0e0;
+  --color-accent-strong: #a3c8ec;
+  --color-accent-soft: #24405e;
+
+  --color-copper: #d59468;
 }
 
 /* Base styles */
@@ -142,11 +168,17 @@ html.dark body::before {
 
 /* Selection */
 ::selection {
-  background-color: var(--color-ink-900);
-  color: var(--color-paper);
+  background-color: var(--color-accent-soft);
+  color: var(--color-ink-950);
 }
 
 /* Article prose */
+/* The body's own top padding already spaces the first block from the rule
+   above it — an h2's 2.5rem margin-top on top of that reads as a hole. */
+.prose-blog > :first-child {
+  margin-top: 0;
+}
+
 .prose-blog h2 {
   font-size: 1.375rem;
   font-weight: 600;
@@ -180,7 +212,7 @@ html.dark body::before {
 }
 
 .prose-blog blockquote {
-  border-left: 2px solid var(--color-ink-200);
+  border-left: 2px solid var(--color-accent);
   padding-left: 1.25rem;
   margin: 2rem 0;
   color: var(--color-ink-600);
@@ -292,6 +324,357 @@ html.dark body::before {
   }
 }
 
+/* Hero greeting — clicking the illustration steps the ferret through three
+   frames: at the desk → waving → waving with a big open-mouth hello → back.
+   A radio group holds the state and three stacked <label>s cover the image;
+   only the label for the NEXT state is displayed, so repeated clicks in the
+   same spot advance the cycle. No JavaScript, same idiom as the carousel. */
+.hero-frame {
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+
+/* A frame stays opaque once reached, rather than fading out as the next one
+   fades in: two half-transparent frames would let the base desk shot show
+   through the middle of the wave → hello step and read as a flicker. Frame 2
+   is later in the DOM, so it simply fades in on top of an opaque frame 1. */
+.hero-greet:has(#hero-s1:checked) .hero-frame-1,
+.hero-greet:has(#hero-s2:checked) .hero-frame-1,
+.hero-greet:has(#hero-s2:checked) .hero-frame-2 {
+  opacity: 1;
+}
+
+/* Fireflies drifting over the hero illustration. Pure CSS: one wandering
+   translate loop per light, with a slower opacity pulse layered on top so the
+   fade in and out never lands on the same beat as the drift. Warm gold, small,
+   and mostly transparent — this should read as air in the room, not as an
+   effect. */
+.hero-fireflies {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.hero-firefly {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #ffe6a3;
+  /* Two shadows: a tight halo for the body of the light and a wide, very faint
+     one for the bloom it throws. A blur filter would soften the core away. */
+  box-shadow:
+    0 0 7px 3px rgb(255 214 130 / 0.7),
+    0 0 20px 8px rgb(255 196 92 / 0.3);
+  opacity: 0;
+  animation:
+    firefly-drift 18s ease-in-out infinite,
+    firefly-pulse 5s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* Spread over the frame and detuned against each other — shared durations
+   would sync the lights into a single pulsing cluster. The two drift paths
+   alternate so neighbours never trace the same arc. */
+.hero-firefly-1 {
+  top: 22%;
+  left: 12%;
+  animation-duration: 19s, 4.6s;
+  animation-delay: 0s, -1.2s;
+}
+
+.hero-firefly-2 {
+  top: 58%;
+  left: 24%;
+  width: 3px;
+  height: 3px;
+  animation-name: firefly-drift-alt, firefly-pulse;
+  animation-duration: 23s, 6.1s;
+  animation-delay: -6s, -3.4s;
+}
+
+.hero-firefly-3 {
+  top: 12%;
+  left: 42%;
+  animation-duration: 16s, 5.4s;
+  animation-delay: -11s, -0.6s;
+}
+
+.hero-firefly-4 {
+  top: 74%;
+  left: 52%;
+  width: 5px;
+  height: 5px;
+  animation-name: firefly-drift-alt, firefly-pulse;
+  animation-duration: 21s, 7.2s;
+  animation-delay: -3s, -4.8s;
+}
+
+.hero-firefly-5 {
+  top: 34%;
+  left: 71%;
+  width: 3px;
+  height: 3px;
+  animation-duration: 25s, 5.8s;
+  animation-delay: -14s, -2.1s;
+}
+
+.hero-firefly-6 {
+  top: 66%;
+  left: 86%;
+  animation-name: firefly-drift-alt, firefly-pulse;
+  animation-duration: 17s, 4.9s;
+  animation-delay: -8s, -3.9s;
+}
+
+.hero-firefly-7 {
+  top: 8%;
+  left: 62%;
+  width: 3px;
+  height: 3px;
+  animation-duration: 27s, 6.6s;
+  animation-delay: -19s, -1.7s;
+}
+
+/* Percentage translates would scale the paths with the frame, which makes the
+   lights sweep half the hero on a wide screen. Fixed px keeps the wander the
+   same physical size at every width. */
+@keyframes firefly-drift {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(26px, -18px);
+  }
+  50% {
+    transform: translate(8px, -34px);
+  }
+  75% {
+    transform: translate(-20px, -14px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes firefly-drift-alt {
+  0% {
+    transform: translate(0, 0);
+  }
+  30% {
+    transform: translate(-24px, -12px);
+  }
+  55% {
+    transform: translate(-10px, 22px);
+  }
+  80% {
+    transform: translate(18px, 10px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+/* Never fully lit: 0.75 at the top of the pulse, and a long dark stretch
+   between flashes. */
+@keyframes firefly-pulse {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.95;
+  }
+  70% {
+    opacity: 0.18;
+  }
+}
+
+/* The illustration is bright in light mode, so the same glow reads as haze
+   there — hold it back and let dark carry the effect. */
+html:not(.dark) .hero-firefly {
+  box-shadow:
+    0 0 6px 2px rgb(201 134 32 / 0.55),
+    0 0 16px 6px rgb(201 134 32 / 0.22);
+  background: #ffcf6e;
+}
+
+.hero-step {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: none;
+  cursor: pointer;
+}
+
+.hero-greet:has(#hero-s0:checked) .hero-step-1,
+.hero-greet:has(#hero-s1:checked) .hero-step-2,
+.hero-greet:has(#hero-s2:checked) .hero-step-0 {
+  display: block;
+}
+
+/* Sound toggle, bottom-right inside the frame. z-index 3 puts it over the
+   step labels (2), so clicking it never advances the greeting. The dark chip
+   is fixed rather than themed: it sits on the illustration, not on the page. */
+.hero-sound {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 0.22);
+  border-radius: 9999px;
+  background: rgb(11 21 36 / 0.5);
+  backdrop-filter: blur(6px);
+  color: rgb(255 255 255 / 0.82);
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.hero-sound:hover {
+  background: rgb(11 21 36 / 0.72);
+  color: #fff;
+  border-color: rgb(255 255 255 / 0.38);
+}
+
+.hero-sound:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Lit while playing, so the state is legible without reading the icon. */
+.hero-sound[aria-pressed="true"] {
+  color: #ffd98a;
+  border-color: rgb(255 217 138 / 0.55);
+}
+
+.hero-sound-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.hero-sound[aria-pressed="false"] .hero-sound-on,
+.hero-sound[aria-pressed="true"] .hero-sound-off {
+  display: none;
+}
+
+/* The radios are visually hidden, so surface their focus on the frame */
+.hero-greet:has(.hero-state:focus-visible) {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-frame {
+    transition: none;
+  }
+
+  /* Drifting points of light are exactly what this query is for. Hold them
+     still and dim rather than removing them, so the frame keeps its warmth. */
+  .hero-firefly {
+    animation: none;
+    opacity: 0.4;
+  }
+}
+
+/* Header nav.
+   The active state was colour plus `font-medium` — and 500 collapses to Regular
+   in Nanum Barun Gothic (see the @font-face note above), so the weight signal
+   was doing nothing at all. Real 700 plus a rule under the label carries it. */
+.nav-link {
+  color: var(--color-ink-600);
+  transition:
+    color 0.15s ease,
+    text-decoration-color 0.15s ease;
+}
+
+.nav-link:hover {
+  color: var(--color-ink-900);
+}
+
+.nav-link-active {
+  color: var(--color-accent);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 9px;
+  text-decoration-color: var(--color-accent);
+}
+
+/* Article card.
+   Light: white paper on the tinted page, lifted on hover by a shadow rather
+   than a colour change — there is no lighter value than white to move to.
+   Dark: a shadow on a near-black page is invisible, so the same hover moves a
+   value step instead. Same gesture, different mechanism. */
+.article-card {
+  background-color: var(--color-surface);
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.article-card:hover {
+  box-shadow:
+    0 1px 2px rgb(11 21 36 / 0.05),
+    0 10px 24px -10px rgb(11 21 36 / 0.16);
+}
+
+html.dark .article-card:hover {
+  background-color: var(--color-surface-hover);
+  box-shadow: none;
+}
+
+/* Category filter — the pills are <label>s for a hidden radio group, and the
+   checked radio hides the non-matching cards via :has(). Same trick as the
+   carousel above: no client JS, so the home page stays at zero JavaScript.
+   The per-category display rules are generated in index.astro from the article
+   data, so adding a category never means editing this file. */
+.cat-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.6rem 1.1rem;
+  font-size: 15px;
+  line-height: 1.2;
+  /* Softly rounded rectangle, not a capsule — 10px echoes the rounded-xl cards
+     and panels rather than introducing a second shape language. Scaled with the
+     box: 8px looked tight once the control grew past ~40px tall. */
+  border-radius: 10px;
+  border: 1px solid var(--color-ink-200);
+  color: var(--color-ink-600);
+  cursor: pointer;
+  user-select: none;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.cat-pill:hover {
+  color: var(--color-ink-900);
+  border-color: var(--color-ink-300);
+}
+
+.cat-input:checked + .cat-pill {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-paper);
+}
+
+/* The radios are visually hidden, so surface keyboard focus on the pill itself */
+.cat-input:focus-visible + .cat-pill {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
 /* Reveal animation */
 @keyframes reveal-up {
   from {
@@ -399,15 +782,32 @@ html.dark body::before {
   animation: fade-in 0.4s ease-out both;
 }
 
-/* Ink divider */
+/* Section rule.
+   Was a transparent→ink→transparent gradient. A rule that fades out at both
+   ends is decoration pretending to be structure: it says "a boundary, but not
+   really", and it is the same fading hairline every generated template ships.
+   A flat hairline in the lightest ink either separates two things or it does
+   not — and it lines up with the card and table borders, which are also flat
+   ink-100, so the page has one rule weight instead of two. */
 .ink-divider {
   border: none;
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--color-ink-200) 20%,
-    var(--color-ink-200) 80%,
-    transparent
-  );
+  background-color: var(--color-ink-100);
+}
+
+/* The one exception: `---` inside an article is an authored beat, not layout.
+   It gets a centred mark instead of a full rule, so a deliberate pause in the
+   writing does not look like the automatic section break above it. */
+.prose-blog .ink-divider {
+  height: auto;
+  background: none;
+  text-align: center;
+}
+
+.prose-blog .ink-divider::before {
+  content: "· · ·";
+  display: block;
+  font-size: 14px;
+  letter-spacing: 0.4em;
+  color: var(--color-ink-300);
 }
