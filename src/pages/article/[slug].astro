@@ -65,7 +65,7 @@ const MAX_CAROUSEL_SLIDES = 6
 >
   <div class="page-enter">
     {/* Article Header */}
-    <header class="max-w-[720px] mx-auto px-6 pt-16 sm:pt-24 pb-10">
+    <header class="max-w-[720px] mx-auto px-6 pt-10 sm:pt-14 pb-8">
       <div class="animate-reveal">
         <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-5">
           <span class="text-xs text-ink-500">{article.date}</span>
@@ -102,7 +102,7 @@ const MAX_CAROUSEL_SLIDES = 6
     <hr class="ink-divider max-w-[720px] mx-auto" />
 
     {/* Article Body */}
-    <article class="max-w-[720px] mx-auto px-6 py-12 prose-blog">
+    <article class="max-w-[720px] mx-auto px-6 pt-9 pb-12 prose-blog">
       {
         summaryItems.length > 0 && (
           <aside
@@ -404,8 +404,6 @@ const MAX_CAROUSEL_SLIDES = 6
             )
           }
 
-          // Without a caption, the image is assumed to be an AI-made
-          // illustration and gets that disclaimer.
           const image = parseImageLine(trimmed)
           if (image) {
             return (
@@ -418,15 +416,11 @@ const MAX_CAROUSEL_SLIDES = 6
                     loading="lazy"
                   />
                 </div>
-                {image.caption ? (
+                {image.caption && (
                   <figcaption
                     class="mt-3 text-sm text-ink-600 leading-relaxed"
                     set:html={formatInline(image.caption)}
                   />
-                ) : (
-                  <figcaption class="mt-3 text-sm text-ink-600 leading-relaxed">
-                    해당 이미지는 AI로 제작한, 이해를 돕기 위한 예시 이미지입니다.
-                  </figcaption>
                 )}
               </figure>
             )

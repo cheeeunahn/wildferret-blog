@@ -60,9 +60,9 @@ export function formatInline(text: string): string {
   return escapeHtml(text)
     .replace(/\[(.+?)\]\((.+?)\)/g, (_, label: string, href: string) => {
       const safeHref = toSafeHref(href)
-      return `<a href="${safeHref}" class="text-ink-600 underline underline-offset-4 decoration-ink-200 hover:text-ink-900 hover:decoration-ink-400 transition-colors">${label}</a>`
+      return `<a href="${safeHref}" class="text-accent underline underline-offset-4 decoration-accent/35 hover:text-accent-strong hover:decoration-accent/70 transition-colors">${label}</a>`
     })
-    .replace(/`(.+?)`/g, (_, code: string) => `<code class="px-1.5 py-0.5 bg-ink-50 rounded text-[14px] font-mono text-ink-600">${code}</code>`)
+    .replace(/`(.+?)`/g, (_, code: string) => `<code class="px-1.5 py-0.5 bg-ink-50 rounded text-[14px] font-mono text-copper">${code}</code>`)
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
 }
 
