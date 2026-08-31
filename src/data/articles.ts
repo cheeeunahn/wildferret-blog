@@ -13,26 +13,26 @@ export const articles: Article[] = [
   */
   {
     slug: 'wiki-as-graph',
-    title: '위키를 문서 말고 그래프로 짠다면',
-    subtitle: 'RAG와 지식 그래프를 들여다보며 배운 것들',
+    title: '합성 유저(synthetic user)는 실제 사람을 대상으로 하는 유저 리서치를 대체할 수 있을까',
+    subtitle: '가상 유저 리서치 패널을 만들다가 생각나서 적어보는 간단 합성 유저 문헌 리뷰 (literature review)',
     date: '2026.08.17',
     readTime: '12분',
     loadContent: () => import('./article-content/wiki-as-graph').then(({ wikiAsGraphContent }) => wikiAsGraphContent),
   },
   {
     slug: 'research-wiki-for-llm',
-    title: 'LLM 친화적인 유저 리서치 위키 만들기',
-    subtitle: '사람은 읽고 에이전트가 쓰는 위키를 만든 기록',
+    title: 'LLM 유저 리서치 위키 만들기',
+    subtitle: '방대한 유저 리서치 자료를 한 곳에, AI 에이전트가 이해하기 쉬운 방식으로 정리하기',
     date: '2026.08.13',
     readTime: '5분',
     loadContent: () => import('./article-content/research-wiki-for-llm').then(({ researchWikiForLlmContent }) => researchWikiForLlmContent),
   },
   {
     slug: 'synthetic-user-research-panel',
-    title: '유저 없이 유저 피드백을 받아봤다',
-    subtitle: '가상 유저 패널(synthetic user panel)을 만들어 실무에서 쓰기까지',
+    title: '유저 없이 유저 피드백을 받을 수 있다?',
+    subtitle: '가상 유저 패널(synthetic user panel) 직접 만들어보기',
     date: '2026.08.13',
-    readTime: '15분',
+    readTime: '10분',
     loadContent: () => import('./article-content/synthetic-user-research-panel').then(({ syntheticUserResearchPanelContent }) => syntheticUserResearchPanelContent),
   },
   {
