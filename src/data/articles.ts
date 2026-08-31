@@ -58,7 +58,7 @@ export const articles: Article[] = [
     date: '2026.03.29',
     readTime: '18분',
     loadContent: () => import('./article-content/agent-teams-and-claude-peers').then(({ agentTeamsAndClaudePeersContent }) => agentTeamsAndClaudePeersContent),
-  },*/
+  },
   {
     slug: 'pm-ai-week',
     title: '빨라진 게 아니라, 가능해진 것들',
@@ -66,5 +66,5 @@ export const articles: Article[] = [
     date: '2026.03.27',
     readTime: '7분',
     loadContent: () => import('./article-content/pm-ai-week').then(({ pmAiWeekContent }) => pmAiWeekContent),
-  },
+  },*/
 ]
