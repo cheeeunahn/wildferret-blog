@@ -1,6 +1,7 @@
 ---
 import type { Article } from '../data/articleTypes'
 import { href } from '../lib/siteUrl'
+import { resolveAssetUrl } from '../lib/assetUrl'
 
 interface Props {
   article: Article
@@ -16,44 +17,67 @@ const { article, index } = Astro.props
   data-cat={article.category}
   style={`animation-delay: ${0.4 + index * 0.08}s`}
 >
+  {/* Thumbnail left, text right. The tile is inset in the card's own padding
+      rather than bled to its edges — flush, it read as a second panel welded
+      on rather than as an element of the card. The row collapses to a stack
+      under sm, where a square would eat half the card. */}
   <article
-    class="article-card rounded-xl p-6 sm:p-7"
+    class="article-card rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row gap-4 sm:gap-5"
   >
-    {/* Meta */}
-    <div class="flex items-center gap-2 text-xs text-ink-500 mb-3">
-      <span>{article.date}</span>
-      <span class="w-px h-2.5 bg-ink-200"></span>
-      <span class="text-accent">{article.category}</span>
-    </div>
+    {
+      article.cardImage && (
+        <div class="article-thumb shrink-0 overflow-hidden rounded-lg sm:w-[168px] sm:self-center">
+          <img
+            src={resolveAssetUrl(article.cardImage)}
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            decoding="async"
+            class="w-full h-40 object-contain sm:h-auto sm:aspect-square sm:object-cover"
+          />
+        </div>
+      )
+    }
 
-    {/* Title */}
-    <h2
-      class="text-xl sm:text-[22px] font-semibold text-ink-900 leading-snug tracking-tight mb-2 group-hover:text-ink-600 transition-colors"
-    >
-      {article.title}
-    </h2>
+    {/* Padding here plus the card's own adds up to the 24/28px the card used
+        to carry on its own, so the text block sits where it always did. */}
+    <div class="min-w-0 flex-1 p-2 sm:p-3">
+      {/* Meta */}
+      <div class="flex items-center gap-2 text-xs text-ink-500 mb-3">
+        <span>{article.date}</span>
+        <span class="w-px h-2.5 bg-ink-200"></span>
+        <span class="text-accent">{article.category}</span>
+      </div>
 
-    {/* Subtitle */}
-    <p class="text-[15px] text-ink-600 leading-relaxed line-clamp-2">
-      {article.subtitle}
-    </p>
-
-    {/* Read time */}
-    <div class="mt-4 flex items-center gap-2 text-xs text-ink-500">
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+      {/* Title */}
+      <h2
+        class="text-xl sm:text-[22px] font-semibold text-ink-900 leading-snug tracking-tight mb-2 group-hover:text-ink-600 transition-colors"
       >
-        <circle cx="12" cy="12" r="10"></circle>
-        <polyline points="12 6 12 12 16 14"></polyline>
-      </svg>
-      {article.readTime} 읽기
+        {article.title}
+      </h2>
+
+      {/* Subtitle */}
+      <p class="text-[15px] text-ink-600 leading-relaxed line-clamp-2">
+        {article.subtitle}
+      </p>
+
+      {/* Read time */}
+      <div class="mt-4 flex items-center gap-2 text-xs text-ink-500">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        {article.readTime} 읽기
+      </div>
     </div>
   </article>
 </a>
