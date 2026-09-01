@@ -2,7 +2,7 @@ export const researchWikiForLlmContent = `
 
 지난 1년 반 동안 쌓인 유저 리서치 자료를 다시 꺼내볼 일이 종종 있다. 사용성 테스트, 심층 인터뷰, 컨셉 테스트, 설문, VOC 주간 분석. 폴더를 열어보니 PDF, PPT, 녹취록 텍스트 파일, 마크다운, 컨플루언스 문서가 뒤섞여 있었고 한 건이 수십 페이지짜리인 것도 있었다.
 
-![책상 가득 쌓인 리서치 문서 더미 앞에서 종이 한 장을 들고 난감해하는 사람의 일러스트](/assets/images/research-wiki-for-llm-scattered-files.webp "형식도 분량도 제각각인 자료가 폴더 하나에 그대로 쌓여 있었다")
+![책상 가득 쌓인 리서치 문서 더미 앞에서 종이 한 장을 들고 난감해하는 사람의 일러스트](/assets/images/research-wiki-for-llm-scattered-files.webp "형식도 분량도 제각각인 자료가 폴더 하나에 그대로 쌓여 있었다 (AI 생성)")
 
 다 읽기에는 너무 많고, 그렇다고 통째로 LLM에 밀어넣기에도 너무 컸다. 그래서 이걸 LLM이 빠르고 쉽게 읽을 수 있는 위키로 정리해보기로 했다.
 
@@ -10,7 +10,7 @@ export const researchWikiForLlmContent = `
 
 ## Open Knowledge Format과 LLM Wiki
 
-팀장 덕분에 LLM에 특화된 문서 포맷 두 가지를 접하게 되었다.
+LLM에 특화된 문서 포맷 두 가지를 최근에 내가 속한 팀의 능력자 팀장님을 통해 접하게 되었다.
 
 하나는 구글의 **[Open Knowledge Format](https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing)**. 지식을 담는 또 하나의 서비스를 만들지 말고 형식을 정하자는 이야기다. 마크다운 파일 하나가 개념 하나고, YAML 프론트매터로 최소한의 메타데이터만 통제하고, 나머지는 쓰는 사람이 알아서 정한다. 강제하는 필드는 문서 타입 하나뿐. 파일 경로가 계층이 되고 마크다운 링크가 그래프가 된다. 벡터 DB도 SDK도 없이 사람과 에이전트가 같은 파일을 읽는다.
 

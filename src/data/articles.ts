@@ -16,7 +16,7 @@ export const articles: Article[] = [
     slug: 'synthetic-user-reading',
     title: '합성 유저(synthetic user)는 실제 사람을 대상으로 하는 유저 리서치를 대체할 수 있을까',
     subtitle: '가상 유저 리서치 패널 만드는 김에 조사하고 읽어본 합성 유저 문헌들',
-    date: '2026.08.17',
+    date: '2026.09.01',
     readTime: '12분',
     category: 'Research',
     cardImage: '/assets/images/synthetic-user-reading-card.webp',
