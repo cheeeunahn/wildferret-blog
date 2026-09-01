@@ -37,22 +37,22 @@ const filterCss = usedCategories
 
 <Base>
   <div class="page-enter">
-    {/* Hero */}
+    {/* Hero, on a full-bleed tonal band. This is what separates the hero from
+        the article list — a change of ground rather than a rule across it. A
+        hairline says "here is a boundary" and nothing more; a band says the two
+        regions are different kinds of thing, which is the actual relationship.
+        It also means the separation survives at any width without a 720px line
+        floating in the middle of a wide screen. */}
+    <div class="bg-paper-warm">
     <section class="max-w-[720px] mx-auto px-6 pt-10 sm:pt-14 pb-12">
-      <h1
-        class="text-3xl sm:text-[40px] font-bold text-ink-950 leading-tight tracking-tight animate-reveal-soft delay-1"
-      >
-        프로덕트 메이커 wildferret의
-        <br />
-        소소한 작업 이야기
-      </h1>
         {/* The box is taller than the source's 16:9, so object-cover crops the
             sides and the ferret renders larger. Its focal point is right of
             centre and high, hence object-[62%_38%] rather than the default.
             The <label> makes the whole illustration the click target for the
             greeting; the checkbox inside it is the state. */}
+        <figure class="m-0 animate-reveal-media delay-1">
         <div
-          class="hero-greet relative block mt-8 overflow-hidden rounded-2xl border border-ink-100 bg-paper-warm/30 animate-reveal-media delay-2"
+          class="hero-greet relative block overflow-hidden rounded-2xl bg-paper-warm/30"
         >
           <input
             type="radio"
@@ -152,6 +152,15 @@ const filterCss = usedCategories
           </button>
         </div>
 
+        {/* Sits outside the frame rather than over the art: the illustration is
+            busy at the bottom edge and an overlay would need a scrim to stay
+            legible, which reads as a header band on a photo. Small and quiet —
+            this labels the picture, it is not the page's headline. */}
+        <figcaption class="mt-3 text-sm text-ink-500">
+          소리 키고 클릭하면 좋은 일이 있을 수도? 위 이미지를 눌러보세요 🍀
+        </figcaption>
+        </figure>
+
         {/* The one bit the CSS state machine cannot do: drop back to the idle
             frame when the reader stops clicking. Inline and dependency-free on
             purpose — see the islands policy in CLAUDE.md; this is not a
@@ -205,15 +214,28 @@ const filterCss = usedCategories
           })()
         </script>
     </section>
-
-    <hr class="ink-divider max-w-[720px] mx-auto" />
+    </div>
 
     {/* Category filter + article list. The :has() rules read from .cat-scope,
         so the radios and the cards must stay inside this one element. */}
-    <div class="cat-scope">
+    <div class="cat-scope pt-12 sm:pt-14">
       <style is:inline set:html={filterCss}></style>
 
-      <section class="max-w-[720px] mx-auto px-6 pt-10">
+      {/* The filter sticks below the header so it stays reachable while you
+          scroll the list — top-16 is the header's own h-16, and z-40 keeps it
+          under the header rather than sliding over it. The band is a full-bleed
+          div and only the inner section is width-capped, so the cards pass
+          behind an opaque strip instead of showing through beside a 720px box.
+          The region's top spacing moved up to .cat-scope: left on this element
+          it would have travelled with it and parked a 3rem gap of paper above
+          the pills once stuck. */}
+      {/* The sentinel is what tells us the bar has stuck: it sits one pixel
+          above the sticky element in normal flow, so the moment it passes
+          under the header the bar is at its stop. Observing the bar itself
+          would never fire — a stuck element stays in view by definition. */}
+      <div class="cat-sentinel" aria-hidden="true"></div>
+      <div class="cat-bar sticky top-16 z-40 bg-paper py-4 sm:py-5">
+      <section class="max-w-[720px] mx-auto px-6">
         <fieldset class="flex flex-wrap items-center gap-2.5 animate-reveal delay-3">
           <legend class="sr-only">카테고리로 글 고르기</legend>
 
@@ -243,10 +265,31 @@ const filterCss = usedCategories
           }
         </fieldset>
       </section>
+      </div>
+
+      {/* Same idiom as the hero script below: inline, dependency-free, not a
+          hydrated component (see the islands policy in CLAUDE.md). There is no
+          CSS selector for "is currently stuck", so this is the one job that
+          needs script. If it never runs the bar still sticks — it just does
+          not gain the shadow. */}
+      <script is:inline>
+        ;(() => {
+          const bar = document.querySelector('.cat-bar')
+          const sentinel = document.querySelector('.cat-sentinel')
+          if (!bar || !sentinel || !('IntersectionObserver' in window)) return
+          new IntersectionObserver(
+            ([entry]) => bar.classList.toggle('is-stuck', !entry.isIntersecting),
+            // The header is 64px of fixed chrome over the viewport; shrink the
+            // root by that much so the sentinel counts as gone when it slides
+            // under the header, not when it leaves the screen entirely.
+            { rootMargin: '-64px 0px 0px 0px', threshold: 0 },
+          ).observe(sentinel)
+        })()
+      </script>
 
       {/* flex + gap, not space-y: a card the filter hides is display:none, and
           gap collapses around it where a sibling margin would leave a hole. */}
-      <section class="max-w-[720px] mx-auto px-6 pt-8 pb-20 flex flex-col gap-5 sm:gap-6">
+      <section class="max-w-[720px] mx-auto px-6 pt-4 pb-20 flex flex-col gap-5 sm:gap-6">
         {articles.map((article, i) => <ArticleCard article={article} index={i} />)}
       </section>
     </div>

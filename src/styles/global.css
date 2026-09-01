@@ -44,27 +44,30 @@
   --font-body: "NanumBarunGothic", "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
   --font-sketch: "Gaegu", "Pretendard Variable", cursive;
 
-  /* Blue-cast neutral scale, keyed to the navy/periwinkle/off-white palette.
-     These are not gray: every step carries the same blue hue, so black text,
-     hairlines and panels all read as part of one family instead of as the
-     framework default. */
-  --color-ink-950: #0b1524;
-  --color-ink-900: #15233a;
-  --color-ink-800: #22304c;
-  --color-ink-700: #33425f;
-  --color-ink-600: #4e5e7c;
-  --color-ink-500: #6f7e9b;
-  --color-ink-400: #93a0ba;
-  --color-ink-300: #bcc6da;
-  --color-ink-200: #d8dfec;
-  --color-ink-100: #e7ecf4;
-  --color-ink-50: #f2f5fa;
+  /* Cool neutral scale, anchored to Shark (#1d2023) at the dark end and Ghost
+     (#ccd0d8) at the light end. Every step carries the same faint blue cast, so
+     black text, hairlines and panels read as one family rather than as the
+     framework default — but the cast is a whisper, not a navy. The scale used
+     to be a saturated blue-grey, which muddied the accent sitting on top of it:
+     a dusty blue next to a dusty blue reads as haze. Pulling the neutrals to
+     this axis is what lets the accent below be genuinely vivid. */
+  --color-ink-950: #16181d;
+  --color-ink-900: #1d2023;
+  --color-ink-800: #2c3038;
+  --color-ink-700: #414652;
+  --color-ink-600: #5c6270;
+  --color-ink-500: #7c8290;
+  --color-ink-400: #9ba1ad;
+  --color-ink-300: #bcc0c9;
+  --color-ink-200: #ccd0d8;
+  --color-ink-100: #e2e5ea;
+  --color-ink-50: #f1f3f6;
 
   /* The page is faintly tinted and the card is pure white, so a card reads as
      paper laid on a surface. Inverting these (white page, tinted card) makes
      the card read as a recess instead. */
-  --color-paper: #f3f6fb;
-  --color-paper-warm: #e8edf7;
+  --color-paper: #f4f5f8;
+  --color-paper-warm: #e9ebf0;
 
   /* Raised surfaces (article cards, diagram panels) — brighter than the page in
      light, lighter than the page in dark, so "raised" reads the same way both
@@ -72,42 +75,56 @@
   --color-surface: #ffffff;
   --color-surface-hover: #ffffff;
 
-  /* The one saturated blue: links, active nav, focus. Used sparingly and never
-     for large fills — the ink scale already carries the hue. */
-  --color-accent: #2c6ca8;
-  --color-accent-strong: #1f4f80;
-  --color-accent-soft: #cfe0f1;
+  /* The one saturated blue: links, active nav, focus. Blue Ribbon — a clean,
+     fully-saturated modern blue, not the dusty steel blue this used to be.
+     Used sparingly and never for large fills; the neutrals above are quiet
+     enough that a little of this goes a long way.
+     -strong is the pressed/hover step, -soft the tint (selection, chips). */
+  --color-accent: #1463f3;
+  --color-accent-strong: #0b48c4;
+  --color-accent-soft: #dbe5fe;
 
   /* The warm counterweight (the copper lamp). One accent only — inline code and
      list markers. Never a background, never next to the blue accent. */
   --color-copper: #b06e45;
+
+  /* The plate behind a card thumbnail. The illustrations are black line work
+     on white and are shown as drawn in both themes, so this one token does
+     NOT flip in dark — it is the artwork's own white there too. */
+  --color-thumb-plate: #ffffff;
 }
 
 /* Dark theme — the same semantic tokens, inverted.
    Every component reads these vars, so nothing else needs a dark: variant. */
 html.dark {
-  --color-ink-950: #f4f7fc;
-  --color-ink-900: #e6ecf6;
-  --color-ink-800: #d3dcea;
-  --color-ink-700: #bcc7da;
-  --color-ink-600: #9dabc4;
-  --color-ink-500: #8291ab;
-  --color-ink-400: #74829b;
-  --color-ink-300: #5d6b85;
-  --color-ink-200: #2e3c56;
-  --color-ink-100: #223047;
-  --color-ink-50: #1a2637;
+  --color-ink-950: #f5f6f8;
+  --color-ink-900: #e8eaee;
+  --color-ink-800: #d6d9e0;
+  --color-ink-700: #bec2cc;
+  --color-ink-600: #9da3b0;
+  --color-ink-500: #858b99;
+  --color-ink-400: #767c8a;
+  --color-ink-300: #5f6573;
+  --color-ink-200: #333844;
+  --color-ink-100: #272c36;
+  --color-ink-50: #1f232b;
 
-  --color-paper: #0d1524;
-  --color-paper-warm: #151f31;
-  --color-surface: #1d2a3f;
-  --color-surface-hover: #26364f;
+  --color-paper: #15171c;
+  --color-paper-warm: #1d2023;
+  --color-surface: #24272f;
+  --color-surface-hover: #2e323b;
 
-  --color-accent: #7fb0e0;
-  --color-accent-strong: #a3c8ec;
-  --color-accent-soft: #24405e;
+  /* Blue Ribbon is too dense to read as a link on a near-black page, so dark
+     takes Malibu — the same hue, lifted — and steps *lighter* for -strong,
+     mirroring how light mode steps darker. */
+  --color-accent: #84a4fc;
+  --color-accent-strong: #a8bffd;
+  --color-accent-soft: #1e2c56;
 
   --color-copper: #d59468;
+
+  /* Deliberately not inverted — see the token's note above. */
+  --color-thumb-plate: #ffffff;
 }
 
 /* Base styles */
@@ -530,7 +547,7 @@ html:not(.dark) .hero-firefly {
   padding: 0;
   border: 1px solid rgb(255 255 255 / 0.22);
   border-radius: 9999px;
-  background: rgb(11 21 36 / 0.5);
+  background: rgb(22 24 29 / 0.5);
   backdrop-filter: blur(6px);
   color: rgb(255 255 255 / 0.82);
   cursor: pointer;
@@ -541,7 +558,7 @@ html:not(.dark) .hero-firefly {
 }
 
 .hero-sound:hover {
-  background: rgb(11 21 36 / 0.72);
+  background: rgb(22 24 29 / 0.72);
   color: #fff;
   border-color: rgb(255 255 255 / 0.38);
 }
@@ -624,13 +641,72 @@ html:not(.dark) .hero-firefly {
 
 .article-card:hover {
   box-shadow:
-    0 1px 2px rgb(11 21 36 / 0.05),
-    0 10px 24px -10px rgb(11 21 36 / 0.16);
+    0 1px 2px rgb(22 24 29 / 0.06),
+    0 10px 24px -10px rgb(22 24 29 / 0.18);
 }
 
 html.dark .article-card:hover {
   background-color: var(--color-surface-hover);
   box-shadow: none;
+}
+
+/* Card thumbnail.
+   The covers are black line art on white and are shown as drawn — no invert,
+   no blend. The tile carries the same white so the plate and the image read
+   as one square in either theme. */
+.article-thumb {
+  background-color: var(--color-thumb-plate);
+}
+
+.article-thumb img {
+  transition: transform 0.35s ease;
+}
+
+/* Opt out of the site-wide `html.dark img { brightness(0.92) }` glare trim —
+   it greys the artwork's white ground, and these read as plain black on white
+   in both themes. Needs to match that rule's specificity to win. */
+html.dark .article-thumb img {
+  filter: none;
+}
+
+.group:hover .article-thumb img {
+  transform: scale(1.04);
+}
+
+/* Category filter bar.
+   The sentinel is a zero-height marker in normal flow directly above the
+   sticky bar; an IntersectionObserver in index.astro watches it and toggles
+   .is-stuck. It needs a real box to be observable, hence the 1px. */
+.cat-sentinel {
+  height: 1px;
+}
+
+.cat-bar {
+  /* No shadow at rest — the bar is the same ground as the page until it
+     actually lifts off it. */
+  box-shadow: 0 0 0 0 transparent;
+  transition: box-shadow 0.2s ease;
+}
+
+.cat-bar.is-stuck {
+  box-shadow:
+    0 1px 2px rgb(22 24 29 / 0.05),
+    0 8px 20px -12px rgb(22 24 29 / 0.28);
+}
+
+/* A soft shadow on a near-black page is invisible — the same problem the
+   article card hover has. Go much darker and tighter so the edge still reads
+   as an overlap rather than as nothing. */
+html.dark .cat-bar.is-stuck {
+  box-shadow:
+    0 1px 0 0 var(--color-ink-200),
+    0 10px 22px -14px rgb(0 0 0 / 0.9);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cat-bar {
+    transition: none;
+  }
 }
 
 /* Category filter — the pills are <label>s for a hidden radio group, and the
@@ -648,7 +724,15 @@ html.dark .article-card:hover {
      and panels rather than introducing a second shape language. Scaled with the
      box: 8px looked tight once the control grew past ~40px tall. */
   border-radius: 10px;
-  border: 1px solid var(--color-ink-200);
+  /* Transparent rather than absent: the resting pill carries no outline, but
+     the box keeps the 1px the checked state is measured against, so nothing
+     shifts by a pixel as you move across the row. */
+  border: 1px solid transparent;
+  /* With the outline gone, the fill is the only thing left saying "this is a
+     control" — a bare label would dissolve into the page. One step up from
+     paper, which is enough to read as a chip without competing with the solid
+     accent on the selected one. */
+  background-color: var(--color-ink-100);
   color: var(--color-ink-600);
   cursor: pointer;
   user-select: none;
@@ -658,14 +742,22 @@ html.dark .article-card:hover {
     background-color 0.15s ease;
 }
 
+/* With no outline to darken, hover steps the fill one further instead. */
 .cat-pill:hover {
   color: var(--color-ink-900);
-  border-color: var(--color-ink-300);
+  background-color: var(--color-ink-200);
 }
 
 .cat-input:checked + .cat-pill {
   background-color: var(--color-accent);
   border-color: var(--color-accent);
+  color: var(--color-paper);
+}
+
+/* The checked pill is already filled — let hover leave it alone rather than
+   washing the accent out with the neutral tint above. */
+.cat-input:checked + .cat-pill:hover {
+  background-color: var(--color-accent);
   color: var(--color-paper);
 }
 

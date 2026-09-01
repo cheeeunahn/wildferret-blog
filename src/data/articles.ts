@@ -13,13 +13,14 @@ export const articles: Article[] = [
   },
   */
   {
-    slug: 'wiki-as-graph',
+    slug: 'synthetic-user-reading',
     title: '합성 유저(synthetic user)는 실제 사람을 대상으로 하는 유저 리서치를 대체할 수 있을까',
-    subtitle: '가상 유저 리서치 패널 만드는 김에 생각나서 해보는 합성 유저 문헌 조사',
+    subtitle: '가상 유저 리서치 패널 만드는 김에 조사하고 읽어본 합성 유저 문헌들',
     date: '2026.08.17',
     readTime: '12분',
     category: 'Research',
-    loadContent: () => import('./article-content/wiki-as-graph').then(({ wikiAsGraphContent }) => wikiAsGraphContent),
+    cardImage: '/assets/images/synthetic-user-reading-card.webp',
+    loadContent: () => import('./article-content/synthetic-user-reading').then(({ syntheticUserReadingContent }) => syntheticUserReadingContent),
   },
   {
     slug: 'research-wiki-for-llm',
@@ -28,6 +29,7 @@ export const articles: Article[] = [
     date: '2026.08.13',
     readTime: '5분',
     category: 'Personal',
+    cardImage: '/assets/images/research-wiki-for-llm-card.webp',
     loadContent: () => import('./article-content/research-wiki-for-llm').then(({ researchWikiForLlmContent }) => researchWikiForLlmContent),
   },
   {
@@ -37,12 +39,14 @@ export const articles: Article[] = [
     date: '2026.08.13',
     readTime: '10분',
     category: 'Personal',
+    cardImage: '/assets/images/synthetic-user-research-panel-card.webp',
     loadContent: () => import('./article-content/synthetic-user-research-panel').then(({ syntheticUserResearchPanelContent }) => syntheticUserResearchPanelContent),
   },
   {
     slug: 'ai-git-101-for-designers',
     title: 'AI는 신이 아니고, 그저 확률 기반으로 움직이는 똑똑한 시스템일 뿐',
     subtitle: '프로덕트 디자이너 대상으로 AI 101 세션을 준비하며 정리한 내용 요약',
+    cardImage: '/assets/images/ai-git-101-for-designers-card.webp',
     date: '2026.04.23',
     readTime: '7분',
     category: 'Personal',
