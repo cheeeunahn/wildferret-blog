@@ -1,4 +1,4 @@
-export const CATEGORIES = ['Research', 'Personal'] as const
+export const CATEGORIES = ['Research', 'Personal', 'Conference'] as const
 
 export type Category = (typeof CATEGORIES)[number]
 

@@ -2,16 +2,6 @@ export type { Article } from './articleTypes'
 import type { Article } from './articleTypes'
 
 export const articles: Article[] = [
-  /*{
-    slug: 'mgs-2026-play-hall',
-    title: 'MGS 2026에서 들은 5가지 세션 요약',
-    subtitle: '구독 결제, AI 인용, 게임 UA, 크립토 광고, 그리고 워크플로우',
-    date: '2026.08.18',
-    readTime: '24분',
-    category: 'Personal',
-    loadContent: () => import('./article-content/mgs-2026-play-hall').then(({ mgs2026PlayHallContent }) => mgs2026PlayHallContent),
-  },
-  */
   {
     slug: 'synthetic-user-reading',
     title: '합성 유저(synthetic user)는 실제 사람을 대상으로 하는 유저 리서치를 대체할 수 있을까',
@@ -21,6 +11,16 @@ export const articles: Article[] = [
     category: 'Research',
     cardImage: '/assets/images/synthetic-user-reading-card.webp',
     loadContent: () => import('./article-content/synthetic-user-reading').then(({ syntheticUserReadingContent }) => syntheticUserReadingContent),
+  },
+  {
+    slug: 'mgs-2026-play-hall',
+    title: 'MGS 2026에서 들은 5가지 세션 요약해보기',
+    subtitle: '구독 결제, AI가 인용하는 브랜드, 게임 마케팅, 가상자산 광고, 그리고 AI로 일하는 방식',
+    date: '2026.08.18',
+    readTime: '12분',
+    category: 'Conference',
+    cardImage: '/assets/images/mgs-2026-play-hall-card.webp',
+    loadContent: () => import('./article-content/mgs-2026-play-hall').then(({ mgs2026PlayHallContent }) => mgs2026PlayHallContent),
   },
   {
     slug: 'research-wiki-for-llm',
