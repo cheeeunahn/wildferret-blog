@@ -58,7 +58,11 @@ describe('formatInline', () => {
     const result = formatInline('**강조** `code` [내부 링크](/assets/image.png) [unsafe](javascript:alert(1)) <script>alert(1)</script>')
 
     expect(result).toContain('<strong>강조</strong>')
-    expect(result).toContain('<code class="px-1.5 py-0.5 bg-ink-50 rounded text-[14px] font-mono text-ink-600">code</code>')
+    // Asserted as wrapper + color token rather than the exact class list: the
+    // rest is presentational churn, and pinning it is what let this test drift
+    // when the redesign moved inline code from text-ink-600 to text-copper.
+    expect(result).toMatch(/<code class="[^"]*">code<\/code>/)
+    expect(result).toContain('text-copper')
     expect(result).toContain('assets/image.png"')
     expect(result).toContain('<a href="#"')
     expect(result).toContain('&lt;script&gt;alert(1)&lt;/script&gt;')

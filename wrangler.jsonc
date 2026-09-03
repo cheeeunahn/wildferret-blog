@@ -1,14 +1,14 @@
 {
   // Static-assets-only Worker: no server code, so no "main" entrypoint.
-  // Build with `npm run build` (BASE_PATH=/ so assets resolve at the root),
-  // then Wrangler uploads ./dist.
+  // Build with `npm run build` (assets resolve at the root), then Wrangler
+  // uploads ./dist.
   "name": "wildferret-blog",
   "compatibility_date": "2026-08-13",
   "assets": {
     "directory": "./dist",
     // Astro prerenders a real file per route, so unknown paths should genuinely
     // 404 rather than rewrite to index.html. dist/404.html is built from
-    // src/pages/404.astro — the old GitHub Pages redirect shim is gone.
+    // src/pages/404.astro.
     "not_found_handling": "404-page"
   }
 }
