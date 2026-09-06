@@ -9,7 +9,8 @@
     "preview": "astro preview",
     "lint": "eslint .",
     "test": "vitest run",
-    "astro": "astro"
+    "astro": "astro",
+    "prepare": "lefthook install"
   },
   "dependencies": {
     "@astrojs/react": "6.0.2",
@@ -23,14 +24,22 @@
     "@tailwindcss/vite": "^4.2.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "astro-eslint-parser": "^1.4.0",
     "eslint": "^9.39.4",
+    "eslint-plugin-astro": "^1.7.0",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
+    "lefthook": "^2.1.12",
     "tailwindcss": "^4.2.2",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.57.0",
     "vitest": "^4.1.10"
   },
-  "packageManager": "pnpm@10.34.5+sha512.a4ee05f2f73658255bd6a89859c065a45c28a57daefae2c893a168ee2b73168c37b91e83e57ea67654ad03f03031746430e8bce38e362e042605fb8abc80192e"
+  "packageManager": "pnpm@10.34.5+sha512.a4ee05f2f73658255bd6a89859c065a45c28a57daefae2c893a168ee2b73168c37b91e83e57ea67654ad03f03031746430e8bce38e362e042605fb8abc80192e",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "lefthook"
+    ]
+  }
 }

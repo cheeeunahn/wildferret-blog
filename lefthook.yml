@@ -1,0 +1,26 @@
+# Git hooks, installed into .git/hooks by `pnpm lefthook install`
+# (run automatically by the `prepare` script on `pnpm install`).
+# Skip a run with `git commit --no-verify` or `LEFTHOOK=0 git push`.
+
+pre-commit:
+  parallel: true
+  jobs:
+    - name: eslint
+      glob: '*.{js,mjs,ts,tsx,astro}'
+      run: pnpm exec eslint --fix --no-warn-ignored {staged_files}
+      # --fix rewrites files behind git's back, so re-stage what it touched.
+      stage_fixed: true
+
+pre-push:
+  jobs:
+    # Advisory only — --no-verify skips it, and it matches the branch you're on,
+    # not `git push origin HEAD:main`. Branch protection is the real lock.
+    - name: no-direct-push-to-main
+      only:
+        - ref: main
+      run: echo '✋ main is protected — push a branch and open a PR'; exit 1
+    # astro check covers the TypeScript pass, so this is typecheck + build in one.
+    - name: build
+      run: pnpm build
+    - name: test
+      run: pnpm test

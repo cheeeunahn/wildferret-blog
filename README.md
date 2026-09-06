@@ -145,7 +145,7 @@ URLs through unchanged.
 Internal *route* links are a separate concern: Astro does not prefix `<a href>`
 with the base path, so use `href()` from `src/lib/siteUrl.ts` (and `isActive()`
 for nav highlighting). Never write a bare `href="/about"`, and never hardcode a
-`/wildferret-blog/` prefix.
+base path prefix.
 
 ### Diagrams
 
@@ -169,28 +169,19 @@ palette colors or arbitrary hex values.
 
 ## Deployment
 
-The site is served from two places with different path prefixes, so
-[`astro.config.mjs`](astro.config.mjs) picks `base` from the environment:
-
-| Target | Base path | How it's set |
-|--------|-----------|--------------|
-| GitHub Pages | `/wildferret-blog/` | `BASE_PATH` env var (also the local default) |
-| Cloudflare Worker | `/` | `WORKERS_CI` / `CF_PAGES` set by Cloudflare's build env |
-
-`BASE_PATH` overrides both when set explicitly. Everything base-aware reads
-`import.meta.env.BASE_URL`, via `resolveAssetUrl()` for assets and `href()` for
-internal links.
+The site is deployed as a Cloudflare static-assets Worker at the root path, so
+[`astro.config.mjs`](astro.config.mjs) uses `base: '/'` by default. Set the
+`BASE_PATH` env var to build for a host that serves the site under a path
+prefix. Everything base-aware reads `import.meta.env.BASE_URL`, via
+`resolveAssetUrl()` for assets and `href()` for internal links.
 
 Astro prerenders one HTML file per route (`dist/about/index.html`,
-`dist/article/<slug>/index.html`, …), so deep links resolve directly on both
-hosts and there is no SPA redirect shim to maintain.
+`dist/article/<slug>/index.html`, …), so deep links resolve directly and there
+is no SPA redirect shim to maintain.
 
-**GitHub Pages** — not deployed automatically. To publish there, build with
-`BASE_PATH=/wildferret-blog/ pnpm build` and upload `dist/` yourself.
-
-**Cloudflare** — [`wrangler.jsonc`](wrangler.jsonc) configures a static-assets-only
-Worker (no server entrypoint) that uploads `./dist` with
-`not_found_handling: "404-page"`, served by the prerendered `dist/404.html`.
+[`wrangler.jsonc`](wrangler.jsonc) configures a static-assets-only Worker (no
+server entrypoint) that uploads `./dist` with `not_found_handling: "404-page"`,
+served by the prerendered `dist/404.html`.
 
 ## Tests
 

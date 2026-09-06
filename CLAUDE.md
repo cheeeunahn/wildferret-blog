@@ -23,7 +23,7 @@ Astro 7 requires **Node 22.12+**; pnpm 10 is pinned via `packageManager`.
 
 Every route is prerendered to a real HTML file at build time. There is no client-side router.
 
-**Deployment:** GitHub Pages at `cheeeunahn.github.io/wildferret-blog` and a root-path Cloudflare static worker. `astro.config.mjs` selects `base` from `BASE_PATH` or the Cloudflare build environment (`WORKERS_CI` / `CF_PAGES`), defaulting to `/wildferret-blog/`. `wrangler.jsonc` uploads `./dist` with `not_found_handling: "404-page"`, served by the prerendered `dist/404.html`.
+**Deployment:** a root-path Cloudflare static worker. `astro.config.mjs` uses `base: '/'`, overridable via the `BASE_PATH` env var for a path-prefixed host. `wrangler.jsonc` uploads `./dist` with `not_found_handling: "404-page"`, served by the prerendered `dist/404.html`.
 
 **Routing** (file-based, `src/pages/`):
 - `index.astro` → `/`
@@ -52,7 +52,7 @@ Astro does **not** prefix `<a href>` with the configured `base`, and there is no
 
 `href()` passes protocol-relative, `https:`, `mailto:`, and `tel:` URLs through untouched; `resolveAssetUrl()` passes `http(s)://` through.
 
-Never write a bare `href="/about"`, and never hardcode a `/wildferret-blog/` prefix.
+Never write a bare `href="/about"`, and never hardcode a base path prefix.
 
 ## Article System
 
@@ -96,3 +96,21 @@ Current diagrams: `voc-workflow`, `terminal-team`, `peers-architecture`, `tmux-s
 `src/styles/global.css` holds the Tailwind entry (`@import "tailwindcss"`), the Nanum `@font-face` declarations, and an `@theme` block defining a custom ink/paper token scale (e.g. `text-ink-900`, `bg-paper-warm`). Dark mode is a `.dark` class on `<html>` that reassigns the same tokens, which is why almost nothing in the codebase needs a `dark:` variant. Stick to the existing token names — don't introduce arbitrary hex colors or raw Tailwind palette colors.
 
 Entrance motion: `.page-enter` on each page's wrapper plus `.animate-reveal` (and the `.delay-*` scale) on its children. The `.boot-shell` / `.boot-header` keyframes are leftovers from the SPA and are deliberately unused — applying them to the layout chrome would replay the header animation on every navigation.
+
+## Lint Rules
+
+`pnpm lint` runs ESLint over `src/**/*.{ts,tsx}` **and** `src/**/*.astro`. Alongside the published rule sets, `eslint-rules/` is a repo-local plugin (registered as `local` in `eslint.config.js`) that turns the three conventions above into errors:
+
+| Rule | Scope | Enforces |
+| --- | --- | --- |
+| `local/no-bare-internal-href` | ts, tsx, astro | Linking — no bare `href="/about"` / `src="/assets/…"`, no hardcoded base prefix in any string (this half also reaches markdown links inside `article-content/*.ts`) |
+| `local/no-raw-colors` | ts, tsx, astro | Design Tokens — no stock Tailwind palette classes, no hex/`rgb()` in `class`/`style`/`fill`/`stroke` |
+| `local/no-unlisted-island` | astro | Islands policy — `client:*` only on `<ThemeToggle>` (allowlist is the rule's `allow` option) |
+| `local/no-interactive-diagrams` | `Diagrams.tsx` only | Islands policy — no hooks, no `on*` handlers |
+
+**Adding a rule:** write `eslint-rules/<name>.js` exporting the standard `{ meta, create }` object (plain ESM, no build step), register it in `eslint-rules/index.js`, enable it in the right block of `eslint.config.js`, and add `RuleTester` cases to `eslint-rules/rules.test.js` — `pnpm test` runs those alongside the parser tests.
+
+Two config details worth knowing before editing `eslint.config.js`:
+
+- The `.astro` block extends `astro.configs['flat/base']`, not `recommended`. `flat/base` supplies the parser and the `<script>` processor without the opinionated rules, which would otherwise fight the deliberately untranspiled pre-paint theme script in `Base.astro`.
+- The ts/tsx block carries `ignores: ['**/*.astro/*']`. The Astro processor emits each `<script>` block as a virtual `Base.astro/0_0.ts`, and `src/**/*.ts` matches that path — without the ignore, the React and typescript-eslint rule sets land on that same inline script.
