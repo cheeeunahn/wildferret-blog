@@ -1,18 +1,21 @@
 ---
-import type { Article } from '../data/articleTypes'
-import { href } from '../lib/siteUrl'
+import type { LocalizedArticle } from '../data/articleTypes'
+import { localeHref, type Locale } from '../lib/i18n'
+import { t } from '../lib/strings'
 import { resolveAssetUrl } from '../lib/assetUrl'
 
 interface Props {
-  article: Article
+  article: LocalizedArticle
   index: number
+  locale: Locale
 }
 
-const { article, index } = Astro.props
+const { article, index, locale } = Astro.props
+const strings = t(locale.lang)
 ---
 
 <a
-  href={href(`/article/${article.slug}`)}
+  href={localeHref(locale, `/article/${article.slug}`)}
   class="group block no-underline animate-reveal"
   data-cat={article.category}
   style={`animation-delay: ${0.4 + index * 0.08}s`}
@@ -76,7 +79,7 @@ const { article, index } = Astro.props
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
-        {article.readTime} 읽기
+        {strings.article.readTime(article.readMinutes)}
       </div>
     </div>
   </article>

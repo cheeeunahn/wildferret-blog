@@ -1,0 +1,39 @@
+---
+import type { GetStaticPaths } from 'astro'
+import Base from '../../../layouts/Base.astro'
+import ArticleView from '../../../components/ArticleView.astro'
+import { articlesIn, langsForSlug } from '../../../data/articles'
+import { LANG_PARAMS, localeFromSegment } from '../../../lib/i18n'
+import { t } from '../../../lib/strings'
+
+// Only posts that have been written in a language get a route in it — an
+// untranslated slug 404s under /en rather than serving Korean text at an
+// English URL.
+export const getStaticPaths = (async () => {
+  const perLang = await Promise.all(
+    LANG_PARAMS.map(async (lang) => {
+      const locale = localeFromSegment(lang)!
+      return Promise.all(
+        articlesIn(locale.lang).map(async (article) => ({
+          params: { lang, slug: article.slug },
+          props: { article, content: await article.loadContent() },
+        })),
+      )
+    }),
+  )
+  return perLang.flat()
+}) satisfies GetStaticPaths
+
+const { article, content } = Astro.props
+const locale = localeFromSegment(Astro.params.lang!)!
+const strings = t(locale.lang)
+---
+
+<Base
+  locale={locale}
+  title={`${article.title} — ${strings.siteTitle}`}
+  description={article.subtitle}
+  availableLangs={langsForSlug(article.slug)}
+>
+  <ArticleView locale={locale} article={article} content={content} />
+</Base>

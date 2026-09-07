@@ -1,0 +1,17 @@
+---
+import type { GetStaticPaths } from 'astro'
+import Base from '../../layouts/Base.astro'
+import HomeView from '../../components/HomeView.astro'
+import { LANG_PARAMS, localeFromSegment } from '../../lib/i18n'
+
+// One prefixed index per language: /kr/ and /en/. The unprefixed /
+// (src/pages/index.astro) is the canonical Korean URL; /kr/ is its alias.
+export const getStaticPaths = (() =>
+  LANG_PARAMS.map((lang) => ({ params: { lang } }))) satisfies GetStaticPaths
+
+const locale = localeFromSegment(Astro.params.lang!)!
+---
+
+<Base locale={locale}>
+  <HomeView locale={locale} />
+</Base>

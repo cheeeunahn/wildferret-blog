@@ -627,6 +627,48 @@ html:not(.dark) .hero-firefly {
   text-decoration-color: var(--color-accent);
 }
 
+/* Language switcher.
+   Sits beside the nav links but is deliberately quieter than them: it names
+   which of three trees you are in (/, /kr, /en), which is orientation rather
+   than navigation. Hence the smaller type and the ink-500 ground — an active
+   nav-link's accent underline would read as a fourth destination. */
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+.lang-switch-link {
+  color: var(--color-ink-500);
+  text-decoration: none;
+  padding: 0.15rem 0.1rem;
+  transition: color 0.15s ease;
+}
+
+.lang-switch-link:hover {
+  color: var(--color-ink-900);
+}
+
+/* The current language is stated, not offered — weight and full-strength ink,
+   with no underline, so it does not read as somewhere else to go. */
+.lang-switch-link.is-current {
+  color: var(--color-ink-900);
+  font-weight: 700;
+}
+
+.lang-switch-link:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+.lang-switch-sep {
+  color: var(--color-ink-200);
+}
+
 /* Article card.
    Light: white paper on the tinted page, lifted on hover by a shadow rather
    than a colour change — there is no lighter value than white to move to.

@@ -1,0 +1,23 @@
+---
+import type { GetStaticPaths } from 'astro'
+import Base from '../../layouts/Base.astro'
+import AboutView from '../../components/AboutView.astro'
+import { LANG_PARAMS, localeFromSegment } from '../../lib/i18n'
+import { t } from '../../lib/strings'
+import { aboutCopy } from '../../data/about'
+
+export const getStaticPaths = (() =>
+  LANG_PARAMS.map((lang) => ({ params: { lang } }))) satisfies GetStaticPaths
+
+const locale = localeFromSegment(Astro.params.lang!)!
+const strings = t(locale.lang)
+const copy = aboutCopy(locale.lang)
+---
+
+<Base
+  locale={locale}
+  title={`${copy.pageTitle} — ${strings.siteTitle}`}
+  description={copy.intro}
+>
+  <AboutView locale={locale} />
+</Base>
