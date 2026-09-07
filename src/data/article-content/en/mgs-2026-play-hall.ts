@@ -1,8 +1,9 @@
 export const mgs2026PlayHallContentEn = `
+This article synthesises five sessions presented at MGS WEEK 2026. It reports the speakers' claims, examples, and figures rather than independently validating them. Accordingly, numerical results should be interpreted as conference evidence whose generalisability depends on the underlying datasets and methods.
 
 ## Engineering constraints on app growth
 
-> I am absolutely not saying to be suspicious of your dev team. Just having the growth side find the engineering problems that bear directly on growth, and turn them into problems a developer can solve, is enough to see results.
+Eom's central claim was not that growth teams should distrust engineering teams, but that they should identify technical constraints with direct implications for growth and translate them into actionable engineering problems.
 
 Eom Jae-woong, Senior DevRel Engineer at RevenueCat, presented findings from the *State of Subscription Apps* report, which aggregates data from approximately 120,000 apps. Unless otherwise noted, the figures in this section are those presented by the speaker.
 
@@ -16,7 +17,7 @@ He also discussed revenue loss caused by plan-change configuration. Google Play 
 
 ---
 
-## Which brands does AI cite?
+## Brand citation in generative search
 
 Jo Kyung-sang, CEO of NNT, presented observations drawn from more than 200 search-optimisation projects. The figures below are reported from that presentation and should be read as project findings rather than general causal estimates.
 
@@ -40,9 +41,9 @@ He concluded that interfaces and usage patterns will continue to change, making 
 
 ---
 
-## Past cost-per-install, toward lifetime value
+## From cost per install to lifetime value
 
-Kim Sun-woo, Director at Mistplay, on mobile game marketing.
+Kim Sun-woo, Director at Mistplay, addressed the measurement of mobile-game marketing. Unless otherwise noted, the figures in this section are those reported in his presentation.
 
 Kim reported that acquisition cost per install had increased by more than 48% on Android and by a factor of 3.5 on iOS. Over the same period, in-game purchase revenue reportedly grew by 4%, session counts by 12%, and playtime by 8%. He argued that installation is only the beginning of a sequence that includes first play, in-game progress, and payment, whereas many marketing budgets continue to optimise for installation alone.
 
@@ -62,7 +63,7 @@ Evaluating a strategy-game campaign after seven days against a puzzle-game bench
 
 ---
 
-## A crypto app marketing playbook
+## Marketing strategies for cryptocurrency applications
 
 Kim Jong-rim of Liftoff Mobile presented the following market figures and audience framework.
 
@@ -72,10 +73,10 @@ According to Kim, clients often operate cryptocurrency and prediction-trading se
 
 | Group | Message | Ad creative |
 | --- | --- | --- |
-| New | "Start from ₩10,000" — clear explanation over exaggeration | App screens showing signup, checking assets, how to buy |
-| Anxious | "Now's your chance", "Everyone else has already started" | Surging coin charts, live price movement |
+| New | “Start from ₩10,000” — clear explanation rather than exaggeration | App screens showing registration, asset review, and purchasing |
+| Anxious | “Now is your opportunity”; “Others have already begun” | Rising cryptocurrency charts and live price movements |
 | Steady-return | Long-term investing, automated returns, regular rewards | Six-month trends instead of short-term dip charts |
-| Whales | Dedicated support, trading stability, strong security | Platinum cards, hotel and airline benefits |
+| High-value | Dedicated support, trading stability, and strong security | Platinum cards and hotel or airline benefits |
 
 For new users, the speaker reported that demonstrations of usability perform better than provocative messages. Prediction-trading companies also use game-like creative, such as asking users to predict a player's scoring total, which reportedly produces a comparatively high click-through rate.
 
@@ -83,7 +84,7 @@ The proposed placement strategy also varied by segment. Casual games and lifesty
 
 ---
 
-## Changing how you work with AI
+## Organisational redesign for AI-supported work
 
 This panel brought together leaders responsible for AI adoption at Ajungdang and Kurly.
 
@@ -97,10 +98,10 @@ The two companies diverged on what to tackle with AI first.
 
 | | Ajungdang | Kurly |
 | --- | --- | --- |
-| Starting point | Building the thing is no longer a differentiator | Cutting cost transfers to other companies better than growing revenue |
-| Deciding question | Does it actually cut time and cost, and can it spread beyond our team? | Which team has the most people on the org chart? |
-| How to find work | Look for duplicated builds across teams, without dampening enthusiasm | Pool the records in the work management tool and pull out highly repetitive work |
-| Direction | A form individuals and teams can adapt | Merchandisers and developers are the largest headcount, so focus on their tools |
+| Starting point | Implementation alone is no longer a differentiator | Cost-reduction methods transfer between organisations more readily than revenue-growth methods |
+| Deciding question | Does the intervention reduce time and cost, and can it extend beyond the originating team? | Which functions account for the largest share of personnel? |
+| How to identify work | Identify duplicated development across teams while preserving voluntary experimentation | Aggregate work-management records and identify highly repetitive tasks |
+| Direction | Tools that individuals and teams can adapt | Focus on tools for merchandising and development, the functions with the largest headcounts |
 
 The companies adopted contrasting diffusion strategies. Ajungdang enables practitioners to build their own tools. A centrally distributed data-analysis tool saw little use after one week, whereas hackathons and workshops encouraged voluntary development. Once the number of tools exceeded thirty to forty, however, management demands and AI-usage costs increased. The company introduced guidance and rules, reported compliance of approximately 50%, and began establishing a dedicated review role. It identified a weekly thirty- to sixty-minute internal meeting for sharing recent experiments as its most effective intervention.
 
@@ -114,7 +115,7 @@ The panel concluded with two recommendations. Decision-makers should treat AI ad
 
 ---
 
-## Where I heard this
+## Event and source details
 
 MGS WEEK 2026 (2026.07.21, Westin Seoul Parnas). The slogan was "Stack AI, Rewrite Everything".
 

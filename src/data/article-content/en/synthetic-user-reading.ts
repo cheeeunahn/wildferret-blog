@@ -1,16 +1,14 @@
-export const syntheticUserReadingContentEn = `## Summary
+export const syntheticUserReadingContentEn = `## Abstract
 
-- Studies reporting closer correspondence between synthetic and real users begin with data collected directly from people, such as extended interview transcripts or survey responses. Without such material, it is difficult to construct synthetic users that represent a specific population.
-- The literature reviewed here does not support replacing research participants with synthetic users. Instead, it treats them as an auxiliary method for preliminary hypothesis testing or question refinement in domains with substantial prior research.
-- Even in this limited role, their use requires adequate source data, critical testing rather than unqualified acceptance of generated responses, and a corresponding validation procedure.
+Studies reporting closer correspondence between synthetic and human responses rely on data collected directly from people, including extended interview transcripts and survey responses. The literature reviewed here does not support replacing human participants with synthetic users. It instead positions synthetic users as an auxiliary method for preliminary hypothesis assessment or question refinement in domains with substantial prior research. Even in this limited role, responsible use requires adequate empirical grounding, critical examination of generated responses, and an explicit validation procedure.
 
 ---
 
-After building and deploying a [synthetic user panel](/en/article/synthetic-user-research-panel), I reviewed relevant research and practitioner presentations. I used AI tools to assist with organising the material.
+This review was undertaken following the development and deployment of a [synthetic user panel](/en/article/synthetic-user-research-panel). It synthesises relevant research and practitioner presentations; AI tools were used to assist with organising the source material.
 
 ---
 
-## What is a synthetic user?
+## Definition and context
 
 [Gu, Chandrasegaran, and Lloyd (2025)](https://doi.org/10.1017/S0890060424000283) define a **synthetic user** as a persona grounded in empirical data whose gaps are filled with synthetic data. Unlike a conventional static persona document, a synthetic user acts as an interactive conversational representation.
 
@@ -22,7 +20,7 @@ After building and deploying a [synthetic user panel](/en/article/synthetic-user
 
 ---
 
-## The problem with synthetic users built without research data
+## Limitations of synthetic users without empirical grounding
 
 An LLM generates responses from patterns learned during training; it cannot independently recover experiences absent from its data and context. Without specific grounding, it tends to produce generic descriptions rather than accounts tied to an identifiable population. Fluent language can also make weakly supported content appear credible. Salminen et al. (2025) identify this capacity to produce plausible but inaccurate imitations as a central risk.
 
@@ -66,7 +64,7 @@ Anand also distinguishes between what people say and what they do. Training data
 
 ---
 
-## Conclusion
+## Conclusion and conditions for use
 
 Across the studies reviewed here, improved synthetic representations depend on data collected from people. Deep Binding relies on extended interview transcripts; Park et al. (2024) use individual self-reports from interviews and surveys.
 
@@ -78,14 +76,14 @@ The available evidence does not justify replacing human-participant research wit
 
 ## References
 
-- [Gu, Chandrasegaran & Lloyd, "Synthetic users: insights from designers' interactions with persona-based chatbots"](https://doi.org/10.1017/S0890060424000283) — AI EDAM, 2025. The paper proposing the synthetic user concept
-- [Salminen, Amin, Jung & Jansen, "The Use of Large Language Models in HCI: A Critical Analysis of Synthetic Users"](https://doi.org/10.1145/3745900.3746108) — Augmented Humans, 2025. The background to the spread of synthetic users, the attendant risks, and the conditions under which they can and cannot be used
-- [Park et al., "LLM Agents Grounded in Self-Reports Enable General-Purpose Simulation of Individuals"](https://arxiv.org/abs/2411.10109) — 2024. A study that re-surveyed 1,052 American adults two weeks later to measure the human-side noise first. On GSS, participant self-consistency 79.53%, raw accuracy of interview-based agents 65.67%, normalised accuracy 0.83
-- [Romberg et al., "Hybrid Panels: Toward Human-AI Collaboration in Survey Research"](https://arxiv.org/abs/2608.22582) — 2026. A design placing a human panel and an LLM inside the same survey and calibrating at each round. German pilot of 1,201 people, 83% vs 69% willingness to participate
-- [Kuric, Demcak & Krajcovic, "What Would GPT Click: Practical Effects of Human-AI Behavioral Misalignment and the Cost of Synthetic Participants in User Experience"](https://arxiv.org/abs/2605.18302) — 2026. Validates GPT's click prediction against 12 real first-click tests (3,431 people). Distributions differed significantly on 53% of tasks, and personas, step-by-step reasoning and sampling adjustments all had no improving effect
-- [Kang et al., "Deep Binding of Language Model Virtual Personas"](https://arxiv.org/abs/2504.11673) — 2025. Improves reproduction of political-orientation survey response distributions (87% by Wasserstein distance) by supplying interview transcripts as background narrative
-- [DeepPersona: A Generative Engine for Scaling Deep Synthetic Personas](https://arxiv.org/abs/2511.07338) — 2025. Personas that use several hundred structured attributes together with roughly 1MB of narrative text
-- [Rosala & Moran, "Synthetic Users: If Nothing Is Real, Everything Is Permitted"](https://www.nngroup.com/articles/synthetic-users/) — Nielsen Norman Group, 2024. Scepticism from a practitioner's view. Points at sycophancy and excessive optimism, the absence of prioritisation, and the absence of behavioural data, and limits the permissible uses
-- [Anand, "Persona Engineering: A Field Guide to AI Synthetic Personas"](https://www.youtube.com/watch?v=YnNF55QV0zs) — AI Engineer World's Fair, 2026. The weather-forecast analogy, and the gap between attitude and behaviour
+- [Gu, K., Chandrasegaran, S., and Lloyd, P. (2025). “Synthetic users: insights from designers' interactions with persona-based chatbots.” *AI EDAM*.](https://doi.org/10.1017/S0890060424000283)
+- [Salminen, J., Amin, R., Jung, S.-G., and Jansen, B. J. (2025). “The Use of Large Language Models in HCI: A Critical Analysis of Synthetic Users.” *Augmented Humans*.](https://doi.org/10.1145/3745900.3746108)
+- [Park, J. S., et al. (2024). “Generative Agent Simulations of 1,000 People.”](https://arxiv.org/abs/2411.10109)
+- [Romberg, J., et al. (2026). “Hybrid Panels: Toward Human-AI Collaboration in Survey Research.”](https://arxiv.org/abs/2608.22582)
+- [Kuric, E., Demcak, P., and Krajcovic, M. (2026). “What Would GPT Click: Practical Effects of Human-AI Behavioral Misalignment and the Cost of Synthetic Participants in User Experience.”](https://arxiv.org/abs/2605.18302)
+- [Kang, B., et al. (2025). “Deep Binding of Language Model Virtual Personas.”](https://arxiv.org/abs/2504.11673)
+- [“DeepPersona: A Generative Engine for Scaling Deep Synthetic Personas.” (2025).](https://arxiv.org/abs/2511.07338)
+- [Rosala, M., and Moran, K. (2024). “Synthetic Users: If Nothing Is Real, Everything Is Permitted.” Nielsen Norman Group.](https://www.nngroup.com/articles/synthetic-users/)
+- [Anand, I. (2026). “Persona Engineering: A Field Guide to AI Synthetic Personas.” AI Engineer World's Fair.](https://www.youtube.com/watch?v=YnNF55QV0zs)
 
 `

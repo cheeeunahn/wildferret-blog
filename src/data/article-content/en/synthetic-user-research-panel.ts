@@ -1,28 +1,28 @@
-export const syntheticUserResearchPanelContentEn = `Product design repeatedly raises two questions: how would a user respond to this screen, and how would they interpret this concept? Direct research with participants remains the most reliable way to answer them. When recruitment is not feasible, however, an interim method can help identify questions for later validation. A frontend platform engineer and I built a tool for that purpose.
+export const syntheticUserResearchPanelContentEn = `Product design repeatedly raises two questions: how might users respond to a screen, and how might they interpret a concept? Direct research with participants remains the most reliable means of answering both. When immediate recruitment is infeasible, however, an interim method may help identify issues and formulate hypotheses for subsequent validation. The project described here was developed with a frontend platform engineer for that purpose.
 
 The result is a **synthetic user panel**: a set of virtual personas grounded in prior user research that can provide preliminary responses to a screen or concept. It is not a substitute for research with people.
 
 ---
 
-## It started as a hackathon idea
+## Project origin and initial prototype
 
 The initial prototype accepted a screenshot or Figma link and a brief description of the context. Several synthetic personas then responded in distinct voices, reporting a first impression, potentially confusing wording, and a trust score.
 
 ![A presentation slide showing the four MVP screens, from upload through to report](/assets/images/synthetic-user-research-panel-challenge-mvp-slide.webp)
 
-After the hackathon, we continued to refine the prototype through demonstrations to product designers and feedback sessions.
+Following the hackathon, the prototype was refined through demonstrations to product designers and structured feedback sessions.
 
 ---
 
-## Giving the personas an evidential basis
+## Evidential basis for persona construction
 
 The personas were constructed in two stages. Demographic data established each profile's basic characteristics, while prior research supplied service-specific attitudes and observed patterns.
 
-**① Population data.** I used NVIDIA's publicly available Nemotron-Personas-Korea dataset to establish profile attributes such as age, occupation, region, education, and household composition. These attributes provide demographic coverage; they do not make an individual persona statistically representative by itself.
+**① Population data.** NVIDIA's publicly available Nemotron-Personas-Korea dataset was used to establish profile attributes such as age, occupation, region, education, and household composition. These attributes provide demographic coverage; they do not make any individual persona statistically representative.
 
-**② Empirical user-research data.** I then incorporated research accumulated by our service: nearly one hundred usability tests, in-depth interviews, concept tests, surveys, and weekly voice-of-customer analyses conducted over several years.
+**② Empirical user-research data.** The profiles were then supplemented with research accumulated by the service: nearly one hundred usability tests, in-depth interviews, concept tests, surveys, and weekly voice-of-customer analyses conducted over several years.
 
-Because the material was distributed across PDFs, slide decks, and transcripts, it could not be used directly. I [reorganised the research into a wiki structured for LLM access](/en/article/research-wiki-for-llm), then derived persona attributes from it. These included income structure, service comprehension, mental model, digital literacy, cost sensitivity, trust posture, and anticipated friction points. Each persona contained more than ten such attributes, all linked to existing evidence rather than invented to complete the profile.
+Because the material was distributed across PDFs, slide decks, and transcripts, it could not be used directly. The research was first [reorganised as a wiki structured for LLM access](/en/article/research-wiki-for-llm), from which persona attributes were derived. These included income structure, service comprehension, mental model, digital literacy, cost sensitivity, trust posture, and anticipated friction points. Each persona contained more than ten such attributes, all linked to existing evidence rather than inferred merely to complete the profile.
 
 The following abbreviated example shows the structure of one persona.
 
@@ -53,7 +53,7 @@ The following abbreviated example shows the structure of one persona.
 }
 ~~~
 
-I also recorded metadata at the panel level.
+Metadata were also recorded at the panel level.
 
 ~~~json
 {
@@ -73,7 +73,7 @@ I also recorded metadata at the panel level.
   "segment_distribution": { "...": "Headcount per segment" },
   "panel_design":        { "...": "Why these particular people were chosen" },
 
-  "personas": [ /* the objects we saw above */ ]
+  "personas": [ /* persona objects of the form shown above */ ]
 }
 ~~~
 
@@ -81,13 +81,13 @@ I also recorded metadata at the panel level.
 
 ---
 
-## The three prompts I used
+## Prompt architecture
 
 **The persona prompt.** This prompt asks the model to respond to a screen from the persona's perspective. In addition to the profile, it supplies fourteen attributes derived from user research, including mental model, cost sensitivity, reading and scrolling behaviour, trust posture, and recurring sources of difficulty.
 
 The prompt evaluates four dimensions: wording, dark patterns, emotion, and usability. Internal UX-writing principles, dark-pattern guidance, and ten established usability heuristics provide evaluation criteria. The generated response does not cite these frameworks; it describes the resulting experience in ordinary language—for example, “Where is the button to turn this off?” rather than “This is a dark pattern.”
 
-To model register, I identified recurring linguistic features in more than one hundred thousand survey comments from the service, including brief answers, spacing errors, typographical errors, and inconsistent sentence endings. The prompt uses these features to avoid producing polished report prose that would be uncharacteristic of the source responses.
+To model register, recurring linguistic features were identified in more than one hundred thousand survey comments from the service, including brief answers, spacing errors, typographical errors, and inconsistent sentence endings. The prompt uses these features to avoid producing polished report prose that would be uncharacteristic of the source responses.
 
 The prompt also guards against forced criticism. Each item defaults to “fine,” and a negative response should appear only when the persona identifies a specific problem. The output contains five categories—first impression, problematic wording, dark patterns, heuristic issues, and emotion—along with trust and usefulness scores.
 
@@ -148,21 +148,21 @@ The following excerpts show the principal constraints in each prompt:
 
 ## Observed uses
 
-An examination of the call logs identified twenty-seven distinct use contexts. Fifteen involved screen evaluation; the remainder involved concept evaluation without a screen or follow-up questions.
+An examination of the available call logs identified twenty-seven distinct use contexts. Fifteen involved screen evaluation; the remainder involved concept evaluation without a screen or follow-up questions. These descriptive counts characterise early use of the tool and should not be interpreted as a representative study of product-design practice.
 
 Requests fell into five broad categories.
 
-- **A single screen**: the home screen on first opening the app, the redesigned step counter, the new-user attendance event, the entry screen arrived at via a notification message
-- **A specific point in a flow**: "I've just finished filing and landed on the completion screen" — writing out the path by which the user met that screen
-- **A concept with no screen yet**: “We are considering a feature like this; what do you think?” These requests accounted for roughly one-third of calls and occurred during specification, before a Figma design existed
-- **An entire specification**: some users supplied a complete draft product-requirements document and requested responses
-- **Digging deeper**: "did you understand the overall context, was it hard?", "what do you think happens if you press this button?"
+- **Single-screen evaluation**: examples included the initial home screen, a redesigned step counter, a new-user attendance event, and an entry screen reached through a notification
+- **Evaluation of a specific point in a flow**: users supplied the preceding interaction path, such as completing a filing process before reaching a confirmation screen
+- **Pre-interface concept evaluation**: these requests accounted for approximately one-third of calls and occurred during specification, before a Figma design existed
+- **Specification-level evaluation**: some users supplied a complete draft product-requirements document
+- **Follow-up inquiry**: users asked whether the context was comprehensible or what the persona expected to occur after selecting an interface element
 
 The prototype was designed for screenshot evaluation, but actual use extended from reviewing draft specifications to checking individual lines of entry-point copy.
 
 ---
 
-## A worked example: evaluating an attendance event screen
+## Worked example: evaluation of an attendance-reward screen
 
 The following example is adapted from an observed workflow. Input typically consists of two elements: the path by which the user reached the screen and the purpose of the screen.
 
@@ -203,7 +203,7 @@ The evaluator can then direct a follow-up question to a specific persona—for e
 
 ---
 
-## Appendix: where this project started
+## Appendix: institutional context
 
 The tool originated during the second day of an internal “AI Week.” Approximately forty teams and more than eighty participants took part voluntarily, with developers and non-developers forming teams to address workplace problems within one day. The winning project was an internal communication platform that used retrieval-augmented generation (RAG) to answer questions about company policies and announcements.
 
