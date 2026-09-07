@@ -3,6 +3,7 @@
 import noBareInternalHref from './no-bare-internal-href.js'
 import noInteractiveDiagrams from './no-interactive-diagrams.js'
 import noRawColors from './no-raw-colors.js'
+import noUnescapedUserHtml from './no-unescaped-user-html.js'
 import noUnlistedIsland from './no-unlisted-island.js'
 
 export default {
@@ -11,6 +12,7 @@ export default {
     'no-bare-internal-href': noBareInternalHref,
     'no-interactive-diagrams': noInteractiveDiagrams,
     'no-raw-colors': noRawColors,
+    'no-unescaped-user-html': noUnescapedUserHtml,
     'no-unlisted-island': noUnlistedIsland,
   },
 }

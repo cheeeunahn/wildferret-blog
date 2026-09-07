@@ -6,6 +6,7 @@ import { describe, it } from 'vitest'
 import noBareInternalHref from './no-bare-internal-href.js'
 import noInteractiveDiagrams from './no-interactive-diagrams.js'
 import noRawColors from './no-raw-colors.js'
+import noUnescapedUserHtml from './no-unescaped-user-html.js'
 import noUnlistedIsland from './no-unlisted-island.js'
 
 // RuleTester drives mocha-style globals; vitest supplies compatible ones.
@@ -93,6 +94,46 @@ astro.run('no-unlisted-island', noUnlistedIsland, {
   invalid: [
     astroCase('<Diagram client:load />', [{ messageId: 'unlisted' }]),
     astroCase('<ArticleCard client:visible />', [{ messageId: 'unlisted' }]),
+  ],
+})
+
+astro.run('no-unlisted-island (with the Comments island allowed)', noUnlistedIsland, {
+  valid: [{ ...astroCase('<Comments client:visible articleSlug={s} />'), options: [{ allow: ['ThemeToggle', 'Comments'] }] }],
+  invalid: [
+    // The allowlist is per-component, so opening it for Comments must not open
+    // it for anything else.
+    {
+      ...astroCase('<ArticleCard client:visible />', [{ messageId: 'unlisted' }]),
+      options: [{ allow: ['ThemeToggle', 'Comments'] }],
+    },
+    // ...and Comments is only an island because the config says so.
+    astroCase('<Comments client:visible />', [{ messageId: 'unlisted' }]),
+  ],
+})
+
+tsx.run('no-unescaped-user-html', noUnescapedUserHtml, {
+  valid: [
+    // React escapes JSX children — this is the actual defense against stored XSS.
+    { code: 'const C = ({ c }) => <p>{c.body}</p>', filename: 'src/components/Comments.tsx' },
+    { code: 'const C = ({ c }) => <span title={c.nickname}>{c.nickname}</span>', filename: 'src/components/Comments.tsx' },
+    // The parser's own module and tests import it legitimately; only
+    // components are barred.
+    { code: "import { formatInline } from './articleContent'", filename: 'src/lib/articleContent.test.ts' },
+    { code: "import { splitContentIntoBlocks } from '../lib/articleContent'", filename: 'src/components/Comments.tsx' },
+  ],
+  invalid: [
+    {
+      code: 'const C = ({ c }) => <p dangerouslySetInnerHTML={{ __html: c.body }} />',
+      filename: 'src/components/Comments.tsx',
+      errors: [{ messageId: 'dangerous' }],
+    },
+    {
+      // The tempting shortcut: reuse the article parser, which emits raw HTML
+      // because it trusts its input.
+      code: "import { formatInline } from '../lib/articleContent'",
+      filename: 'src/components/Comments.tsx',
+      errors: [{ messageId: 'formatInline' }],
+    },
   ],
 })
 

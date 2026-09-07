@@ -3,6 +3,7 @@ import type { GetStaticPaths } from 'astro'
 import Base from '../../layouts/Base.astro'
 import { articles } from '../../data/articles'
 import { getDiagram } from '../../components/diagramRegistry'
+import Comments from '../../components/Comments'
 import {
   formatInline,
   parseImageLine,
@@ -436,6 +437,14 @@ const MAX_CAROUSEL_SLIDES = 6
         })
       }
     </article>
+
+    {/* Comments. client:visible, not client:only — the island has no
+        server-hostile code, so the shell prerenders and the React runtime only
+        downloads once a reader actually scrolls this far. */}
+    <div class="max-w-[720px] mx-auto px-6 pb-4">
+      <hr class="ink-divider mb-10" />
+      <Comments client:visible articleSlug={article.slug} />
+    </div>
 
     {/* Back link */}
     <div class="max-w-[720px] mx-auto px-6 pb-20">
