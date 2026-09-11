@@ -96,7 +96,7 @@ Ajungdang discussed customer consultation. Its interface offers “call” and �
 
 The two companies diverged on what to tackle with AI first.
 
-| | Ajungdang | Kurly |
+| Category | Ajungdang | Kurly |
 | --- | --- | --- |
 | Starting point | Implementation alone is no longer a differentiator | Cost-reduction methods transfer between organisations more readily than revenue-growth methods |
 | Deciding question | Does the intervention reduce time and cost, and can it extend beyond the originating team? | Which functions account for the largest share of personnel? |
