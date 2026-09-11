@@ -37,7 +37,12 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
-    rules: localRules,
+    rules: {
+      ...localRules,
+      // Comments.tsx renders attacker-supplied text; the moderation trigger is
+      // not an XSS filter. See the Stored XSS section in CLAUDE.md.
+      'local/no-unescaped-user-html': 'error',
+    },
   },
   {
     // href=, client:*, and class= all live in the templates, so the local rules
@@ -51,7 +56,9 @@ export default defineConfig([
     extends: [astro.configs['flat/base']],
     rules: {
       ...localRules,
-      'local/no-unlisted-island': 'error',
+      // Comments is the second island: client:visible, so the React runtime
+      // loads only when a reader scrolls to the bottom of an article.
+      'local/no-unlisted-island': ['error', { allow: ['ThemeToggle', 'Comments'] }],
     },
   },
   {

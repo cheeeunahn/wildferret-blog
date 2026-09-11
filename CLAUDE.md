@@ -39,7 +39,10 @@ The page files are thin: each resolves a `Locale`, then renders a view component
 This is the rule that is easiest to break by accident.
 
 - Pages, the layout, and `ArticleCard.astro` are `.astro` and ship **zero** JavaScript.
-- `src/components/ThemeToggle.tsx` is the **only** hydrated island. It is mounted `client:only="react"` because it reads `document.documentElement` in a `useState` initializer, which has no server equivalent. Its fixed-size wrapper in `Base.astro` reserves layout space so the header does not shift on mount.
+- There are exactly **two** hydrated islands, and they hydrate differently on purpose:
+  - `src/components/ThemeToggle.tsx` — `client:only="react"`, because it reads `document.documentElement` in a `useState` initializer, which has no server equivalent. Its fixed-size wrapper in `Base.astro` reserves layout space so the header does not shift on mount.
+  - `src/components/Comments.tsx` — `client:visible` in `ArticleView.astro` (so all three language trees get it from one place). It has no server-hostile code, so the shell prerenders and the React runtime downloads only once a reader scrolls to the bottom of an article. Article pages keep a zero-JS first paint. Do not "simplify" this to `client:load`, which would ship React to every article on load.
+- The allowlist for the above lives in `eslint.config.js` (the `allow` option on `local/no-unlisted-island`), not in the rule file.
 - `src/components/Diagrams.tsx` components render with **no** `client:*` directive — they are pure static JSX, so Astro server-renders them to HTML with no client JS. **Adding a hook or an event handler to any diagram silently breaks this** and would force a `client:*` directive (and with it a React runtime on article pages).
 
 ## Linking
@@ -123,16 +126,48 @@ Current diagrams: `voc-workflow`, `terminal-team`, `peers-architecture`, `tmux-s
 
 Entrance motion: `.page-enter` on each page's wrapper plus `.animate-reveal` (and the `.delay-*` scale) on its children. The `.boot-shell` / `.boot-header` keyframes are leftovers from the SPA and are deliberately unused — applying them to the layout chrome would replay the header animation on every navigation.
 
+## Comments
+
+Anonymous, nickname-only comments on article pages, stored in Supabase. Schema and moderation live in `supabase/migrations/0001_blog_user_comments.sql`; apply it in the Supabase SQL editor.
+
+The site is static with no server runtime, so the browser talks to PostgREST directly (`src/lib/supabaseComments.ts`, plain `fetch` — deliberately **not** `@supabase/supabase-js`, which is ~40kB for two REST calls). Two consequences that drive the whole design:
+
+- **The publishable key is public.** It is inlined into the built JS, and anyone can POST to the REST endpoint without going through the form. So nothing in the frontend is a security control. Access is enforced by RLS plus *column-level* grants (`grant insert (article_slug, nickname, body)`), and content by the `moderate_comment()` BEFORE INSERT trigger. `src/lib/moderation.ts` is a client-side subset of that trigger for instant feedback only — it deliberately omits the profanity list, which lives in a table `anon` cannot read.
+- **Rejections travel as reason codes, never messages.** The trigger raises with a `hint` (`pii_phone`, `profanity`, `too_fast`, …); the copy lives in `REJECTION_MESSAGES` (Korean) and `REJECTION_MESSAGES_EN` in `moderation.ts`, picked by `messageFor(reason, lang)` — `lang` defaults to `'ko'`. Never render a PostgREST `message`/`details` string — that would make the error path an injection channel.
+
+### Languages
+
+A post's thread is keyed by `article_slug` **alone**, so one discussion is shared across `/`, `/kr/` and `/en/` rather than split per language. Changing that means re-keying the table, not just the prop.
+
+The island's UI text arrives as a `strings` prop (`Strings['comments']`) and its rejection copy is chosen by a `lang` prop, both passed down from `ArticleView.astro`. It is done this way so the island ships only the strings it renders instead of bundling every language's dictionary — do not `import { t }` inside `Comments.tsx`.
+
+### Stored XSS — the trap in this repo
+
+Comment text is attacker-controlled and stored verbatim. **The moderation trigger is not an XSS filter**: `<script>` passes through it and is stored as text, which is correct, because storage was never the vulnerability. Rendering is.
+
+`ArticleView.astro` renders prose with `set:html={formatInline(...)}`, which emits raw HTML *on purpose* — that is how `**bold**` works, and it is safe only because its input is your own content. Reusing that parser for comments is the obvious-looking move and would be a textbook stored-XSS hole.
+
+- Render comment `body` and `nickname` as JSX children (`{c.body}`) and let React escape them. **This is the actual defense.** Nickname counts too — it looks like metadata, which is why it gets rendered carelessly.
+- `local/no-unescaped-user-html` enforces the mechanical half (no `dangerouslySetInnerHTML`, no `formatInline` import in `src/components/`).
+- If you ever add markdown to comments, that needs a real sanitizer on the output — not the article parser. If you ever autolink URLs, allowlist `http:`/`https:`; React does not escape a `javascript:` href.
+
+`public/_headers` carries a CSP, but note what it is not: `script-src` must allow `'unsafe-inline'` because Astro emits its island runtime as inline scripts, so the CSP is **not** a backstop against script injection. It still buys `connect-src` (no exfiltration to arbitrary hosts), `object-src`, `base-uri`, and `frame-ancestors`.
+
+### Environment
+
+`PUBLIC_SUPABASE_URL` and `PUBLIC_SUPABASE_ANON_KEY` (see `.env.example`) are inlined at **build** time, so they must be set wherever `pnpm build` runs — locally in `.env`, and as build environment variables in Cloudflare. Setting them as Worker runtime secrets does nothing. Use the publishable key, never `service_role`, which bypasses RLS.
+
 ## Lint Rules
 
-`pnpm lint` runs ESLint over `src/**/*.{ts,tsx}` **and** `src/**/*.astro`. Alongside the published rule sets, `eslint-rules/` is a repo-local plugin (registered as `local` in `eslint.config.js`) that turns the three conventions above into errors:
+`pnpm lint` runs ESLint over `src/**/*.{ts,tsx}` **and** `src/**/*.astro`. Alongside the published rule sets, `eslint-rules/` is a repo-local plugin (registered as `local` in `eslint.config.js`) that turns the conventions above into errors:
 
 | Rule | Scope | Enforces |
 | --- | --- | --- |
 | `local/no-bare-internal-href` | ts, tsx, astro | Linking — no bare `href="/about"` / `src="/assets/…"`, no hardcoded base prefix in any string (this half also reaches markdown links inside `article-content/*.ts`) |
 | `local/no-raw-colors` | ts, tsx, astro | Design Tokens — no stock Tailwind palette classes, no hex/`rgb()` in `class`/`style`/`fill`/`stroke` |
-| `local/no-unlisted-island` | astro | Islands policy — `client:*` only on `<ThemeToggle>` (allowlist is the rule's `allow` option) |
+| `local/no-unlisted-island` | astro | Islands policy — `client:*` only on `<ThemeToggle>` and `<Comments>` (allowlist is the rule's `allow` option, set in `eslint.config.js`) |
 | `local/no-interactive-diagrams` | `Diagrams.tsx` only | Islands policy — no hooks, no `on*` handlers |
+| `local/no-unescaped-user-html` | ts, tsx | Comments — no `dangerouslySetInnerHTML`; no importing `formatInline` into `src/components/` |
 
 **Adding a rule:** write `eslint-rules/<name>.js` exporting the standard `{ meta, create }` object (plain ESM, no build step), register it in `eslint-rules/index.js`, enable it in the right block of `eslint.config.js`, and add `RuleTester` cases to `eslint-rules/rules.test.js` — `pnpm test` runs those alongside the parser tests.
 

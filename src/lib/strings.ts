@@ -42,6 +42,22 @@ export interface Strings {
     back: string
   }
   notFound: { title: string; back: string }
+  /**
+   * Passed to the Comments island as a prop rather than looked up inside it.
+   * The island would otherwise have to bundle every language's dictionary to
+   * pick one at runtime; this way it ships only the strings it renders.
+   */
+  comments: {
+    heading: string
+    loading: string
+    empty: string
+    namePlaceholder: string
+    nameLabel: string
+    bodyPlaceholder: string
+    bodyLabel: string
+    submit: string
+    submitting: string
+  }
 }
 
 const ko: Strings = {
@@ -74,6 +90,17 @@ const ko: Strings = {
     back: '목록으로 돌아가기',
   },
   notFound: { title: '페이지를 찾을 수 없습니다', back: '목록으로 돌아가기' },
+  comments: {
+    heading: '댓글',
+    loading: '댓글을 불러오는 중…',
+    empty: '첫 댓글을 남겨보세요.',
+    namePlaceholder: '이름',
+    nameLabel: '이름',
+    bodyPlaceholder: '댓글을 남겨주세요',
+    bodyLabel: '댓글',
+    submit: '댓글 남기기',
+    submitting: '등록 중…',
+  },
 }
 
 const en: Strings = {
@@ -107,6 +134,17 @@ const en: Strings = {
     back: 'Back to all posts',
   },
   notFound: { title: 'Page not found', back: 'Back to all posts' },
+  comments: {
+    heading: 'Comments',
+    loading: 'Loading comments…',
+    empty: 'Be the first to comment.',
+    namePlaceholder: 'Name',
+    nameLabel: 'Name',
+    bodyPlaceholder: 'Leave a comment',
+    bodyLabel: 'Comment',
+    submit: 'Post comment',
+    submitting: 'Posting…',
+  },
 }
 
 const STRINGS: Record<Lang, Strings> = { ko, en }

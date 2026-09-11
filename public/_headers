@@ -1,0 +1,19 @@
+# Served by Cloudflare's static-asset runtime. Copied to dist/ at build.
+#
+# script-src allows 'unsafe-inline' because Astro emits its island hydration
+# runtime as inline <script> blocks whose content changes per page and per
+# build, alongside the pre-paint theme script in Base.astro. Hashing them is not
+# maintainable, and a nonce needs a server this site does not have.
+#
+# Be clear about what that costs: this CSP is NOT a backstop against script
+# injection. The defense against stored XSS in comments is React escaping JSX
+# children in Comments.tsx, enforced by local/no-unescaped-user-html — not this
+# header. What the header still buys is real but narrower:
+#   connect-src   an injected script cannot exfiltrate to an arbitrary host
+#   object-src    no <object>/<embed> vector
+#   base-uri      no <base> tag hijacking every relative URL on the page
+#   frame-ancestors  no clickjacking
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src 'self' https://hangeul.pstatic.net https://cdn.jsdelivr.net https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://*.supabase.co; object-src 'none'; base-uri 'self'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
