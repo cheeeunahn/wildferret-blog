@@ -10,10 +10,12 @@ pnpm build     # astro check + astro build → dist/
 pnpm preview   # serve dist/ locally (at the configured base path)
 pnpm lint      # ESLint
 pnpm test      # unit tests for the article-content parser
+pnpm translation:status  # which articles have no English version yet
+pnpm translate           # write the missing English versions (opens Claude Code)
 pnpm astro     # the Astro CLI directly
 ```
 
-One test file: `src/lib/articleContent.test.ts`, run by vitest via `vitest.config.ts`. No single-file build commands.
+Vitest (`vitest.config.ts`) runs `src/**/*.test.ts`, `eslint-rules/*.test.js`, and `scripts/*.test.js`. No single-file build commands.
 
 Astro 7 requires **Node 22.12+**; pnpm 10 is pinned via `packageManager`.
 
@@ -25,13 +27,14 @@ Every route is prerendered to a real HTML file at build time. There is no client
 
 **Deployment:** a root-path Cloudflare static worker. `astro.config.mjs` uses `base: '/'`, overridable via the `BASE_PATH` env var for a path-prefixed host. `wrangler.jsonc` uploads `./dist` with `not_found_handling: "404-page"`, served by the prerendered `dist/404.html`.
 
-**Routing** (file-based, `src/pages/`):
-- `index.astro` → `/`
-- `about.astro` → `/about`
-- `article/[slug].astro` → `/article/:slug`, via `getStaticPaths` over the `articles` array
-- `404.astro` → `dist/404.html`
+**Routing** (file-based, `src/pages/`). Every page exists in three prerendered trees — see Languages below:
+- `index.astro` → `/` · `about.astro` → `/about` · `article/[slug].astro` → `/article/:slug` (Korean, canonical)
+- `[lang]/index.astro`, `[lang]/about.astro`, `[lang]/article/[slug].astro` → the same pages under `/kr/…` and `/en/…`
+- `404.astro` → `dist/404.html` — one file serves every miss, `/en/` included, so it answers in **both** languages
 
-`src/layouts/Base.astro` is the shared shell: `<head>` (title, favicon, fonts, the pre-paint theme script), header, footer, and a `<slot />`.
+The page files are thin: each resolves a `Locale`, then renders a view component (`HomeView`, `AboutView`, `ArticleView` in `src/components/`) that holds the actual markup. The markup lives in exactly one place — edit the view, not one of the two routes that mount it.
+
+`src/layouts/Base.astro` is the shared shell: `<head>` (title, favicon, fonts, canonical + `hreflang` alternates, the pre-paint theme script), header, footer, and a `<slot />`. It takes a required `locale` prop.
 
 ## Islands policy
 
@@ -40,7 +43,7 @@ This is the rule that is easiest to break by accident.
 - Pages, the layout, and `ArticleCard.astro` are `.astro` and ship **zero** JavaScript.
 - There are exactly **two** hydrated islands, and they hydrate differently on purpose:
   - `src/components/ThemeToggle.tsx` — `client:only="react"`, because it reads `document.documentElement` in a `useState` initializer, which has no server equivalent. Its fixed-size wrapper in `Base.astro` reserves layout space so the header does not shift on mount.
-  - `src/components/Comments.tsx` — `client:visible` in `article/[slug].astro`. It has no server-hostile code, so the shell prerenders and the React runtime downloads only once a reader scrolls to the bottom of an article. Article pages keep a zero-JS first paint. Do not "simplify" this to `client:load`, which would ship React to every article on load.
+  - `src/components/Comments.tsx` — `client:visible` in `ArticleView.astro` (so all three language trees get it from one place). It has no server-hostile code, so the shell prerenders and the React runtime downloads only once a reader scrolls to the bottom of an article. Article pages keep a zero-JS first paint. Do not "simplify" this to `client:load`, which would ship React to every article on load.
 - The allowlist for the above lives in `eslint.config.js` (the `allow` option on `local/no-unlisted-island`), not in the rule file.
 - `src/components/Diagrams.tsx` components render with **no** `client:*` directive — they are pure static JSX, so Astro server-renders them to HTML with no client JS. **Adding a hook or an event handler to any diagram silently breaks this** and would force a `client:*` directive (and with it a React runtime on article pages).
 
@@ -48,28 +51,55 @@ This is the rule that is easiest to break by accident.
 
 Astro does **not** prefix `<a href>` with the configured `base`, and there is no router `<Link>` to do it.
 
-- Internal route hrefs → `href()` from `src/lib/siteUrl.ts`
-- Nav active state → `isActive(Astro.url.pathname, '/about')` from the same module; it strips the base prefix, which a bare `Astro.url.pathname === '/about'` comparison would not
-- Base-prefixed pathname → app path (`'/'`-rooted, no trailing slash) → `toAppPath()`, the normalizer `isActive` is built on
+- Internal route hrefs in a template → **`localeHref(locale, '/about')`** from `src/lib/i18n.ts`. It applies the language prefix *and* the base prefix, so a reader who arrived under `/en` stays under `/en`. A bare `href()` here would silently drop them back into the Korean tree.
+- Nav active state → `isActiveInLocale(Astro.url.pathname, '/about')` from the same module; it strips both the base and the language segment
+- Language-free page identity (`/en/about` → `/about`) → `toLangFreePath()`, the normalizer `isActiveInLocale` is built on
+- `href()` / `toAppPath()` from `src/lib/siteUrl.ts` are the base-prefix-only layer underneath `localeHref`. Use them directly only when a link must ignore language (the canonical URL, the switcher's own targets).
 - Images and in-content links → `resolveAssetUrl()` from `src/lib/assetUrl.ts`
 
 `href()` passes protocol-relative, `https:`, `mailto:`, and `tel:` URLs through untouched; `resolveAssetUrl()` passes `http(s)://` through.
 
 Never write a bare `href="/about"`, and never hardcode a base path prefix.
 
+## Languages
+
+Three prerendered trees, all built from the same view components:
+
+| URL | Language | Role |
+| --- | --- | --- |
+| `/`, `/about`, `/article/:slug` | Korean | canonical — `<link rel="canonical">` points here |
+| `/kr/…` | Korean | explicit-prefix alias, canonicalised onto `/` |
+| `/en/…` | English | canonical for itself |
+
+Language lives in the **URL**, never in client state — every page is a static file, so there is nothing to read a preference from at request time. A `Locale` is therefore a `{ lang, prefix }` pair, not just a language: `''` and `'/kr'` are the same language at different URLs, and links have to stay in the prefix the reader arrived through.
+
+`src/lib/i18n.ts` owns the URL side (`localeHref`, `toLangFreePath`, `switchLangHref`, `canonicalPath`) and is covered by `src/lib/i18n.test.ts`. Note the two spellings of Korean: `LANG_SEGMENTS` maps it to the reader-facing `kr` used in URLs, `HTML_LANGS` to the standards-facing `ko` used in `<html lang>` and `hreflang`.
+
+**All chrome text lives in `src/lib/strings.ts`**, keyed by language behind the `Strings` interface, and about-page copy in `src/data/about.ts`. Never put a user-visible literal in a template — a missing key is a type error, but a hardcoded Korean string is a silent leak into `/en/`. The one `is:inline` script that needs translated text (the hero's sound toggle) reads it off `data-*` attributes rather than being templated, so the script stays static.
+
+The header switcher (`src/components/LangSwitcher.astro`) is plain links, no island. It always targets an explicit prefix, so `/en/about ↔ /kr/about` round-trips.
+
+**Adding a language:** add it to `LANGS` + `LANG_SEGMENTS` + `HTML_LANGS` in `i18n.ts`, then add its column to `strings.ts` and `about.ts`. TypeScript will point at every remaining hole; the routes and the switcher pick it up with no further edits.
+
 ## Article System
 
 Articles live entirely in `src/data/`:
 
-- `articleTypes.ts` — `Article` interface (`slug`, `title`, `subtitle`, `date`, `readTime`, `coverImage?`, `loadContent`)
-- `article-content/*.ts` — each article exports its content as a template literal string
-- `articles.ts` — declares metadata and the `loadContent` dynamic imports (newest first)
+- `articleTypes.ts` — `Article` (`slug`, `title`, `subtitle`, `date`, `readMinutes`, `category`, `coverImage?`, `cardImage?`, `loadContent`, `translations?`) plus `localizeArticle()`
+- `article-content/*.ts` — each article exports its Korean content as a template literal string; `article-content/en/*.ts` holds the English versions
+- `articles.ts` — declares metadata and the `loadContent` dynamic imports (newest first), and exposes `articlesIn(lang)` / `langsForSlug(slug)`
+
+`readMinutes` is a **number**, formatted per language (`12분 읽기` / `12 min read`). Never store a unit string like `'12분'` in the data.
 
 **Adding an article:** create a new file in `src/data/article-content/`, export the content string, add a dynamic `loadContent` import in `articles.ts`, and prepend a new entry to the array.
 
+**Translating an article:** add `src/data/article-content/en/<slug>.ts` exporting `<name>ContentEn`, then add a `translations.en` block (`title`, `subtitle`, `loadContent`) to that article's entry. The base fields stay Korean. A post with no `translations.en` is simply **left out** of the English index and gets no `/en/article/:slug` route — untranslated Korean is never served at an English URL, and the switcher on such a post falls back to the `/en` home rather than a 404.
+
+You do not normally do this by hand — see Automatic Translation below.
+
 Bodies are read at **build time** in `getStaticPaths`, so a broken `loadContent` fails `pnpm build` rather than degrading at runtime. There is no loading or error state to render.
 
-**Content format** (parsed by `src/lib/articleContent.ts`, rendered by `src/pages/article/[slug].astro`):
+**Content format** (parsed by `src/lib/articleContent.ts`, rendered by `src/components/ArticleView.astro`):
 - Blocks are separated by blank lines (`\n\n`)
 - `## Heading`, `### Heading` — section headings
 - `> text` — blockquote
@@ -82,9 +112,31 @@ Bodies are read at **build time** in `getStaticPaths`, so a broken `loadContent`
 - `[diagram:id]` — renders a React component from `Diagrams.tsx` (see below)
 - Inline: `**bold**`, `` `code` ``, `[text](url)`
 
-The block-type dispatch in `[slug].astro` is order-dependent — table detection must stay after list detection.
+The block-type dispatch in `ArticleView.astro` is order-dependent — table detection must stay after list detection.
 
 **Cover images** go in `public/assets/images/`. Reference them in `articles.ts` with a leading slash and no base prefix — `resolveAssetUrl` handles it at render time.
+
+## Automatic Translation
+
+Publishing is a one-language job: write the Korean post, push, and the English
+version is written for you. Three pieces, in the order they run:
+
+| Piece | Role |
+| --- | --- |
+| `scripts/translation-status.mjs` | **Decides what needs translating.** Scans `articles.ts` for entries with no `translations.en` block and checks the ones that have it against the files on disk. Plain text, or `--json` for `{ pending, translated, problems }` |
+| `.claude/commands/translate-articles.md` | **Does the translating.** The procedure — register, what must survive a translation untouched, how to wire up `articles.ts`, how to verify. Run locally as `/translate-articles [slugs]` or `pnpm translate` |
+| `.github/workflows/translate-articles.yml` | **Runs it automatically.** On any push touching `src/data/article-content/**` or `articles.ts` |
+
+The split matters: **the decision to translate is deterministic, only the writing is a model.** The workflow runs the scanner first and invokes Claude only when `pending` or `problems` is non-empty, so what gets translated is reproducible and reviewable rather than a judgement made inside a prompt. It is also what keeps the workflow from looping — after a successful run nothing is pending, so a re-run exits at the first step (pushes made with `GITHUB_TOKEN` do not trigger workflows either way).
+
+Where the translation lands depends on the branch it was pushed to: on a feature branch it is committed straight back, so it shows up in the same PR as the Korean post; on `main`, which is protected, it arrives as its own PR. Either way a human reviews it — the workflow commits, it does not deploy.
+
+**An untranslated post is a valid state, not an error.** It is left out of the `/en` index and gets no English route, so the scanner exits 0 on `pending` and the pre-push hook does not block you. It exits 1 only on a `problems` entry — a `translations.en` block pointing at a file or export that does not exist, which fails `pnpm build`.
+
+Two things the pipeline deliberately does not do, both of which need a human:
+
+- **Diagrams are not translated.** `[diagram:id]` is copied through as-is, and the labels inside `Diagrams.tsx` are hardcoded Korean with no language awareness, so an English article carrying one renders Korean text. The workflow's summary calls this out per article.
+- **It does not track drift.** An English version is written once. Edit the Korean afterwards and the two fall out of sync with nothing to detect it — re-run `/translate-articles <slug>` against the updated Korean when that happens.
 
 ## Diagram System
 
@@ -107,13 +159,19 @@ Anonymous, nickname-only comments on article pages, stored in Supabase. Schema a
 The site is static with no server runtime, so the browser talks to PostgREST directly (`src/lib/supabaseComments.ts`, plain `fetch` — deliberately **not** `@supabase/supabase-js`, which is ~40kB for two REST calls). Two consequences that drive the whole design:
 
 - **The publishable key is public.** It is inlined into the built JS, and anyone can POST to the REST endpoint without going through the form. So nothing in the frontend is a security control. Access is enforced by RLS plus *column-level* grants (`grant insert (article_slug, nickname, body)`), and content by the `moderate_comment()` BEFORE INSERT trigger. `src/lib/moderation.ts` is a client-side subset of that trigger for instant feedback only — it deliberately omits the profanity list, which lives in a table `anon` cannot read.
-- **Rejections travel as reason codes, never messages.** The trigger raises with a `hint` (`pii_phone`, `profanity`, `too_fast`, …); the copy lives in `REJECTION_MESSAGES` in `moderation.ts`. Never render a PostgREST `message`/`details` string — that would make the error path an injection channel.
+- **Rejections travel as reason codes, never messages.** The trigger raises with a `hint` (`pii_phone`, `profanity`, `too_fast`, …); the copy lives in `REJECTION_MESSAGES` (Korean) and `REJECTION_MESSAGES_EN` in `moderation.ts`, picked by `messageFor(reason, lang)` — `lang` defaults to `'ko'`. Never render a PostgREST `message`/`details` string — that would make the error path an injection channel.
+
+### Languages
+
+A post's thread is keyed by `article_slug` **alone**, so one discussion is shared across `/`, `/kr/` and `/en/` rather than split per language. Changing that means re-keying the table, not just the prop.
+
+The island's UI text arrives as a `strings` prop (`Strings['comments']`) and its rejection copy is chosen by a `lang` prop, both passed down from `ArticleView.astro`. It is done this way so the island ships only the strings it renders instead of bundling every language's dictionary — do not `import { t }` inside `Comments.tsx`.
 
 ### Stored XSS — the trap in this repo
 
 Comment text is attacker-controlled and stored verbatim. **The moderation trigger is not an XSS filter**: `<script>` passes through it and is stored as text, which is correct, because storage was never the vulnerability. Rendering is.
 
-`article/[slug].astro` renders prose with `set:html={formatInline(...)}`, which emits raw HTML *on purpose* — that is how `**bold**` works, and it is safe only because its input is your own content. Reusing that parser for comments is the obvious-looking move and would be a textbook stored-XSS hole.
+`ArticleView.astro` renders prose with `set:html={formatInline(...)}`, which emits raw HTML *on purpose* — that is how `**bold**` works, and it is safe only because its input is your own content. Reusing that parser for comments is the obvious-looking move and would be a textbook stored-XSS hole.
 
 - Render comment `body` and `nickname` as JSX children (`{c.body}`) and let React escape them. **This is the actual defense.** Nickname counts too — it looks like metadata, which is why it gets rendered carelessly.
 - `local/no-unescaped-user-html` enforces the mechanical half (no `dangerouslySetInnerHTML`, no `formatInline` import in `src/components/`).

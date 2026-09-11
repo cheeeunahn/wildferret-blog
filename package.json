@@ -9,6 +9,8 @@
     "preview": "astro preview",
     "lint": "eslint .",
     "test": "vitest run",
+    "translation:status": "node scripts/translation-status.mjs",
+    "translate": "claude \"/translate-articles\"",
     "astro": "astro",
     "prepare": "lefthook install"
   },
@@ -25,6 +27,7 @@
     "@types/node": "^26.4.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@typescript-eslint/parser": "^8.69.0",
     "astro-eslint-parser": "^1.4.0",
     "eslint": "^9.39.4",
     "eslint-plugin-astro": "^1.7.0",

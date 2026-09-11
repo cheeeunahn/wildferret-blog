@@ -1,30 +1,61 @@
 ---
 import '../styles/global.css'
 import ThemeToggle from '../components/ThemeToggle'
-import { href, isActive } from '../lib/siteUrl'
+import LangSwitcher from '../components/LangSwitcher.astro'
+import {
+  HTML_LANGS,
+  LANGS,
+  canonicalPath,
+  isActiveInLocale,
+  localeHref,
+  toLangFreePath,
+  type Lang,
+  type Locale,
+} from '../lib/i18n'
+import { t } from '../lib/strings'
 import { resolveAssetUrl } from '../lib/assetUrl'
 
 interface Props {
+  locale: Locale
   title?: string
   description?: string
+  /** Languages this page exists in; see LangSwitcher. */
+  availableLangs?: Lang[]
 }
 
-const { title = 'wildferret의 블로그', description } = Astro.props
+const { locale, title, description, availableLangs = [...LANGS] } = Astro.props
+const strings = t(locale.lang)
+
 const pathname = Astro.url.pathname
+// The same page's identity across the three trees: '/about', not '/en/about'.
+const appPath = toLangFreePath(pathname)
 const year = new Date().getFullYear()
 
+// Korean is served at both '/' and '/kr/'; point both at the unprefixed URL so
+// they are not indexed as two competing pages.
+const canonical = canonicalPath(locale.lang, appPath)
+
 const navLinkClass = (path: string) =>
-  `nav-link text-sm ${isActive(pathname, path) ? 'nav-link-active' : 'no-underline'}`
+  `nav-link text-sm ${isActiveInLocale(pathname, path) ? 'nav-link-active' : 'no-underline'}`
 ---
 
 <!doctype html>
-<html lang="ko">
+<html lang={HTML_LANGS[locale.lang]}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href={resolveAssetUrl('/favicon.svg')} />
-    <title>{title}</title>
+    <title>{title ?? strings.siteTitle}</title>
     {description && <meta name="description" content={description} />}
+    <link rel="canonical" href={canonical} />
+    {
+      /* canonicalPath, not switchLangHref: an hreflang alternate has to name the
+         canonical URL for that language, so Korean points at '/', not '/kr'. */
+      LANGS.filter((lang) => availableLangs.includes(lang)).map((lang) => (
+        <link rel="alternate" hreflang={lang} href={canonicalPath(lang, appPath)} />
+      ))
+    }
+    <link rel="alternate" hreflang="x-default" href={canonicalPath('ko', appPath)} />
 
     <!-- Resolve the theme before first paint so there is no light flash.
          is:inline keeps Astro from bundling and deferring this. -->
@@ -65,23 +96,31 @@ const navLinkClass = (path: string) =>
         <nav
           class="max-w-[720px] mx-auto px-6 h-16 flex items-center justify-between"
         >
+          {/* Every internal link goes through localeHref, so a reader who
+              arrived under /en stays under /en for the rest of the visit. */}
           <a
-            href={href('/')}
+            href={localeHref(locale, '/')}
             class="text-ink-900 text-lg font-semibold tracking-tight no-underline hover:opacity-70 transition-opacity"
             >wildferret's blog</a
           >
-          <div class="flex items-center gap-6">
+          <div class="flex items-center gap-4 sm:gap-6">
             <a
-              href={href('/')}
+              href={localeHref(locale, '/')}
               class={navLinkClass('/')}
-              aria-current={isActive(pathname, '/') ? 'page' : undefined}>글</a
+              aria-current={isActiveInLocale(pathname, '/') ? 'page' : undefined}
+              >{strings.nav.posts}</a
             >
             <a
-              href={href('/about')}
+              href={localeHref(locale, '/about')}
               class={navLinkClass('/about')}
-              aria-current={isActive(pathname, '/about') ? 'page' : undefined}
-              >소개</a
+              aria-current={isActiveInLocale(pathname, '/about') ? 'page' : undefined}
+              >{strings.nav.about}</a
             >
+            <LangSwitcher
+              locale={locale}
+              appPath={appPath}
+              availableLangs={availableLangs}
+            />
             <!-- client:only — ThemeToggle reads document.documentElement in a
                  useState initializer, which has no server equivalent. The fixed
                  30px box (p-1.5 + 18px svg) reserves its space so the header

@@ -1,0 +1,145 @@
+name: Translate new articles
+
+# Every Korean article should get an English version. This runs whenever an
+# article body is added or edited and writes the missing English versions, so
+# publishing a post is a one-language job.
+#
+# The decision to translate is NOT made by the model: scripts/translation-status.mjs
+# reports which articles have no `translations.en` block and which ones declare a
+# broken one, and Claude only runs if one of those lists is non-empty. An article
+# with no English version is a valid state (it is simply left out of the /en tree),
+# so this workflow adds translations — it never fails a build for the lack of one,
+# and a broken reference it is here to repair does not turn the run red either.
+#
+# Loop safety: the commit this workflow pushes uses GITHUB_TOKEN, and pushes made
+# with GITHUB_TOKEN do not trigger workflows. The status check is a second guard —
+# after a successful run there is nothing pending, so a re-run exits at step 1.
+
+on:
+  push:
+    paths:
+      - 'src/data/article-content/**.ts'
+      - 'src/data/articles.ts'
+    branches-ignore:
+      - 'translate/**'
+  workflow_dispatch:
+    inputs:
+      slugs:
+        description: 'Space-separated slugs to translate (default: everything pending)'
+        required: false
+        default: ''
+
+concurrency:
+  # One translation run per branch; a newer push supersedes an in-flight one.
+  group: translate-articles-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # commits the translation back
+      pull-requests: write # opens the PR when the push was to main
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.12
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Find articles needing translation
+        id: status
+        run: |
+          node scripts/translation-status.mjs || true
+          # The scanner exits 1 when it finds problems[] — a translations.en block
+          # pointing at a missing file. That is a case this workflow exists to fix,
+          # not a reason to fail the job, so keep the exit code off the pipeline
+          # (a step's default shell runs with -e and pipefail).
+          node scripts/translation-status.mjs --json > "$RUNNER_TEMP/status.json" || true
+          # Both lists are work for /translate-articles: a pending post needs an
+          # English version written, a problems entry needs its broken
+          # translations.en reference repaired.
+          slugs=$(jq -r '[.pending[].slug, .problems[].slug] | unique | join(" ")' "$RUNNER_TEMP/status.json")
+          echo "slugs=$slugs" >> "$GITHUB_OUTPUT"
+          echo "count=$(echo $slugs | wc -w | tr -d ' ')" >> "$GITHUB_OUTPUT"
+
+      - name: Translate
+        if: steps.status.outputs.count != '0'
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Run `/translate-articles ${{ github.event.inputs.slugs || steps.status.outputs.slugs }}`.
+
+            Follow that command's instructions exactly — it is the single source
+            of truth for how this repo translates an article, and it is the same
+            procedure a human runs locally. Read CLAUDE.md first for the content
+            format and the project conventions it documents.
+
+            Write the files and verify them. Do not commit, push, or open a pull
+            request: a later step in this workflow does that, so leave your work
+            in the working tree.
+
+            Finish by writing a short markdown summary to `/tmp/translation-summary.md`:
+            one bullet per slug with its English title, then a "Needs a human"
+            section for anything a reviewer should check — diagrams whose labels
+            are hardcoded Korean, passages you were unsure of, Korean-language
+            links an English reader cannot follow. Write that file even if the
+            list is empty.
+          claude_args: >-
+            --allowed-tools "Read,Write,Edit,Grep,Glob,Bash(pnpm:*),Bash(node scripts/translation-status.mjs:*),Bash(git status:*),Bash(git diff:*)"
+            --max-turns 120
+
+      - name: Commit the translations
+        if: steps.status.outputs.count != '0'
+        id: commit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          # Only ever the article data — never a stray build artifact or a
+          # config file the run happened to touch.
+          git add src/data/article-content/en src/data/articles.ts
+          if git diff --cached --quiet; then
+            echo 'Nothing was produced — leaving the branch untouched.'
+            echo 'pushed=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          slugs='${{ github.event.inputs.slugs || steps.status.outputs.slugs }}'
+          git commit \
+            -m "content: add English versions of $slugs" \
+            -m 'Generated by .github/workflows/translate-articles.yml.' \
+            -m 'Co-Authored-By: Claude <noreply@anthropic.com>'
+
+          summary=/tmp/translation-summary.md
+          [ -f "$summary" ] || echo 'No summary was written.' > "$summary"
+
+          if [ "${{ github.ref_name }}" = 'main' ]; then
+            # main is protected, so the translation arrives as a reviewable PR.
+            branch="translate/$(date +%Y%m%d)-${GITHUB_SHA::7}"
+            git checkout -b "$branch"
+            git push origin "$branch"
+            gh pr create \
+              --title "content: English versions of $slugs" \
+              --body-file "$summary" \
+              --base main --head "$branch"
+          else
+            # On a feature branch the translation lands in the same PR as the
+            # Korean post, which is where a reviewer wants to see it.
+            git push origin HEAD:${{ github.ref_name }}
+          fi
+          echo 'pushed=true' >> "$GITHUB_OUTPUT"

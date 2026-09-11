@@ -1,0 +1,77 @@
+---
+import { resolveAssetUrl } from '../lib/assetUrl'
+import { aboutCopy } from '../data/about'
+import type { Locale } from '../lib/i18n'
+
+interface Props {
+  locale: Locale
+}
+
+const { locale } = Astro.props
+const copy = aboutCopy(locale.lang)
+const profileImageUrl = resolveAssetUrl('/assets/images/profile-ferret-desk.webp')
+---
+
+<div class="page-enter">
+  <section class="max-w-[640px] mx-auto px-6 pt-10 sm:pt-14 pb-20">
+    {/* Profile */}
+    <div class="animate-reveal mb-12">
+      <div
+        class="w-20 h-20 rounded-full border border-ink-200 overflow-hidden mb-6"
+      >
+        <img
+          src={profileImageUrl}
+          alt={copy.profileAlt}
+          class="w-full h-full object-cover"
+          loading="eager"
+        />
+      </div>
+      <h1
+        class="text-2xl sm:text-3xl font-bold text-ink-950 tracking-tight mb-3"
+      >
+        {copy.heading}
+      </h1>
+      <p class="text-ink-600 text-[15px]">
+        {copy.intro}
+      </p>
+    </div>
+
+    {/* Interests */}
+    <div class="animate-reveal delay-2">
+      <h2
+        class="text-sm font-medium text-ink-600 uppercase tracking-widest mb-6"
+      >
+        {copy.interestsHeading}
+      </h2>
+      <p class="text-ink-700 text-[15px]">
+        {copy.interests.join(' · ')}
+      </p>
+    </div>
+
+    {/* Career */}
+    <div class="mt-16 animate-reveal delay-3">
+      <h2
+        class="text-sm font-medium text-ink-600 uppercase tracking-widest mb-6"
+      >
+        {copy.careerHeading}
+      </h2>
+      <ul class="space-y-3">
+        {
+          copy.career.map((item) => (
+            <li class="flex flex-col sm:flex-row sm:gap-4 text-[15px]">
+              <span
+                class="text-ink-600 text-xs sm:text-[13px] sm:w-32 sm:shrink-0 sm:pt-1 tabular-nums"
+              >
+                {item.period}
+              </span>
+              <span class="text-ink-700">
+                {item.role}
+                <span class="text-ink-600">{` · ${item.org}`}</span>
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</div>

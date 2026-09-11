@@ -1,5 +1,8 @@
 # Dependencies
 node_modules/
+# pnpm is pinned via packageManager and pnpm-lock.yaml is the lockfile of
+# record. An npm install here would leave a second, competing lockfile.
+package-lock.json
 
 # Build output
 .astro/

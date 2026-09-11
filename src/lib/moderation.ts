@@ -91,6 +91,32 @@ export const REJECTION_MESSAGES: Record<RejectionReason, string> = {
   unknown: '댓글을 등록하지 못했어요. 잠시 후 다시 시도해 주세요.',
 }
 
-export function messageFor(reason: RejectionReason): string {
-  return REJECTION_MESSAGES[reason] ?? REJECTION_MESSAGES.unknown
+/** The same copy in English, for the /en tree. */
+export const REJECTION_MESSAGES_EN: Record<RejectionReason, string> = {
+  pii_card: 'That looks like it contains a card number. Please remove it and try again.',
+  pii_rrn: 'That looks like it contains a national ID number. Please remove it and try again.',
+  pii_phone: 'That looks like it contains a phone number. Please remove it and try again.',
+  pii_email: 'That looks like it contains an email address. Please remove it and try again.',
+  profanity: 'That contains profanity. Please rephrase and try again.',
+  link_spam: 'Too many links. Please leave just one.',
+  duplicate: 'A comment with the same content already exists.',
+  too_fast: 'A comment was just posted. Please try again shortly.',
+  too_short: 'That comment is too short.',
+  too_long: 'That comment is too long.',
+  no_nickname: 'Please enter a name.',
+  unknown: 'Could not post the comment. Please try again shortly.',
+}
+
+const MESSAGES_BY_LANG: Record<string, Record<RejectionReason, string>> = {
+  ko: REJECTION_MESSAGES,
+  en: REJECTION_MESSAGES_EN,
+}
+
+/**
+ * `lang` defaults to Korean, which is the site's base language — so a caller
+ * that has no locale to hand (and the existing tests) keep the original copy.
+ */
+export function messageFor(reason: RejectionReason, lang = 'ko'): string {
+  const messages = MESSAGES_BY_LANG[lang] ?? REJECTION_MESSAGES
+  return messages[reason] ?? messages.unknown ?? REJECTION_MESSAGES.unknown
 }

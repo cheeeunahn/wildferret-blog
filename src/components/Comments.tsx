@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { checkComment, LIMITS, messageFor, type RejectionReason } from '../lib/moderation'
+import type { Lang } from '../lib/i18n'
+import type { Strings } from '../lib/strings'
 import {
   CommentError,
   fetchComments,
@@ -9,9 +11,14 @@ import {
 } from '../lib/supabaseComments'
 
 /**
- * The comment island. Mounted client:visible in article/[slug].astro, so the
+ * The comment island. Mounted client:visible in ArticleView.astro, so the
  * React runtime downloads only once a reader scrolls this far — article pages
  * keep their zero-JS first paint.
+ *
+ * UI text arrives as a `strings` prop and the rejection copy is picked by
+ * `lang`, so the island renders in the language of the tree that mounted it
+ * without bundling every dictionary. A post's thread is keyed by slug alone,
+ * so it is shared across /, /kr and /en rather than split per language.
  *
  * XSS: every value below is rendered as JSX children so React escapes it.
  * `body` and `nickname` are attacker-controlled text stored verbatim (the
@@ -33,7 +40,15 @@ const field =
   'placeholder:text-ink-400 outline-none transition-colors ' +
   'focus-visible:border-accent focus-visible:ring-1 focus-visible:ring-accent'
 
-export default function Comments({ articleSlug }: { articleSlug: string }) {
+export default function Comments({
+  articleSlug,
+  strings,
+  lang = 'ko',
+}: {
+  articleSlug: string
+  strings: Strings['comments']
+  lang?: Lang
+}) {
   // Build-time constant, so it can settle during render rather than in an
   // effect — setState in an effect body would cascade a second render.
   const configured = isConfigured()
@@ -64,11 +79,14 @@ export default function Comments({ articleSlug }: { articleSlug: string }) {
     }
   }, [articleSlug, configured])
 
-  const reject = useCallback((reason: RejectionReason) => {
-    // Our own copy, keyed by code. The server's message string is never shown.
-    setError(messageFor(reason))
-    bodyRef.current?.focus()
-  }, [])
+  const reject = useCallback(
+    (reason: RejectionReason) => {
+      // Our own copy, keyed by code. The server's message string is never shown.
+      setError(messageFor(reason, lang))
+      bodyRef.current?.focus()
+    },
+    [lang],
+  )
 
   const onSubmit = useCallback(
     async () => {
@@ -103,13 +121,14 @@ export default function Comments({ articleSlug }: { articleSlug: string }) {
   return (
     <section aria-labelledby="comments-heading">
       <h2 id="comments-heading" className="text-lg font-bold text-ink-900 mb-6">
-        댓글 {comments.length > 0 && <span className="text-ink-400">{comments.length}</span>}
+        {strings.heading}{' '}
+        {comments.length > 0 && <span className="text-ink-400">{comments.length}</span>}
       </h2>
 
       {loading ? (
-        <p className="text-sm text-ink-500 mb-8">댓글을 불러오는 중…</p>
+        <p className="text-sm text-ink-500 mb-8">{strings.loading}</p>
       ) : comments.length === 0 ? (
-        <p className="text-sm text-ink-500 mb-8">첫 댓글을 남겨보세요.</p>
+        <p className="text-sm text-ink-500 mb-8">{strings.empty}</p>
       ) : (
         <ul className="list-none p-0 m-0 mb-10 flex flex-col gap-5">
           {comments.map((c) => (
@@ -137,19 +156,19 @@ export default function Comments({ articleSlug }: { articleSlug: string }) {
           type="text"
           value={nickname}
           onChange={(e) => setNickname(e.target.value)}
-          placeholder="이름"
+          placeholder={strings.namePlaceholder}
           maxLength={LIMITS.nickname}
-          aria-label="이름"
+          aria-label={strings.nameLabel}
           className={`${field} sm:max-w-[200px]`}
         />
         <textarea
           ref={bodyRef}
           value={body}
           onChange={(e) => setBody(e.target.value)}
-          placeholder="댓글을 남겨주세요"
+          placeholder={strings.bodyPlaceholder}
           rows={4}
           maxLength={LIMITS.body}
-          aria-label="댓글"
+          aria-label={strings.bodyLabel}
           className={`${field} resize-y min-h-[96px]`}
         />
 
@@ -165,7 +184,7 @@ export default function Comments({ articleSlug }: { articleSlug: string }) {
             disabled={submitting}
             className="rounded-lg bg-ink-900 px-4 py-2 text-sm text-paper transition-opacity hover:opacity-80 disabled:opacity-50 cursor-pointer disabled:cursor-default"
           >
-            {submitting ? '등록 중…' : '댓글 남기기'}
+            {submitting ? strings.submitting : strings.submit}
           </button>
         </div>
       </form>

@@ -19,6 +19,12 @@ pre-push:
       only:
         - ref: main
       run: echo '✋ main is protected — push a branch and open a PR'; exit 1
+    # Reports articles with no English version, and fails on a translations.en
+    # block that points at a missing file or export — which would fail the build
+    # below anyway, just slower. A merely untranslated post exits 0: it is a
+    # valid state, and the translate-articles workflow fills it in after the push.
+    - name: translation-status
+      run: node scripts/translation-status.mjs
     # astro check covers the TypeScript pass, so this is typecheck + build in one.
     - name: build
       run: pnpm build

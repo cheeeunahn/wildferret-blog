@@ -1,0 +1,54 @@
+---
+import { LANGS, LANG_SEGMENTS, switchLangHref, type Lang, type Locale } from '../lib/i18n'
+import { t } from '../lib/strings'
+
+interface Props {
+  locale: Locale
+  /** Current page as an app path, language segment already stripped. */
+  appPath: string
+  /**
+   * Languages this particular page exists in. A language left out still gets a
+   * button — it points at that language's home rather than at a URL that would
+   * 404. Defaults to every language, which is right for the chrome pages.
+   */
+  availableLangs?: Lang[]
+}
+
+const { locale, appPath, availableLangs = [...LANGS] } = Astro.props
+const strings = t(locale.lang)
+
+// Both trees always link with an explicit prefix, so /en/about ↔ /kr/about
+// round-trips. The unprefixed root is a canonical alias readers land on, not a
+// destination the switcher produces.
+const targets = LANGS.map((lang) => ({
+  lang,
+  // The visible label is the URL segment ('KR'), not the language code
+  // ('ko') — the reader is picking a URL, and the two must agree on screen.
+  label: LANG_SEGMENTS[lang].toUpperCase(),
+  name: strings.langNames[lang],
+  href: switchLangHref(lang, availableLangs.includes(lang) ? appPath : '/'),
+  current: lang === locale.lang,
+}))
+---
+
+{/* Plain links — the whole site is prerendered, so switching language is a
+    navigation, not state. No island, no JS. */}
+<div class="lang-switch" role="group" aria-label={strings.langSwitchLabel}>
+  {
+    targets.map(({ lang, label, name, href: target, current }, i) => (
+      <>
+        {i > 0 && <span class="lang-switch-sep" aria-hidden="true">/</span>}
+        <a
+          href={target}
+          hreflang={lang}
+          lang={lang}
+          class={`lang-switch-link ${current ? 'is-current' : ''}`}
+          aria-current={current ? 'true' : undefined}
+        >
+          <span aria-hidden="true">{label}</span>
+          <span class="sr-only">{name}</span>
+        </a>
+      </>
+    ))
+  }
+</div>
