@@ -128,12 +128,6 @@ export function articlesIn(lang: Lang): LocalizedArticle[] {
     .filter((article): article is LocalizedArticle => article !== null)
 }
 
-/** One post in one language, or null if it has no version there. */
-export function articleIn(slug: string, lang: Lang): LocalizedArticle | null {
-  const article = articles.find((a) => a.slug === slug)
-  return article ? localizeArticle(article, lang) : null
-}
-
 /** Languages a slug is available in — drives the article page's switcher. */
 export function langsForSlug(slug: string): Lang[] {
   const article = articles.find((a) => a.slug === slug)

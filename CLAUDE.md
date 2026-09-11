@@ -10,10 +10,12 @@ pnpm build     # astro check + astro build → dist/
 pnpm preview   # serve dist/ locally (at the configured base path)
 pnpm lint      # ESLint
 pnpm test      # unit tests for the article-content parser
+pnpm translation:status  # which articles have no English version yet
+pnpm translate           # write the missing English versions (opens Claude Code)
 pnpm astro     # the Astro CLI directly
 ```
 
-One test file: `src/lib/articleContent.test.ts`, run by vitest via `vitest.config.ts`. No single-file build commands.
+Vitest (`vitest.config.ts`) runs `src/**/*.test.ts`, `eslint-rules/*.test.js`, and `scripts/*.test.js`. No single-file build commands.
 
 Astro 7 requires **Node 22.12+**; pnpm 10 is pinned via `packageManager`.
 
@@ -85,13 +87,15 @@ Articles live entirely in `src/data/`:
 
 - `articleTypes.ts` — `Article` (`slug`, `title`, `subtitle`, `date`, `readMinutes`, `category`, `coverImage?`, `cardImage?`, `loadContent`, `translations?`) plus `localizeArticle()`
 - `article-content/*.ts` — each article exports its Korean content as a template literal string; `article-content/en/*.ts` holds the English versions
-- `articles.ts` — declares metadata and the `loadContent` dynamic imports (newest first), and exposes `articlesIn(lang)` / `articleIn(slug, lang)` / `langsForSlug(slug)`
+- `articles.ts` — declares metadata and the `loadContent` dynamic imports (newest first), and exposes `articlesIn(lang)` / `langsForSlug(slug)`
 
 `readMinutes` is a **number**, formatted per language (`12분 읽기` / `12 min read`). Never store a unit string like `'12분'` in the data.
 
 **Adding an article:** create a new file in `src/data/article-content/`, export the content string, add a dynamic `loadContent` import in `articles.ts`, and prepend a new entry to the array.
 
 **Translating an article:** add `src/data/article-content/en/<slug>.ts` exporting `<name>ContentEn`, then add a `translations.en` block (`title`, `subtitle`, `loadContent`) to that article's entry. The base fields stay Korean. A post with no `translations.en` is simply **left out** of the English index and gets no `/en/article/:slug` route — untranslated Korean is never served at an English URL, and the switcher on such a post falls back to the `/en` home rather than a 404.
+
+You do not normally do this by hand — see Automatic Translation below.
 
 Bodies are read at **build time** in `getStaticPaths`, so a broken `loadContent` fails `pnpm build` rather than degrading at runtime. There is no loading or error state to render.
 
@@ -111,6 +115,28 @@ Bodies are read at **build time** in `getStaticPaths`, so a broken `loadContent`
 The block-type dispatch in `ArticleView.astro` is order-dependent — table detection must stay after list detection.
 
 **Cover images** go in `public/assets/images/`. Reference them in `articles.ts` with a leading slash and no base prefix — `resolveAssetUrl` handles it at render time.
+
+## Automatic Translation
+
+Publishing is a one-language job: write the Korean post, push, and the English
+version is written for you. Three pieces, in the order they run:
+
+| Piece | Role |
+| --- | --- |
+| `scripts/translation-status.mjs` | **Decides what needs translating.** Scans `articles.ts` for entries with no `translations.en` block and checks the ones that have it against the files on disk. Plain text, or `--json` for `{ pending, translated, problems }` |
+| `.claude/commands/translate-articles.md` | **Does the translating.** The procedure — register, what must survive a translation untouched, how to wire up `articles.ts`, how to verify. Run locally as `/translate-articles [slugs]` or `pnpm translate` |
+| `.github/workflows/translate-articles.yml` | **Runs it automatically.** On any push touching `src/data/article-content/**` or `articles.ts` |
+
+The split matters: **the decision to translate is deterministic, only the writing is a model.** The workflow runs the scanner first and invokes Claude only when `pending` or `problems` is non-empty, so what gets translated is reproducible and reviewable rather than a judgement made inside a prompt. It is also what keeps the workflow from looping — after a successful run nothing is pending, so a re-run exits at the first step (pushes made with `GITHUB_TOKEN` do not trigger workflows either way).
+
+Where the translation lands depends on the branch it was pushed to: on a feature branch it is committed straight back, so it shows up in the same PR as the Korean post; on `main`, which is protected, it arrives as its own PR. Either way a human reviews it — the workflow commits, it does not deploy.
+
+**An untranslated post is a valid state, not an error.** It is left out of the `/en` index and gets no English route, so the scanner exits 0 on `pending` and the pre-push hook does not block you. It exits 1 only on a `problems` entry — a `translations.en` block pointing at a file or export that does not exist, which fails `pnpm build`.
+
+Two things the pipeline deliberately does not do, both of which need a human:
+
+- **Diagrams are not translated.** `[diagram:id]` is copied through as-is, and the labels inside `Diagrams.tsx` are hardcoded Korean with no language awareness, so an English article carrying one renders Korean text. The workflow's summary calls this out per article.
+- **It does not track drift.** An English version is written once. Edit the Korean afterwards and the two fall out of sync with nothing to detect it — re-run `/translate-articles <slug>` against the updated Korean when that happens.
 
 ## Diagram System
 

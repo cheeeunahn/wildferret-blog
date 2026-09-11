@@ -9,6 +9,8 @@
     "preview": "astro preview",
     "lint": "eslint .",
     "test": "vitest run",
+    "translation:status": "node scripts/translation-status.mjs",
+    "translate": "claude \"/translate-articles\"",
     "astro": "astro",
     "prepare": "lefthook install"
   },

@@ -5,10 +5,11 @@ name: Translate new articles
 # publishing a post is a one-language job.
 #
 # The decision to translate is NOT made by the model: scripts/translation-status.mjs
-# reports which articles have no `translations.en` block, and Claude only runs if
-# that list is non-empty. An article with no English version is a valid state
-# (it is simply left out of the /en tree), so this workflow adds translations —
-# it never fails a build for the lack of one.
+# reports which articles have no `translations.en` block and which ones declare a
+# broken one, and Claude only runs if one of those lists is non-empty. An article
+# with no English version is a valid state (it is simply left out of the /en tree),
+# so this workflow adds translations — it never fails a build for the lack of one,
+# and a broken reference it is here to repair does not turn the run red either.
 #
 # Loop safety: the commit this workflow pushes uses GITHUB_TOKEN, and pushes made
 # with GITHUB_TOKEN do not trigger workflows. The status check is a second guard —
@@ -56,17 +57,21 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Find articles with no English version
+      - name: Find articles needing translation
         id: status
         run: |
           node scripts/translation-status.mjs || true
-          pending=$(node scripts/translation-status.mjs --json | node -e "
-            let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{
-              const {pending}=JSON.parse(s);
-              console.log(pending.map(p=>p.slug).join(' '));
-            })")
-          echo "slugs=$pending" >> "$GITHUB_OUTPUT"
-          echo "count=$(echo $pending | wc -w | tr -d ' ')" >> "$GITHUB_OUTPUT"
+          # The scanner exits 1 when it finds problems[] — a translations.en block
+          # pointing at a missing file. That is a case this workflow exists to fix,
+          # not a reason to fail the job, so keep the exit code off the pipeline
+          # (a step's default shell runs with -e and pipefail).
+          node scripts/translation-status.mjs --json > "$RUNNER_TEMP/status.json" || true
+          # Both lists are work for /translate-articles: a pending post needs an
+          # English version written, a problems entry needs its broken
+          # translations.en reference repaired.
+          slugs=$(jq -r '[.pending[].slug, .problems[].slug] | unique | join(" ")' "$RUNNER_TEMP/status.json")
+          echo "slugs=$slugs" >> "$GITHUB_OUTPUT"
+          echo "count=$(echo $slugs | wc -w | tr -d ' ')" >> "$GITHUB_OUTPUT"
 
       - name: Translate
         if: steps.status.outputs.count != '0'

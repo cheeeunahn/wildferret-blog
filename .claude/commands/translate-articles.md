@@ -105,9 +105,17 @@ pnpm build
 `getStaticPaths`, so a bad import or a broken template literal fails here rather
 than in the browser. All four must pass before you report the work done.
 
-Note that `local/no-bare-internal-href` reaches into article content, so an
-in-content link written as `/about` is a lint error — the Korean source will
-already be in the right shape, so this only bites if you rewrite a link.
+In-content links are **not** covered by lint. `local/no-bare-internal-href` only
+reports bare hrefs from JSX/Astro attributes, and article content is a plain
+template literal, so a markdown link inside it is never flagged. (The rule's
+other half — no hardcoded base prefix — does reach these files.) A leading-slash
+path like `/assets/...` is in fact the correct form here: `toSafeHref` in
+`articleContent.ts` runs it through `resolveAssetUrl` at render time.
+
+So check in-content links by hand: a link to another post must carry the `/en/`
+prefix (`[text](/en/article/<slug>)`), and the target must actually have an
+English version — otherwise the link lands a reader in the Korean tree or on a
+missing route.
 
 ## 5. Report
 
