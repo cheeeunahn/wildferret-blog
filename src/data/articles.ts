@@ -40,7 +40,7 @@ export const articles: Article[] = [
       },
     },
   },
-  {
+ /* {
     slug: 'research-wiki-for-llm',
     title: 'LLM 유저 리서치 위키 만들기',
     subtitle: '방대한 유저 리서치 자료를 한 곳에, AI 에이전트가 이해하기 쉬운 방식으로 정리하기',
@@ -74,7 +74,7 @@ export const articles: Article[] = [
         loadContent: () => import('./article-content/en/synthetic-user-research-panel').then(({ syntheticUserResearchPanelContentEn }) => syntheticUserResearchPanelContentEn),
       },
     },
-  },
+  },*/
   {
     slug: 'ai-git-101-for-designers',
     title: 'AI는 신이 아니고, 그저 확률 기반으로 움직이는 똑똑한 시스템일 뿐',
