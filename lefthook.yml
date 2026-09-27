@@ -17,6 +17,16 @@ pre-commit:
       run: pnpm exec prettier --write --ignore-unknown {staged_files}
       stage_fixed: true
 
+post-commit:
+  jobs:
+    # Commit a Korean article and its English version follows as a second
+    # commit. The script checks what HEAD touched and what translation-status
+    # reports, so a commit with nothing to translate returns instantly. It
+    # guards its own translation commit, and rebases/merges, against re-running.
+    # Skip one commit with AUTO_TRANSLATE=0.
+    - name: auto-translate
+      run: node scripts/auto-translate.mjs
+
 pre-push:
   jobs:
     # Advisory only — --no-verify skips it, and it matches the branch you're on,
