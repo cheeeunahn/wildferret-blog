@@ -120,7 +120,8 @@ const en: Strings = {
     heroStepGreet: 'Say hello to the ferret',
     heroStepGreetMore: 'See more of the greeting',
     heroStepReset: 'Go back to the first frame',
-    heroCaption: 'Turn the sound on and click — something good might happen. Try the image above 🍀',
+    heroCaption:
+      'Turn the sound on and click — something good might happen. Try the image above 🍀',
     soundOn: 'Turn ambient sound on',
     soundOff: 'Turn ambient sound off',
     filterLegend: 'Filter posts by category',

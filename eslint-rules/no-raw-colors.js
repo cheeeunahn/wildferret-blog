@@ -23,7 +23,16 @@ const HEX = /#[0-9a-fA-F]{3,8}\b/
 const FUNCTIONAL = /\b(rgba?|hsla?|oklch|lab)\s*\(/
 
 const CLASS_ATTRS = new Set(['class', 'classname', 'classlist'])
-const COLOR_ATTRS = new Set(['class', 'classname', 'classlist', 'style', 'fill', 'stroke', 'color', 'stopcolor'])
+const COLOR_ATTRS = new Set([
+  'class',
+  'classname',
+  'classlist',
+  'style',
+  'fill',
+  'stroke',
+  'color',
+  'stopcolor',
+])
 
 function attrName(node) {
   const name = node.name
@@ -60,7 +69,9 @@ export default {
     docs: { description: 'Use the ink/paper design tokens instead of raw colors' },
     messages: {
       palette:
-        'Raw Tailwind palette class "{{cls}}". Use a design token from global.css — ' + TOKENS + '.',
+        'Raw Tailwind palette class "{{cls}}". Use a design token from global.css — ' +
+        TOKENS +
+        '.',
       literal:
         'Raw color value "{{value}}". Colors are defined once in the @theme block of global.css so dark mode can reassign them — use a token: ' +
         TOKENS +

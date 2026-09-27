@@ -1,26 +1,16 @@
 import { describe, expect, it } from 'vitest'
-import {
-  formatInline,
-  parseImageLine,
-  splitContentIntoBlocks,
-} from './articleContent'
+import { formatInline, parseImageLine, splitContentIntoBlocks } from './articleContent'
 
 describe('parseImageLine', () => {
   it('preserves literal parentheses in image sources', () => {
-    expect(parseImageLine('![diagram](/assets/images/graph_(final).png)')).toEqual(
-      {
-        alt: 'diagram',
-        src: '/assets/images/graph_(final).png',
-      },
-    )
+    expect(parseImageLine('![diagram](/assets/images/graph_(final).png)')).toEqual({
+      alt: 'diagram',
+      src: '/assets/images/graph_(final).png',
+    })
   })
 
   it('separates a caption from a source containing parentheses', () => {
-    expect(
-      parseImageLine(
-        '![diagram](/assets/images/graph_(final).png "Source (2026)")',
-      ),
-    ).toEqual({
+    expect(parseImageLine('![diagram](/assets/images/graph_(final).png "Source (2026)")')).toEqual({
       alt: 'diagram',
       src: '/assets/images/graph_(final).png',
       caption: 'Source (2026)',
@@ -55,7 +45,9 @@ describe('splitContentIntoBlocks', () => {
 
 describe('formatInline', () => {
   it('renders supported markup while escaping unsafe input and URLs', () => {
-    const result = formatInline('**강조** `code` [내부 링크](/assets/image.png) [unsafe](javascript:alert(1)) <script>alert(1)</script>')
+    const result = formatInline(
+      '**강조** `code` [내부 링크](/assets/image.png) [unsafe](javascript:alert(1)) <script>alert(1)</script>',
+    )
 
     expect(result).toContain('<strong>강조</strong>')
     // Asserted as wrapper + color token rather than the exact class list: the

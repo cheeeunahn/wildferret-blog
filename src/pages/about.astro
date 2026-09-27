@@ -10,10 +10,6 @@ const strings = t(locale.lang)
 const copy = aboutCopy(locale.lang)
 ---
 
-<Base
-  locale={locale}
-  title={`${copy.pageTitle} — ${strings.siteTitle}`}
-  description={copy.intro}
->
+<Base locale={locale} title={`${copy.pageTitle} — ${strings.siteTitle}`} description={copy.intro}>
   <AboutView locale={locale} />
 </Base>
