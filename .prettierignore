@@ -1,0 +1,5 @@
+dist
+.astro
+pnpm-lock.yaml
+# Served verbatim by the worker (_headers, images, fonts).
+public

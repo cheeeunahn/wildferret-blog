@@ -19,7 +19,11 @@ function attrName(node) {
 /** `useState(...)` or `React.useState(...)` → 'useState'. */
 function calleeHookName(callee) {
   if (callee.type === 'Identifier') return callee.name
-  if (callee.type === 'MemberExpression' && !callee.computed && callee.property.type === 'Identifier') {
+  if (
+    callee.type === 'MemberExpression' &&
+    !callee.computed &&
+    callee.property.type === 'Identifier'
+  ) {
     return callee.property.name
   }
   return null

@@ -6,7 +6,7 @@ export const syntheticUserReadingContent = `## 요약
 
 ---
 
-[가상 유저 패널](/article/synthetic-user-research-panel)을 직접 만들어 실무에 쓰면서 합성 패널에 관심이 생겼다. 그래서 관련 연구와 강연을 찾아 읽었고, 그 내용을 AI와 함께 정리했다.
+가상 유저 패널(synthetic user panel)을 직접 만들어 실무에 쓰면서 합성 패널에 관심이 생겼다. 그래서 관련 연구와 강연을 찾아 읽었고, 그 내용을 AI와 함께 정리했다.
 
 ---
 

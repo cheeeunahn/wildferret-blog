@@ -49,4 +49,3 @@ jobs:
           claude_args: >-
             --allowed-tools "Read,Grep,Glob,Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr edit:*),Bash(gh pr comment:*),Bash(gh issue view:*),Bash(gh issue comment:*),Bash(gh run view:*),Bash(gh api:*),Bash(git log:*),Bash(git diff:*),Bash(git show:*)"
             --max-turns 40
-

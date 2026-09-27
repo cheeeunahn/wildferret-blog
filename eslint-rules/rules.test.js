@@ -30,7 +30,11 @@ const astro = new RuleTester({
 })
 
 // astro-eslint-parser only takes the .astro path from the filename.
-const astroCase = (code, errors) => ({ filename: 'src/pages/x.astro', code, ...(errors ? { errors } : {}) })
+const astroCase = (code, errors) => ({
+  filename: 'src/pages/x.astro',
+  code,
+  ...(errors ? { errors } : {}),
+})
 
 tsx.run('no-bare-internal-href (tsx)', noBareInternalHref, {
   valid: [
@@ -47,7 +51,7 @@ tsx.run('no-bare-internal-href (tsx)', noBareInternalHref, {
     {
       // The article-content files are plain .ts strings, so this half of the rule
       // is the only one that reaches a markdown [text](url) link.
-      code: "export const content = `See [the post](/wildferret-blog/article/x).`",
+      code: 'export const content = `See [the post](/wildferret-blog/article/x).`',
       errors: [{ messageId: 'hardcodedBase' }],
     },
     {
@@ -98,7 +102,12 @@ astro.run('no-unlisted-island', noUnlistedIsland, {
 })
 
 astro.run('no-unlisted-island (with the Comments island allowed)', noUnlistedIsland, {
-  valid: [{ ...astroCase('<Comments client:visible articleSlug={s} />'), options: [{ allow: ['ThemeToggle', 'Comments'] }] }],
+  valid: [
+    {
+      ...astroCase('<Comments client:visible articleSlug={s} />'),
+      options: [{ allow: ['ThemeToggle', 'Comments'] }],
+    },
+  ],
   invalid: [
     // The allowlist is per-component, so opening it for Comments must not open
     // it for anything else.
@@ -115,11 +124,20 @@ tsx.run('no-unescaped-user-html', noUnescapedUserHtml, {
   valid: [
     // React escapes JSX children — this is the actual defense against stored XSS.
     { code: 'const C = ({ c }) => <p>{c.body}</p>', filename: 'src/components/Comments.tsx' },
-    { code: 'const C = ({ c }) => <span title={c.nickname}>{c.nickname}</span>', filename: 'src/components/Comments.tsx' },
+    {
+      code: 'const C = ({ c }) => <span title={c.nickname}>{c.nickname}</span>',
+      filename: 'src/components/Comments.tsx',
+    },
     // The parser's own module and tests import it legitimately; only
     // components are barred.
-    { code: "import { formatInline } from './articleContent'", filename: 'src/lib/articleContent.test.ts' },
-    { code: "import { splitContentIntoBlocks } from '../lib/articleContent'", filename: 'src/components/Comments.tsx' },
+    {
+      code: "import { formatInline } from './articleContent'",
+      filename: 'src/lib/articleContent.test.ts',
+    },
+    {
+      code: "import { splitContentIntoBlocks } from '../lib/articleContent'",
+      filename: 'src/components/Comments.tsx',
+    },
   ],
   invalid: [
     {

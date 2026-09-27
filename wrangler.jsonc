@@ -9,6 +9,6 @@
     // Astro prerenders a real file per route, so unknown paths should genuinely
     // 404 rather than rewrite to index.html. dist/404.html is built from
     // src/pages/404.astro.
-    "not_found_handling": "404-page"
-  }
+    "not_found_handling": "404-page",
+  },
 }

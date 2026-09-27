@@ -71,7 +71,6 @@ const navLinkClass = (path: string) =>
         } catch (e) {}
       })()
     </script>
-
     <link rel="preconnect" href="https://hangeul.pstatic.net" crossorigin />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link
@@ -90,44 +89,37 @@ const navLinkClass = (path: string) =>
         once-per-SPA-boot animations and would replay on every real navigation.
         Per-page entrance motion lives on each page's .page-enter wrapper. */}
     <div class="min-h-screen flex flex-col">
-      <header
-        class="sticky top-0 z-50 bg-paper/80 backdrop-blur-md border-b border-ink-100"
-      >
-        <nav
-          class="max-w-[720px] mx-auto px-6 h-16 flex items-center justify-between"
-        >
+      <header class="sticky top-0 z-50 bg-paper/80 backdrop-blur-md border-b border-ink-100">
+        <nav class="max-w-[720px] mx-auto px-6 h-16 flex items-center justify-between">
           {/* Every internal link goes through localeHref, so a reader who
               arrived under /en stays under /en for the rest of the visit. */}
           <a
             href={localeHref(locale, '/')}
             class="text-ink-900 text-lg font-semibold tracking-tight no-underline hover:opacity-70 transition-opacity"
-            >wildferret's blog</a
           >
+            wildferret's blog
+          </a>
           <div class="flex items-center gap-4 sm:gap-6">
             <a
               href={localeHref(locale, '/')}
               class={navLinkClass('/')}
               aria-current={isActiveInLocale(pathname, '/') ? 'page' : undefined}
-              >{strings.nav.posts}</a
             >
+              {strings.nav.posts}
+            </a>
             <a
               href={localeHref(locale, '/about')}
               class={navLinkClass('/about')}
               aria-current={isActiveInLocale(pathname, '/about') ? 'page' : undefined}
-              >{strings.nav.about}</a
             >
-            <LangSwitcher
-              locale={locale}
-              appPath={appPath}
-              availableLangs={availableLangs}
-            />
+              {strings.nav.about}
+            </a>
+            <LangSwitcher locale={locale} appPath={appPath} availableLangs={availableLangs} />
             <!-- client:only — ThemeToggle reads document.documentElement in a
                  useState initializer, which has no server equivalent. The fixed
                  30px box (p-1.5 + 18px svg) reserves its space so the header
                  does not shift when the island mounts. -->
-            <span
-              class="inline-flex w-[30px] h-[30px] items-center justify-center -mr-1.5"
-            >
+            <span class="inline-flex w-[30px] h-[30px] items-center justify-center -mr-1.5">
               <ThemeToggle client:only="react" />
             </span>
           </div>
@@ -139,9 +131,7 @@ const navLinkClass = (path: string) =>
       </main>
 
       <footer class="border-t border-ink-100 bg-paper-warm">
-        <div
-          class="max-w-[720px] mx-auto px-6 py-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
-        >
+        <div class="max-w-[720px] mx-auto px-6 py-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <p class="text-ink-900 font-semibold text-sm">wildferret</p>
             <p class="text-ink-600 text-xs mt-1">

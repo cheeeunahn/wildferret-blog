@@ -1,11 +1,5 @@
 import type { ComponentType } from 'react'
-import {
-  VocWorkflow,
-  TerminalTeam,
-  PeersArchitecture,
-  TmuxSplit,
-  FlowComparison,
-} from './Diagrams'
+import { VocWorkflow, TerminalTeam, PeersArchitecture, TmuxSplit, FlowComparison } from './Diagrams'
 
 // Diagrams are only needed by one long-form article. Keeping the registry here
 // makes their ownership explicit.
