@@ -1,139 +1,138 @@
 export const mgs2026PlayHallContentEn = `
-This article synthesises five sessions presented at MGS WEEK 2026. It reports the speakers' claims, examples, and figures rather than independently validating them. Accordingly, numerical results should be interpreted as conference evidence whose generalisability depends on the underlying datasets and methods.
 
-## Engineering constraints on app growth
+## Engineering may be holding back app growth
 
-Eom's central claim was not that growth teams should distrust engineering teams, but that they should identify technical constraints with direct implications for growth and translate them into actionable engineering problems.
+> This is absolutely not an invitation to distrust the development team. Growth teams can make a difference simply by identifying engineering issues that directly affect growth, then framing them as problems developers can solve.
 
-Eom Jae-woong, Senior DevRel Engineer at RevenueCat, presented findings from the *State of Subscription Apps* report, which aggregates data from approximately 120,000 apps. Unless otherwise noted, the figures in this section are those presented by the speaker.
+Eom Jae-woong, Senior Developer Relations (DevRel) Engineer at RevenueCat, drew on the company's *State of Subscription Apps* report, which aggregates data from approximately 120,000 apps.
 
-According to the presentation, payment failure accounts for 32.2% of Google Play cancellations and 15.2% of App Store cancellations. Examples include an expired card or insufficient funds preventing automatic renewal. Only 3–7% of surveyed users reportedly identify the event as a technical problem, which means many do not submit a support request. The first automatic renewal is especially consequential: approximately half of monthly subscribers and three-quarters of annual subscribers discontinue at that point. Remediation is difficult because Apple, Google, and Stripe control payment and retry permissions, grace-period rules vary across iOS, Android, and the web, and new payment APIs may require system migration.
+Payment failure is the leading cause of subscription cancellations, accounting for 32.2% of cancellations on Google Play and 15.2% on the App Store. These failures occur when an expired card or insufficient funds prevent automatic renewal, yet only 3–7% of users describe the cause as a technical problem when asked. Because users often do not realise that their payment method has failed, they do not submit a support request. The first automatic renewal is the critical point: approximately half of monthly subscribers and three out of four annual subscribers drop off at this stage. The problem is difficult to fix because Apple, Google, and Stripe control payments and retry permissions. Grace-period rules differ across iOS, Android, and the web, and each new payment application programming interface (API) can require a system migration.
 
-The speaker reported that 59.6% of paid conversions occur on the first day. Yet mobile payment screens are comparatively difficult to modify: even a copy change may require app review and a new release. He also challenged the assumption that shorter trials perform better, reporting that a 32-day trial converted at 1.7 times the rate of trials lasting four days or fewer.
+Some 59.6% of paid conversions occur on the first day. Yet payment screens are rarely updated. Even changing a single line of copy requires another app review and release, turning a task that takes an hour on the web into a two-week undertaking on mobile. The conventional belief that shorter trials perform better also conflicts with the data: a 32-day trial converted at 1.7 times the rate of trials lasting four days or fewer, even as the industry moves towards shorter trials.
 
-The proposed intervention was server-driven screen configuration. Moving trial length, pricing copy, and discount timing from application code into configuration can allow teams to test several variants without a release. He cited one reverse-trial case—in which all paid features were available initially and reverted to a free tier when the trial ended—where conversion increased from 0.4% to 4.5%.
+The proposed solution was to deliver screen configurations from the server. Moving trial length, pricing copy, and the timing of discount offers out of the code and into configuration allows teams to run three or four tests per month without a new release. Eom cited a reverse-trial case in which all paid features were initially available before users reverted to the free tier at the end of the trial. The conversion rate rose from 0.4% to 4.5%.
 
-He also discussed revenue loss caused by plan-change configuration. Google Play offers six methods for calculating the remaining subscription period when a user changes plans; an inappropriate selection can provide paid access without corresponding revenue. For 10,000 users moving from a $9.99 monthly plan to a $99.99 annual plan, he estimated the difference at approximately $50,000. Because the cause may be only one or two configuration lines, it is not necessarily visible as such in analytics dashboards.
+He also identified places where revenue can leak away unnoticed. Google Play offers six options for calculating the remaining subscription period when a user changes plans; choosing the wrong one can give away paid features for free. For 10,000 users moving from a $9.99 monthly plan to a $99.99 annual plan, the loss would be approximately $50,000. The difference may come down to one or two lines of configuration, and no dashboard identifies it as the cause.
 
 ---
 
-## Brand citation in generative search
+## Which brands does AI cite?
 
-Jo Kyung-sang, CEO of NNT, presented observations drawn from more than 200 search-optimisation projects. The figures below are reported from that presentation and should be read as project findings rather than general causal estimates.
+Jo Kyung-sang, CEO of NNT, shared findings from more than 200 search engine optimisation (SEO) projects.
 
-In an analysis of 840 ChatGPT responses concerning one global brand, none cited the brand's official Korean channels. Jo argued that, when authoritative material is absent, a system may instead rely on third-party sources or unsupported inferences.
+When NNT analysed 840 ChatGPT responses about one global brand, it found that the brand's official Korean channels had not been cited once. Rather than saying that it does not know, artificial intelligence (AI) fills the gap with someone else's information.
 
-NNT refers to work intended to improve a brand's representation and citation in AI-generated answers as generative engine optimisation (GEO). Its framework contains four areas: sales; marketing, divided into human-written content and automated production; public relations and communications; and technology and operations.
+The work of ensuring that a brand is properly cited in AI answers is known as generative engine optimisation (GEO). NNT divides it into four areas: sales, including Naver Shopping price comparison, Google Shopping, and ChatGPT product recommendations; marketing, split between high-quality human-written content and automated mass production; public relations and communications, which NNT expects to become the most important area next year; and technology and operations.
 
-Where a person might produce 18–30 pieces of content per month, automated systems can generate thousands. Jo cautioned, however, that undifferentiated machine-generated text can reduce site quality and search visibility. He described a food brand that used lower-risk queries such as “calories in X” and incorporated proprietary real-time search data and customer reviews. In the cases presented, pages with reviews showed purchase-conversion rates 8–19 times those of pages without them.
+Where a person might produce 18–30 pieces of content per month, automated production can generate thousands. However, generic AI-generated articles can undermine a site's credibility, causing it to disappear from search results or fall in the rankings. One food brand could not use phrases such as “benefits of X” without risking legal issues, so it expanded its pages with combinations such as “calories in X” and incorporated proprietary material, including real-time search data and customer reviews. Purchase conversion rates differed by a factor of 8–19 before and after reviews were added.
 
-The public-relations argument followed the same logic. Systems such as ChatGPT and Gemini may decompose a question into subqueries and draw on community sources where authoritative material is unavailable. Supplying reliable information for those subqueries can therefore influence how a system describes a brand.
+The reasoning for public relations is similar. ChatGPT and Gemini break a user's question into multiple branches and search them independently; when information is unavailable, they fill the gaps with community posts or their own conjecture. Supplying the pieces that a brand is in a position to provide changes how AI describes that brand.
 
-The presentation reported the following findings:
+The research produced the following figures:
 
-- A document ranking first on Google has a reported probability above 40% of being cited in an AI answer, with comparatively high citation rates through positions 1–7. This association does not establish causation, but it suggests that GEO overlaps with conventional search optimisation
-- Roughly 70% of all citations come from about 30 sites
-- Longer, more detailed content reportedly performs better when structured with a summary first, followed by evidence and supporting detail
+- A page ranked first on Google has a probability of more than 40% of being cited in an AI answer, and pages ranked from first through seventh also have a high probability. This is not a causal relationship, but responding to AI is not separate from conventional SEO
+- Approximately 70% of all citations come from about 30 sites
+- Longer, more detailed content has an advantage. Place the key summary at the top, followed by the evidence and then the detail
 
-He proposed three conditions for useful content: a distinctive analytical perspective, proprietary evidence, and a precisely defined audience. Rather than a broad category such as “women in their thirties who buy cars,” he recommended a concrete profile specifying age, income, budget, preferences, and commute. He also advised placing key points first, using question-and-answer structures where appropriate, and naming relevant brands, products, people, and figures.
+Good content should offer a distinctive perspective, as a critic would; use evidence available only to the organisation; and define its reader very precisely. Jo said that the audience profile should go beyond “a woman in her thirties buying a car” to something like “32 years old, an annual income of ₩96 million, an ₩80 million budget, brand-conscious, and a 15-kilometre commute each way”. He also recommended leading with the key point, using a question-and-answer structure, and densely incorporating brand names, product names, people, and specific figures.
 
-He concluded that interfaces and usage patterns will continue to change, making short-lived technical tactics an insufficient strategy. The more durable question is which activities become more valuable as AI improves; his answer was the production of substantive, original content.
+His closing observation stayed with me. This year's AI and next year's AI will differ in both interface and use, so concentrating only on today's technical tactics amounts to chasing a passing trend. Ask instead, “What becomes more valuable as AI improves?” The answer ultimately comes back to valuable content.
 
 ---
 
 ## From cost per install to lifetime value
 
-Kim Sun-woo, Director at Mistplay, addressed the measurement of mobile-game marketing. Unless otherwise noted, the figures in this section are those reported in his presentation.
+Kim Sun-woo, Director at Mistplay, spoke about mobile-game marketing.
 
-Kim reported that acquisition cost per install had increased by more than 48% on Android and by a factor of 3.5 on iOS. Over the same period, in-game purchase revenue reportedly grew by 4%, session counts by 12%, and playtime by 8%. He argued that installation is only the beginning of a sequence that includes first play, in-game progress, and payment, whereas many marketing budgets continue to optimise for installation alone.
+The advertising cost of acquiring a single installation has risen sharply: by more than 48% on Android and by a factor of 3.5 on iOS. Over the same period, in-game purchase revenue grew by only 4%, while session counts rose by 12% and playtime by 8%. For a user, installation is only the beginning; first play, progress towards an in-game objective, and payment follow. Yet most marketing budgets still reward installation alone.
 
-As an alternative, he proposed rewards tied to playtime. These may be awarded at time intervals or upon reaching in-game milestones, such as clearing a stage, reaching level ten, making a first purchase, or joining a guild. In the cases presented, average playtime per game increased by 30% and daily active users by 20%. He emphasised the sequence: playtime increased before return on advertising spend. In his interpretation, the view that reward-driven users are low quality arose from rewarding installation rather than meaningful engagement.
+This led to rewards for playtime. The reward system is divided into two axes: one provides rewards at intervals as playtime accumulates, while the other ties them to in-game objectives such as clearing a stage, reaching level ten, making a first purchase, or joining a guild. Average playtime per game increased by 30%, and daily active users increased by 20%. Kim emphasised the sequence: playtime rose first, followed by return on advertising spend (ROAS). He argued that the industry's perception that reward-driven users are low quality arose because rewards had been tied to installation.
 
-For scale, he suggested extending proven reward models to services where reward-seeking behaviour is already established, including financial-app points, shopping cashback, and memberships. These channels reportedly reach more than forty million monthly users. In a Korean MMORPG case, a Chinese developer achieved 2.5 times its day-seven advertising-spend recovery target and a 40% next-day retention rate, 16 percentage points above conventional install-ad channels.
+To scale the approach, Kim recommended extending proven reward models beyond games. By connecting with areas where reward-driven behaviour is already established, such as financial-app points, shopping cashback, and memberships, Mistplay secured more than 40 million monthly users. In a Korean massively multiplayer online role-playing game (MMORPG) case, a Chinese developer achieved 2.5 times its day-seven ROAS target and a 40% next-day retention rate. This was 16 percentage points higher than conventional installation-advertising channels.
 
-The presentation also described regional differences: users in the United States and United Kingdom were said to play several games concurrently, while users in Korea and Japan tended to concentrate on fewer games. On that basis, Kim recommended using rewards in Western markets to encourage return visits through new content and rotating events, and in East Asian markets to reinforce accumulated investment in characters, rankings, and equipment. These broad regional categories should be treated as reported marketing segments rather than universal user traits.
+Patterns also differed by country. Users in the United States and United Kingdom play several games concurrently, whereas users in Korea and Japan invest deeply in a small number of games. Even with the same reward budget, Western markets need reasons to return, such as new content and rotating events. East Asian markets need reasons not to leave, such as characters, rankings, and equipment whose value grows with the time invested.
 
 | Genre | Share of paying users | Time to first purchase | Characteristics |
 | --- | --- | --- | --- |
 | Puzzle | 7.3% | 1.6 days | Fastest and strongest purchase conversion |
-| RPG | 5% | 1.7 days | Consistently high in both session count and time to purchase |
+| Role-playing game (RPG) | 5% | 1.7 days | Consistently high in both session count and time to purchase |
 | Strategy | 4.3% | 2.2 days | Slowest, but the highest session count per user |
 
-Evaluating a strategy-game campaign after seven days against a puzzle-game benchmark may therefore terminate a viable campaign prematurely. Kim recommended prioritising playtime and purchasing behaviour over cost per install on marketing dashboards. He also argued that marketing teams share responsibility for the path from installation to the game's core experience, and cautioned against transferring a campaign unchanged across markets or genres.
+Evaluating a strategy-game campaign on day seven against a puzzle-game benchmark can lead a team to terminate a sound campaign. Kim recommended replacing cost per install (CPI) in the first section of the dashboard with playtime and purchasing-behaviour metrics. Marketing teams must also design the path through which users reach the game's core appeal after installation. He added that even a successful campaign structure should not be copied unchanged across markets or genres.
 
 ---
 
-## Marketing strategies for cryptocurrency applications
+## A marketing playbook for cryptocurrency applications
 
-Kim Jong-rim of Liftoff Mobile presented the following market figures and audience framework.
+Kim Jong-rim of Liftoff Mobile.
 
-He reported 560 million cryptocurrency holders worldwide, equivalent to approximately 10% of the internet population, with annual growth of 32% over the preceding three years. He also stated that 78% of trades occur on mobile, although institutional and high-value investors remain active on desktop. His audience framework emphasised three tendencies: anxiety associated with news-driven volatility, engagement with check-in rewards and leaderboards, and responsiveness to trading rewards and cashback.
+There are 560 million cryptocurrency holders worldwide, or approximately 10% of the internet population, and the figure has grown by 32% annually over the past three years. Mobile devices account for 78% of trades, although institutional investors and high spenders are also active on desktop computers. Kim identified three aspects of user psychology: anxiety caused by sharp news-driven price swings, an appetite for features such as check-in rewards and leaderboards, and sensitivity to trading rewards and cashback.
 
-According to Kim, clients often operate cryptocurrency and prediction-trading services together. He placed the cryptocurrency market at $2.16 trillion while noting that it can decline by 50% from a peak. Prediction trading allows probabilities to change as an event unfolds—for example, after a goal in a football match—and was reported to be growing at 303%. The presentation did not specify the period or denominator for this growth figure.
+Clients usually operate two types of service together. The cryptocurrency market recently reached a capitalisation of $2.16 trillion, but it is highly volatile and can fall as much as 50% from its peak. Prediction trading taps into the desire to bet. Even if a football match begins at even odds, a goal can change the odds, creating opportunities to profit during the match; this market has grown by 303%.
 
 | Group | Message | Ad creative |
 | --- | --- | --- |
-| New | “Start from ₩10,000” — clear explanation rather than exaggeration | App screens showing registration, asset review, and purchasing |
-| Anxious | “Now is your opportunity”; “Others have already begun” | Rising cryptocurrency charts and live price movements |
-| Steady-return | Long-term investing, automated returns, regular rewards | Six-month trends instead of short-term dip charts |
+| New | “Start with ₩10,000” — clear explanation rather than exaggeration | App screens showing how to register, check assets, and make a purchase |
+| Anxious | “Now is your opportunity”; “Others have already begun” | Surging cryptocurrency charts and real-time price changes |
+| Steady-return | Long-term investing, automated returns, and regular rewards | Six-month trends instead of short-term decline charts |
 | High-value | Dedicated support, trading stability, and strong security | Platinum cards and hotel or airline benefits |
 
-For new users, the speaker reported that demonstrations of usability perform better than provocative messages. Prediction-trading companies also use game-like creative, such as asking users to predict a player's scoring total, which reportedly produces a comparatively high click-through rate.
+For new users, showing how easy the application is to use works better than provocative messaging. Companies that also offer prediction trading use game-like creative around the National Football League (NFL) or the World Cup, such as asking users to predict how many goals a player will score. These advertisements have particularly high click-through rates.
 
-The proposed placement strategy also varied by segment. Casual games and lifestyle or entertainment apps were recommended for reaching new users; finance, weather, and news apps for the anxious and steady-return groups; and sports apps for prediction-trading users. A further strategy targets established high spenders, based on the claim that the top 10–20% of users often account for 70–80% of revenue. This may increase revenue per user but limits audience scale. Timing also matters: because activity increases immediately before a match, Kim recommended concentrating budget in the four hours before kickoff rather than distributing it evenly.
+There are three approaches to ad placement. Reach new users through casual games and lifestyle or entertainment applications; increase the share of finance, weather, and news applications for the anxious and steady-return groups; and concentrate exclusively on sports applications for prediction-trading users. Another approach is to identify existing high spenders and advertise to them intensively, because the top 10–20% of users often account for 70–80% of total revenue. This maximises revenue but is difficult to scale because the target audience is small. Timing matters as well. Users contact friends and check news and comments shortly before a match, so the daily budget is concentrated in the four hours before the event rather than spent evenly throughout the day.
 
 ---
 
-## Organisational redesign for AI-supported work
+## Changing how we work with AI
 
-This panel brought together leaders responsible for AI adoption at Ajungdang and Kurly.
+This panel brought together the people responsible for AI adoption at Ajungdang and Kurly.
 
-Kurly reported that producing a product-detail page required an average of two to four weeks, progressing from a merchandiser's brief through editing, design, and final approval. Adding AI separately to each stage produced little reduction in total time because handoffs remained the bottleneck. After redesigning the process so that a merchandiser could produce the complete page with one AI tool, the reported production time fell to as little as two to three hours. The change raised questions about roles and responsibilities, including ownership of page production and design standards.
+At Kurly, producing a product-detail page took an average of two to four weeks: a merchandise planner (MD) prepared the brief, an editor wrote the copy, a designer created the page, and the result went through final approval. Adding AI to each stage did little to reduce the total time. The bottleneck lay in the handoffs and waiting between stages. Once the sequence itself was redesigned so that the merchandise planner could use a single AI tool to produce everything from the brief to the detail page, the work could be completed in as little as two to three hours. This, however, created conflicts over roles and responsibilities (R&R): why should the merchandise planner produce the detail page, and who is responsible for design standards?
 
-> For more than 80% of work, the real problem is the cost of communication and the cost of decisions. A unit task finishes quickly with GPT or Claude, but work entangling several teams and stakeholders does not.
+> In more than 80% of work, communication and decision-making costs are the real problem. Individual tasks can be completed quickly with GPT or Claude, but work involving multiple teams and stakeholders cannot.
 
-Ajungdang discussed customer consultation. Its interface offers “call” and “request a consultation,” but even with approximately 300 agents, demand can produce delays during which prospective customers may choose a competitor. The company therefore uses an AI system to call immediately after a consultation request, conduct an initial conversation, transcribe it, and pass structured notes to the customer-management system for a human agent. The company reported subsequent increases in both conversion and revenue.
+Ajungdang focused on customer consultations. Customers had only two buttons to choose from: place a call or request a consultation. Even with approximately 300 consultants, a surge in calls meant that customers could move to a competitor while waiting. Ajungdang therefore arranged for AI to call immediately after a consultation request, conduct a conversation, transcribe the recording, and pass a summary to the customer relationship management (CRM) system for a human consultant to continue. This kept customers engaged while they waited and meant that they had already invested time in the process. Both conversion and revenue increased.
 
-The two companies diverged on what to tackle with AI first.
+The two companies differed on which problems to address with AI first.
 
 | Category | Ajungdang | Kurly |
 | --- | --- | --- |
-| Starting point | Implementation alone is no longer a differentiator | Cost-reduction methods transfer between organisations more readily than revenue-growth methods |
-| Deciding question | Does the intervention reduce time and cost, and can it extend beyond the originating team? | Which functions account for the largest share of personnel? |
-| How to identify work | Identify duplicated development across teams while preserving voluntary experimentation | Aggregate work-management records and identify highly repetitive tasks |
-| Direction | Tools that individuals and teams can adapt | Focus on tools for merchandising and development, the functions with the largest headcounts |
+| Starting point | Building something is no longer a differentiator in itself | Cost-reduction methods transfer to other companies more readily than revenue-growth methods |
+| Deciding question | Does it actually reduce time and cost, and can it spread beyond our team? | Which team has the most people on the organisational chart? |
+| How to identify work | Look for teams independently building the same things, without dampening their initiative | Aggregate records from work-management tools to identify highly repetitive tasks |
+| Direction | Tools that individuals and organisations can adapt for themselves | Focus on tools for merchandise planners and developers, the two largest groups |
 
-The companies adopted contrasting diffusion strategies. Ajungdang enables practitioners to build their own tools. A centrally distributed data-analysis tool saw little use after one week, whereas hackathons and workshops encouraged voluntary development. Once the number of tools exceeded thirty to forty, however, management demands and AI-usage costs increased. The company introduced guidance and rules, reported compliance of approximately 50%, and began establishing a dedicated review role. It identified a weekly thirty- to sixty-minute internal meeting for sharing recent experiments as its most effective intervention.
+Their approaches to spreading adoption were diametrically opposed. Ajungdang allows practitioners to build tools on their own. When it used AI to create and distribute a data-analysis tool, no one was using it a week later; switching to hackathons and workshops brought forward people who built tools voluntarily. However, once the number of tools exceeded thirty to forty, both the management burden and AI usage fees rose sharply. The company introduced guidelines and rules, but compliance remained at approximately 50%, so it is establishing a separate review function. Its most effective measure was a weekly internal AI gathering lasting thirty minutes to an hour. Participants share what they built the previous week, even if it is unrelated to their work.
 
-Kurly described a more executive-led approach centred on three measures. First, roles must be redefined: reducing communication overhead requires individuals or teams to assume broader responsibilities, which depends on executive support. Second, tools should be accessible without requiring non-developers to install development software. Third, the company found substantive mandatory training more effective than optional instruction.
+Kurly takes an executive-led approach and identified three requirements. Redefining roles is the most important. Reducing communication costs requires one person or team to assume broader responsibilities, which is impossible without commitment from management. The second is an accessible working environment: non-developers should not be asked to begin by installing developer software. The final requirement is training, and compulsory training proved the most effective.
 
-When asked how marketing changes, Ajungdang emphasised validation. If teams can produce hundreds of prototypes quickly, the remaining work is to test, revise, and identify effective options. As production becomes less expensive, evaluation becomes more important. Kurly reported that one marketer manages the US launch of its beauty brand from content planning through TikTok and Amazon setup to operations. Work that previously required a team can therefore shift expenditure from staffing to advertising and change the target return.
+Asked what changes in marketing, Ajungdang pointed to validation. In an era when teams can produce hundreds of prototypes per day, the remaining task is to fail quickly, make corrections, and find what works. As production becomes cheaper, verification becomes more important, which ultimately brings the work back to fundamentals. Kurly offered a concrete example. A single marketer handles the US launch of its in-house beauty brand, from content planning to TikTok and Amazon setup and ongoing operations. The work would previously have required a team, so money once spent on personnel can be redirected to advertising, changing the baseline for the target rate of return itself.
 
-A Kurly panelist, drawing on experience with 100 apps and 300 projects since 2009, argued that single-app development is becoming less viable at company scale. In this account, a solo product earning several million won per month may remain sustainable, whereas a team of five or more may struggle to achieve an adequate return. This was a practitioner judgment, not a general market estimate.
+The Kurly panelist, who has worked on 100 applications and 300 projects since 2009, argued that the app business is no longer worth pursuing at company scale. It remains viable as a solo venture earning several million to ten million won per month, but a team of five or more is unlikely to achieve either success or the expected return by launching a single application.
 
-The panel concluded with two recommendations. Decision-makers should treat AI adoption as an organisational-design question and redefine roles to reduce communication costs. Practitioners should begin problem definition with available data. The panelists also observed that employees who prioritise work against organisational goals and collaborate effectively tend to direct AI systems effectively.
+The panel closed with advice for both groups. Decision-makers should treat AI as a team member rather than an assistive tool, redesign roles, and directly reshape organisational structures and responsibilities to reduce communication costs. Practitioners should begin problem definition with data. The panelists also observed that people who are good at their work are good at using AI: those who set priorities in line with company goals and collaborate effectively also give AI effective direction.
 
 ---
 
-## Event and source details
+## Where I heard these talks
 
 MGS WEEK 2026 (2026.07.21, Westin Seoul Parnas). The slogan was "Stack AI, Rewrite Everything".
 
 **Main Hall**
 
-- **What's blocking your app's growth may be engineering, not growth strategy** — Eom Jae-woong (Senior DevRel Engineer, RevenueCat) · 10:15–10:40
+- **What is blocking your app's growth may be engineering, not growth strategy** — Eom Jae-woong (Senior DevRel Engineer, RevenueCat) · 10:15–10:40
 
 **Play Hall**
 
-- **Beyond the ROAS Wall: past CPI, toward LTV** — Kim Sun-woo (Director & Commercial Director, Mistplay) · 10:55–11:20
+- **Beyond the ROAS Wall: from CPI to LTV** — Kim Sun-woo (Director and Commercial Director, Mistplay) · 10:55–11:20
 - **Which brands does AI cite?** — Jo Kyung-sang (CEO, NNT) · 11:30–11:55
-- **The crypto UA playbook: optimal creative and targeting strategy per user persona** — Kim Jong-rim (Liftoff Mobile, Pan-APAC) · 12:05–12:30
+- **The crypto UA playbook: optimal creative and targeting strategies for each user persona** — Kim Jong-rim (Liftoff Mobile, Pan-APAC) · 12:05–12:30
 
 **Main Hall (continued)**
 
-- **AI & agentic workflows: redesigning organisational operations and growth** — moderator Nam Sung-pil (CEO, AB180), panel Lee Ha-seok (Head of Marketing, Ajungdang) · Kwak Geun-bong (Head of AX Centre, Kurly) · 18:35–19:00
+- **AI and agentic workflows: redesigning organisational operations and growth** — moderator Nam Sung-pil (CEO, AB180), panelists Lee Ha-seok (Head of Marketing, Ajungdang) · Kwak Geun-bong (Head of AX Centre, Kurly) · 18:35–19:00
 
 **Further reading**
 
-- [MGS 2026 field sketch — "Time to rewrite marketing with AI" (AB180, 2026.08.03)](https://blog.ab180.co/posts/mgs-2026-recap) — the organiser's full recap of the event
+- [MGS 2026 field report — "Now is the time to rewrite marketing with AI" (AB180, 2026.08.03)](https://blog.ab180.co/posts/mgs-2026-recap) — the organiser's recap of the full event
 `
