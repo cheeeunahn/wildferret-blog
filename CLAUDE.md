@@ -28,6 +28,7 @@ Every route is prerendered to a real HTML file at build time. There is no client
 **Deployment:** a root-path Cloudflare static worker. `astro.config.mjs` uses `base: '/'`, overridable via the `BASE_PATH` env var for a path-prefixed host. `wrangler.jsonc` uploads `./dist` with `not_found_handling: "404-page"`, served by the prerendered `dist/404.html`.
 
 **Routing** (file-based, `src/pages/`). Every page exists in three prerendered trees — see Languages below:
+
 - `index.astro` → `/` · `about.astro` → `/about` · `article/[slug].astro` → `/article/:slug` (Korean, canonical)
 - `[lang]/index.astro`, `[lang]/about.astro`, `[lang]/article/[slug].astro` → the same pages under `/kr/…` and `/en/…`
 - `404.astro` → `dist/404.html` — one file serves every miss, `/en/` included, so it answers in **both** languages
@@ -51,7 +52,7 @@ This is the rule that is easiest to break by accident.
 
 Astro does **not** prefix `<a href>` with the configured `base`, and there is no router `<Link>` to do it.
 
-- Internal route hrefs in a template → **`localeHref(locale, '/about')`** from `src/lib/i18n.ts`. It applies the language prefix *and* the base prefix, so a reader who arrived under `/en` stays under `/en`. A bare `href()` here would silently drop them back into the Korean tree.
+- Internal route hrefs in a template → **`localeHref(locale, '/about')`** from `src/lib/i18n.ts`. It applies the language prefix _and_ the base prefix, so a reader who arrived under `/en` stays under `/en`. A bare `href()` here would silently drop them back into the Korean tree.
 - Nav active state → `isActiveInLocale(Astro.url.pathname, '/about')` from the same module; it strips both the base and the language segment
 - Language-free page identity (`/en/about` → `/about`) → `toLangFreePath()`, the normalizer `isActiveInLocale` is built on
 - `href()` / `toAppPath()` from `src/lib/siteUrl.ts` are the base-prefix-only layer underneath `localeHref`. Use them directly only when a link must ignore language (the canonical URL, the switcher's own targets).
@@ -65,11 +66,11 @@ Never write a bare `href="/about"`, and never hardcode a base path prefix.
 
 Three prerendered trees, all built from the same view components:
 
-| URL | Language | Role |
-| --- | --- | --- |
-| `/`, `/about`, `/article/:slug` | Korean | canonical — `<link rel="canonical">` points here |
-| `/kr/…` | Korean | explicit-prefix alias, canonicalised onto `/` |
-| `/en/…` | English | canonical for itself |
+| URL                             | Language | Role                                             |
+| ------------------------------- | -------- | ------------------------------------------------ |
+| `/`, `/about`, `/article/:slug` | Korean   | canonical — `<link rel="canonical">` points here |
+| `/kr/…`                         | Korean   | explicit-prefix alias, canonicalised onto `/`    |
+| `/en/…`                         | English  | canonical for itself                             |
 
 Language lives in the **URL**, never in client state — every page is a static file, so there is nothing to read a preference from at request time. A `Locale` is therefore a `{ lang, prefix }` pair, not just a language: `''` and `'/kr'` are the same language at different URLs, and links have to stay in the prefix the reader arrived through.
 
@@ -100,6 +101,7 @@ You do not normally do this by hand — see Automatic Translation below.
 Bodies are read at **build time** in `getStaticPaths`, so a broken `loadContent` fails `pnpm build` rather than degrading at runtime. There is no loading or error state to render.
 
 **Content format** (parsed by `src/lib/articleContent.ts`, rendered by `src/components/ArticleView.astro`):
+
 - Blocks are separated by blank lines (`\n\n`)
 - `## Heading`, `### Heading` — section headings
 - `> text` — blockquote
@@ -121,11 +123,11 @@ The block-type dispatch in `ArticleView.astro` is order-dependent — table dete
 Publishing is a one-language job: write the Korean post, push, and the English
 version is written for you. Three pieces, in the order they run:
 
-| Piece | Role |
-| --- | --- |
-| `scripts/translation-status.mjs` | **Decides what needs translating.** Scans `articles.ts` for entries with no `translations.en` block and checks the ones that have it against the files on disk. Plain text, or `--json` for `{ pending, translated, problems }` |
-| `.claude/commands/translate-articles.md` | **Does the translating.** The procedure — register, what must survive a translation untouched, how to wire up `articles.ts`, how to verify. Run locally as `/translate-articles [slugs]` or `pnpm translate` |
-| `.github/workflows/translate-articles.yml` | **Runs it automatically.** On any push touching `src/data/article-content/**` or `articles.ts` |
+| Piece                                      | Role                                                                                                                                                                                                                            |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/translation-status.mjs`           | **Decides what needs translating.** Scans `articles.ts` for entries with no `translations.en` block and checks the ones that have it against the files on disk. Plain text, or `--json` for `{ pending, translated, problems }` |
+| `.claude/commands/translate-articles.md`   | **Does the translating.** The procedure — register, what must survive a translation untouched, how to wire up `articles.ts`, how to verify. Run locally as `/translate-articles [slugs]` or `pnpm translate`                    |
+| `.github/workflows/translate-articles.yml` | **Runs it automatically.** On any push touching `src/data/article-content/**` or `articles.ts`                                                                                                                                  |
 
 The split matters: **the decision to translate is deterministic, only the writing is a model.** The workflow runs the scanner first and invokes Claude only when `pending` or `problems` is non-empty, so what gets translated is reproducible and reviewable rather than a judgement made inside a prompt. It is also what keeps the workflow from looping — after a successful run nothing is pending, so a re-run exits at the first step (pushes made with `GITHUB_TOKEN` do not trigger workflows either way).
 
@@ -158,7 +160,7 @@ Anonymous, nickname-only comments on article pages, stored in Supabase. Schema a
 
 The site is static with no server runtime, so the browser talks to PostgREST directly (`src/lib/supabaseComments.ts`, plain `fetch` — deliberately **not** `@supabase/supabase-js`, which is ~40kB for two REST calls). Two consequences that drive the whole design:
 
-- **The publishable key is public.** It is inlined into the built JS, and anyone can POST to the REST endpoint without going through the form. So nothing in the frontend is a security control. Access is enforced by RLS plus *column-level* grants (`grant insert (article_slug, nickname, body)`), and content by the `moderate_comment()` BEFORE INSERT trigger. `src/lib/moderation.ts` is a client-side subset of that trigger for instant feedback only — it deliberately omits the profanity list, which lives in a table `anon` cannot read.
+- **The publishable key is public.** It is inlined into the built JS, and anyone can POST to the REST endpoint without going through the form. So nothing in the frontend is a security control. Access is enforced by RLS plus _column-level_ grants (`grant insert (article_slug, nickname, body)`), and content by the `moderate_comment()` BEFORE INSERT trigger. `src/lib/moderation.ts` is a client-side subset of that trigger for instant feedback only — it deliberately omits the profanity list, which lives in a table `anon` cannot read.
 - **Rejections travel as reason codes, never messages.** The trigger raises with a `hint` (`pii_phone`, `profanity`, `too_fast`, …); the copy lives in `REJECTION_MESSAGES` (Korean) and `REJECTION_MESSAGES_EN` in `moderation.ts`, picked by `messageFor(reason, lang)` — `lang` defaults to `'ko'`. Never render a PostgREST `message`/`details` string — that would make the error path an injection channel.
 
 ### Languages
@@ -171,7 +173,7 @@ The island's UI text arrives as a `strings` prop (`Strings['comments']`) and its
 
 Comment text is attacker-controlled and stored verbatim. **The moderation trigger is not an XSS filter**: `<script>` passes through it and is stored as text, which is correct, because storage was never the vulnerability. Rendering is.
 
-`ArticleView.astro` renders prose with `set:html={formatInline(...)}`, which emits raw HTML *on purpose* — that is how `**bold**` works, and it is safe only because its input is your own content. Reusing that parser for comments is the obvious-looking move and would be a textbook stored-XSS hole.
+`ArticleView.astro` renders prose with `set:html={formatInline(...)}`, which emits raw HTML _on purpose_ — that is how `**bold**` works, and it is safe only because its input is your own content. Reusing that parser for comments is the obvious-looking move and would be a textbook stored-XSS hole.
 
 - Render comment `body` and `nickname` as JSX children (`{c.body}`) and let React escape them. **This is the actual defense.** Nickname counts too — it looks like metadata, which is why it gets rendered carelessly.
 - `local/no-unescaped-user-html` enforces the mechanical half (no `dangerouslySetInnerHTML`, no `formatInline` import in `src/components/`).
@@ -183,17 +185,23 @@ Comment text is attacker-controlled and stored verbatim. **The moderation trigge
 
 `PUBLIC_SUPABASE_URL` and `PUBLIC_SUPABASE_ANON_KEY` (see `.env.example`) are inlined at **build** time, so they must be set wherever `pnpm build` runs — locally in `.env`, and as build environment variables in Cloudflare. Setting them as Worker runtime secrets does nothing. Use the publishable key, never `service_role`, which bypasses RLS.
 
+## Formatting
+
+Prettier (`.prettierrc.json`, with `prettier-plugin-astro`) owns layout: no semicolons, single quotes, trailing commas, 100 columns. ESLint owns correctness and the repo conventions below, and carries no stylistic rules, so the two never disagree. The pre-commit hook runs `eslint --fix` and then `prettier --write` on staged files. `public/` is ignored because the worker serves it verbatim.
+
+Article bodies are template literals, which Prettier leaves alone, so formatting never touches post content.
+
 ## Lint Rules
 
 `pnpm lint` runs ESLint over `src/**/*.{ts,tsx}` **and** `src/**/*.astro`. Alongside the published rule sets, `eslint-rules/` is a repo-local plugin (registered as `local` in `eslint.config.js`) that turns the conventions above into errors:
 
-| Rule | Scope | Enforces |
-| --- | --- | --- |
-| `local/no-bare-internal-href` | ts, tsx, astro | Linking — no bare `href="/about"` / `src="/assets/…"`, no hardcoded base prefix in any string (this half also reaches markdown links inside `article-content/*.ts`) |
-| `local/no-raw-colors` | ts, tsx, astro | Design Tokens — no stock Tailwind palette classes, no hex/`rgb()` in `class`/`style`/`fill`/`stroke` |
-| `local/no-unlisted-island` | astro | Islands policy — `client:*` only on `<ThemeToggle>` and `<Comments>` (allowlist is the rule's `allow` option, set in `eslint.config.js`) |
-| `local/no-interactive-diagrams` | `Diagrams.tsx` only | Islands policy — no hooks, no `on*` handlers |
-| `local/no-unescaped-user-html` | ts, tsx | Comments — no `dangerouslySetInnerHTML`; no importing `formatInline` into `src/components/` |
+| Rule                            | Scope               | Enforces                                                                                                                                                            |
+| ------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `local/no-bare-internal-href`   | ts, tsx, astro      | Linking — no bare `href="/about"` / `src="/assets/…"`, no hardcoded base prefix in any string (this half also reaches markdown links inside `article-content/*.ts`) |
+| `local/no-raw-colors`           | ts, tsx, astro      | Design Tokens — no stock Tailwind palette classes, no hex/`rgb()` in `class`/`style`/`fill`/`stroke`                                                                |
+| `local/no-unlisted-island`      | astro               | Islands policy — `client:*` only on `<ThemeToggle>` and `<Comments>` (allowlist is the rule's `allow` option, set in `eslint.config.js`)                            |
+| `local/no-interactive-diagrams` | `Diagrams.tsx` only | Islands policy — no hooks, no `on*` handlers                                                                                                                        |
+| `local/no-unescaped-user-html`  | ts, tsx             | Comments — no `dangerouslySetInnerHTML`; no importing `formatInline` into `src/components/`                                                                         |
 
 **Adding a rule:** write `eslint-rules/<name>.js` exporting the standard `{ meta, create }` object (plain ESM, no build step), register it in `eslint-rules/index.js`, enable it in the right block of `eslint.config.js`, and add `RuleTester` cases to `eslint-rules/rules.test.js` — `pnpm test` runs those alongside the parser tests.
 
