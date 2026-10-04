@@ -1,9 +1,9 @@
 ---
 import Base from '../layouts/Base.astro'
 import AboutView from '../components/AboutView.astro'
-import { ROOT_LOCALE } from '../lib/i18n'
-import { t } from '../lib/strings'
-import { aboutCopy } from '../data/about'
+import { ROOT_LOCALE } from '../shared/i18n'
+import { t } from '../copy/strings'
+import { aboutCopy } from '../content/service'
 
 const locale = ROOT_LOCALE
 const strings = t(locale.lang)

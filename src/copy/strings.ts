@@ -5,7 +5,7 @@
 //
 // Article bodies are not here: those live per-language in
 // src/data/article-content/ and are wired up in src/data/articles.ts.
-import type { Lang } from './i18n'
+import type { Lang } from '../shared/i18n'
 
 export interface Strings {
   /** <title> for the index, and the suffix on every other page's title. */

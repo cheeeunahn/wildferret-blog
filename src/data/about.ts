@@ -1,6 +1,7 @@
 // The about page's copy, per language. It is page content rather than chrome,
-// so it lives in src/data/ next to the articles instead of in lib/strings.ts.
-import type { Lang } from '../lib/i18n'
+// so it lives in src/data/ next to the articles instead of in copy/strings.ts.
+// Read it through aboutCopy() in src/content/service.ts.
+import type { Lang } from '../shared/i18n'
 
 export interface AboutCopy {
   pageTitle: string
@@ -50,8 +51,4 @@ const en: AboutCopy = {
   ],
 }
 
-const ABOUT: Record<Lang, AboutCopy> = { ko, en }
-
-export function aboutCopy(lang: Lang): AboutCopy {
-  return ABOUT[lang]
-}
+export const about: Record<Lang, AboutCopy> = { ko, en }

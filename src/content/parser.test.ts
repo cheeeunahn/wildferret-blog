@@ -3,7 +3,7 @@ import {
   formatInline,
   parseImageLine,
   splitContentIntoBlocks,
-} from './articleContent'
+} from './parser'
 
 describe('parseImageLine', () => {
   it('preserves literal parentheses in image sources', () => {

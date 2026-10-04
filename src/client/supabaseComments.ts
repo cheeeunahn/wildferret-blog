@@ -8,7 +8,7 @@
  * here (auth, realtime, storage) is unused.
  */
 
-import type { RejectionReason } from './moderation'
+import type { RejectionReason } from '../shared/moderation'
 
 export interface Comment {
   id: string

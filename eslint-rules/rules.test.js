@@ -4,6 +4,8 @@ import * as astroParser from 'astro-eslint-parser'
 import { describe, it } from 'vitest'
 
 import noBareInternalHref from './no-bare-internal-href.js'
+import noCrossLayerImport from './no-cross-layer-import.js'
+import { layerZones } from './layer-zones.js'
 import noInteractiveDiagrams from './no-interactive-diagrams.js'
 import noRawColors from './no-raw-colors.js'
 import noUnescapedUserHtml from './no-unescaped-user-html.js'
@@ -118,8 +120,8 @@ tsx.run('no-unescaped-user-html', noUnescapedUserHtml, {
     { code: 'const C = ({ c }) => <span title={c.nickname}>{c.nickname}</span>', filename: 'src/components/Comments.tsx' },
     // The parser's own module and tests import it legitimately; only
     // components are barred.
-    { code: "import { formatInline } from './articleContent'", filename: 'src/lib/articleContent.test.ts' },
-    { code: "import { splitContentIntoBlocks } from '../lib/articleContent'", filename: 'src/components/Comments.tsx' },
+    { code: "import { formatInline } from './parser'", filename: 'src/content/parser.test.ts' },
+    { code: "import { splitContentIntoBlocks } from '../content/parser'", filename: 'src/components/Comments.tsx' },
   ],
   invalid: [
     {
@@ -130,7 +132,7 @@ tsx.run('no-unescaped-user-html', noUnescapedUserHtml, {
     {
       // The tempting shortcut: reuse the article parser, which emits raw HTML
       // because it trusts its input.
-      code: "import { formatInline } from '../lib/articleContent'",
+      code: "import { formatInline } from '../content/parser'",
       filename: 'src/components/Comments.tsx',
       errors: [{ messageId: 'formatInline' }],
     },
@@ -174,4 +176,50 @@ tsx.run('no-raw-colors (tsx)', noRawColors, {
 astro.run('no-raw-colors (astro)', noRawColors, {
   valid: [astroCase('<div class="bg-surface text-ink-900" />')],
   invalid: [astroCase('<div class="bg-zinc-800" />', [{ messageId: 'palette' }])],
+})
+
+// Run against the real zone map, so a loosened zone fails here rather than
+// passing against a test-only copy.
+const layers = [{ zones: layerZones }]
+const layerCase = (filename, code, errors) => ({ filename, code, options: layers, ...(errors ? { errors } : {}) })
+const crossLayer = [{ messageId: 'crossLayer' }]
+
+tsx.run('no-cross-layer-import (ts/tsx)', noCrossLayerImport, {
+  valid: [
+    // Every layer may use the shared helpers.
+    layerCase('src/components/Comments.tsx', "import { checkComment } from '../shared/moderation'"),
+    layerCase('src/content/service.ts', "import { articles } from '../data/articles'"),
+    layerCase('src/data/about.ts', "import type { Lang } from '../shared/i18n'"),
+    // Same-layer imports, including data's own dynamic article imports.
+    layerCase('src/data/articles.ts', "const c = () => import('./article-content/x')"),
+    layerCase('src/components/diagramRegistry.ts', "import { A } from './Diagrams'"),
+    // Packages are not layers.
+    layerCase('src/shared/i18n.ts', "import { describe } from 'vitest'"),
+    // Absolute filenames, as ESLint passes them for real.
+    layerCase('/repo/src/content/service.ts', "import { about } from '../data/about'"),
+  ],
+  invalid: [
+    // An island bundling build-time content would ship it to the browser.
+    layerCase('src/components/Comments.tsx', "import { articlesIn } from '../content/service'", crossLayer),
+    layerCase('src/client/supabaseComments.ts', "import { articles } from '../data/articles'", crossLayer),
+    // Type-only imports still couple the layers.
+    layerCase('src/components/HomeView.ts', "import type { Article } from '../data/articleTypes'", crossLayer),
+    layerCase('src/content/service.ts', "import { t } from '../copy/strings'", crossLayer),
+    layerCase('src/data/about.ts', "import { aboutCopy } from '../content/service'", crossLayer),
+    layerCase('src/shared/i18n.ts', "import { t } from '../copy/strings'", crossLayer),
+    // Re-exports and dynamic imports cross the boundary just the same.
+    layerCase('src/copy/strings.ts', "export { articles } from '../data/articles'", crossLayer),
+    layerCase('src/copy/strings.ts', "export * from '../data/articles'", crossLayer),
+    layerCase('src/components/Comments.tsx', "const m = () => import('../content/service')", crossLayer),
+    layerCase('/repo/src/shared/assetUrl.ts', "import { articles } from '../data/articles'", crossLayer),
+  ],
+})
+
+astro.run('no-cross-layer-import (astro)', noCrossLayerImport, {
+  valid: [
+    layerCase('src/pages/x.astro', "---\nimport { articlesIn } from '../content/service'\n---\n<p />"),
+  ],
+  invalid: [
+    layerCase('src/pages/x.astro', "---\nimport { articles } from '../data/articles'\n---\n<p />", crossLayer),
+  ],
 })

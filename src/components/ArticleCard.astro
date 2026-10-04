@@ -1,8 +1,8 @@
 ---
-import type { LocalizedArticle } from '../data/articleTypes'
-import { localeHref, type Locale } from '../lib/i18n'
-import { t } from '../lib/strings'
-import { resolveAssetUrl } from '../lib/assetUrl'
+import type { LocalizedArticle } from '../content/service'
+import { localeHref, type Locale } from '../shared/i18n'
+import { t } from '../copy/strings'
+import { resolveAssetUrl } from '../shared/assetUrl'
 
 interface Props {
   article: LocalizedArticle
