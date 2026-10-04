@@ -65,11 +65,12 @@ The import rules, enforced by `local/no-cross-layer-import` (zones in `eslint-ru
 This is the rule that is easiest to break by accident.
 
 - Pages, the layout, and `ArticleCard.astro` are `.astro` and ship **zero** JavaScript.
-- Astryx components (`Heading`, `Text`, `Card`, `Table`, …) are React, but used in `.astro` **without** `client:*` they render to static HTML and ship nothing. Only use display components that way; anything needing a click handler would render dead (switch such features off — `CodeBlock hasCopyButton={false}`, `Text hasTruncateTooltip={false}`). Interactive Astryx controls belong inside an existing island only. Importing one into `ThemeToggle` would put Astryx's ~31 KB button chunk on every page, which is why that toggle stays a native `<button>`.
-- There are exactly **three** hydrated islands, and they hydrate differently on purpose:
+- Astryx components (`Heading`, `Text`, `Card`, `Table`, …) are React, but used in `.astro` **without** `client:*` they render to static HTML and ship nothing. Only use display components that way; anything needing a click handler would render dead (switch such features off — `CodeBlock hasCopyButton={false}`, `Text hasTruncateTooltip={false}`). Interactive Astryx controls belong inside a listed island only (see below). Importing one into `ThemeToggle` would put Astryx's ~31 KB button chunk on every page, which is why that toggle stays a native `<button>`.
+- There are exactly **four** hydrated islands, and they hydrate differently on purpose:
   - `src/components/ThemeToggle.tsx` — `client:only="react"`, because it reads `document.documentElement` in a `useState` initializer, which has no server equivalent. Its fixed-size wrapper in `Base.astro` reserves layout space so the header does not shift on mount.
   - `src/components/Comments.tsx` — `client:visible` in `ArticleView.astro` (so all three language trees get it from one place). It has no server-hostile code, so the shell prerenders and the React runtime downloads only once a reader scrolls to the bottom of an article. Article pages keep a zero-JS first paint. Do not "simplify" this to `client:load`, which would ship React to every article on load.
   - `src/components/CategoryFilter.tsx` — `client:load` in `HomeView.astro`. The home page's Astryx `SegmentedControl`. It does not render the cards (they are static HTML outside it); it only sets `data-filter` on `.cat-scope`, and per-category rules generated in `HomeView.astro` hide non-matching cards. With no JS, every post stays visible. Costs the home page ~29 KB gzipped (its own chunk plus an Astryx chunk it shares with Comments); React itself was already there for ThemeToggle.
+  - `src/components/AiSummary.tsx` — `client:summarizer`, a custom directive (`src/directives/summarizer.ts`, registered in `astro.config.mjs`). The button sits in the article header, which is in view on load, so `client:visible` would ship React to every article view — mostly to readers whose browser cannot run it. The directive hydrates only where Chrome's built-in Prompt API (`LanguageModel`) exists; everyone else downloads neither the island nor React. See AI Summary below.
 - The allowlist for the above lives in `eslint.config.js` (the `allow` option on `local/no-unlisted-island`), not in the rule file.
 
 ## Linking
@@ -165,6 +166,17 @@ Two things the pipeline deliberately does not do, both of which need a human:
 - **Text inside images is not translated.** Alt text and captions are, but an image with Korean baked into it (the diagram screenshots in `agent-teams-and-claude-peers`, for one) still shows Korean on `/en/`. The workflow's summary calls this out per article.
 - **It does not track drift.** An English version is written once. Edit the Korean afterwards and the two fall out of sync with nothing to detect it — re-run `/translate-articles <slug>` against the updated Korean when that happens.
 
+## AI Summary
+
+The "AI로 요약하기 / Summarize with AI" button in the article header summarizes the post on the reader's device with Chrome's built-in AI (Gemini Nano). No server, no key, no network call — the CSP needs nothing new.
+
+- `src/client/summarizer.ts` holds every call to the browser APIs; `AiSummary.tsx` only renders state. Covered by `summarizer.test.ts` against stubbed globals.
+- **Prompt API, not the Summarizer API.** On Chrome 154 the Summarizer ignores `type`/`length`/`format` and returns pages of markdown critiquing the post. `LanguageModel` with a system prompt (3–5 plain sentences, no preamble) works. `toPlainText()` still strips any markdown the model slips in, and the island renders the sentences as a list.
+- **Korean goes through English.** Chrome's model refuses Korean as input and output, so `pickRoute()` picks `via-en`: Translator `ko→en`, summarize, Translator `en→ko` (streamed). When Chrome takes Korean directly, `pickRoute()` returns `direct` with no code change.
+- **One download per click.** Chrome refuses a second `create()` that needs a download in the same click (`NotAllowedError`). Models are created one at a time and kept across clicks; `NeedsAnotherClick` puts the button into "이어서 내려받기".
+- Summaries are cached in `sessionStorage` under `ai-summary:v2:<lang>:<slug>`. Bump the version when the prompt or format changes, or readers keep seeing the old output for the session.
+- Model output is untrusted text: render it as JSX children only, same as comments.
+
 ## Design Tokens
 
 The site uses **Astryx's default color system** and Astryx typography (ADR 0002, TRD in `docs/trd/astryx-design-system.md`). `<html data-astryx-theme="wildferret">` in `Base.astro` applies the theme page-wide; the theme (`src/styles/astryx/wildferretTheme.ts`, built with `pnpm theme:build`, output committed) only swaps in NanumBarunGothic — it sets no colors.
@@ -247,13 +259,13 @@ Article bodies are template literals, which Prettier leaves alone, so formatting
 
 `pnpm lint` runs ESLint over `src/**/*.{ts,tsx}` **and** `src/**/*.astro`. Alongside the published rule sets, `eslint-rules/` is a repo-local plugin (registered as `local` in `eslint.config.js`) that turns the conventions above into errors:
 
-| Rule                           | Scope          | Enforces                                                                                                                                                              |
-| ------------------------------ | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `local/no-bare-internal-href`  | ts, tsx, astro | Linking — no bare `href="/about"` / `src="/assets/…"`, no hardcoded base prefix in any string (this half also reaches markdown links inside `article-content/*.ts`)   |
-| `local/no-raw-colors`          | ts, tsx, astro | **Off** during the Astryx move (ADR 0002); the rule and its tests are kept. Was: no stock Tailwind palette classes, no hex/`rgb()` in `class`/`style`/`fill`/`stroke` |
-| `local/no-unlisted-island`     | astro          | Islands policy — `client:*` only on `<ThemeToggle>` and `<Comments>` (allowlist is the rule's `allow` option, set in `eslint.config.js`)                              |
-| `local/no-unescaped-user-html` | ts, tsx        | Comments — no `dangerouslySetInnerHTML`; no importing `formatInline` (from `content/parser`) into `src/components/`                                                   |
-| `local/no-cross-layer-import`  | ts, tsx, astro | Layers — the import rules above (zones in `eslint-rules/layer-zones.js`)                                                                                              |
+| Rule                           | Scope          | Enforces                                                                                                                                                                    |
+| ------------------------------ | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `local/no-bare-internal-href`  | ts, tsx, astro | Linking — no bare `href="/about"` / `src="/assets/…"`, no hardcoded base prefix in any string (this half also reaches markdown links inside `article-content/*.ts`)         |
+| `local/no-raw-colors`          | ts, tsx, astro | **Off** during the Astryx move (ADR 0002); the rule and its tests are kept. Was: no stock Tailwind palette classes, no hex/`rgb()` in `class`/`style`/`fill`/`stroke`       |
+| `local/no-unlisted-island`     | astro          | Islands policy — `client:*` only on `<ThemeToggle>`, `<Comments>`, `<CategoryFilter>` and `<AiSummary>` (allowlist is the rule's `allow` option, set in `eslint.config.js`) |
+| `local/no-unescaped-user-html` | ts, tsx        | Comments — no `dangerouslySetInnerHTML`; no importing `formatInline` (from `content/parser`) into `src/components/`                                                         |
+| `local/no-cross-layer-import`  | ts, tsx, astro | Layers — the import rules above (zones in `eslint-rules/layer-zones.js`)                                                                                                    |
 
 **Adding a rule:** write `eslint-rules/<name>.js` exporting the standard `{ meta, create }` object (plain ESM, no build step), register it in `eslint-rules/index.js`, enable it in the right block of `eslint.config.js`, and add `RuleTester` cases to `eslint-rules/rules.test.js` — `pnpm test` runs those alongside the unit tests.
 

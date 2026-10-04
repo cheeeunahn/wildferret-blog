@@ -63,9 +63,11 @@ export default defineConfig([
       // Comments is the second island: client:visible, so the React runtime
       // loads only when a reader scrolls to the bottom of an article.
       // CategoryFilter is the third: the home page's Astryx SegmentedControl.
+      // AiSummary is the fourth: client:summarizer, so it loads only in browsers
+      // that have Chrome's built-in Prompt API.
       'local/no-unlisted-island': [
         'error',
-        { allow: ['ThemeToggle', 'Comments', 'CategoryFilter'] },
+        { allow: ['ThemeToggle', 'Comments', 'CategoryFilter', 'AiSummary'] },
       ],
     },
   },
