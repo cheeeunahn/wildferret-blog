@@ -115,17 +115,17 @@ export class NeedsAnotherClick extends Error {
  * needed (the model and a language pack, on a fresh machine), this throws
  * `NeedsAnotherClick` after the first, and the next click picks up from there.
  *
- * `onProgress` gets the current download's fraction, and is called only while
- * something is downloading.
+ * `onDownload` is called while a model is downloading. The fraction Chrome
+ * reports is not passed on: it reaches 1 well before the model is ready.
  */
 export async function createPipeline(
   lang: Lang,
   route: Route,
   models: Models,
-  onProgress: (fraction: number) => void,
+  onDownload: () => void,
 ): Promise<SummaryPipeline> {
   const monitor = (m: CreateMonitor) => {
-    m.addEventListener('downloadprogress', (e) => onProgress(e.loaded))
+    m.addEventListener('downloadprogress', onDownload)
   }
   const make = async <T>(create: () => Promise<T>): Promise<T> => {
     try {

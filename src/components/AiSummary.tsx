@@ -91,9 +91,7 @@ export default function AiSummary({
       // reload may still have to pick the route.
       const route = routeRef.current ?? (routeRef.current = await pickRoute(lang))
       if (!route) throw new Error('unavailable')
-      // Only reports progress when a model is not on the device yet.
-      // The reported fraction is not shown: Chrome jumps to 100% and then
-      // keeps loading for a while, so a number would mislead.
+      // Only called when a model is not on the device yet.
       const pipeline = await createPipeline(lang, route, modelsRef.current, () =>
         setStatus('downloading'),
       )
