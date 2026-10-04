@@ -6,7 +6,6 @@ import { describe, it } from 'vitest'
 import noBareInternalHref from './no-bare-internal-href.js'
 import noCrossLayerImport from './no-cross-layer-import.js'
 import { layerZones } from './layer-zones.js'
-import noInteractiveDiagrams from './no-interactive-diagrams.js'
 import noRawColors from './no-raw-colors.js'
 import noUnescapedUserHtml from './no-unescaped-user-html.js'
 import noUnlistedIsland from './no-unlisted-island.js'
@@ -15,7 +14,7 @@ import noUnlistedIsland from './no-unlisted-island.js'
 RuleTester.describe = describe
 RuleTester.it = it
 
-/** Rules run against .tsx (Diagrams.tsx, ThemeToggle.tsx). */
+/** Rules run against .tsx (ThemeToggle.tsx, Comments.tsx). */
 const tsx = new RuleTester({
   languageOptions: {
     parser: tsParser,
@@ -68,37 +67,14 @@ astro.run('no-bare-internal-href (astro)', noBareInternalHref, {
   invalid: [astroCase('<a href="/about">x</a>', [{ messageId: 'bareHref' }])],
 })
 
-tsx.run('no-interactive-diagrams', noInteractiveDiagrams, {
-  valid: [
-    // The real shape of every current diagram: static JSX, currentColor SVGs.
-    'const D = () => <svg className="text-ink-500"><line stroke="currentColor" /></svg>',
-    'const D = () => <div>{steps.map((s) => <span key={s.n}>{s.title}</span>)}</div>',
-    'const user = getUser()',
-  ],
-  invalid: [
-    {
-      code: 'const D = () => { const [n] = useState(0); return <div>{n}</div> }',
-      errors: [{ messageId: 'hook', data: { name: 'useState' } }],
-    },
-    {
-      code: 'const D = () => { React.useEffect(() => {}); return <div /> }',
-      errors: [{ messageId: 'hook' }],
-    },
-    {
-      code: 'const D = () => <button onClick={go}>x</button>',
-      errors: [{ messageId: 'handler', data: { name: 'onClick' } }],
-    },
-  ],
-})
-
 astro.run('no-unlisted-island', noUnlistedIsland, {
   valid: [
     astroCase('<ThemeToggle client:only="react" />'),
-    astroCase('<Diagram />'),
-    astroCase('<div class="animate-reveal"><Diagram /></div>'),
+    astroCase('<ArticleCard />'),
+    astroCase('<div class="animate-reveal"><ArticleCard /></div>'),
   ],
   invalid: [
-    astroCase('<Diagram client:load />', [{ messageId: 'unlisted' }]),
+    astroCase('<LangSwitcher client:load />', [{ messageId: 'unlisted' }]),
     astroCase('<ArticleCard client:visible />', [{ messageId: 'unlisted' }]),
   ],
 })
@@ -215,7 +191,7 @@ tsx.run('no-cross-layer-import (ts/tsx)', noCrossLayerImport, {
     layerCase('src/data/about.ts', "import type { Lang } from '../shared/i18n'"),
     // Same-layer imports, including data's own dynamic article imports.
     layerCase('src/data/articles.ts', "const c = () => import('./article-content/x')"),
-    layerCase('src/components/diagramRegistry.ts', "import { A } from './Diagrams'"),
+    layerCase('src/components/Comments.tsx', "import { A } from './Other'"),
     // Packages are not layers.
     layerCase('src/shared/i18n.ts', "import { describe } from 'vitest'"),
     // Absolute filenames, as ESLint passes them for real.

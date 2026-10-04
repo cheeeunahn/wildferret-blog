@@ -52,10 +52,10 @@ runs on is better rendered as two English ones.
 - Image paths in `![alt](/assets/images/...)` — translate the alt text and the
   `"caption"` after the path, never the path itself. Keep the `(AI-generated)`
   marker on AI-generated images.
-- `[diagram:id]` tags — copy the tag exactly. Note in your summary that the
-  diagram's own labels are hardcoded Korean in `src/components/Diagrams.tsx`
-  and are not language-aware, so a translated article carrying one needs a
-  follow-up.
+- Images with Korean text inside them (diagram screenshots, slides) — keep the
+  image and translate its alt text as usual, but note in your summary that the
+  picture itself still reads Korean, so a translated article carrying one needs
+  a follow-up.
 - Fenced code blocks — they use `~~~`, not backticks, because the content is a
   template literal. Translate comments inside the code; leave the code itself
   alone.
@@ -120,5 +120,5 @@ missing route.
 ## 5. Report
 
 List each slug you translated, and call out anything that needs a human:
-diagrams with Korean labels, a passage whose meaning you were unsure of, or a
+images with Korean text baked in, a passage whose meaning you were unsure of, or a
 Korean-language link that an English reader cannot follow.

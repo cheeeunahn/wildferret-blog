@@ -78,7 +78,7 @@
   --color-paper: #f4f5f8;
   --color-paper-warm: #e9ebf0;
 
-  /* Raised surfaces (article cards, diagram panels) — brighter than the page in
+  /* Raised surfaces (article cards) — brighter than the page in
      light, lighter than the page in dark, so "raised" reads the same way both
      ways round. */
   --color-surface: #ffffff;

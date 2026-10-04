@@ -1,12 +1,11 @@
 /**
- * ThemeToggle is the only component allowed to hydrate. Everything else —
- * diagrams included — is server-rendered to static HTML. A stray client:*
- * directive ships a React runtime to the page that carries it. See the Islands
- * policy in CLAUDE.md.
+ * Only allowlisted components may hydrate (the list is the rule's `allow`
+ * option, set in eslint.config.js). Everything else is server-rendered to
+ * static HTML. A stray client:* directive ships a React runtime to the page
+ * that carries it. See the Islands policy in CLAUDE.md.
  *
- * The diagram call site in article/[slug].astro renders `<Diagram />` from
- * getDiagram(), so provenance cannot be traced through imports. Allowlisting the
- * one legitimate island is both simpler and stricter.
+ * Allowlisting the legitimate islands by name is simpler and stricter than
+ * tracing each component's provenance through its imports.
  */
 
 const DEFAULT_ALLOW = ['ThemeToggle']

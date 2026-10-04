@@ -67,7 +67,6 @@ This is the rule that is easiest to break by accident.
   - `src/components/ThemeToggle.tsx` — `client:only="react"`, because it reads `document.documentElement` in a `useState` initializer, which has no server equivalent. Its fixed-size wrapper in `Base.astro` reserves layout space so the header does not shift on mount.
   - `src/components/Comments.tsx` — `client:visible` in `ArticleView.astro` (so all three language trees get it from one place). It has no server-hostile code, so the shell prerenders and the React runtime downloads only once a reader scrolls to the bottom of an article. Article pages keep a zero-JS first paint. Do not "simplify" this to `client:load`, which would ship React to every article on load.
 - The allowlist for the above lives in `eslint.config.js` (the `allow` option on `local/no-unlisted-island`), not in the rule file.
-- `src/components/Diagrams.tsx` components render with **no** `client:*` directive — they are pure static JSX, so Astro server-renders them to HTML with no client JS. **Adding a hook or an event handler to any diagram silently breaks this** and would force a `client:*` directive (and with it a React runtime on article pages).
 
 ## Linking
 
@@ -133,7 +132,6 @@ Bodies are read at **build time** in `getStaticPaths`, so a broken `loadContent`
 - `---` — horizontal divider
 - `~~~lang … ~~~` — fenced code block (use `~~~` not backticks to avoid escaping issues in template literals)
 - `![alt](path)` — inline image (path is resolved via `resolveAssetUrl`)
-- `[diagram:id]` — renders a React component from `Diagrams.tsx` (see below)
 - Inline: `**bold**`, `` `code` ``, `[text](url)`
 
 The block-type dispatch in `ArticleView.astro` is order-dependent — table detection must stay after list detection.
@@ -160,16 +158,8 @@ Where the translation lands depends on the branch it was pushed to: on a feature
 
 Two things the pipeline deliberately does not do, both of which need a human:
 
-- **Diagrams are not translated.** `[diagram:id]` is copied through as-is, and the labels inside `Diagrams.tsx` are hardcoded Korean with no language awareness, so an English article carrying one renders Korean text. The workflow's summary calls this out per article.
+- **Text inside images is not translated.** Alt text and captions are, but an image with Korean baked into it (the diagram screenshots in `agent-teams-and-claude-peers`, for one) still shows Korean on `/en/`. The workflow's summary calls this out per article.
 - **It does not track drift.** An English version is written once. Edit the Korean afterwards and the two fall out of sync with nothing to detect it — re-run `/translate-articles <slug>` against the updated Korean when that happens.
-
-## Diagram System
-
-`src/components/Diagrams.tsx` contains named React diagram components, mapped by id in `src/components/diagramRegistry.ts`. Use `[diagram:id]` in article content to embed one. To add a new diagram: write a named component in `Diagrams.tsx`, add it to the `diagrams` record in `diagramRegistry.ts`, then reference `[diagram:your-id]` in content.
-
-The registry is a plain static map — not `React.lazy` — because diagrams render at build time with no `<Suspense>` boundary and no client runtime. See the Islands policy above.
-
-Current diagrams: `voc-workflow`, `terminal-team`, `peers-architecture`, `tmux-split`, `comparison`.
 
 ## Design Tokens
 
@@ -251,14 +241,13 @@ Article bodies are template literals, which Prettier leaves alone, so formatting
 
 `pnpm lint` runs ESLint over `src/**/*.{ts,tsx}` **and** `src/**/*.astro`. Alongside the published rule sets, `eslint-rules/` is a repo-local plugin (registered as `local` in `eslint.config.js`) that turns the conventions above into errors:
 
-| Rule                            | Scope               | Enforces                                                                                                                                                            |
-| ------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `local/no-bare-internal-href`   | ts, tsx, astro      | Linking — no bare `href="/about"` / `src="/assets/…"`, no hardcoded base prefix in any string (this half also reaches markdown links inside `article-content/*.ts`) |
-| `local/no-raw-colors`           | ts, tsx, astro      | Design Tokens — no stock Tailwind palette classes, no hex/`rgb()` in `class`/`style`/`fill`/`stroke`                                                                |
-| `local/no-unlisted-island`      | astro               | Islands policy — `client:*` only on `<ThemeToggle>` and `<Comments>` (allowlist is the rule's `allow` option, set in `eslint.config.js`)                            |
-| `local/no-interactive-diagrams` | `Diagrams.tsx` only | Islands policy — no hooks, no `on*` handlers                                                                                                                        |
-| `local/no-unescaped-user-html`  | ts, tsx             | Comments — no `dangerouslySetInnerHTML`; no importing `formatInline` (from `content/parser`) into `src/components/`                                                 |
-| `local/no-cross-layer-import`   | ts, tsx, astro      | Layers — the import rules above (zones in `eslint-rules/layer-zones.js`)                                                                                            |
+| Rule                           | Scope          | Enforces                                                                                                                                                            |
+| ------------------------------ | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `local/no-bare-internal-href`  | ts, tsx, astro | Linking — no bare `href="/about"` / `src="/assets/…"`, no hardcoded base prefix in any string (this half also reaches markdown links inside `article-content/*.ts`) |
+| `local/no-raw-colors`          | ts, tsx, astro | Design Tokens — no stock Tailwind palette classes, no hex/`rgb()` in `class`/`style`/`fill`/`stroke`                                                                |
+| `local/no-unlisted-island`     | astro          | Islands policy — `client:*` only on `<ThemeToggle>` and `<Comments>` (allowlist is the rule's `allow` option, set in `eslint.config.js`)                            |
+| `local/no-unescaped-user-html` | ts, tsx        | Comments — no `dangerouslySetInnerHTML`; no importing `formatInline` (from `content/parser`) into `src/components/`                                                 |
+| `local/no-cross-layer-import`  | ts, tsx, astro | Layers — the import rules above (zones in `eslint-rules/layer-zones.js`)                                                                                            |
 
 **Adding a rule:** write `eslint-rules/<name>.js` exporting the standard `{ meta, create }` object (plain ESM, no build step), register it in `eslint-rules/index.js`, enable it in the right block of `eslint.config.js`, and add `RuleTester` cases to `eslint-rules/rules.test.js` — `pnpm test` runs those alongside the unit tests.
 
