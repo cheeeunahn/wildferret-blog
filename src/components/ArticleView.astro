@@ -1,6 +1,5 @@
 ---
 import type { LocalizedArticle } from '../content/service'
-import { getDiagram } from './diagramRegistry'
 import Comments from './Comments'
 import { formatInline, parseImageLine, splitContentIntoBlocks } from '../content/parser'
 import { resolveAssetUrl } from '../shared/assetUrl'
@@ -114,19 +113,6 @@ const MAX_CAROUSEL_SLIDES = 6
 
       if (trimmed === '---') {
         return <hr class="ink-divider my-10" />
-      }
-
-      const diagramMatch = trimmed.match(/^\[diagram:(.+)\]$/)
-      if (diagramMatch) {
-        const Diagram = getDiagram(diagramMatch[1])
-        // No client:* directive → server-rendered to static HTML, zero JS.
-        if (Diagram) {
-          return (
-            <div class="animate-reveal" style={delay(i)}>
-              <Diagram />
-            </div>
-          )
-        }
       }
 
       if (trimmed.startsWith('~~~')) {

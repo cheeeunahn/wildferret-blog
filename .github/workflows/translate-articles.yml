@@ -92,8 +92,8 @@ jobs:
 
             Finish by writing a short markdown summary to `/tmp/translation-summary.md`:
             one bullet per slug with its English title, then a "Needs a human"
-            section for anything a reviewer should check — diagrams whose labels
-            are hardcoded Korean, passages you were unsure of, Korean-language
+            section for anything a reviewer should check — images with Korean
+            text baked in, passages you were unsure of, Korean-language
             links an English reader cannot follow. Write that file even if the
             list is empty.
           claude_args: >-

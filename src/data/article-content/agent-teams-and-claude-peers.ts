@@ -56,7 +56,7 @@ npm install -g @anthropic-ai/claude-code
 
 이 과정을 AI 에이전트 팀으로 만들었다. 커맨드 한 줄로 실행된다. 흐름은 이렇다:
 
-[diagram:voc-workflow]
+![VOC 분석 에이전트 팀의 6단계 흐름. 데이터 수집, CX 전문가 A·B의 동시 독립 분석, 교차 토론, 리포트 초안 작성, CEO 관점 리뷰, 최종 리포트 저장 순으로 이어진다](/assets/images/agent-teams-and-claude-peers-voc-workflow.webp)
 
 핵심은 ②번이다. **같은 데이터를 두 명의 AI 분석가가 서로 모르는 상태에서 독립적으로 분석한다.** 그리고 ③번에서 서로의 분석을 비판적으로 검토한다. "A는 이걸 주요 트렌드로 봤는데, 데이터를 보면 이건 일시적 급증이지 트렌드가 아니다"처럼, 근거를 들어 반론을 제기한다.
 
@@ -113,7 +113,7 @@ Claude Code가 알아서 팀원(에이전트)을 여러 명 만들고, 역할을
 
 그러면 이런 일이 벌어진다:
 
-[diagram:terminal-team]
+![Claude Code 터미널 화면. 팀 리드(메인 Claude) 아래에서 팀원 A와 B가 VOC를 독립 분석하고 있고, 공유 할 일 목록에는 데이터 수집 완료, 두 팀원의 분석 진행 중, 교차 토론과 리포트 작성 대기가 표시되어 있다](/assets/images/agent-teams-and-claude-peers-terminal-team.webp)
 
 **3단계: 팀원과 소통하기**
 
@@ -174,7 +174,7 @@ Claude Code가 알아서 팀원(에이전트)을 여러 명 만들고, 역할을
 
 원래 이 셋은 서로의 존재를 모른다. Claude Peers를 설치하면 이 AI들이 서로를 인식한다.
 
-[diagram:peers-architecture]
+![서로 다른 폴더에서 프론트엔드, 노트 정리, 데이터 분석을 하는 Claude 세 개가 Claude Peers와 양방향으로 연결된 구조도. Claude Peers는 누가 어디서 뭘 하는지 추적하고, AI 간 메시지를 전달하고, 종료된 AI를 자동으로 정리한다](/assets/images/agent-teams-and-claude-peers-peers-architecture.webp)
 
 "지금 다른 Claude가 뭘 하고 있지?" 하고 물으면 목록이 나온다. 각자 어떤 폴더에서, 어떤 작업을 하고 있는지 요약이 보인다. 그 목록에서 바로 메시지를 보낼 수도 있다. 슬랙에서 다른 팀원에게 DM을 보내는 것과 같다.
 
@@ -259,7 +259,7 @@ tmux attach -t work
 
 여러 AI를 동시에 보고 싶다면, tmux 화면 분할이 유용하다:
 
-[diagram:tmux-split]
+![tmux 화면을 넷으로 나눠 Claude 네 개를 동시에 띄운 모습. 각각 코드 작업, 문서 정리, VOC 분석, 리서치를 진행 중이다](/assets/images/agent-teams-and-claude-peers-tmux-split.webp)
 
 ### iTerm2는 화면 분할이 편하다
 
@@ -278,7 +278,7 @@ macOS 기본 터미널도 괜찮지만, iTerm2는 tmux와의 통합이 좋고 �
 
 에이전트 팀은 프로젝트 팀에 가깝다. 한 프로젝트 안에서 분석가, 리뷰어, 라이터가 동시에 움직인다. 혼자 다 해야 하는 PM에게, 필요한 순간에 전문가 몇 명이 붙는 경험이다. Claude Peers는 그보다 한 층 위다. 서로 다른 프로젝트에서 독립적으로 일하되 필요할 때만 정보를 주고받는, 팀과 팀 사이의 소통에 가깝다.
 
-[diagram:comparison]
+![세 가지 작업 방식 비교. 기존 방식은 에이전트 하나가 A부터 D까지 순서대로 처리하고, 에이전트 팀은 분석가 A·B가 동시에 분석한 뒤 토론과 리포트를 거치며, Claude Peers는 프로젝트 A부터 D까지가 필요할 때 메시지를 주고받는다](/assets/images/agent-teams-and-claude-peers-comparison.webp)
 
 원래 여러 사람이 분담해야 할 일을 AI 여러 개가 대신 분담하는 구조다. 감을 잡는 데는 오래 걸리지 않는다. Claude Code를 설치하고 아무 문서나 골라 "이 회의록을 두 사람이 각각 요약하고, 서로 비교해서 놓친 부분을 찾아줘"라고 시켜보면 5분이면 된다. Peers는 위의 설치 과정을 그대로 따라가면 된다.
 

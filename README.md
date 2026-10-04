@@ -54,9 +54,7 @@ src/
 │   └── api/comments.ts        # The one on-demand route (Worker code)
 ├── components/
 │   ├── ArticleCard.astro
-│   ├── ThemeToggle.tsx        # The only hydrated island (client:only)
-│   ├── Diagrams.tsx           # Static React diagrams — server-rendered, zero JS
-│   └── diagramRegistry.ts     # id → diagram component map
+│   └── ThemeToggle.tsx        # The only hydrated island (client:only)
 ├── styles/
 │   └── global.css             # Tailwind entry + ink/paper design tokens
 ├── copy/
@@ -96,10 +94,6 @@ JavaScript unless something explicitly asks for it. Two rules keep it that way:
   `client:only="react"` because it reads `document.documentElement` in a
   `useState` initializer, which has no server equivalent. Its fixed-size wrapper
   in `Base.astro` reserves layout space so the header does not shift on mount.
-- **Diagrams carry no `client:*` directive.** They are React components, but
-  pure static JSX, so Astro server-renders them to HTML. Adding a hook or an
-  event handler to one silently breaks that and would pull a React runtime onto
-  every article page.
 
 Pages, `src/layouts/Base.astro`, and `ArticleCard.astro` are `.astro` files and
 ship zero JavaScript by construction.
@@ -148,7 +142,6 @@ Blocks are separated by blank lines. Supported syntax:
 | `---`                                   | Horizontal divider                                                                       |
 | `~~~lang … ~~~`                         | Fenced code block — use `~~~`, not backticks, to avoid escaping inside template literals |
 | `![alt](path)`                          | Inline image                                                                             |
-| `[diagram:id]`                          | Embedded React diagram                                                                   |
 | `**bold**`, `` `code` ``, `[text](url)` | Inline formatting                                                                        |
 
 Parsing and safe inline formatting live in `src/content/parser.ts`.
@@ -165,20 +158,6 @@ Internal _route_ links are a separate concern: Astro does not prefix `<a href>`
 with the base path, so use `href()` from `src/shared/siteUrl.ts` (and `isActive()`
 for nav highlighting). Never write a bare `href="/about"`, and never hardcode a
 base path prefix.
-
-### Diagrams
-
-`src/components/Diagrams.tsx` holds named React diagram components, mapped by id
-in `src/components/diagramRegistry.ts`. Reference one from article content with
-`[diagram:id]`. To add a new one, write the component, register it in the
-`diagrams` record, then use `[diagram:your-id]`.
-
-They render with no `client:*` directive, so Astro turns them into static HTML
-and ships no JavaScript for them. Adding a hook or an event handler to a diagram
-breaks that and would require hydrating it.
-
-Current diagrams: `voc-workflow`, `terminal-team`, `peers-architecture`,
-`tmux-split`, `comparison`.
 
 ## Styling
 

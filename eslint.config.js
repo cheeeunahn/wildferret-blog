@@ -63,12 +63,4 @@ export default defineConfig([
       'local/no-unlisted-island': ['error', { allow: ['ThemeToggle', 'Comments'] }],
     },
   },
-  {
-    // Diagrams render at build time with no client:* directive. A hook or an
-    // event handler here would force one, and with it a React runtime on every
-    // article page.
-    files: ['src/components/Diagrams.tsx'],
-    plugins: { local },
-    rules: { 'local/no-interactive-diagrams': 'error' },
-  },
 ])

@@ -2,7 +2,6 @@
 // Wired into eslint.config.js as the `local` plugin.
 import noBareInternalHref from './no-bare-internal-href.js'
 import noCrossLayerImport from './no-cross-layer-import.js'
-import noInteractiveDiagrams from './no-interactive-diagrams.js'
 import noRawColors from './no-raw-colors.js'
 import noUnescapedUserHtml from './no-unescaped-user-html.js'
 import noUnlistedIsland from './no-unlisted-island.js'
@@ -12,7 +11,6 @@ export default {
   rules: {
     'no-bare-internal-href': noBareInternalHref,
     'no-cross-layer-import': noCrossLayerImport,
-    'no-interactive-diagrams': noInteractiveDiagrams,
     'no-raw-colors': noRawColors,
     'no-unescaped-user-html': noUnescapedUserHtml,
     'no-unlisted-island': noUnlistedIsland,

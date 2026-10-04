@@ -41,6 +41,14 @@ jobs:
             review post each finding as an inline comment anchored to its line in
             the Files changed tab.
 
+            Read the PR description first (`gh pr view ${{ github.event.pull_request.number }} --repo ${{ github.repository }}`).
+            It follows `.github/pull_request_template.md`. Use its **Summary**,
+            **Steps to test** and **Affected areas** as the author's stated intent, and
+            treat a mismatch between that intent and the diff as a finding (e.g. `/en/`
+            is not ticked but the diff changes an English route). Do not take ticked
+            **Checks** boxes on trust: confirm them against the code. If the description
+            is still marked NOT READY, review anyway but say so at the top of the summary.
+
             Before judging any changed hunk, read the full file it lives in and the
             files it calls into, so findings are grounded in how the code is actually
             used rather than in the diff alone. Read CLAUDE.md and follow the project
@@ -51,7 +59,8 @@ jobs:
             1. Correctness — logic errors, unhandled edge cases, null/undefined paths,
                async and state-update races, incorrect types behind `any` or casts
             2. Regressions — behavior this PR changes for existing routes, articles,
-               or the GitHub Pages base-path handling
+               the three language trees (`/`, `/kr/`, `/en/`), or the base-path
+               handling of the Cloudflare static worker deploy
             3. Project conventions — violations of the rules in CLAUDE.md
             4. Security — XSS via rendered content, unsafe URL handling, dependency risk
             5. Performance — unnecessary re-renders, work repeated per render, bundle cost
@@ -78,13 +87,19 @@ jobs:
               a few words), since the detail already lives in the inline comments.
               Full explanation and suggested fix inline here only for findings that
               could not be anchored to a line
+            - **PR description** — one line: whether Summary and Steps to test are
+              filled in, and any ticked Checks box the code contradicts
             - **What looks good** — one or two lines, so the review is not only negative
 
-            If you found nothing worth changing, skip the inline comments and leave
-            only the summary, saying the PR looks good and what you checked. Never
-            leave more than one summary comment.
+            The summary comment is REQUIRED on every run, even when the review finds
+            nothing. A run that ends without a summary comment on the PR counts as a
+            failed review. If you found nothing worth changing, skip the inline
+            comments but still post the summary, saying the PR looks good, listing
+            what you checked, and writing "No issues found" under **Findings**.
+            Never leave more than one summary comment.
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
           claude_args: >-
+            --model claude-opus-5-5
             --allowed-tools "Read,Grep,Glob,Write,Bash(gh pr comment:*),Bash(gh pr review:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh api:*),Bash(git diff:*),Bash(git log:*)"
             --max-turns 80
