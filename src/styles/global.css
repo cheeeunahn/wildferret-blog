@@ -186,18 +186,6 @@ html.dark body::before {
   margin-bottom: 0.75rem;
 }
 
-/* Long-form reading size. Astryx's body type is 14px / 1.43, sized for UI
-   copy; prose paragraphs and lists keep the 17px / 1.85 they had before.
-   Setting the tokens (not font-size) lets Astryx's own Text rule pick them up,
-   so there is no specificity or layer fight. Scoped to direct children so the
-   summary card, tables and the comments island keep the default. */
-.prose-blog > p,
-.prose-blog > ul,
-.prose-blog > ol {
-  --text-body-size: 1.0625rem;
-  --text-body-leading: 1.85;
-}
-
 .prose-blog p {
   margin-bottom: 1.5rem;
   word-break: keep-all;
