@@ -1,16 +1,27 @@
 /// <reference types="astro/client" />
 
-interface ImportMetaEnv {
-  /** Supabase project URL, e.g. https://xxxx.supabase.co */
-  readonly PUBLIC_SUPABASE_URL: string
-  /**
-   * The publishable (anon) key — never the service_role key, which bypasses RLS.
-   * PUBLIC_ vars are inlined into the built JS at build time, so this is public
-   * by design; RLS and the column grants are what enforce access.
-   */
-  readonly PUBLIC_SUPABASE_ANON_KEY: string
+/**
+ * Worker bindings for /api/comments, read through `env` from
+ * `cloudflare:workers`. All three are runtime secrets (`wrangler secret put`,
+ * or .dev.vars locally) — none is inlined into the browser bundle. See the
+ * Comments > Environment section of CLAUDE.md.
+ */
+declare namespace Cloudflare {
+  interface Env {
+    /** Supabase project URL, e.g. https://xxxx.supabase.co */
+    SUPABASE_URL?: string
+    /** Publishable key — the gateway requires it as `apikey`; it grants nothing after 0003. */
+    SUPABASE_PUBLISHABLE_KEY?: string
+    /** JWT with role claim `blog_api` (scripts/mint-api-jwt.mjs). Never a service_role key. */
+    SUPABASE_API_JWT?: string
+  }
 }
 
-interface ImportMeta {
-  readonly env: ImportMetaEnv
+/**
+ * Only `env` is used. Declared here rather than pulling in
+ * @cloudflare/workers-types, whose globals would replace the DOM `Response`,
+ * `fetch`, etc. for the browser code too.
+ */
+declare module 'cloudflare:workers' {
+  export const env: Cloudflare.Env
 }

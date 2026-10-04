@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config'
 import react from '@astrojs/react'
+import cloudflare from '@astrojs/cloudflare'
 import tailwindcss from '@tailwindcss/vite'
 
 // Served at the root of the Cloudflare static worker, so the default base is '/'.
@@ -14,6 +15,17 @@ export default defineConfig({
   // The worker resolves extensionless paths to the directory index.
   build: { format: 'directory' },
   trailingSlash: 'ignore',
+  // Every page is still prerendered. The adapter exists for the one route that
+  // opts out with `prerender = false`: /api/comments (src/pages/api/comments.ts).
+  // No sessions: the blog has no logged-in state, and leaving them on makes the
+  // adapter require a SESSION KV namespace that nothing would ever read.
+  // No image service: images are plain files in public/, never astro:assets.
+  //
+  // Left out under Vitest: vitest.config.ts loads this file through
+  // getViteConfig, and the adapter's Cloudflare Vite plugin refuses Vitest's
+  // Node environment. Unit tests never exercise the Worker runtime anyway.
+  adapter: process.env.VITEST ? undefined : cloudflare({ imageService: 'passthrough' }),
+  session: false,
   integrations: [react()],
   vite: { plugins: [tailwindcss()] },
 })

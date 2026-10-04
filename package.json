@@ -13,10 +13,12 @@
     "test": "vitest run",
     "translation:status": "node scripts/translation-status.mjs",
     "translate": "claude \"/translate-articles\"",
+    "mint:api-jwt": "node scripts/mint-api-jwt.mjs",
     "astro": "astro",
     "prepare": "lefthook install"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "14.2.6",
     "@astrojs/react": "6.0.2",
     "astro": "7.2.2",
     "react": "^19.2.4",
@@ -42,7 +44,8 @@
     "tailwindcss": "^4.2.2",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.57.0",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "wrangler": "^4.147.0"
   },
   "packageManager": "pnpm@10.34.5+sha512.a4ee05f2f73658255bd6a89859c065a45c28a57daefae2c893a168ee2b73168c37b91e83e57ea67654ad03f03031746430e8bce38e362e042605fb8abc80192e",
   "pnpm": {

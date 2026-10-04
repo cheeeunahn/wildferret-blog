@@ -31,5 +31,9 @@ pnpm-debug.log*
 
 # Env
 .env
+# Worker secrets for `astro dev` (see .dev.vars.example)
+.dev.vars
+# Wrangler's local state and the deploy-config redirect the adapter writes
+.wrangler/
 .env.local
 .env.*.local

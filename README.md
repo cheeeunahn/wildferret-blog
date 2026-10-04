@@ -9,7 +9,7 @@ Thanks for stopping by 👋🏻
 
 | Layer     | Choice                                            |
 | --------- | ------------------------------------------------- |
-| Framework | Astro 7 (static output)                           |
+| Framework | Astro 7 (static output + one Worker API route)    |
 | UI        | React 19 islands, TypeScript 5 (strict)           |
 | Styling   | Tailwind CSS 4 (`@tailwindcss/vite`)              |
 | Routing   | File-based (`src/pages/`) — no client-side router |
@@ -50,7 +50,8 @@ src/
 │   ├── index.astro            # /
 │   ├── about.astro            # /about
 │   ├── article/[slug].astro   # /article/:slug — getStaticPaths + content renderer
-│   └── 404.astro
+│   ├── 404.astro
+│   └── api/comments.ts        # The one on-demand route (Worker code)
 ├── components/
 │   ├── ArticleCard.astro
 │   ├── ThemeToggle.tsx        # The only hydrated island (client:only)
@@ -61,11 +62,16 @@ src/
 ├── copy/
 │   └── strings.ts             # All UI text, per language
 ├── client/
-│   └── supabaseComments.ts    # Browser → comments backend
+│   └── commentsApi.ts         # Browser → /api/comments
+├── server/comments/           # Logic, run per request in the Worker
+│   ├── http.ts                # /api/comments transport (statuses, size limit)
+│   ├── service.ts             # Validation + moderation pre-check
+│   └── repository.ts          # The only Supabase caller (as role blog_api)
 ├── content/                   # Logic, run at build time
 │   ├── service.ts             # articlesIn / langsForSlug / localizeArticle / aboutCopy
 │   └── parser.ts              # Article-content parser, safe inline formatter
 ├── shared/                    # Pure helpers, importable from any layer
+│   ├── comments.ts            # /api/comments wire type
 │   ├── i18n.ts                # Locales and language-aware hrefs
 │   ├── moderation.ts          # Comment pre-check + rejection copy
 │   ├── assetUrl.ts            # Deployment-safe asset URL resolver
@@ -182,24 +188,29 @@ palette colors or arbitrary hex values.
 
 ## Deployment
 
-The site is deployed as a Cloudflare static-assets Worker at the root path, so
+The site is deployed as one Cloudflare Worker at the root path, so
 [`astro.config.mjs`](astro.config.mjs) uses `base: '/'` by default. Set the
 `BASE_PATH` env var to build for a host that serves the site under a path
 prefix. Everything base-aware reads `import.meta.env.BASE_URL`, via
 `resolveAssetUrl()` for assets and `href()` for internal links.
 
-Astro prerenders one HTML file per route (`dist/about/index.html`,
-`dist/article/<slug>/index.html`, …), so deep links resolve directly and there
-is no SPA redirect shim to maintain.
+Astro prerenders one HTML file per page (`dist/client/about/index.html`,
+`dist/client/article/<slug>/index.html`, …), served as static assets, so deep
+links resolve directly and there is no SPA redirect shim to maintain. Unknown
+paths get the prerendered `dist/client/404.html`.
 
-[`wrangler.jsonc`](wrangler.jsonc) configures a static-assets-only Worker (no
-server entrypoint) that uploads `./dist` with `not_found_handling: "404-page"`,
-served by the prerendered `dist/404.html`.
+The one exception is `/api/comments`, which runs as Worker code
+(`dist/server/`, via the `@astrojs/cloudflare` adapter) and talks to Supabase
+with runtime secrets. See the Comments section of [CLAUDE.md](CLAUDE.md) for
+the secrets and the database cutover order.
 
 ## Tests
 
-`pnpm test` covers block splitting (including fenced code) and the safe inline
-formatter. Add cases here when extending the supported article syntax.
+`pnpm test` covers the article parser (block splitting, fenced code, the safe
+inline formatter), the content service, i18n, comment moderation, the comments
+API (transport, service, and repository against a mocked PostgREST), the lint
+rules, and the scripts. Add parser cases when extending the supported article
+syntax.
 
 ## Automation
 
