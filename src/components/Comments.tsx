@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { checkComment, LIMITS, messageFor, type RejectionReason } from '../lib/moderation'
-import type { Lang } from '../lib/i18n'
-import type { Strings } from '../lib/strings'
+import { checkComment, LIMITS, messageFor, type RejectionReason } from '../shared/moderation'
+import type { Lang } from '../shared/i18n'
+import type { Strings } from '../copy/strings'
 import {
   CommentError,
   fetchComments,
   isConfigured,
   postComment,
   type Comment,
-} from '../lib/supabaseComments'
+} from '../client/supabaseComments'
 
 /**
  * The comment island. Mounted client:visible in ArticleView.astro, so the

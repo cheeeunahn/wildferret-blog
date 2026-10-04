@@ -58,15 +58,28 @@ src/
 │   └── diagramRegistry.ts     # id → diagram component map
 ├── styles/
 │   └── global.css             # Tailwind entry + ink/paper design tokens
-├── lib/
-│   ├── articleContent.ts      # Parser, safe inline formatter
+├── copy/
+│   └── strings.ts             # All UI text, per language
+├── client/
+│   └── supabaseComments.ts    # Browser → comments backend
+├── content/                   # Logic, run at build time
+│   ├── service.ts             # articlesIn / langsForSlug / localizeArticle / aboutCopy
+│   └── parser.ts              # Article-content parser, safe inline formatter
+├── shared/                    # Pure helpers, importable from any layer
+│   ├── i18n.ts                # Locales and language-aware hrefs
+│   ├── moderation.ts          # Comment pre-check + rejection copy
 │   ├── assetUrl.ts            # Deployment-safe asset URL resolver
-│   └── siteUrl.ts             # href / toAppPath / isActive — base-aware routes
-└── data/
-    ├── articleTypes.ts        # `Article` interface
+│   └── siteUrl.ts             # href / toAppPath — base-aware routes
+└── data/                      # Pure data, no logic
+    ├── articleTypes.ts        # `Article` types
     ├── articles.ts            # Article[] (newest first)
+    ├── about.ts               # About-page copy
     └── article-content/       # One file per article body (+ its own README)
 ```
+
+Pages and components read data through `src/content/service.ts`, never from
+`src/data` directly — a lint rule enforces the layer boundaries. See
+[ADR 0001](docs/adr/0001-layered-architecture.md).
 
 ## Rendering model
 
@@ -132,18 +145,18 @@ Blocks are separated by blank lines. Supported syntax:
 | `[diagram:id]`                          | Embedded React diagram                                                                   |
 | `**bold**`, `` `code` ``, `[text](url)` | Inline formatting                                                                        |
 
-Parsing and safe inline formatting live in `src/lib/articleContent.ts`.
+Parsing and safe inline formatting live in `src/content/parser.ts`.
 
 ### Images
 
 Put images in `public/assets/images/` and reference them in `articles.ts` with a
 leading slash and no base prefix (e.g. `/assets/images/my-cover.png`). Every
-asset URL is resolved at render time by `resolveAssetUrl()` in `src/lib/assetUrl.ts`,
+asset URL is resolved at render time by `resolveAssetUrl()` in `src/shared/assetUrl.ts`,
 which prepends the base path for relative URLs and passes absolute `https://`
 URLs through unchanged.
 
 Internal _route_ links are a separate concern: Astro does not prefix `<a href>`
-with the base path, so use `href()` from `src/lib/siteUrl.ts` (and `isActive()`
+with the base path, so use `href()` from `src/shared/siteUrl.ts` (and `isActive()`
 for nav highlighting). Never write a bare `href="/about"`, and never hardcode a
 base path prefix.
 

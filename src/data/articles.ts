@@ -1,7 +1,6 @@
-export type { Article, LocalizedArticle } from './articleTypes'
-import type { Article, LocalizedArticle } from './articleTypes'
-import { localizeArticle, articleLangs } from './articleTypes'
-import type { Lang } from '../lib/i18n'
+// Article metadata, newest first. Pure data: the queries over it (per-language
+// index, available languages) live in src/content/service.ts.
+import type { Article } from './articleTypes'
 
 export const articles: Article[] = [
   {
@@ -139,16 +138,3 @@ export const articles: Article[] = [
     loadContent: () => import('./article-content/pm-ai-week').then(({ pmAiWeekContent }) => pmAiWeekContent),
   },*/
 ]
-
-/** The index for one language: posts written in it, newest first (source order). */
-export function articlesIn(lang: Lang): LocalizedArticle[] {
-  return articles
-    .map((article) => localizeArticle(article, lang))
-    .filter((article): article is LocalizedArticle => article !== null)
-}
-
-/** Languages a slug is available in — drives the article page's switcher. */
-export function langsForSlug(slug: string): Lang[] {
-  const article = articles.find((a) => a.slug === slug)
-  return article ? articleLangs(article) : []
-}

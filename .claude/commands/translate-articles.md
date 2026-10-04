@@ -110,7 +110,7 @@ reports bare hrefs from JSX/Astro attributes, and article content is a plain
 template literal, so a markdown link inside it is never flagged. (The rule's
 other half — no hardcoded base prefix — does reach these files.) A leading-slash
 path like `/assets/...` is in fact the correct form here: `toSafeHref` in
-`articleContent.ts` runs it through `resolveAssetUrl` at render time.
+`src/content/parser.ts` runs it through `resolveAssetUrl` at render time.
 
 So check in-content links by hand: a link to another post must carry the `/en/`
 prefix (`[text](/en/article/<slug>)`), and the target must actually have an

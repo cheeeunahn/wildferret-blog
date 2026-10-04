@@ -6,12 +6,14 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 import local from './eslint-rules/index.js'
+import { layerZones } from './eslint-rules/layer-zones.js'
 
 // The `local` plugin turns the conventions written up in CLAUDE.md — Linking,
-// the Islands policy, Design Tokens — into lint errors. See eslint-rules/.
+// the Islands policy, Design Tokens, Layers — into lint errors. See eslint-rules/.
 const localRules = {
   'local/no-bare-internal-href': 'error',
   'local/no-raw-colors': 'error',
+  'local/no-cross-layer-import': ['error', { zones: layerZones }],
 }
 
 export default defineConfig([

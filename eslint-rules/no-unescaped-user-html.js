@@ -42,7 +42,7 @@ export default {
       // article/[slug].astro, which is exactly what it exists for.
       ImportDeclaration(node) {
         if (!context.filename.includes('/components/')) return
-        if (!String(node.source.value).endsWith('articleContent')) return
+        if (!String(node.source.value).endsWith('content/parser')) return
         for (const spec of node.specifiers) {
           if (spec.type === 'ImportSpecifier' && spec.imported.name === 'formatInline') {
             context.report({ node: spec, messageId: 'formatInline' })

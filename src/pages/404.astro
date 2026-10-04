@@ -4,8 +4,8 @@
 // language at build time. It answers in both rather than guessing — and needs
 // no script to do it.
 import Base from '../layouts/Base.astro'
-import { LANGS, ROOT_LOCALE, switchLangHref } from '../lib/i18n'
-import { t } from '../lib/strings'
+import { LANGS, ROOT_LOCALE, switchLangHref } from '../shared/i18n'
+import { t } from '../copy/strings'
 
 const options = LANGS.map((lang) => ({
   lang,

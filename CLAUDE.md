@@ -37,6 +37,26 @@ The page files are thin: each resolves a `Locale`, then renders a view component
 
 `src/layouts/Base.astro` is the shared shell: `<head>` (title, favicon, fonts, canonical + `hreflang` alternates, the pre-paint theme script), header, footer, and a `<slot />`. It takes a required `locale` prop.
 
+## Layers
+
+`src/` is split into presentation, logic, and data layers, plus pure shared helpers. The reasoning is in `docs/adr/0001-layered-architecture.md`.
+
+| Layer              | Folder                                                                 | Holds                                                                                                                                                    |
+| ------------------ | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Presentation       | `src/pages`, `src/layouts`, `src/components`, `src/copy`, `src/styles` | Templates, islands, UI copy (`copy/strings.ts`), Tailwind                                                                                                |
+| Browser client     | `src/client`                                                           | Code an island uses to reach anything outside the page (today: `supabaseComments.ts`)                                                                    |
+| Logic (build time) | `src/content`                                                          | `service.ts` — every read of article/about data (`articlesIn`, `langsForSlug`, `localizeArticle`, `aboutCopy`); `parser.ts` — the article-content parser |
+| Data               | `src/data`                                                             | Article metadata, bodies, about copy, and their types. No functions beyond `loadContent`                                                                 |
+| Shared             | `src/shared`                                                           | Pure helpers any layer may use: `i18n`, `siteUrl`, `assetUrl`, `moderation`                                                                              |
+
+The import rules, enforced by `local/no-cross-layer-import` (zones in `eslint-rules/layer-zones.js`):
+
+- Presentation never imports `src/data`, **type imports included**. It goes through `src/content/service.ts`, which re-exports the types it needs (`LocalizedArticle`, `AboutCopy`, …).
+- `.tsx` components and `src/client` ship to the browser, so they never import `src/content`, `src/server` or `src/data`.
+- `src/content` never imports presentation; `src/data` imports nothing but `src/shared`; `src/shared` imports nothing from the app.
+
+`src/content` runs at build time (inside `getStaticPaths` and page frontmatter), not on a request server — that is why it is not called `server/`. A `src/server/` folder is reserved for code that runs per request; the zones already cover it.
+
 ## Islands policy
 
 This is the rule that is easiest to break by accident.
@@ -52,11 +72,11 @@ This is the rule that is easiest to break by accident.
 
 Astro does **not** prefix `<a href>` with the configured `base`, and there is no router `<Link>` to do it.
 
-- Internal route hrefs in a template → **`localeHref(locale, '/about')`** from `src/lib/i18n.ts`. It applies the language prefix _and_ the base prefix, so a reader who arrived under `/en` stays under `/en`. A bare `href()` here would silently drop them back into the Korean tree.
+- Internal route hrefs in a template → **`localeHref(locale, '/about')`** from `src/shared/i18n.ts`. It applies the language prefix _and_ the base prefix, so a reader who arrived under `/en` stays under `/en`. A bare `href()` here would silently drop them back into the Korean tree.
 - Nav active state → `isActiveInLocale(Astro.url.pathname, '/about')` from the same module; it strips both the base and the language segment
 - Language-free page identity (`/en/about` → `/about`) → `toLangFreePath()`, the normalizer `isActiveInLocale` is built on
-- `href()` / `toAppPath()` from `src/lib/siteUrl.ts` are the base-prefix-only layer underneath `localeHref`. Use them directly only when a link must ignore language (the canonical URL, the switcher's own targets).
-- Images and in-content links → `resolveAssetUrl()` from `src/lib/assetUrl.ts`
+- `href()` / `toAppPath()` from `src/shared/siteUrl.ts` are the base-prefix-only layer underneath `localeHref`. Use them directly only when a link must ignore language (the canonical URL, the switcher's own targets).
+- Images and in-content links → `resolveAssetUrl()` from `src/shared/assetUrl.ts`
 
 `href()` passes protocol-relative, `https:`, `mailto:`, and `tel:` URLs through untouched; `resolveAssetUrl()` passes `http(s)://` through.
 
@@ -74,9 +94,9 @@ Three prerendered trees, all built from the same view components:
 
 Language lives in the **URL**, never in client state — every page is a static file, so there is nothing to read a preference from at request time. A `Locale` is therefore a `{ lang, prefix }` pair, not just a language: `''` and `'/kr'` are the same language at different URLs, and links have to stay in the prefix the reader arrived through.
 
-`src/lib/i18n.ts` owns the URL side (`localeHref`, `toLangFreePath`, `switchLangHref`, `canonicalPath`) and is covered by `src/lib/i18n.test.ts`. Note the two spellings of Korean: `LANG_SEGMENTS` maps it to the reader-facing `kr` used in URLs, `HTML_LANGS` to the standards-facing `ko` used in `<html lang>` and `hreflang`.
+`src/shared/i18n.ts` owns the URL side (`localeHref`, `toLangFreePath`, `switchLangHref`, `canonicalPath`) and is covered by `src/shared/i18n.test.ts`. Note the two spellings of Korean: `LANG_SEGMENTS` maps it to the reader-facing `kr` used in URLs, `HTML_LANGS` to the standards-facing `ko` used in `<html lang>` and `hreflang`.
 
-**All chrome text lives in `src/lib/strings.ts`**, keyed by language behind the `Strings` interface, and about-page copy in `src/data/about.ts`. Never put a user-visible literal in a template — a missing key is a type error, but a hardcoded Korean string is a silent leak into `/en/`. The one `is:inline` script that needs translated text (the hero's sound toggle) reads it off `data-*` attributes rather than being templated, so the script stays static.
+**All chrome text lives in `src/copy/strings.ts`**, keyed by language behind the `Strings` interface, and about-page copy in `src/data/about.ts` (read through `aboutCopy()` in `src/content/service.ts`). Never put a user-visible literal in a template — a missing key is a type error, but a hardcoded Korean string is a silent leak into `/en/`. The one `is:inline` script that needs translated text (the hero's sound toggle) reads it off `data-*` attributes rather than being templated, so the script stays static.
 
 The header switcher (`src/components/LangSwitcher.astro`) is plain links, no island. It always targets an explicit prefix, so `/en/about ↔ /kr/about` round-trips.
 
@@ -84,11 +104,12 @@ The header switcher (`src/components/LangSwitcher.astro`) is plain links, no isl
 
 ## Article System
 
-Articles live entirely in `src/data/`:
+Article data lives in `src/data/`; everything that reads it lives in `src/content/service.ts`:
 
-- `articleTypes.ts` — `Article` (`slug`, `title`, `subtitle`, `date`, `readMinutes`, `category`, `coverImage?`, `cardImage?`, `loadContent`, `translations?`) plus `localizeArticle()`
+- `articleTypes.ts` — `Article` (`slug`, `title`, `subtitle`, `date`, `readMinutes`, `category`, `coverImage?`, `cardImage?`, `loadContent`, `translations?`) — types only, plus the `CATEGORIES` list
 - `article-content/*.ts` — each article exports its Korean content as a template literal string; `article-content/en/*.ts` holds the English versions
-- `articles.ts` — declares metadata and the `loadContent` dynamic imports (newest first), and exposes `articlesIn(lang)` / `langsForSlug(slug)`
+- `articles.ts` — declares metadata and the `loadContent` dynamic imports (newest first). Pure data
+- `src/content/service.ts` — `localizeArticle()`, `articlesIn(lang)`, `langsForSlug(slug)`; covered by `service.test.ts`
 
 `readMinutes` is a **number**, formatted per language (`12분 읽기` / `12 min read`). Never store a unit string like `'12분'` in the data.
 
@@ -100,7 +121,7 @@ You do not normally do this by hand — see Automatic Translation below.
 
 Bodies are read at **build time** in `getStaticPaths`, so a broken `loadContent` fails `pnpm build` rather than degrading at runtime. There is no loading or error state to render.
 
-**Content format** (parsed by `src/lib/articleContent.ts`, rendered by `src/components/ArticleView.astro`):
+**Content format** (parsed by `src/content/parser.ts`, rendered by `src/components/ArticleView.astro`):
 
 - Blocks are separated by blank lines (`\n\n`)
 - `## Heading`, `### Heading` — section headings
@@ -159,9 +180,9 @@ Entrance motion: `.page-enter` on each page's wrapper plus `.animate-reveal` (an
 
 Anonymous, nickname-only comments on article pages, stored in Supabase. Schema and moderation live in `supabase/migrations/0001_blog_user_comments.sql`; apply it in the Supabase SQL editor.
 
-The site is static with no server runtime, so the browser talks to PostgREST directly (`src/lib/supabaseComments.ts`, plain `fetch` — deliberately **not** `@supabase/supabase-js`, which is ~40kB for two REST calls). Two consequences that drive the whole design:
+The site is static with no server runtime, so the browser talks to PostgREST directly (`src/client/supabaseComments.ts`, plain `fetch` — deliberately **not** `@supabase/supabase-js`, which is ~40kB for two REST calls). Two consequences that drive the whole design:
 
-- **The publishable key is public.** It is inlined into the built JS, and anyone can POST to the REST endpoint without going through the form. So nothing in the frontend is a security control. Access is enforced by RLS plus _column-level_ grants (`grant insert (article_slug, nickname, body)`), and content by the `moderate_comment()` BEFORE INSERT trigger. `src/lib/moderation.ts` is a client-side subset of that trigger for instant feedback only — it deliberately omits the profanity list, which lives in a table `anon` cannot read.
+- **The publishable key is public.** It is inlined into the built JS, and anyone can POST to the REST endpoint without going through the form. So nothing in the frontend is a security control. Access is enforced by RLS plus _column-level_ grants (`grant insert (article_slug, nickname, body)`), and content by the `moderate_comment()` BEFORE INSERT trigger. `src/shared/moderation.ts` is a client-side subset of that trigger for instant feedback only — it deliberately omits the profanity list, which lives in a table `anon` cannot read.
 - **Rejections travel as reason codes, never messages.** The trigger raises with a `hint` (`pii_phone`, `profanity`, `too_fast`, …); the copy lives in `REJECTION_MESSAGES` (Korean) and `REJECTION_MESSAGES_EN` in `moderation.ts`, picked by `messageFor(reason, lang)` — `lang` defaults to `'ko'`. Never render a PostgREST `message`/`details` string — that would make the error path an injection channel.
 
 ### Languages
@@ -202,9 +223,10 @@ Article bodies are template literals, which Prettier leaves alone, so formatting
 | `local/no-raw-colors`           | ts, tsx, astro      | Design Tokens — no stock Tailwind palette classes, no hex/`rgb()` in `class`/`style`/`fill`/`stroke`                                                                |
 | `local/no-unlisted-island`      | astro               | Islands policy — `client:*` only on `<ThemeToggle>` and `<Comments>` (allowlist is the rule's `allow` option, set in `eslint.config.js`)                            |
 | `local/no-interactive-diagrams` | `Diagrams.tsx` only | Islands policy — no hooks, no `on*` handlers                                                                                                                        |
-| `local/no-unescaped-user-html`  | ts, tsx             | Comments — no `dangerouslySetInnerHTML`; no importing `formatInline` into `src/components/`                                                                         |
+| `local/no-unescaped-user-html`  | ts, tsx             | Comments — no `dangerouslySetInnerHTML`; no importing `formatInline` (from `content/parser`) into `src/components/`                                                 |
+| `local/no-cross-layer-import`   | ts, tsx, astro      | Layers — the import rules above (zones in `eslint-rules/layer-zones.js`)                                                                                            |
 
-**Adding a rule:** write `eslint-rules/<name>.js` exporting the standard `{ meta, create }` object (plain ESM, no build step), register it in `eslint-rules/index.js`, enable it in the right block of `eslint.config.js`, and add `RuleTester` cases to `eslint-rules/rules.test.js` — `pnpm test` runs those alongside the parser tests.
+**Adding a rule:** write `eslint-rules/<name>.js` exporting the standard `{ meta, create }` object (plain ESM, no build step), register it in `eslint-rules/index.js`, enable it in the right block of `eslint.config.js`, and add `RuleTester` cases to `eslint-rules/rules.test.js` — `pnpm test` runs those alongside the unit tests.
 
 Two config details worth knowing before editing `eslint.config.js`:
 

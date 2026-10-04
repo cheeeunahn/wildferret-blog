@@ -2,9 +2,9 @@
 import type { GetStaticPaths } from 'astro'
 import Base from '../../../layouts/Base.astro'
 import ArticleView from '../../../components/ArticleView.astro'
-import { articlesIn, langsForSlug } from '../../../data/articles'
-import { LANG_PARAMS, localeFromSegment } from '../../../lib/i18n'
-import { t } from '../../../lib/strings'
+import { articlesIn, langsForSlug } from '../../../content/service'
+import { LANG_PARAMS, localeFromSegment } from '../../../shared/i18n'
+import { t } from '../../../copy/strings'
 
 // Only posts that have been written in a language get a route in it — an
 // untranslated slug 404s under /en rather than serving Korean text at an

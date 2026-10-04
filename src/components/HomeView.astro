@@ -1,10 +1,9 @@
 ---
 import ArticleCard from './ArticleCard.astro'
-import { articlesIn } from '../data/articles'
-import { CATEGORIES } from '../data/articleTypes'
-import { resolveAssetUrl } from '../lib/assetUrl'
-import { t } from '../lib/strings'
-import type { Locale } from '../lib/i18n'
+import { articlesIn, CATEGORIES } from '../content/service'
+import { resolveAssetUrl } from '../shared/assetUrl'
+import { t } from '../copy/strings'
+import type { Locale } from '../shared/i18n'
 
 interface Props {
   locale: Locale

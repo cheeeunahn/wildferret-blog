@@ -2,9 +2,9 @@
 import type { GetStaticPaths } from 'astro'
 import Base from '../../layouts/Base.astro'
 import AboutView from '../../components/AboutView.astro'
-import { LANG_PARAMS, localeFromSegment } from '../../lib/i18n'
-import { t } from '../../lib/strings'
-import { aboutCopy } from '../../data/about'
+import { LANG_PARAMS, localeFromSegment } from '../../shared/i18n'
+import { t } from '../../copy/strings'
+import { aboutCopy } from '../../content/service'
 
 export const getStaticPaths = (() =>
   LANG_PARAMS.map((lang) => ({ params: { lang } }))) satisfies GetStaticPaths

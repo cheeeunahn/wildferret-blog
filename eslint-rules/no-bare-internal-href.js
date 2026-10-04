@@ -1,8 +1,8 @@
 /**
  * Astro does not prefix `<a href>` with the configured `base`, and there is no
  * router <Link> to do it. Route hrefs must go through href() from
- * src/lib/siteUrl.ts; images and in-content links through resolveAssetUrl()
- * from src/lib/assetUrl.ts. See the Linking section of CLAUDE.md.
+ * src/shared/siteUrl.ts; images and in-content links through resolveAssetUrl()
+ * from src/shared/assetUrl.ts. See the Linking section of CLAUDE.md.
  */
 
 // The pass-through set encoded in href(): protocol-relative, any scheme://,
@@ -35,7 +35,7 @@ export default {
     },
     messages: {
       bareHref:
-        'Bare internal path "{{path}}". Route hrefs go through href() from src/lib/siteUrl.ts; asset paths through resolveAssetUrl() from src/lib/assetUrl.ts.',
+        'Bare internal path "{{path}}". Route hrefs go through href() from src/shared/siteUrl.ts; asset paths through resolveAssetUrl() from src/shared/assetUrl.ts.',
       hardcodedBase:
         'Hardcoded base path "{{base}}". The base is configurable (astro.config.mjs / BASE_PATH) — let href() or resolveAssetUrl() apply it.',
     },

@@ -2,24 +2,19 @@
 import type { GetStaticPaths } from 'astro'
 import Base from '../../layouts/Base.astro'
 import ArticleView from '../../components/ArticleView.astro'
-import { articles, langsForSlug } from '../../data/articles'
-import { localizeArticle } from '../../data/articleTypes'
-import { ROOT_LOCALE } from '../../lib/i18n'
-import { t } from '../../lib/strings'
+import { articlesIn, langsForSlug } from '../../content/service'
+import { ROOT_LOCALE } from '../../shared/i18n'
+import { t } from '../../copy/strings'
 
 export const getStaticPaths = (async () => {
   return Promise.all(
-    articles.map(async (article) => {
-      // Every post has a Korean base copy, so localizeArticle never returns
-      // null here — the non-null assertion is the type system catching up.
-      const localized = localizeArticle(article, ROOT_LOCALE.lang)!
-      return {
-        params: { slug: article.slug },
-        // Read the body at build time. loadContent() keeps its interface; it
-        // just runs in Node during the build instead of in the browser.
-        props: { article: localized, content: await localized.loadContent() },
-      }
-    }),
+    // Every post has a Korean base copy, so the Korean index is every post.
+    articlesIn(ROOT_LOCALE.lang).map(async (article) => ({
+      params: { slug: article.slug },
+      // Read the body at build time. loadContent() keeps its interface; it
+      // just runs in Node during the build instead of in the browser.
+      props: { article, content: await article.loadContent() },
+    })),
   )
 }) satisfies GetStaticPaths
 

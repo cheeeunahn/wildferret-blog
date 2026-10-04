@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatInline, parseImageLine, splitContentIntoBlocks } from './articleContent'
+import { formatInline, parseImageLine, splitContentIntoBlocks } from './parser'
 
 describe('parseImageLine', () => {
   it('preserves literal parentheses in image sources', () => {

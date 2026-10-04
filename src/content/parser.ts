@@ -1,4 +1,4 @@
-import { resolveAssetUrl } from './assetUrl'
+import { resolveAssetUrl } from '../shared/assetUrl'
 
 export interface ArticleImage {
   alt: string

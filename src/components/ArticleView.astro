@@ -1,11 +1,11 @@
 ---
-import type { LocalizedArticle } from '../data/articleTypes'
+import type { LocalizedArticle } from '../content/service'
 import { getDiagram } from './diagramRegistry'
 import Comments from './Comments'
-import { formatInline, parseImageLine, splitContentIntoBlocks } from '../lib/articleContent'
-import { resolveAssetUrl } from '../lib/assetUrl'
-import { localeHref, type Locale } from '../lib/i18n'
-import { t } from '../lib/strings'
+import { formatInline, parseImageLine, splitContentIntoBlocks } from '../content/parser'
+import { resolveAssetUrl } from '../shared/assetUrl'
+import { localeHref, type Locale } from '../shared/i18n'
+import { t } from '../copy/strings'
 
 interface Props {
   locale: Locale
