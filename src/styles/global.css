@@ -99,7 +99,9 @@
 
   /* The plate behind a card thumbnail. The illustrations are black line work
      on white and are shown as drawn in both themes, so this one token does
-     NOT flip in dark — it is the artwork's own white there too. */
+     NOT flip in dark — it is the artwork's own white there too. A deliberate
+     raw value, one of the two exceptions to "Astryx only" (CLAUDE.md, Design
+     Tokens): Astryx has no white that holds in both themes. */
   --color-thumb-plate: #ffffff;
 }
 
@@ -497,8 +499,8 @@ html.dark body::before {
 
 /* The illustration is bright in light mode, so the same glow reads as haze
    there — hold it back and let dark carry the effect.
-   The firefly colors are deliberate raw values, the one exception to "Astryx
-   only" (CLAUDE.md, Design Tokens): a warm light source has no Astryx role. */
+   The firefly colors are deliberate raw values, an exception to "Astryx only"
+   (CLAUDE.md, Design Tokens): a warm light source has no Astryx role. */
 html:not(.dark) .hero-firefly {
   box-shadow:
     0 0 6px 2px rgb(201 134 32 / 0.55),
