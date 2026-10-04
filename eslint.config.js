@@ -12,7 +12,9 @@ import { layerZones } from './eslint-rules/layer-zones.js'
 // the Islands policy, Design Tokens, Layers — into lint errors. See eslint-rules/.
 const localRules = {
   'local/no-bare-internal-href': 'error',
-  'local/no-raw-colors': 'error',
+  // Off while Astryx is evaluated: it brings its own token vocabulary, which this
+  // rule would fight. The rule and its tests stay. See docs/adr/0002-astryx-design-system.md.
+  'local/no-raw-colors': 'off',
   'local/no-cross-layer-import': ['error', { zones: layerZones }],
 }
 
@@ -60,7 +62,11 @@ export default defineConfig([
       ...localRules,
       // Comments is the second island: client:visible, so the React runtime
       // loads only when a reader scrolls to the bottom of an article.
-      'local/no-unlisted-island': ['error', { allow: ['ThemeToggle', 'Comments'] }],
+      // CategoryFilter is the third: the home page's Astryx SegmentedControl.
+      'local/no-unlisted-island': [
+        'error',
+        { allow: ['ThemeToggle', 'Comments', 'CategoryFilter'] },
+      ],
     },
   },
 ])

@@ -2,6 +2,8 @@
 import { resolveAssetUrl } from '../shared/assetUrl'
 import { aboutCopy } from '../content/service'
 import type { Locale } from '../shared/i18n'
+import { Heading } from '@astryxdesign/core/Heading'
+import { Text } from '@astryxdesign/core/Text'
 
 interface Props {
   locale: Locale
@@ -24,35 +26,39 @@ const profileImageUrl = resolveAssetUrl('/assets/images/profile-ferret-desk.webp
           loading="eager"
         />
       </div>
-      <h1 class="text-2xl sm:text-3xl font-bold text-ink-950 tracking-tight mb-3">
+      <Heading level={1} className="mb-3">
         {copy.heading}
-      </h1>
-      <p class="text-ink-600 text-[15px]">{copy.intro}</p>
+      </Heading>
+      <Text as="p" display="block" type="large" color="secondary">
+        {copy.intro}
+      </Text>
     </div>
 
     {/* Interests */}
     <div class="animate-reveal delay-2">
-      <h2 class="text-sm font-medium text-ink-600 uppercase tracking-widest mb-6">
+      <Heading level={2} className="mb-6">
         {copy.interestsHeading}
-      </h2>
-      <p class="text-ink-700 text-[15px]">{copy.interests.join(' · ')}</p>
+      </Heading>
+      <Text as="p" display="block">
+        {copy.interests.join(' · ')}
+      </Text>
     </div>
 
     {/* Career */}
     <div class="mt-16 animate-reveal delay-3">
-      <h2 class="text-sm font-medium text-ink-600 uppercase tracking-widest mb-6">
+      <Heading level={2} className="mb-6">
         {copy.careerHeading}
-      </h2>
+      </Heading>
       <ul class="space-y-3">
         {copy.career.map((item) => (
           <li class="flex flex-col sm:flex-row sm:gap-4 text-[15px]">
-            <span class="text-ink-600 text-xs sm:text-[13px] sm:w-32 sm:shrink-0 sm:pt-1 tabular-nums">
+            <Text type="supporting" hasTabularNumbers className="sm:w-32 sm:shrink-0 sm:pt-1">
               {item.period}
-            </span>
-            <span class="text-ink-700">
+            </Text>
+            <Text>
               {item.role}
-              <span class="text-ink-600">{` · ${item.org}`}</span>
-            </span>
+              <Text type="inherit" color="secondary">{` · ${item.org}`}</Text>
+            </Text>
           </li>
         ))}
       </ul>

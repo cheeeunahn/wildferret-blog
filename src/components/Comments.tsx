@@ -3,6 +3,13 @@ import { checkComment, LIMITS, messageFor, type RejectionReason } from '../share
 import type { Lang } from '../shared/i18n'
 import type { Strings } from '../copy/strings'
 import { CommentError, fetchComments, postComment, type Comment } from '../client/commentsApi'
+import { Button } from '@astryxdesign/core/Button'
+import { Heading } from '@astryxdesign/core/Heading'
+import { InternationalizationProvider } from '@astryxdesign/core/i18n'
+import koKR from '@astryxdesign/core/locales/ko-KR.generated.js'
+import { Text } from '@astryxdesign/core/Text'
+import { TextArea } from '@astryxdesign/core/TextArea'
+import { TextInput } from '@astryxdesign/core/TextInput'
 
 /**
  * The comment island. Mounted client:visible in ArticleView.astro, so the
@@ -21,18 +28,22 @@ import { CommentError, fetchComments, postComment, type Comment } from '../clien
  * text through formatInline/set:html — that parser emits raw HTML on purpose
  * and trusts its input because its input is the site owner. See CLAUDE.md.
  * `local/no-unescaped-user-html` enforces the first half of that.
+ *
+ * Controls are Astryx components, themed by the `wildferret` theme on <html>
+ * (see docs/trd/astryx-design-system.md). Our labels and placeholders still come from
+ * `strings`; only text Astryx renders on its own (counter, status announcements)
+ * comes from its catalog. The Korean one is ~6 KB gzipped and is bundled for
+ * every reader — acceptable for a client:visible island.
  */
+
+const ASTRYX_LOCALES: Record<Lang, string> = { ko: 'ko-KR', en: 'en' }
+const ASTRYX_MESSAGES = { 'ko-KR': koKR }
 
 function formatDate(iso: string): string {
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return ''
   return `${d.getFullYear()}. ${d.getMonth() + 1}. ${d.getDate()}.`
 }
-
-const field =
-  'w-full rounded-lg border border-ink-100 bg-surface px-3 py-2 text-ink-900 ' +
-  'placeholder:text-ink-400 outline-none transition-colors ' +
-  'focus-visible:border-accent focus-visible:ring-1 focus-visible:ring-accent'
 
 export default function Comments({
   articleSlug,
@@ -106,75 +117,86 @@ export default function Comments({
   if (loadFailed && comments.length === 0) return null
 
   return (
-    <section aria-labelledby="comments-heading">
-      <h2 id="comments-heading" className="text-lg font-bold text-ink-900 mb-6">
-        {strings.heading}{' '}
-        {comments.length > 0 && <span className="text-ink-400">{comments.length}</span>}
-      </h2>
+    <InternationalizationProvider locale={ASTRYX_LOCALES[lang]} messages={ASTRYX_MESSAGES}>
+      <section aria-labelledby="comments-heading">
+        <Heading level={2} id="comments-heading" className="mb-6">
+          {strings.heading}{' '}
+          {comments.length > 0 && (
+            <Text type="inherit" color="secondary">
+              {comments.length}
+            </Text>
+          )}
+        </Heading>
 
-      {loading ? (
-        <p className="text-sm text-ink-500 mb-8">{strings.loading}</p>
-      ) : comments.length === 0 ? (
-        <p className="text-sm text-ink-500 mb-8">{strings.empty}</p>
-      ) : (
-        <ul className="list-none p-0 m-0 mb-10 flex flex-col gap-5">
-          {comments.map((c) => (
-            <li key={c.id} className="border-b border-ink-50 pb-5 last:border-b-0">
-              <div className="flex items-baseline gap-2 mb-1.5">
-                <span className="text-sm font-bold text-ink-800">{c.nickname}</span>
-                <span className="text-xs text-ink-400">{formatDate(c.created_at)}</span>
-              </div>
-              <p className="text-[15px] leading-relaxed text-ink-700 m-0 whitespace-pre-wrap break-words">
-                {c.body}
-              </p>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          void onSubmit()
-        }}
-        className="flex flex-col gap-3"
-      >
-        <input
-          type="text"
-          value={nickname}
-          onChange={(e) => setNickname(e.target.value)}
-          placeholder={strings.namePlaceholder}
-          maxLength={LIMITS.nickname}
-          aria-label={strings.nameLabel}
-          className={`${field} sm:max-w-[200px]`}
-        />
-        <textarea
-          ref={bodyRef}
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          placeholder={strings.bodyPlaceholder}
-          rows={4}
-          maxLength={LIMITS.body}
-          aria-label={strings.bodyLabel}
-          className={`${field} resize-y min-h-[96px]`}
-        />
-
-        {error && (
-          <p role="alert" className="text-sm text-copper m-0">
-            {error}
-          </p>
+        {loading ? (
+          <Text as="p" display="block" type="supporting" className="mb-8">
+            {strings.loading}
+          </Text>
+        ) : comments.length === 0 ? (
+          <Text as="p" display="block" type="supporting" className="mb-8">
+            {strings.empty}
+          </Text>
+        ) : (
+          <ul className="list-none p-0 m-0 mb-10 flex flex-col gap-5">
+            {comments.map((c) => (
+              <li key={c.id} className="border-b border-ink-50 pb-5 last:border-b-0">
+                <div className="flex items-baseline gap-2 mb-1.5">
+                  <Text type="label" weight="bold">
+                    {c.nickname}
+                  </Text>
+                  <Text type="supporting" size="xsm">
+                    {formatDate(c.created_at)}
+                  </Text>
+                </div>
+                <Text as="p" display="block" className="m-0 whitespace-pre-wrap break-words">
+                  {c.body}
+                </Text>
+              </li>
+            ))}
+          </ul>
         )}
 
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            disabled={submitting}
-            className="rounded-lg bg-ink-900 px-4 py-2 text-sm text-paper transition-opacity hover:opacity-80 disabled:opacity-50 cursor-pointer disabled:cursor-default"
-          >
-            {submitting ? strings.submitting : strings.submit}
-          </button>
-        </div>
-      </form>
-    </section>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            void onSubmit()
+          }}
+          className="flex flex-col gap-3"
+        >
+          <TextInput
+            label={strings.nameLabel}
+            isLabelHidden
+            value={nickname}
+            // TextInput has no maxLength; cap here so typing stops at the limit
+            onChange={(value) => setNickname(value.slice(0, LIMITS.nickname))}
+            placeholder={strings.namePlaceholder}
+            width={200}
+          />
+          <TextArea
+            ref={bodyRef}
+            label={strings.bodyLabel}
+            isLabelHidden
+            value={body}
+            onChange={setBody}
+            placeholder={strings.bodyPlaceholder}
+            rows={4}
+            // Shows a counter; it does not block input. checkComment() enforces it.
+            maxLength={LIMITS.body}
+            // Rejections (ours or the server's reason code) show as the field's
+            // own error status, announced by Astryx.
+            status={error ? { type: 'error', message: error } : undefined}
+          />
+
+          <div className="flex justify-end">
+            <Button
+              type="submit"
+              variant="primary"
+              label={submitting ? strings.submitting : strings.submit}
+              isLoading={submitting}
+            />
+          </div>
+        </form>
+      </section>
+    </InternationalizationProvider>
   )
 }

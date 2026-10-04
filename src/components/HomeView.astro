@@ -1,9 +1,11 @@
 ---
 import ArticleCard from './ArticleCard.astro'
+import CategoryFilter from './CategoryFilter'
 import { articlesIn, CATEGORIES } from '../content/service'
 import { resolveAssetUrl } from '../shared/assetUrl'
 import { t } from '../copy/strings'
 import type { Locale } from '../shared/i18n'
+import { Text } from '@astryxdesign/core/Text'
 
 interface Props {
   locale: Locale
@@ -20,9 +22,6 @@ const articles = articlesIn(locale.lang)
 // CATEGORIES order rather than in publication order.
 const usedCategories = CATEGORIES.filter((c) => articles.some((a) => a.category === c))
 
-// The filter is CSS-only (radio + :has(), like the carousel), so the rule that
-// hides non-matching cards has to exist per category. Generated from the data
-// here so adding a category to articleTypes.ts is the only edit needed.
 // The hero's later frames: same ferret, turned to face the reader, then
 // greeting them properly. Stepped through by the radio group below.
 const GREET_FRAMES = [
@@ -36,11 +35,13 @@ const GREET_FRAMES = [
   },
 ]
 
+// The CategoryFilter island writes the chosen category to .cat-scope's
+// data-filter; these rules do the hiding, so the cards stay static HTML. One
+// rule per category, generated from the data so adding a category to
+// articleTypes.ts is the only edit needed. Category names are our own data,
+// never reader input.
 const filterCss = usedCategories
-  .map(
-    (c, i) =>
-      `.cat-scope:has(#cat-${i + 1}:checked) [data-cat]:not([data-cat="${c}"]){display:none}`,
-  )
+  .map((c) => `.cat-scope[data-filter="${c}"] [data-cat]:not([data-cat="${c}"]){display:none}`)
   .join('\n')
 ---
 
@@ -189,7 +190,9 @@ const filterCss = usedCategories
           busy at the bottom edge and an overlay would need a scrim to stay
           legible, which reads as a header band on a photo. Small and quiet —
           this labels the picture, it is not the page's headline. */}
-        <figcaption class="mt-3 text-sm text-ink-500">{strings.home.heroCaption}</figcaption>
+        <figcaption class="mt-3">
+          <Text type="supporting">{strings.home.heroCaption}</Text>
+        </figcaption>
       </figure>
 
       {/* The one bit the CSS state machine cannot do: drop back to the idle
@@ -249,8 +252,8 @@ const filterCss = usedCategories
     </section>
   </div>
 
-  {/* Category filter + article list. The :has() rules read from .cat-scope,
-      so the radios and the cards must stay inside this one element. */}
+  {/* Category filter + article list. The filter rules key off .cat-scope's
+      data-filter, so the cards must stay inside this one element. */}
   <div class="cat-scope pt-12 sm:pt-14">
     <style is:inline set:html={filterCss}></style>
 
@@ -269,23 +272,17 @@ const filterCss = usedCategories
     <div class="cat-sentinel" aria-hidden="true"></div>
     <div class="cat-bar sticky top-16 z-40 bg-paper py-4 sm:py-5">
       <section class="max-w-[720px] mx-auto px-6">
-        <fieldset class="flex flex-wrap items-center gap-2.5 animate-reveal delay-3">
-          <legend class="sr-only">{strings.home.filterLegend}</legend>
-
-          <input type="radio" name="category" id="cat-0" class="cat-input sr-only" checked />
-          <label for="cat-0" class="cat-pill">
-            {strings.home.filterAll}
-          </label>
-
-          {usedCategories.map((c, i) => (
-            <>
-              <input type="radio" name="category" id={`cat-${i + 1}`} class="cat-input sr-only" />
-              <label for={`cat-${i + 1}`} class="cat-pill">
-                {c}
-              </label>
-            </>
-          ))}
-        </fieldset>
+        {/* client:load, not :visible — the bar is near the top of the page and
+            sticky, so it is on screen almost at once. The React runtime is
+            already on this page for ThemeToggle; the cost is Astryx's chunk. */}
+        <div class="animate-reveal delay-3">
+          <CategoryFilter
+            client:load
+            categories={usedCategories}
+            allLabel={strings.home.filterAll}
+            legend={strings.home.filterLegend}
+          />
+        </div>
       </section>
     </div>
 
@@ -314,7 +311,9 @@ const filterCss = usedCategories
       {articles.length > 0 ? (
         articles.map((article, i) => <ArticleCard article={article} index={i} locale={locale} />)
       ) : (
-        <p class="text-ink-600 text-[15px] animate-reveal delay-4">{strings.home.emptyList}</p>
+        <Text as="p" display="block" color="secondary" className="animate-reveal delay-4">
+          {strings.home.emptyList}
+        </Text>
       )}
     </section>
   </div>

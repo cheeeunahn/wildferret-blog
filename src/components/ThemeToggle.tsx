@@ -16,6 +16,7 @@ export default function ThemeToggle() {
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark')
     document.documentElement.style.colorScheme = theme
+    document.documentElement.dataset.theme = theme
   }, [theme])
 
   // Keep following the OS until the reader picks a side themselves
@@ -45,6 +46,9 @@ export default function ThemeToggle() {
 
   const isDark = theme === 'dark'
 
+  // A native button, not Astryx's IconButton: this island loads on every page,
+  // and IconButton pulls in Astryx's shared button chunk (~31 KB gzipped) for a
+  // single icon. The classes resolve to Astryx's tokens (see global.css @theme).
   return (
     <button
       type="button"
