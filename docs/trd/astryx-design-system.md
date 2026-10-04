@@ -15,7 +15,7 @@ The blog's design system was Tailwind 4 plus a hand-maintained ink/paper palette
 - Render every display element (headings, text, cards, badges, quotes, dividers, tables, code) with Astryx components, article prose included.
 - Use Astryx controls in the comment form, with Astryx's own i18n for its built-in strings.
 - Keep zero-JS pages where they were: one new island (the home page's category filter) and no new JS elsewhere.
-- Disable `local/no-raw-colors` while the old palette rules no longer apply.
+- Retire `local/no-raw-colors`, which enforced the old palette; the site uses Astryx colors, tokens and components only.
 
 ## Non-goals
 
@@ -141,7 +141,7 @@ The toggle stays a native `<button>`. `IconButton` would put Astryx's shared but
 
 ### 9. Lint
 
-`'local/no-raw-colors': 'off'` in `eslint.config.js`, with the rule and its tests kept.
+`local/no-raw-colors` is retired: the rule, its tests and its config line are deleted. Colors come only from Astryx tokens (or the aliases in `global.css`), and that is checked in review.
 
 ## Measurements
 
@@ -182,10 +182,10 @@ The same three article pages are built before and after.
 | `astryx.css` (~30 KB gzipped) loads on every page                | Measured above; swizzle the few components used and drop the global sheet if it becomes the blocker             |
 | Beta API churn between 0.x releases                              | Exact pins; upgrade deliberately with `astryx upgrade --apply`, then `pnpm theme:build`                         |
 | A static component quietly gains a click-only feature on upgrade | Review the rendered page after upgrades; only display components are used outside islands                       |
-| Color discipline drifts while `no-raw-colors` is off             | Re-enable it pointed at Astryx's tokens once the alias layer is retired                                         |
+| Color discipline drifts with `no-raw-colors` retired             | "Astryx only" is written into CLAUDE.md (Design Tokens) and checked in review                                   |
 
 ## Open questions
 
-1. **Reading size:** keep Astryx's 14px body, or raise it for article prose?
+1. **Reading size:** keep Astryx's 14px body, or raise it for article prose? **Resolved:** keep Astryx's default.
 2. **Alias retirement:** rename `ink-*`/`paper` utilities in templates to Astryx role names (or adopt the Tailwind bridge under non-clashing names) and delete the alias block?
-3. **`no-raw-colors`:** re-enable it rewritten for Astryx token names, or retire it?
+3. **`no-raw-colors`:** re-enable it rewritten for Astryx token names, or retire it? **Resolved:** retired; Astryx colors, tokens and components only.

@@ -37,7 +37,7 @@ Proposed. It becomes Accepted or Rejected on the exit criteria below.
 4. **Astryx components wherever something only displays.** That covers `Heading`, `Text`, `Card`, `Badge`, `Blockquote`, `Divider`, `Table` and `CodeBlock` across the article, home, about and footer, all rendered statically with no `client:*`. Article prose renders each parsed block through the matching component. Lists stay native `<ul>`/`<ol>`, because Astryx `List` is a UI list with string labels, not prose.
 5. **New JS for interactivity only where it earns it.** The category filter is an Astryx `SegmentedControl` in a third island, `CategoryFilter` (`client:load`, home page only). It sets `data-filter` on the list container, and generated CSS rules hide non-matching cards, which stay static HTML; with no JS, all posts show. The React runtime was already on the page for ThemeToggle, so the added cost is Astryx's chunk. The hero and carousel stay CSS-only (radios + `:has()`), restyled with Astryx tokens. Features that need a handler are switched off rather than shipped dead: CodeBlock's copy button and Text's truncation tooltip. The theme toggle stays a native button (Context 7).
 6. **Interactive Astryx inside existing islands only.** The Comments island uses `TextInput`, `TextArea` (with its own error `status`), `Button`, `Heading` and `Text`, wrapped in `InternationalizationProvider` with the `ko-KR` catalog. Our own copy stays in `src/copy/strings.ts`.
-7. **Disable, don't delete, `local/no-raw-colors`.** The rule file and its tests stay, so it comes back with one config line.
+7. **Retire `local/no-raw-colors`.** It enforced the ink/paper palette, which no longer exists. The policy it stood for becomes "Astryx only": Astryx components, Astryx semantic tokens (or their aliases) for every color, no raw values, no stock palette classes, no new tokens of our own. The rule file and its tests are deleted.
 
 ## Consequences
 
@@ -50,7 +50,7 @@ Proposed. It becomes Accepted or Rejected on the exit criteria below.
 - − Astryx's default body size is 14px, against the old 17px article prose. Long-form reading is denser.
 - − The eleven-step ink scale collapses onto four Astryx roles, so some former contrast steps now coincide.
 - − Beta dependency: 0.x versions with codemods between them (`astryx upgrade`). Versions are pinned exactly.
-- − Color discipline is not lint-enforced while the rule is off.
+- − "Astryx only" is a review rule, not a lint error, now that `no-raw-colors` is retired.
 
 ## Exit criteria
 
