@@ -117,8 +117,8 @@ const ko: Strings = {
   },
   summarizer: {
     button: 'AI로 요약하기',
-    downloading: 'AI 모델을 내려받는 중',
-    continue: '이어서 내려받기',
+    downloading: 'AI 모델을 불러오고 있어요',
+    continue: '이어서 불러오기',
     summarizing: '요약하는 중…',
     heading: 'AI 요약',
     disclaimer: 'Chrome에 내장된 AI가 이 기기에서 만든 요약이에요. 틀린 내용이 있을 수 있어요.',
@@ -172,8 +172,8 @@ const en: Strings = {
   },
   summarizer: {
     button: 'Summarize with AI',
-    downloading: 'Downloading the AI model',
-    continue: 'Continue download',
+    downloading: 'Loading the AI model',
+    continue: 'Continue loading',
     summarizing: 'Summarizing…',
     heading: 'AI summary',
     disclaimer: "Written on your device by Chrome's built-in AI. It may contain mistakes.",

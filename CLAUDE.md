@@ -173,7 +173,7 @@ The "AI로 요약하기 / Summarize with AI" button in the article header summar
 - `src/client/summarizer.ts` holds every call to the browser APIs; `AiSummary.tsx` only renders state. Covered by `summarizer.test.ts` against stubbed globals.
 - **Prompt API, not the Summarizer API.** On Chrome 154 the Summarizer ignores `type`/`length`/`format` and returns pages of markdown critiquing the post. `LanguageModel` with a system prompt (3–5 plain sentences, no preamble) works. `toPlainText()` still strips any markdown the model slips in, and the island renders the sentences as a list.
 - **Korean goes through English.** Chrome's model refuses Korean as input and output, so `pickRoute()` picks `via-en`: Translator `ko→en`, summarize, Translator `en→ko` (streamed). When Chrome takes Korean directly, `pickRoute()` returns `direct` with no code change.
-- **One download per click.** Chrome refuses a second `create()` that needs a download in the same click (`NotAllowedError`). Models are created one at a time and kept across clicks; `NeedsAnotherClick` puts the button into "이어서 내려받기".
+- **One download per click.** Chrome refuses a second `create()` that needs a download in the same click (`NotAllowedError`). Models are created one at a time and kept across clicks; `NeedsAnotherClick` puts the button into "이어서 불러오기".
 - Summaries are cached in `sessionStorage` under `ai-summary:v2:<lang>:<slug>`. Bump the version when the prompt or format changes, or readers keep seeing the old output for the session.
 - Model output is untrusted text: render it as JSX children only, same as comments.
 
