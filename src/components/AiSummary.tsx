@@ -54,7 +54,6 @@ export default function AiSummary({
   const key = cacheKey(lang, slug)
   const [status, setStatus] = useState<Status>('checking')
   const [summary, setSummary] = useState('')
-  const [progress, setProgress] = useState(0)
   const routeRef = useRef<Route | null>(null)
   // Kept across clicks: a click can pay for only one model download.
   const modelsRef = useRef<Models>({})
@@ -84,7 +83,6 @@ export default function AiSummary({
 
   async function run() {
     setSummary('')
-    setProgress(0)
     // Busy straight away: Chrome can take several seconds to report the first
     // download progress, and the button must not look clickable meanwhile.
     setStatus('summarizing')
@@ -94,10 +92,11 @@ export default function AiSummary({
       const route = routeRef.current ?? (routeRef.current = await pickRoute(lang))
       if (!route) throw new Error('unavailable')
       // Only reports progress when a model is not on the device yet.
-      const pipeline = await createPipeline(lang, route, modelsRef.current, (fraction) => {
-        setStatus('downloading')
-        setProgress(fraction)
-      })
+      // The reported fraction is not shown: Chrome jumps to 100% and then
+      // keeps loading for a while, so a number would mislead.
+      const pipeline = await createPipeline(lang, route, modelsRef.current, () =>
+        setStatus('downloading'),
+      )
       setStatus('summarizing')
       const result = await pipeline.run(readArticleText(), title, setSummary)
       writeCachedSummary(key, result)
@@ -119,10 +118,16 @@ export default function AiSummary({
           onClick={() => void run()}
           disabled={busy}
           aria-busy={busy}
-          className="rounded-lg border border-ink-100 bg-surface px-3.5 py-2 text-sm text-ink-800 transition-colors hover:bg-surface-hover hover:border-ink-200 disabled:opacity-60 cursor-pointer disabled:cursor-default"
+          className="inline-flex items-center gap-2 rounded-lg border border-ink-100 bg-surface px-3.5 py-2 text-sm text-ink-800 transition-colors hover:bg-surface-hover hover:border-ink-200 disabled:text-ink-600 disabled:hover:bg-surface disabled:hover:border-ink-100 cursor-pointer disabled:cursor-default"
         >
+          {busy && (
+            <span
+              aria-hidden="true"
+              className="size-3.5 shrink-0 rounded-full border-2 border-ink-200 border-t-ink-700 motion-safe:animate-spin"
+            />
+          )}
           {status === 'downloading'
-            ? `${strings.downloading} ${Math.round(progress * 100)}%`
+            ? strings.downloading
             : status === 'summarizing'
               ? strings.summarizing
               : status === 'continue'

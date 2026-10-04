@@ -117,7 +117,7 @@ const ko: Strings = {
   },
   summarizer: {
     button: 'AI로 요약하기',
-    downloading: 'AI 모델을 내려받는 중',
+    downloading: 'AI 모델을 불러오고 있어요',
     continue: '이어서 내려받기',
     summarizing: '요약하는 중…',
     heading: 'AI 요약',
@@ -172,7 +172,7 @@ const en: Strings = {
   },
   summarizer: {
     button: 'Summarize with AI',
-    downloading: 'Downloading the AI model',
+    downloading: 'Loading the AI model',
     continue: 'Continue download',
     summarizing: 'Summarizing…',
     heading: 'AI summary',
