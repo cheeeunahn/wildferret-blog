@@ -1,4 +1,5 @@
 // @ts-check
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'astro/config'
 import react from '@astrojs/react'
 import cloudflare from '@astrojs/cloudflare'
@@ -7,6 +8,21 @@ import tailwindcss from '@tailwindcss/vite'
 // Served at the root of the Cloudflare static worker, so the default base is '/'.
 // BASE_PATH overrides it for a build that has to live under a path prefix.
 const base = process.env.BASE_PATH ?? '/'
+
+// `client:summarizer`: hydrate only where Chrome's built-in Prompt API
+// exists. Used by the AiSummary island; see src/directives/summarizer.ts.
+/** @type {import('astro').AstroIntegration} */
+const summarizerDirective = {
+  name: 'summarizer-directive',
+  hooks: {
+    'astro:config:setup': ({ addClientDirective }) => {
+      addClientDirective({
+        name: 'summarizer',
+        entrypoint: fileURLToPath(new URL('./src/directives/summarizer.ts', import.meta.url)),
+      })
+    },
+  },
+}
 
 export default defineConfig({
   base,
@@ -26,6 +42,6 @@ export default defineConfig({
   // Node environment. Unit tests never exercise the Worker runtime anyway.
   adapter: process.env.VITEST ? undefined : cloudflare({ imageService: 'passthrough' }),
   session: false,
-  integrations: [react()],
+  integrations: [react(), summarizerDirective],
   vite: { plugins: [tailwindcss()] },
 })

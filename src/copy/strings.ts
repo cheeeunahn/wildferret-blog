@@ -58,6 +58,20 @@ export interface Strings {
     submit: string
     submitting: string
   }
+  /** Passed to the AiSummary island as a prop, for the same reason as `comments`. */
+  summarizer: {
+    button: string
+    /** Shown with a percentage while Chrome downloads the on-device model. */
+    downloading: string
+    /** When one model has downloaded and the next needs another click. */
+    continue: string
+    summarizing: string
+    heading: string
+    /** Says the summary is machine-written and may be wrong. */
+    disclaimer: string
+    error: string
+    retry: string
+  }
 }
 
 const ko: Strings = {
@@ -100,6 +114,16 @@ const ko: Strings = {
     bodyLabel: '댓글',
     submit: '댓글 남기기',
     submitting: '등록 중…',
+  },
+  summarizer: {
+    button: 'AI로 요약하기',
+    downloading: 'AI 모델을 내려받는 중',
+    continue: '이어서 내려받기',
+    summarizing: '요약하는 중…',
+    heading: 'AI 요약',
+    disclaimer: 'Chrome에 내장된 AI가 이 기기에서 만든 요약이에요. 틀린 내용이 있을 수 있어요.',
+    error: '요약하지 못했어요.',
+    retry: '다시 시도',
   },
 }
 
@@ -145,6 +169,16 @@ const en: Strings = {
     bodyLabel: 'Comment',
     submit: 'Post comment',
     submitting: 'Posting…',
+  },
+  summarizer: {
+    button: 'Summarize with AI',
+    downloading: 'Downloading the AI model',
+    continue: 'Continue download',
+    summarizing: 'Summarizing…',
+    heading: 'AI summary',
+    disclaimer: "Written on your device by Chrome's built-in AI. It may contain mistakes.",
+    error: "Couldn't summarize this post.",
+    retry: 'Try again',
   },
 }
 

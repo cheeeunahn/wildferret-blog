@@ -60,7 +60,9 @@ export default defineConfig([
       ...localRules,
       // Comments is the second island: client:visible, so the React runtime
       // loads only when a reader scrolls to the bottom of an article.
-      'local/no-unlisted-island': ['error', { allow: ['ThemeToggle', 'Comments'] }],
+      // AiSummary is the third: client:summarizer, so it loads only in browsers
+      // that have Chrome's built-in Prompt API.
+      'local/no-unlisted-island': ['error', { allow: ['ThemeToggle', 'Comments', 'AiSummary'] }],
     },
   },
 ])

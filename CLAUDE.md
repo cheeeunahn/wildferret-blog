@@ -63,9 +63,10 @@ The import rules, enforced by `local/no-cross-layer-import` (zones in `eslint-ru
 This is the rule that is easiest to break by accident.
 
 - Pages, the layout, and `ArticleCard.astro` are `.astro` and ship **zero** JavaScript.
-- There are exactly **two** hydrated islands, and they hydrate differently on purpose:
+- There are exactly **three** hydrated islands, and they hydrate differently on purpose:
   - `src/components/ThemeToggle.tsx` — `client:only="react"`, because it reads `document.documentElement` in a `useState` initializer, which has no server equivalent. Its fixed-size wrapper in `Base.astro` reserves layout space so the header does not shift on mount.
   - `src/components/Comments.tsx` — `client:visible` in `ArticleView.astro` (so all three language trees get it from one place). It has no server-hostile code, so the shell prerenders and the React runtime downloads only once a reader scrolls to the bottom of an article. Article pages keep a zero-JS first paint. Do not "simplify" this to `client:load`, which would ship React to every article on load.
+  - `src/components/AiSummary.tsx` — `client:summarizer`, a custom directive (`src/directives/summarizer.ts`, registered in `astro.config.mjs`). The button sits in the article header, which is in view on load, so `client:visible` would ship React to every article view — mostly to readers whose browser cannot run it. The directive hydrates only where Chrome's built-in Prompt API (`LanguageModel`) exists; everyone else downloads neither the island nor React. See AI Summary below.
 - The allowlist for the above lives in `eslint.config.js` (the `allow` option on `local/no-unlisted-island`), not in the rule file.
 
 ## Linking
@@ -161,6 +162,17 @@ Two things the pipeline deliberately does not do, both of which need a human:
 - **Text inside images is not translated.** Alt text and captions are, but an image with Korean baked into it (the diagram screenshots in `agent-teams-and-claude-peers`, for one) still shows Korean on `/en/`. The workflow's summary calls this out per article.
 - **It does not track drift.** An English version is written once. Edit the Korean afterwards and the two fall out of sync with nothing to detect it — re-run `/translate-articles <slug>` against the updated Korean when that happens.
 
+## AI Summary
+
+The "AI로 요약하기 / Summarize with AI" button in the article header summarizes the post on the reader's device with Chrome's built-in AI (Gemini Nano). No server, no key, no network call — the CSP needs nothing new.
+
+- `src/client/summarizer.ts` holds every call to the browser APIs; `AiSummary.tsx` only renders state. Covered by `summarizer.test.ts` against stubbed globals.
+- **Prompt API, not the Summarizer API.** On Chrome 154 the Summarizer ignores `type`/`length`/`format` and returns pages of markdown critiquing the post. `LanguageModel` with a system prompt (3–5 plain sentences, no preamble) works. `toPlainText()` still strips any markdown the model slips in, and the island renders the sentences as a list.
+- **Korean goes through English.** Chrome's model refuses Korean as input and output, so `pickRoute()` picks `via-en`: Translator `ko→en`, summarize, Translator `en→ko` (streamed). When Chrome takes Korean directly, `pickRoute()` returns `direct` with no code change.
+- **One download per click.** Chrome refuses a second `create()` that needs a download in the same click (`NotAllowedError`). Models are created one at a time and kept across clicks; `NeedsAnotherClick` puts the button into "이어서 내려받기".
+- Summaries are cached in `sessionStorage` under `ai-summary:v2:<lang>:<slug>`. Bump the version when the prompt or format changes, or readers keep seeing the old output for the session.
+- Model output is untrusted text: render it as JSX children only, same as comments.
+
 ## Design Tokens
 
 `src/styles/global.css` holds the Tailwind entry (`@import "tailwindcss"`), the Nanum `@font-face` declarations, and an `@theme` block defining a custom ink/paper token scale (e.g. `text-ink-900`, `bg-paper-warm`). Dark mode is a `.dark` class on `<html>` that reassigns the same tokens, which is why almost nothing in the codebase needs a `dark:` variant. Stick to the existing token names — don't introduce arbitrary hex colors or raw Tailwind palette colors.
@@ -245,7 +257,7 @@ Article bodies are template literals, which Prettier leaves alone, so formatting
 | ------------------------------ | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `local/no-bare-internal-href`  | ts, tsx, astro | Linking — no bare `href="/about"` / `src="/assets/…"`, no hardcoded base prefix in any string (this half also reaches markdown links inside `article-content/*.ts`) |
 | `local/no-raw-colors`          | ts, tsx, astro | Design Tokens — no stock Tailwind palette classes, no hex/`rgb()` in `class`/`style`/`fill`/`stroke`                                                                |
-| `local/no-unlisted-island`     | astro          | Islands policy — `client:*` only on `<ThemeToggle>` and `<Comments>` (allowlist is the rule's `allow` option, set in `eslint.config.js`)                            |
+| `local/no-unlisted-island`     | astro          | Islands policy — `client:*` only on `<ThemeToggle>`, `<Comments>` and `<AiSummary>` (allowlist is the rule's `allow` option, set in `eslint.config.js`)             |
 | `local/no-unescaped-user-html` | ts, tsx        | Comments — no `dangerouslySetInnerHTML`; no importing `formatInline` (from `content/parser`) into `src/components/`                                                 |
 | `local/no-cross-layer-import`  | ts, tsx, astro | Layers — the import rules above (zones in `eslint-rules/layer-zones.js`)                                                                                            |
 
