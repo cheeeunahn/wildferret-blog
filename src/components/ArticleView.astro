@@ -1,5 +1,6 @@
 ---
 import type { LocalizedArticle } from '../content/service'
+import AiSummary from './AiSummary'
 import Comments from './Comments'
 import { formatInline, parseArticleBody } from '../content/parser'
 import { resolveAssetUrl } from '../shared/assetUrl'
@@ -42,6 +43,16 @@ const MAX_CAROUSEL_SLIDES = 6
         {article.title}
       </h1>
       <p class="text-ink-600 text-base leading-relaxed">{article.subtitle}</p>
+      {/* AI summary button. client:summarizer (src/directives/summarizer.ts)
+            hydrates it only in browsers that have Chrome's Prompt API, so
+            everyone else downloads neither the island nor React. */}
+      <AiSummary
+        client:summarizer
+        slug={article.slug}
+        title={article.title}
+        lang={locale.lang}
+        strings={strings.summarizer}
+      />
       {article.coverImage && (
         <div class="mt-8">
           <div class="overflow-hidden rounded-2xl border border-ink-100">
@@ -61,9 +72,10 @@ const MAX_CAROUSEL_SLIDES = 6
   <hr class="ink-divider max-w-[720px] mx-auto" />
 
   {/* Article Body */}
-  <article class="max-w-[720px] mx-auto px-6 pt-9 pb-12 prose-blog">
+  <article class="max-w-[720px] mx-auto px-6 pt-9 pb-12 prose-blog" data-article-body>
     {summary && (
       <aside
+        data-summary-card
         class="mb-10 rounded-xl border border-ink-100 overflow-hidden animate-reveal"
         aria-label={summary.label}
       >
