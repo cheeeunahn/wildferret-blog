@@ -1,7 +1,7 @@
 ---
 import type { LocalizedArticle } from '../content/service'
 import Comments from './Comments'
-import { formatInline, parseImageLine, splitContentIntoBlocks } from '../content/parser'
+import { formatInline, parseArticleBody } from '../content/parser'
 import { resolveAssetUrl } from '../shared/assetUrl'
 import { localeHref, type Locale } from '../shared/i18n'
 import { t } from '../copy/strings'
@@ -15,36 +15,7 @@ interface Props {
 
 const { locale, article, content } = Astro.props
 const strings = t(locale.lang)
-const allBlocks = splitContentIntoBlocks(content)
-
-// A leading summary heading plus its bullet list renders as a card at the top of
-// the body instead of a plain heading + list. The heading text becomes the card
-// label, so renaming it in the content (TL;DR -> 핵심 요약 / Key takeaways)
-// keeps working. The divider that follows it in the source is dropped — the
-// card's border separates it.
-const summaryHeading = allBlocks[0]
-  ?.trim()
-  .match(/^##\s+(.+)$/)?.[1]
-  ?.trim()
-const isSummaryLabel = (label?: string) =>
-  !!label &&
-  (/^tl[;,.]?\s?dr$/i.test(label) ||
-    label.includes('요약') ||
-    /\b(summary|takeaways)\b/i.test(label))
-
-const hasSummary = isSummaryLabel(summaryHeading) && !!allBlocks[1]?.trim().startsWith('- ')
-
-const summaryLabel = hasSummary ? summaryHeading! : ''
-const summaryItems = hasSummary
-  ? allBlocks[1]
-      .trim()
-      .split('\n')
-      .filter((l) => l.trim().startsWith('- '))
-      .map((l) => l.replace(/^-\s+/, ''))
-  : []
-
-let blocks = hasSummary ? allBlocks.slice(2) : allBlocks
-if (hasSummary && blocks[0]?.trim() === '---') blocks = blocks.slice(1)
+const { summary, blocks } = parseArticleBody(content)
 
 const langLabels: Record<string, string> = {
   bash: 'Terminal',
@@ -91,17 +62,17 @@ const MAX_CAROUSEL_SLIDES = 6
 
   {/* Article Body */}
   <article class="max-w-[720px] mx-auto px-6 pt-9 pb-12 prose-blog">
-    {summaryItems.length > 0 && (
+    {summary && (
       <aside
         class="mb-10 rounded-xl border border-ink-100 overflow-hidden animate-reveal"
-        aria-label={summaryLabel}
+        aria-label={summary.label}
       >
         <div class="px-4 py-2 border-b border-ink-100 bg-ink-50/60 text-[13px] text-ink-600">
-          {summaryLabel}
+          {summary.label}
         </div>
         <div class="px-5 py-4">
           <ul class="list-disc pl-5 space-y-2.5 marker:text-ink-300 text-ink-700 text-[15px] leading-relaxed">
-            {summaryItems.map((item) => (
+            {summary.items.map((item) => (
               <li set:html={formatInline(item)} />
             ))}
           </ul>
@@ -109,18 +80,12 @@ const MAX_CAROUSEL_SLIDES = 6
       </aside>
     )}
     {blocks.map((block, i) => {
-      const trimmed = block.trim()
-
-      if (trimmed === '---') {
+      if (block.type === 'divider') {
         return <hr class="ink-divider my-10" />
       }
 
-      if (trimmed.startsWith('~~~')) {
-        const codeLines = trimmed.split('\n')
-        const langMatch = codeLines[0].match(/^~~~(\w+)?$/)
-        const lang = langMatch?.[1] || ''
-        const code = codeLines.slice(1, codeLines.length - 1).join('\n')
-        const label = langLabels[lang] || (lang ? lang : '')
+      if (block.type === 'code') {
+        const label = langLabels[block.lang] || block.lang
         return (
           <div
             class="my-6 rounded-xl border border-ink-100 overflow-hidden animate-reveal"
@@ -132,84 +97,60 @@ const MAX_CAROUSEL_SLIDES = 6
               <div class="w-[7px] h-[7px] rounded-full border border-ink-300/70" />
               {label && <span class="ml-2 text-[11px] text-ink-600">{label}</span>}
             </div>
-            <pre class="px-4 py-3 bg-paper-warm/40 overflow-x-auto"><code class="text-[13px] text-ink-600 leading-relaxed whitespace-pre block font-mono">{code}</code></pre>
+            <pre class="px-4 py-3 bg-paper-warm/40 overflow-x-auto"><code class="text-[13px] text-ink-600 leading-relaxed whitespace-pre block font-mono">{block.code}</code></pre>
           </div>
         )
       }
 
-      if (trimmed.startsWith('### ')) {
+      if (block.type === 'heading' && block.level === 3) {
         return (
           <h3 class="text-lg font-semibold text-ink-900 mt-8 mb-4 animate-reveal" style={delay(i)}>
-            {trimmed.replace('### ', '')}
+            {block.text}
           </h3>
         )
       }
 
-      if (trimmed.startsWith('## ')) {
+      if (block.type === 'heading') {
         return (
           <h2 class="animate-reveal" style={delay(i)}>
-            {trimmed.replace('## ', '')}
+            {block.text}
           </h2>
         )
       }
 
-      if (trimmed.startsWith('> ')) {
+      if (block.type === 'quote') {
         return (
-          <blockquote
-            class="animate-reveal"
-            style={delay(i)}
-            set:html={formatInline(trimmed.replace('> ', '').replace(/^"/, '').replace(/"$/, ''))}
-          />
+          <blockquote class="animate-reveal" style={delay(i)} set:html={formatInline(block.text)} />
         )
       }
 
-      if (trimmed.startsWith('- ')) {
-        const items = trimmed
-          .split('\n')
-          .filter((l) => l.trim().startsWith('- '))
-          .map((l) => l.replace(/^-\s+/, ''))
+      if (block.type === 'list' && !block.ordered) {
         return (
           <ul
             class="list-disc pl-5 mb-6 space-y-2 text-ink-700 text-[17px] leading-relaxed animate-reveal"
             style={delay(i)}
           >
-            {items.map((item) => (
+            {block.items.map((item) => (
               <li set:html={formatInline(item)} />
             ))}
           </ul>
         )
       }
 
-      if (trimmed.match(/^\d\.\s/)) {
-        const items = trimmed.split('\n').map((line) => line.replace(/^\d+\.\s/, ''))
+      if (block.type === 'list') {
         return (
           <ol
             class="list-decimal pl-5 mb-6 space-y-2 text-ink-700 text-[17px] leading-relaxed animate-reveal"
             style={delay(i)}
           >
-            {items.map((item) => (
+            {block.items.map((item) => (
               <li set:html={formatInline(item)} />
             ))}
           </ol>
         )
       }
 
-      if (
-        trimmed.includes('\n') &&
-        trimmed.split('\n').every((l) => l.trim().startsWith('|') && l.trim().endsWith('|'))
-      ) {
-        const rows = trimmed.split('\n').map((l) => l.trim())
-        const dataRows = rows.filter((r) => !r.match(/^\|[\s\-:|]+\|$/))
-        const headerCells = dataRows[0]
-          .split('|')
-          .filter((c) => c.trim())
-          .map((c) => c.trim())
-        const bodyRows = dataRows.slice(1).map((r) =>
-          r
-            .split('|')
-            .filter((c) => c.trim() !== '')
-            .map((c) => c.trim()),
-        )
+      if (block.type === 'table') {
         return (
           <div
             class="my-6 overflow-x-auto rounded-xl border border-ink-100 animate-reveal"
@@ -218,7 +159,7 @@ const MAX_CAROUSEL_SLIDES = 6
             <table class="w-full min-w-[560px] text-[15px]">
               <thead>
                 <tr class="border-b border-ink-100 bg-ink-50/60">
-                  {headerCells.map((cell) => (
+                  {block.header.map((cell) => (
                     <th class="px-4 py-2.5 text-left text-xs font-semibold text-ink-500 uppercase tracking-wide">
                       {cell}
                     </th>
@@ -226,8 +167,8 @@ const MAX_CAROUSEL_SLIDES = 6
                 </tr>
               </thead>
               <tbody>
-                {bodyRows.map((cells, j) => (
-                  <tr class={j < bodyRows.length - 1 ? 'border-b border-ink-50' : ''}>
+                {block.rows.map((cells, j) => (
+                  <tr class={j < block.rows.length - 1 ? 'border-b border-ink-50' : ''}>
                     {cells.map((cell) => (
                       <td
                         class="px-4 py-2.5 text-ink-700 leading-relaxed"
@@ -242,18 +183,15 @@ const MAX_CAROUSEL_SLIDES = 6
         )
       }
 
-      // Consecutive image lines in one block (no blank line between them) are
-      // one carousel sharing a single caption, taken from the first line.
-      // Scroll-snap only — no client JS, per the islands policy.
-      const imageLines = trimmed.split('\n').map((l) => l.trim())
-      if (imageLines.length > 1 && imageLines.every((l) => parseImageLine(l) !== null)) {
-        const slides = imageLines.map((l) => parseImageLine(l)!)
+      if (block.type === 'carousel') {
+        const { slides, caption } = block
+        // The slide limit is the CSS's: global.css positions the track for at
+        // most this many radio inputs.
         if (slides.length > MAX_CAROUSEL_SLIDES) {
           throw new Error(
             `Carousel in ${article.slug} has ${slides.length} images; only up to ${MAX_CAROUSEL_SLIDES} are supported`,
           )
         }
-        const caption = slides.find((s) => s.caption)?.caption
         const cid = `carousel-${i}`
         return (
           <figure class="carousel my-8 animate-reveal" style={delay(i)}>
@@ -336,8 +274,8 @@ const MAX_CAROUSEL_SLIDES = 6
         )
       }
 
-      const image = parseImageLine(trimmed)
-      if (image) {
+      if (block.type === 'image') {
+        const { image } = block
         return (
           <figure class="my-8 animate-reveal" style={delay(i)}>
             <div class="overflow-hidden rounded-2xl border border-ink-100">
@@ -358,7 +296,7 @@ const MAX_CAROUSEL_SLIDES = 6
         )
       }
 
-      return <p class="animate-reveal" style={delay(i)} set:html={formatInline(trimmed)} />
+      return <p class="animate-reveal" style={delay(i)} set:html={formatInline(block.text)} />
     })}
   </article>
 

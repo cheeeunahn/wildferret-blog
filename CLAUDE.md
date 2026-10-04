@@ -134,7 +134,7 @@ Bodies are read at **build time** in `getStaticPaths`, so a broken `loadContent`
 - `![alt](path)` — inline image (path is resolved via `resolveAssetUrl`)
 - Inline: `**bold**`, `` `code` ``, `[text](url)`
 
-The block-type dispatch in `ArticleView.astro` is order-dependent — table detection must stay after list detection.
+`parseArticleBody()` classifies every block into a typed `ArticleBlock` (plus the leading summary card, if any); `ArticleView.astro` only switches on `block.type` and renders. A new block type therefore starts in the parser: add it to the `ArticleBlock` union and `classifyBlock()`, then give it a branch in the view. `classifyBlock()` is order-dependent — table detection must stay after list detection, and the single-image check after the carousel check.
 
 **Cover images** go in `public/assets/images/`. Reference them in `articles.ts` with a leading slash and no base prefix — `resolveAssetUrl` handles it at render time.
 
