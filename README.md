@@ -7,12 +7,12 @@ Thanks for stopping by 👋🏻
 
 ## Tech stack
 
-| Layer | Choice |
-|--------|--------|
-| Framework | Astro 7 (static output) |
-| UI | React 19 islands, TypeScript 5 (strict) |
-| Styling | Tailwind CSS 4 (`@tailwindcss/vite`) |
-| Routing | File-based (`src/pages/`) — no client-side router |
+| Layer     | Choice                                            |
+| --------- | ------------------------------------------------- |
+| Framework | Astro 7 (static output)                           |
+| UI        | React 19 islands, TypeScript 5 (strict)           |
+| Styling   | Tailwind CSS 4 (`@tailwindcss/vite`)              |
+| Routing   | File-based (`src/pages/`) — no client-side router |
 
 ## Prerequisites
 
@@ -28,14 +28,14 @@ pnpm install
 
 ## Scripts
 
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Dev server (`astro dev`) |
-| `pnpm build` | Type-check (`astro check`) and production build to `dist/` |
+| Command        | Description                                                     |
+| -------------- | --------------------------------------------------------------- |
+| `pnpm dev`     | Dev server (`astro dev`)                                        |
+| `pnpm build`   | Type-check (`astro check`) and production build to `dist/`      |
 | `pnpm preview` | Serve the production build locally, at the configured base path |
-| `pnpm lint` | ESLint |
-| `pnpm test` | Unit tests for article-content utilities |
-| `pnpm astro` | The Astro CLI directly |
+| `pnpm lint`    | ESLint                                                          |
+| `pnpm test`    | Unit tests for article-content utilities                        |
+| `pnpm astro`   | The Astro CLI directly                                          |
 
 ## Project layout
 
@@ -108,7 +108,7 @@ face. Pretendard and Gaegu are loaded via `<link>` in `Base.astro`.
 
 Dark mode is a `.dark` class on `<html>` that reassigns the same ink/paper
 tokens — which is why almost nothing in the codebase needs a `dark:` variant. An
-`is:inline` script in `<head>` resolves the saved or system preference *before*
+`is:inline` script in `<head>` resolves the saved or system preference _before_
 first paint, so there is no light flash; `ThemeToggle` only flips the class and
 persists the choice to `localStorage`. Until the reader picks a side themselves,
 the toggle keeps following OS changes live.
@@ -132,18 +132,18 @@ fails `pnpm build` instead of degrading in the browser.
 
 Blocks are separated by blank lines. Supported syntax:
 
-| Syntax | Renders as |
-|--------|------------|
-| `## Heading` / `### Heading` | Section headings |
-| `> text` | Blockquote |
-| `- item` | Unordered list (consecutive lines in one block) |
-| `1. item` | Ordered list |
-| `\| a \| b \|` | Table (consecutive pipe-delimited lines) |
-| `---` | Horizontal divider |
-| `~~~lang … ~~~` | Fenced code block — use `~~~`, not backticks, to avoid escaping inside template literals |
-| `![alt](path)` | Inline image |
-| `[diagram:id]` | Embedded React diagram |
-| `**bold**`, `` `code` ``, `[text](url)` | Inline formatting |
+| Syntax                                  | Renders as                                                                               |
+| --------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `## Heading` / `### Heading`            | Section headings                                                                         |
+| `> text`                                | Blockquote                                                                               |
+| `- item`                                | Unordered list (consecutive lines in one block)                                          |
+| `1. item`                               | Ordered list                                                                             |
+| `\| a \| b \|`                          | Table (consecutive pipe-delimited lines)                                                 |
+| `---`                                   | Horizontal divider                                                                       |
+| `~~~lang … ~~~`                         | Fenced code block — use `~~~`, not backticks, to avoid escaping inside template literals |
+| `![alt](path)`                          | Inline image                                                                             |
+| `[diagram:id]`                          | Embedded React diagram                                                                   |
+| `**bold**`, `` `code` ``, `[text](url)` | Inline formatting                                                                        |
 
 Parsing and safe inline formatting live in `src/content/parser.ts`.
 
@@ -155,7 +155,7 @@ asset URL is resolved at render time by `resolveAssetUrl()` in `src/shared/asset
 which prepends the base path for relative URLs and passes absolute `https://`
 URLs through unchanged.
 
-Internal *route* links are a separate concern: Astro does not prefix `<a href>`
+Internal _route_ links are a separate concern: Astro does not prefix `<a href>`
 with the base path, so use `href()` from `src/shared/siteUrl.ts` (and `isActive()`
 for nav highlighting). Never write a bare `href="/about"`, and never hardcode a
 base path prefix.

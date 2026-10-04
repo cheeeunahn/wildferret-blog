@@ -76,9 +76,16 @@ async function toCommentError(res: Response): Promise<CommentError> {
     // Non-JSON body (gateway error, rate limiter). Fall through to unknown.
   }
   const known: RejectionReason[] = [
-    'pii_card', 'pii_rrn', 'pii_phone', 'pii_email',
-    'profanity', 'link_spam', 'duplicate', 'too_fast',
-    'too_short', 'too_long',
+    'pii_card',
+    'pii_rrn',
+    'pii_phone',
+    'pii_email',
+    'profanity',
+    'link_spam',
+    'duplicate',
+    'too_fast',
+    'too_short',
+    'too_long',
   ]
   const reason = known.find((r) => r === hint) ?? 'unknown'
   return new CommentError(reason)

@@ -34,21 +34,23 @@ const targets = LANGS.map((lang) => ({
 {/* Plain links — the whole site is prerendered, so switching language is a
     navigation, not state. No island, no JS. */}
 <div class="lang-switch" role="group" aria-label={strings.langSwitchLabel}>
-  {
-    targets.map(({ lang, label, name, href: target, current }, i) => (
-      <>
-        {i > 0 && <span class="lang-switch-sep" aria-hidden="true">/</span>}
-        <a
-          href={target}
-          hreflang={lang}
-          lang={lang}
-          class={`lang-switch-link ${current ? 'is-current' : ''}`}
-          aria-current={current ? 'true' : undefined}
-        >
-          <span aria-hidden="true">{label}</span>
-          <span class="sr-only">{name}</span>
-        </a>
-      </>
-    ))
-  }
+  {targets.map(({ lang, label, name, href: target, current }, i) => (
+    <>
+      {i > 0 && (
+        <span class="lang-switch-sep" aria-hidden="true">
+          /
+        </span>
+      )}
+      <a
+        href={target}
+        hreflang={lang}
+        lang={lang}
+        class={`lang-switch-link ${current ? 'is-current' : ''}`}
+        aria-current={current ? 'true' : undefined}
+      >
+        <span aria-hidden="true">{label}</span>
+        <span class="sr-only">{name}</span>
+      </a>
+    </>
+  ))}
 </div>

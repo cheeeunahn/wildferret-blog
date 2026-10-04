@@ -88,33 +88,30 @@ export default function Comments({
     [lang],
   )
 
-  const onSubmit = useCallback(
-    async () => {
-      if (submitting) return
-      setError(null)
+  const onSubmit = useCallback(async () => {
+    if (submitting) return
+    setError(null)
 
-      // Instant feedback only — the trigger is what actually enforces this.
-      const local = checkComment(nickname, body)
-      if (local) {
-        reject(local)
-        return
-      }
+    // Instant feedback only — the trigger is what actually enforces this.
+    const local = checkComment(nickname, body)
+    if (local) {
+      reject(local)
+      return
+    }
 
-      setSubmitting(true)
-      try {
-        const saved = await postComment({ slug: articleSlug, nickname, body })
-        setComments((prev) => [...prev, saved])
-        // Keep the nickname so a second comment doesn't need retyping.
-        setBody('')
-      } catch (err) {
-        // The input is deliberately left intact so the reader can edit and retry.
-        reject(err instanceof CommentError ? err.reason : 'unknown')
-      } finally {
-        setSubmitting(false)
-      }
-    },
-    [articleSlug, body, nickname, reject, submitting],
-  )
+    setSubmitting(true)
+    try {
+      const saved = await postComment({ slug: articleSlug, nickname, body })
+      setComments((prev) => [...prev, saved])
+      // Keep the nickname so a second comment doesn't need retyping.
+      setBody('')
+    } catch (err) {
+      // The input is deliberately left intact so the reader can edit and retry.
+      reject(err instanceof CommentError ? err.reason : 'unknown')
+    } finally {
+      setSubmitting(false)
+    }
+  }, [articleSlug, body, nickname, reject, submitting])
 
   if (loadFailed && comments.length === 0) return null
 

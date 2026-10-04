@@ -8,14 +8,19 @@
  * specifier is a package.
  *
  * Targets are directory prefixes (`src/pages`) or globs (`src/components/*.tsx`),
- * relative to the repo root. The zones themselves live in eslint.config.js.
+ * relative to the repo root. The zones themselves live in layer-zones.js.
  */
 
 import path from 'node:path'
 
 function globToRegExp(glob) {
   const escaped = glob.replace(/[.+^${}()|[\]\\]/g, '\\$&')
-  return new RegExp(`^${escaped.replace(/\*\*/g, '\u0000').replace(/\*/g, '[^/]*').replace(/\u0000/g, '.*')}$`)
+  return new RegExp(
+    `^${escaped
+      .replace(/\*\*/g, '\u0000')
+      .replace(/\*/g, '[^/]*')
+      .replace(/\u0000/g, '.*')}$`,
+  )
 }
 
 function matches(rel, pattern) {
@@ -36,7 +41,8 @@ export default {
     type: 'problem',
     docs: { description: 'Forbid imports that cross a layer boundary' },
     messages: {
-      crossLayer: '{{file}} may not import {{target}} — {{reason}} See the Layers section of CLAUDE.md.',
+      crossLayer:
+        '{{file}} may not import {{target}} — {{reason}} See the Layers section of CLAUDE.md.',
     },
     schema: [
       {
@@ -77,7 +83,11 @@ export default {
       for (const zone of zones) {
         const hit = zone.from.find((f) => matches(resolved, f))
         if (hit) {
-          context.report({ node, messageId: 'crossLayer', data: { file, target: hit, reason: zone.reason } })
+          context.report({
+            node,
+            messageId: 'crossLayer',
+            data: { file, target: hit, reason: zone.reason },
+          })
           return
         }
       }

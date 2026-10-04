@@ -18,9 +18,7 @@ const articles = articlesIn(locale.lang)
 
 // Only offer a pill for a category that actually has articles, in the fixed
 // CATEGORIES order rather than in publication order.
-const usedCategories = CATEGORIES.filter((c) =>
-  articles.some((a) => a.category === c),
-)
+const usedCategories = CATEGORIES.filter((c) => articles.some((a) => a.category === c))
 
 // The filter is CSS-only (radio + :has(), like the carousel), so the rule that
 // hides non-matching cards has to exist per category. Generated from the data
@@ -54,81 +52,75 @@ const filterCss = usedCategories
       It also means the separation survives at any width without a 720px line
       floating in the middle of a wide screen. */}
   <div class="bg-paper-warm">
-  <section class="max-w-[720px] mx-auto px-6 pt-10 sm:pt-14 pb-12">
+    <section class="max-w-[720px] mx-auto px-6 pt-10 sm:pt-14 pb-12">
       {/* The box is taller than the source's 16:9, so object-cover crops the
           sides and the ferret renders larger. Its focal point is right of
           centre and high, hence object-[62%_38%] rather than the default.
           The <label> makes the whole illustration the click target for the
           greeting; the checkbox inside it is the state. */}
       <figure class="m-0 animate-reveal-media delay-1">
-      <div
-        class="hero-greet relative block overflow-hidden rounded-2xl bg-paper-warm/30"
-      >
-        <input
-          type="radio"
-          name="hero-state"
-          id="hero-s0"
-          class="hero-state sr-only"
-          checked
-          aria-label={strings.home.heroStateIdle}
-        />
-        <input
-          type="radio"
-          name="hero-state"
-          id="hero-s1"
-          class="hero-state sr-only"
-          aria-label={strings.home.heroStateGreet}
-        />
-        <input
-          type="radio"
-          name="hero-state"
-          id="hero-s2"
-          class="hero-state sr-only"
-          aria-label={strings.home.heroStateGreetMore}
-        />
+        <div class="hero-greet relative block overflow-hidden rounded-2xl bg-paper-warm/30">
+          <input
+            type="radio"
+            name="hero-state"
+            id="hero-s0"
+            class="hero-state sr-only"
+            checked
+            aria-label={strings.home.heroStateIdle}
+          />
+          <input
+            type="radio"
+            name="hero-state"
+            id="hero-s1"
+            class="hero-state sr-only"
+            aria-label={strings.home.heroStateGreet}
+          />
+          <input
+            type="radio"
+            name="hero-state"
+            id="hero-s2"
+            class="hero-state sr-only"
+            aria-label={strings.home.heroStateGreetMore}
+          />
 
-        <img
-          src={resolveAssetUrl('/assets/images/wildferret-hero-coding.webp')}
-          alt={strings.home.heroCodingAlt}
-          class="w-full h-[260px] sm:h-[440px] object-cover object-[62%_38%]"
-          loading="eager"
-        />
-        {
-          GREET_FRAMES.map((frame, i) => (
+          <img
+            src={resolveAssetUrl('/assets/images/wildferret-hero-coding.webp')}
+            alt={strings.home.heroCodingAlt}
+            class="w-full h-[260px] sm:h-[440px] object-cover object-[62%_38%]"
+            loading="eager"
+          />
+          {GREET_FRAMES.map((frame, i) => (
             <img
               src={resolveAssetUrl(frame.src)}
               alt={frame.alt}
               class={`hero-frame hero-frame-${i + 1} absolute inset-0 w-full h-full object-cover object-[62%_38%]`}
               loading="eager"
             />
-          ))
-        }
+          ))}
 
-        {/* Fireflies. Decorative and click-through (pointer-events: none in
+          {/* Fireflies. Decorative and click-through (pointer-events: none in
             global.css), so they sit above the frames but below the labels
             and never block the greeting. Each one carries its own drift and
             pulse timing — see .hero-firefly-N. */}
-        <div class="hero-fireflies" aria-hidden="true">
-          {
-            Array.from({ length: 7 }, (_, i) => (
+          <div class="hero-fireflies" aria-hidden="true">
+            {Array.from({ length: 7 }, (_, i) => (
               <span class={`hero-firefly hero-firefly-${i + 1}`} />
-            ))
-          }
-        </div>
+            ))}
+          </div>
 
-        {/* Only the label for the next state is displayed (see global.css),
+          {/* Only the label for the next state is displayed (see global.css),
             so clicking the same spot again advances the cycle. */}
-        <label for="hero-s1" class="hero-step hero-step-1">
-          <span class="sr-only">{strings.home.heroStepGreet}</span>
-        </label>
-        <label for="hero-s2" class="hero-step hero-step-2">
-          <span class="sr-only">{strings.home.heroStepGreetMore}</span>
-        </label>
-        <label for="hero-s0" class="hero-step hero-step-0">
-          <span class="sr-only">{strings.home.heroStepReset}</span>
-        </label>
+          <label for="hero-s1" class="hero-step hero-step-1">
+            <span class="sr-only">{strings.home.heroStepGreet}</span>
+          </label>
+          <label for="hero-s2" class="hero-step hero-step-2">
+            <span class="sr-only">{strings.home.heroStepGreetMore}</span>
+          </label>
+          <label for="hero-s0" class="hero-step hero-step-0">
+            <span class="sr-only">{strings.home.heroStepReset}</span>
+          </label>
 
-        {/* Room tone for the desk scene: office ambience with the ferret's
+          {/* Room tone for the desk scene: office ambience with the ferret's
             own typing layered over it, started and stopped together. The two
             loops are different lengths (56s and 8s), so they drift against
             each other instead of repeating as one fixed bar.
@@ -136,50 +128,68 @@ const filterCss = usedCategories
             reader asks for it — and browsers block autoplay without a
             gesture anyway. The button sits above the step labels so it does
             not advance the greeting. */}
-        <audio
-          class="hero-audio"
-          src={resolveAssetUrl('/assets/audio/office-ambience.mp3')}
-          data-volume="0.35"
-          loop
-          preload="none"></audio>
-        <audio
-          class="hero-audio"
-          src={resolveAssetUrl('/assets/audio/keyboard-typing.mp3')}
-          data-volume="0.22"
-          loop
-          preload="none"></audio>
-        {/* The two labels ride on the element rather than living in the
+          <audio
+            class="hero-audio"
+            src={resolveAssetUrl('/assets/audio/office-ambience.mp3')}
+            data-volume="0.35"
+            loop
+            preload="none"
+          ></audio>
+          <audio
+            class="hero-audio"
+            src={resolveAssetUrl('/assets/audio/keyboard-typing.mp3')}
+            data-volume="0.22"
+            loop
+            preload="none"
+          ></audio>
+          {/* The two labels ride on the element rather than living in the
             script below: the script is is:inline and untranslated by design,
             so the only way it can speak the page's language is to read it
             off the DOM. */}
-        <button
-          type="button"
-          class="hero-sound"
-          aria-pressed="false"
-          aria-label={strings.home.soundOn}
-          data-label-on={strings.home.soundOn}
-          data-label-off={strings.home.soundOff}
-        >
-          <svg class="hero-sound-icon hero-sound-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M11 5 6 9H3v6h3l5 4z" />
-            <path d="m16 9 5 6" />
-            <path d="m21 9-5 6" />
-          </svg>
-          <svg class="hero-sound-icon hero-sound-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M11 5 6 9H3v6h3l5 4z" />
-            <path d="M15.5 8.5a5 5 0 0 1 0 7" />
-            <path d="M18.5 5.5a9 9 0 0 1 0 13" />
-          </svg>
-        </button>
-      </div>
+          <button
+            type="button"
+            class="hero-sound"
+            aria-pressed="false"
+            aria-label={strings.home.soundOn}
+            data-label-on={strings.home.soundOn}
+            data-label-off={strings.home.soundOff}
+          >
+            <svg
+              class="hero-sound-icon hero-sound-off"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M11 5 6 9H3v6h3l5 4z" />
+              <path d="m16 9 5 6" />
+              <path d="m21 9-5 6" />
+            </svg>
+            <svg
+              class="hero-sound-icon hero-sound-on"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M11 5 6 9H3v6h3l5 4z" />
+              <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+              <path d="M18.5 5.5a9 9 0 0 1 0 13" />
+            </svg>
+          </button>
+        </div>
 
-      {/* Sits outside the frame rather than over the art: the illustration is
+        {/* Sits outside the frame rather than over the art: the illustration is
           busy at the bottom edge and an overlay would need a scrim to stay
           legible, which reads as a header band on a photo. Small and quiet —
           this labels the picture, it is not the page's headline. */}
-      <figcaption class="mt-3 text-sm text-ink-500">
-        {strings.home.heroCaption}
-      </figcaption>
+        <figcaption class="mt-3 text-sm text-ink-500">{strings.home.heroCaption}</figcaption>
       </figure>
 
       {/* The one bit the CSS state machine cannot do: drop back to the idle
@@ -236,7 +246,7 @@ const filterCss = usedCategories
           })
         })()
       </script>
-  </section>
+    </section>
   </div>
 
   {/* Category filter + article list. The :has() rules read from .cat-scope,
@@ -258,36 +268,25 @@ const filterCss = usedCategories
         would never fire — a stuck element stays in view by definition. */}
     <div class="cat-sentinel" aria-hidden="true"></div>
     <div class="cat-bar sticky top-16 z-40 bg-paper py-4 sm:py-5">
-    <section class="max-w-[720px] mx-auto px-6">
-      <fieldset class="flex flex-wrap items-center gap-2.5 animate-reveal delay-3">
-        <legend class="sr-only">{strings.home.filterLegend}</legend>
+      <section class="max-w-[720px] mx-auto px-6">
+        <fieldset class="flex flex-wrap items-center gap-2.5 animate-reveal delay-3">
+          <legend class="sr-only">{strings.home.filterLegend}</legend>
 
-        <input
-          type="radio"
-          name="category"
-          id="cat-0"
-          class="cat-input sr-only"
-          checked
-        />
-        <label for="cat-0" class="cat-pill">{strings.home.filterAll}</label>
+          <input type="radio" name="category" id="cat-0" class="cat-input sr-only" checked />
+          <label for="cat-0" class="cat-pill">
+            {strings.home.filterAll}
+          </label>
 
-        {
-          usedCategories.map((c, i) => (
+          {usedCategories.map((c, i) => (
             <>
-              <input
-                type="radio"
-                name="category"
-                id={`cat-${i + 1}`}
-                class="cat-input sr-only"
-              />
+              <input type="radio" name="category" id={`cat-${i + 1}`} class="cat-input sr-only" />
               <label for={`cat-${i + 1}`} class="cat-pill">
                 {c}
               </label>
             </>
-          ))
-        }
-      </fieldset>
-    </section>
+          ))}
+        </fieldset>
+      </section>
     </div>
 
     {/* Same idiom as the hero script below: inline, dependency-free, not a
@@ -309,21 +308,14 @@ const filterCss = usedCategories
         ).observe(sentinel)
       })()
     </script>
-
     {/* flex + gap, not space-y: a card the filter hides is display:none, and
         gap collapses around it where a sibling margin would leave a hole. */}
     <section class="max-w-[720px] mx-auto px-6 pt-4 pb-20 flex flex-col gap-5 sm:gap-6">
-      {
-        articles.length > 0 ? (
-          articles.map((article, i) => (
-            <ArticleCard article={article} index={i} locale={locale} />
-          ))
-        ) : (
-          <p class="text-ink-600 text-[15px] animate-reveal delay-4">
-            {strings.home.emptyList}
-          </p>
-        )
-      }
+      {articles.length > 0 ? (
+        articles.map((article, i) => <ArticleCard article={article} index={i} locale={locale} />)
+      ) : (
+        <p class="text-ink-600 text-[15px] animate-reveal delay-4">{strings.home.emptyList}</p>
+      )}
     </section>
   </div>
 </div>

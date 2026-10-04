@@ -1,128 +1,121 @@
 export const aiGit101ForDesignersContentEn = `
-## Rationale and learning objectives
+## I held a 30-minute internal session
 
-Following the introduction of the Figma MCP, designers in the organisation raised recurring questions about its operation, failure modes, and use of tokens. Without a basic conceptual model of the system, they could use it under normal conditions but had little basis for diagnosing failures.
+As our designers began using the Figma integration based on the Model Context Protocol (MCP), I started hearing comments such as, “I do not understand how this works,” “I thought it would just work, but then it suddenly stopped,” and “What is a token?” Using a tool without knowing what is happening behind the scenes is more frustrating than it might seem. When it works, you simply move on. When it does not, you have no idea where to begin troubleshooting.
 
-A thirty-minute introductory session was therefore organised to establish a shared technical vocabulary and a practical framework for troubleshooting.
+When I first started using artificial intelligence (AI), I spent a long time feeling lost because I did not know what to ask it to do or what questions would produce useful answers. Hoping to clear away at least some of that uncertainty, I held a short 30-minute session.
 
-![An Excalidraw whiteboard shared during the session, with handwritten examples: "Where is the cat? → In the box", "What is the capital of France? → Paris", "Where is my Figma file? → 80% Desktop, 10% Documents"](/assets/images/ai-git-101-session-whiteboard.webp "Examples were developed on a shared whiteboard during the session")
+![An Excalidraw whiteboard shared during the session, with handwritten examples: “Where is the cat? → In the box,” “What is the capital of France? → Paris,” and “Where is my Figma file? → 80% Desktop, 10% Documents”](/assets/images/ai-git-101-session-whiteboard.webp "I led the session by working through examples on a whiteboard")
 
-The session had three learning objectives:
+I set three goals for the session:
 
-1. Reduce uncertainty about AI systems
-2. Explain why some prompts work better than others
-3. Describe what happens when a designer uses the Figma MCP
+1. Ease the vague sense of fear surrounding AI
+2. Develop at least a basic understanding of why prompts work or fail and how the underlying process operates
+3. Gain an intuitive sense of what happens behind the scenes when using the Figma MCP integration
 
 ---
 
-## Conceptual overview
+## What the session covered
 
-### Anthropomorphic interpretations of AI
+### I began by clearing up some misconceptions
 
-Conversational systems can appear to possess a self, but their conceptual foundations are not new.
+It is natural for AI to feel like “something with a mind of its own.” The concept itself, however, has existed for quite some time.
 
-In 1950, [Alan Turing](https://doi.org/10.1093/mind/LIX.236.433) proposed what became known as the Turing test: a method for considering whether a machine could produce human-like conversational responses. Early conversational programs relied largely on predefined rules and pattern matching.
+In the 1950s, Alan Turing proposed the Turing test, an experiment designed to determine whether a computer could converse like a human. Systems at the time were capable of little more than answering “Woof” when asked, “What sound does a dog make?” They returned responses according to predetermined rules.
 
-Today's generative AI is substantially more capable, but it likewise produces outputs through computation rather than intention or selfhood.
+Ultimately, today’s AI is also a system that calculates responses to given questions in a prescribed way.
 
-### Conditions underlying recent adoption
+### Why did AI suddenly take off?
 
-Progress was uneven for decades, constrained in part by limited computing capacity, available data, and storage.
+Progress remained slow for many years after the 1950s. Hardware performance and data storage capacity were both insufficient, so the concept existed without advancing very far.
 
-By the 2010s, the volume of digital text and images had increased considerably, while advances in GPU computing made large-scale model training more practical.
+Two things changed in the 2010s. The first was data. As social media grew, people began uploading text and images at an explosive rate, creating material that could be used to train AI. The second was computing power, particularly improvements in graphics processing units (GPUs).
 
-In 2017, [Vaswani et al.](https://arxiv.org/abs/1706.03762) introduced the Transformer architecture, which made it possible to process language sequences more efficiently and at greater scale.
+Then, in 2017, Google introduced the Transformer architecture. It provided a much faster and more efficient way to handle tasks such as text autocomplete.
 
-OpenAI released ChatGPT in 2022, making conversational use of large language models widely accessible. Its appearance was not an abrupt invention but the public culmination of several decades of research and engineering.
+In 2022, OpenAI adapted that technology for everyday question-and-answer interactions and released it as ChatGPT. The technology did not appear overnight. Rather, decades of accumulated development had finally reached the general public.
 
-### Probabilistic token generation
+### Ultimately, it is a probability calculation
 
-Large language models generate text by estimating a probability distribution over the next token, repeatedly, in light of the preceding context.
+AI calculates the probability of the word that will come next.
 
-For a prompt such as “What is the capital of France?”, “Paris” receives a high probability because of patterns learned during training.
+When asked, “What is the capital of France?”, it answers “Paris” because that is the most probable next word.
 
-For a simplified prompt such as “Where is the cat?”, the model might assign probabilities resembling the following:
+When asked, “Where is the cat?”, its internal calculation might look roughly like this:
 
 - In the box: 80%
 - Up a tree: 10%
 - In the room: 5%
 - Other: 5%
 
-The model then samples or selects from this distribution. The percentages are illustrative, not measurements of an actual model response.
+That is why the answer is “The cat is in the box.”
 
-![Illustration of an AI receiving a question and computing the probability of what comes next — "in the box 80%, up a tree 10%, in the room 5%, other 5%" — then giving the highest one as its answer](/assets/images/ai-git-101-next-token-prediction.webp "A simplified illustration of next-token prediction (AI-generated)")
+![An illustration of AI receiving a question, calculating probabilities for what comes next—“in the box 80%, up a tree 10%, in the room 5%, other 5%”—and returning the most probable answer](/assets/images/ai-git-101-next-token-prediction.webp "AI produces an answer by choosing the most probable next word (AI-generated)")
 
-These predictions can be effective because contemporary models are trained on very large datasets and learn complex statistical relationships. “Autocomplete” is an imperfect but useful introductory analogy; it should not be taken to imply that the underlying computation is simple.
+Its predictions are remarkably accurate because it has been trained on data at the scale of the internet. Rather than having developed a mind of its own, it is closer to an exceptionally capable autocomplete system.
 
-### Context narrows the problem
+### Context reduces token use
 
-Relevant context can narrow the range of plausible responses and improve the model's ability to complete a task.
+Narrowing the scope of a question makes the prediction far more accurate.
 
-If an agent is asked, “Where is my Figma file?”, it may need to search broadly. Adding “It is probably on the Desktop” narrows the search scope and may reduce both tool use and token consumption. Context does not automatically reduce token use, however: irrelevant or excessive context can increase it.
+If you ask, “Where is my Figma file?”, the AI has to search the entire computer, consuming a large number of tokens in the process. Add a single line such as, “It is probably somewhere on the Desktop,” and the narrower scope reduces token use while improving accuracy.
 
-Files such as \`memory.md\` and \`CLAUDE.md\` can supply persistent instructions or project context before an agent begins work. Well-designed context often improves relevance, although its effect on token use depends on its length and on the task.
+This is what files such as \`memory.md\` and \`claude.md\` do. They are context documents that AI reads before beginning a task. Prompt engineering became popular for a similar reason: well-designed context produces better answers while using fewer tokens.
 
-### Distinction between Claude and Claude Code
+### What is the difference between Claude and Claude Code?
 
-The distinction is important because the two products have different capabilities.
+This distinction causes a great deal of confusion.
 
-**Claude** (claude.ai) is a browser-based conversational interface used for tasks such as writing and document analysis. In an ordinary browser session, it does not directly control the local terminal or file system.
+**Claude** (claude.ai) is the browser-based chat version. It is particularly capable at producing text, working with documents, and writing. However, it cannot control the terminal or directly modify files on your computer.
 
-**Claude Code** is an agentic development tool that runs in the terminal and can act within a configured environment.
+**Claude Code** is an AI agent that runs in the terminal. It uses the same model but can do much more:
 
-- Execute terminal commands
-- Access and modify files within its configured permissions
-- Generate structured data such as JSON
-- Call external tools through MCP
+- Control the terminal
+- Access and modify files on the computer
+- Generate and execute JavaScript Object Notation (JSON)
+- Invoke external tools through MCP
 
-In the configuration discussed during the session, the Figma MCP was used through Claude Code rather than the standard claude.ai interface.
+The Figma MCP integration requires Claude Code. It does not work in claude.ai.
 
-### Functional role of the Figma MCP
+### What the Figma MCP integration does
 
-The model does not manipulate Figma by itself. MCP (Model Context Protocol) provides a standard interface through which an agent can invoke external tools.
+The AI model itself only predicts text, so it has no way to manipulate Figma directly. That is why the Model Context Protocol (MCP) sits between them.
 
 > Claude Code ↔ MCP ↔ Figma
 
-For an instruction such as “change the blue button to white”, the interaction can be summarised as follows:
+MCP relays information between the two. If you say, “Change the blue button to white,” the process actually unfolds as follows:
 
-1. **Command** — Claude Code receives the user's natural-language instruction
-2. **Tool call** — Claude Code selects an available tool and constructs structured arguments for it
-3. **Execution** — the MCP server passes the request to the relevant Figma integration, subject to the tool's permissions and capabilities
-4. **Feedback** — the tool result returns to Claude Code, which reports the outcome to the user
+1. **Command** — Claude Code receives the user’s natural-language instruction
+2. **Translate** — Claude Code translates the request into JSON, a machine-readable language, and outputs it
+3. **Dispatch** — MCP passes the JSON to Figma, which interprets it and changes the button’s color
+4. **Feedback** — A “Change complete” message returns to Claude Code through MCP, and a response appears for the user
 
-![A four-panel illustration — Command, Translate, Dispatch, Feedback. The user says "change the blue button to white", Claude Code translates it into JSON, MCP passes it to Figma where the button colour changes, and a "done" response returns to the user](/assets/images/ai-git-101-figma-mcp-flow.webp "A simplified representation of instruction, tool invocation, execution, and feedback (AI-generated)")
+![A four-panel illustration labeled Command, Translate, Dispatch, and Feedback. The user says, “Change the blue button to white.” Claude Code translates the request into JSON, MCP passes it to Figma, the button color changes, and a “Change complete” response returns to the user](/assets/images/ai-git-101-figma-mcp-flow.webp "The four stages of an instruction traveling to Figma and returning to the user (AI-generated)")
 
-### Distinction between MCP integrations and Skills
+### MCP and Skills are different
 
-MCP defines how an AI application exchanges context and tool calls with external systems such as Figma.
+MCP is an intermediary that communicates directly with external tools. It actually invokes external systems such as Figma.
 
-A Skill (\`SKILL.md\`) is instead a set of instructions that guides the agent's work. The two can be used together: a Skill may instruct the agent to use an MCP integration under specified conditions.
+A Skill (\`skill.md\`) is not an intermediary. It is a text document, or a kind of manual, that AI reads before beginning a task. The two are often used together. For example, a Skill might say, “Use the Figma MCP integration when necessary,” prompting the AI to invoke MCP when appropriate.
 
-Because Skill instructions occupy context, they should contain only information relevant to the task.
+The longer a Skill becomes, the more tokens it consumes, so it is best to include only essential context.
 
-### Practical implications for designers
+### Three things designers can try immediately
 
-**01. Use autocomplete as a provisional analogy.** Treating a language model as a sophisticated prediction system can produce more realistic expectations than treating it as an autonomous mind, provided that the analogy is not mistaken for a complete technical account.
+**01. Think of it as autocomplete.** If you write prompts on the assumption that AI is an extremely intelligent autocomplete system, both your expectations and requests will become far more realistic.
 
-**02. Provide context, define the target, and decompose the task.** Durable context may be recorded in a Markdown file; individual requests should specify their scope and divide large assignments into discrete units.
+**02. Provide context, target precisely, and break tasks down.** Use Markdown files to provide context, narrow the scope to target the right area, and divide large tasks into smaller units. These practices account for most of the difference in output quality.
 
-**03. Limit the scope of each request.** A request to generate more than ten screens, for example, may consume the available context or output budget before the agent invokes the Figma tool.
-
----
-
-## Implications for practice
-
-Setup procedures should be based on current official documentation because configuration details change over time. An AI assistant may help locate and summarise those materials, but its account should be checked against the primary source.
-
-The session used the following statement as a concise reminder that model performance remains conditional on task definition and context:
-
-> AI is not an omniscient system; its performance depends substantially on the quality and relevance of the context provided.
-
-Understanding the mechanism makes failures easier to diagnose: insufficient context is one possible cause, alongside permissions, tool availability, ambiguous instructions, and integration errors. The session was intended to provide that diagnostic foundation.
+**03. Do not ask for too much at once.** If you ask it to “design more than ten screens,” it may generate too much text and exceed the token limit before the request even reaches MCP.
 
 ---
 
-## References
+## After the session
 
-- [Turing, A. M. (1950). “Computing Machinery and Intelligence.” *Mind*, 59(236), 433–460.](https://doi.org/10.1093/mind/LIX.236.433)
-- [Vaswani, A., et al. (2017). “Attention Is All You Need.” *Advances in Neural Information Processing Systems*, 30.](https://arxiv.org/abs/1706.03762)`
+The fastest and most accurate way to learn how to set up the Figma MCP integration is to ask Claude, “How do I connect the Figma MCP integration?” It can combine a web search with the latest documentation, which is more effective than searching Google yourself.
+
+There was one statement I deliberately repeated throughout the session:
+
+> AI is not a god. But it becomes remarkably intelligent when you give it the right context.
+
+Once you understand how it works, the question “Why is this not working?” becomes “Ah, I did not provide enough context.” That uncertainty was what I wanted to clear away.`

@@ -55,7 +55,8 @@ function readEnTranslation(entryText) {
   const block = /translations:\s*\{[\s\S]*?\ben:\s*\{([\s\S]*?)\n\s{6}\}/.exec(entryText)
   if (!block) return null
   const body = block[1]
-  const load = /import\('\.\/article-content\/en\/([^']+)'\)[\s\S]*?\(\{\s*([A-Za-z0-9_$]+)\s*\}\)/.exec(body)
+  const load =
+    /import\('\.\/article-content\/en\/([^']+)'\)[\s\S]*?\(\{\s*([A-Za-z0-9_$]+)\s*\}\)/.exec(body)
   return {
     title: /title:\s*'([^']*)'|title:\s*"([^"]*)"/.exec(body) !== null,
     module: load?.[1] ?? null,
@@ -63,7 +64,10 @@ function readEnTranslation(entryText) {
   }
 }
 
-export function scan(readFile = (rel) => readFileSync(path.join(root, rel), 'utf8'), exists = (rel) => existsSync(path.join(root, rel))) {
+export function scan(
+  readFile = (rel) => readFileSync(path.join(root, rel), 'utf8'),
+  exists = (rel) => existsSync(path.join(root, rel)),
+) {
   const source = stripComments(readFile(`${DATA}/articles.ts`))
   const pending = []
   const translated = []
@@ -71,7 +75,8 @@ export function scan(readFile = (rel) => readFileSync(path.join(root, rel), 'utf
 
   for (const { slug, text } of splitEntries(source)) {
     const koFile = `${KO_DIR}/${slug}.ts`
-    if (!exists(koFile)) problems.push({ slug, problem: `Korean content file is missing: ${koFile}` })
+    if (!exists(koFile))
+      problems.push({ slug, problem: `Korean content file is missing: ${koFile}` })
 
     const en = readEnTranslation(text)
     const enFile = `${EN_DIR}/${slug}.ts`
@@ -81,7 +86,10 @@ export function scan(readFile = (rel) => readFileSync(path.join(root, rel), 'utf
       // yet. An orphan en/ file means a half-finished translation, which is
       // worth flagging: nothing renders it.
       if (exists(enFile)) {
-        problems.push({ slug, problem: `${enFile} exists but articles.ts has no translations.en block for it` })
+        problems.push({
+          slug,
+          problem: `${enFile} exists but articles.ts has no translations.en block for it`,
+        })
       }
       pending.push({ slug, koFile, enFile })
       continue
@@ -124,7 +132,9 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
       for (const { slug, problem } of result.problems) console.log(`   ${slug}: ${problem}`)
     }
     if (result.pending.length) {
-      console.log('\nRun `pnpm translate` (or /translate-articles in Claude Code) to write the missing versions.')
+      console.log(
+        '\nRun `pnpm translate` (or /translate-articles in Claude Code) to write the missing versions.',
+      )
     }
   }
 

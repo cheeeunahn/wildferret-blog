@@ -62,12 +62,21 @@ export function formatInline(text: string): string {
       const safeHref = toSafeHref(href)
       return `<a href="${safeHref}" class="text-accent underline underline-offset-4 decoration-accent/35 hover:text-accent-strong hover:decoration-accent/70 transition-colors">${label}</a>`
     })
-    .replace(/`(.+?)`/g, (_, code: string) => `<code class="px-1.5 py-0.5 bg-ink-50 rounded text-[14px] font-mono text-copper">${code}</code>`)
+    .replace(
+      /`(.+?)`/g,
+      (_, code: string) =>
+        `<code class="px-1.5 py-0.5 bg-ink-50 rounded text-[14px] font-mono text-copper">${code}</code>`,
+    )
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
 }
 
 function escapeHtml(value: string): string {
-  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
 }
 
 function toSafeHref(href: string): string {

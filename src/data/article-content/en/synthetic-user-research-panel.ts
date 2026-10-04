@@ -1,30 +1,30 @@
-export const syntheticUserResearchPanelContentEn = `Product design repeatedly raises two questions: how might users respond to a screen, and how might they interpret a concept? Direct research with participants remains the most reliable means of answering both. When immediate recruitment is infeasible, however, an interim method may help identify issues and formulate hypotheses for subsequent validation. The project described here was developed with a frontend platform engineer for that purpose.
+export const syntheticUserResearchPanelContentEn = `When working on design or product planning, I repeatedly encounter the same questions: “How will real users feel about this screen? What will they think when they see this concept?” The surest way to find out is to meet users directly, whether through usability testing or another form of research. Yet there are times when, for unavoidable reasons, there is simply no capacity to recruit users. For those occasions, I worked with an exceptionally talented frontend platform engineer on a tool that could help.
 
-The result is a **synthetic user panel**: a set of virtual personas grounded in prior user research that can provide preliminary responses to a screen or concept. It is not a substitute for research with people.
-
----
-
-## Project origin and initial prototype
-
-The initial prototype accepted a screenshot or Figma link and a brief description of the context. Several synthetic personas then responded in distinct voices, reporting a first impression, potentially confusing wording, and a trust score.
-
-![A presentation slide showing the four MVP screens, from upload through to report](/assets/images/synthetic-user-research-panel-challenge-mvp-slide.webp)
-
-Following the hackathon, the prototype was refined through demonstrations to product designers and structured feedback sessions.
+That tool is a **synthetic user panel**: it shows a screen first to virtual users created from user research data, rather than to real users.
 
 ---
 
-## Evidential basis for persona construction
+## It began as a hackathon idea
 
-The personas were constructed in two stages. Demographic data established each profile's basic characteristics, while prior research supplied service-specific attitudes and observed patterns.
+The idea began as a simple tool: provide a screenshot or Figma link and a one-line description of the context, and several synthetic personas would view the screen and respond in their own voices. After a screenshot was uploaded, each persona would give a first impression, flag wording that gave them pause, and provide a trust score.
 
-**① Population data.** NVIDIA's publicly available Nemotron-Personas-Korea dataset was used to establish profile attributes such as age, occupation, region, education, and household composition. These attributes provide demographic coverage; they do not make any individual persona statistically representative.
+![A presentation slide showing the four minimum viable product (MVP) screens, from upload through to report](/assets/images/synthetic-user-research-panel-challenge-mvp-slide.webp)
 
-**② Empirical user-research data.** The profiles were then supplemented with research accumulated by the service: nearly one hundred usability tests, in-depth interviews, concept tests, surveys, and weekly voice-of-customer analyses conducted over several years.
+It seemed too valuable to leave behind as a hackathon project, so after the challenge ended, the engineer and I continued refining it, showing it to product designers and gathering their feedback.
 
-Because the material was distributed across PDFs, slide decks, and transcripts, it could not be used directly. The research was first [reorganised as a wiki structured for LLM access](/en/article/research-wiki-for-llm), from which persona attributes were derived. These included income structure, service comprehension, mental model, digital literacy, cost sensitivity, trust posture, and anticipated friction points. Each persona contained more than ten such attributes, all linked to existing evidence rather than inferred merely to complete the profile.
+---
 
-The following abbreviated example shows the structure of one persona.
+## Grounding the personas in evidence
+
+The personas were created in two stages. Demographic data provided a broad outline of “who this person is,” while research data supplied the details of “how this person actually responds.”
+
+**① Statistically representative demographic data.** I used NVIDIA's Nemotron-Personas-Korea, a public synthetic-persona dataset based on Korean demographic statistics, to establish basic profile attributes such as age, occupation, region, education level, and household composition.
+
+**② Directly observed behavioural data.** I then layered in the user experience (UX) research accumulated within our service: nearly one hundred usability tests, in-depth interviews, concept tests, surveys, and weekly voice-of-customer (VOC) analyses conducted over several years.
+
+Because this material was scattered across PDFs, presentation decks, and transcripts, it could not be used as it was. I first [organised the research into a wiki that a large language model (LLM) could read](/en/article/research-wiki-for-llm), then used that wiki to populate the persona attributes. These included income structure, service comprehension, mental model, digital literacy, cost sensitivity, trust posture, and anticipated friction points. Each persona required more than ten attributes, and the wiki meant that I did not have to fill those fields from imagination.
+
+The following abbreviated example illustrates the structure of a single persona.
 
 ~~~json
 {
@@ -53,7 +53,7 @@ The following abbreviated example shows the structure of one persona.
 }
 ~~~
 
-Metadata were also recorded at the panel level.
+I also devoted considerable attention to the persona metadata.
 
 ~~~json
 {
@@ -77,25 +77,25 @@ Metadata were also recorded at the panel level.
 }
 ~~~
 
-\`framework\` defines vocabulary shared across the panel, \`demographic_basis\` records the observed distribution of sign-ups, and \`evidence_caveats\` documents limitations in the underlying research. The file also specifies that the system must not infer persona attributes in areas unsupported by a study.
+\`framework\` defines the vocabulary shared across the panel, \`demographic_basis\` records the actual gender and age distribution of registered users, and \`evidence_caveats\` documents the limitations of the research used as evidence. The file also establishes that areas for which no research exists must not be synthesised into the personas.
 
 ---
 
-## Prompt architecture
+## The three prompts
 
-**The persona prompt.** This prompt asks the model to respond to a screen from the persona's perspective. In addition to the profile, it supplies fourteen attributes derived from user research, including mental model, cost sensitivity, reading and scrolling behaviour, trust posture, and recurring sources of difficulty.
+**The persona prompt.** Its role is to respond to the screen “as this person.” In addition to the persona profile, the prompt injects fourteen attributes drawn from actual user research, including mental model, cost sensitivity, how the person reads a screen, scrolling tendencies, trust posture, and likely sticking points.
 
-The prompt evaluates four dimensions: wording, dark patterns, emotion, and usability. Internal UX-writing principles, dark-pattern guidance, and ten established usability heuristics provide evaluation criteria. The generated response does not cite these frameworks; it describes the resulting experience in ordinary language—for example, “Where is the button to turn this off?” rather than “This is a dark pattern.”
+There are four assessment dimensions: wording (UX writing), dark patterns, emotion, and usability. Behind them are hidden evaluation criteria drawn from internal UX-writing principles, internal dark-pattern guidelines, and ten widely used usability principles. The persona knows these principles but never cites them, speaking only about how the interface feels. For example, the response says, “Where is the button to turn this off?” rather than, “This is a dark pattern.”
 
-To model register, recurring linguistic features were identified in more than one hundred thousand survey comments from the service, including brief answers, spacing errors, typographical errors, and inconsistent sentence endings. The prompt uses these features to avoid producing polished report prose that would be uncharacteristic of the source responses.
+I paid close attention to the voice as well. From well over one hundred thousand responses to service surveys, I extracted patterns such as short, clipped answers, missing spaces and typographical errors, and mixed sentence endings, then instructed the personas to imitate them. If the output reads like polished report prose, it does not sound like a user.
 
-The prompt also guards against forced criticism. Each item defaults to “fine,” and a negative response should appear only when the persona identifies a specific problem. The output contains five categories—first impression, problematic wording, dark patterns, heuristic issues, and emotion—along with trust and usefulness scores.
+There is one further rule: the persona must not find fault with a perfectly sound screen merely to fill every field. The default for every category is “fine,” and the response should be negative only when something is clearly bothersome. The output is fixed at five categories, first impression, problematic wording, dark patterns, heuristics, and emotion, together with two scores for trust and usefulness.
 
-**The heuristic-evaluation prompt.** This separate prompt adopts an expert register, assesses the screen against ten usability heuristics, and records supporting evidence and potential improvements. It may cite only visible interface elements. Items that cannot be assessed from a screenshot receive no score. Keeping this stage separate prevents persona reactions from being conflated with an expert evaluation.
+**The heuristic-evaluation prompt.** This prompt uses an expert voice and is entirely separate from the persona evaluation. It scores the screen against ten usability principles and records the evidence and suggested improvements. The evidence may cite only elements actually visible on the screen. If an item cannot be judged from the screenshot alone, the prompt leaves it blank instead of forcing a score. I separated the two evaluations completely so that the persona's emotional response would not become mixed with the expert's dispassionate assessment.
 
-**The report-generation prompt.** This prompt consolidates responses from multiple personas. The summary groups only claims made by the panel; recommendations appear in a separate final section and must be supported by the preceding evidence.
+**The report-generation prompt.** Its role is to consolidate multiple personas' responses into a single summary. The summary section only groups and organises what the panel said. Suggestions for improvement appear only in the final section, and the prompt must not invent new claims without evidence.
 
-The following excerpts show the principal constraints in each prompt:
+The following excerpts show a few of the decisive passages from the actual prompts:
 
 ~~~
 [ PERSONA ROLEPLAY PROMPT ] excerpt
@@ -146,25 +146,25 @@ The following excerpts show the principal constraints in each prompt:
 
 ---
 
-## Observed uses
+## Seeing how people actually used it
 
-An examination of the available call logs identified twenty-seven distinct use contexts. Fifteen involved screen evaluation; the remainder involved concept evaluation without a screen or follow-up questions. These descriptive counts characterise early use of the tool and should not be interpreted as a representative study of product-design practice.
+When I opened the call logs, I found many contexts I had never anticipated. Reviewing the queries revealed twenty-seven distinct contexts. Just over half, fifteen, involved screen evaluation; the remainder involved concept validation without a screen or follow-up questions.
 
-Requests fell into five broad categories.
+The subjects of the requests varied widely.
 
-- **Single-screen evaluation**: examples included the initial home screen, a redesigned step counter, a new-user attendance event, and an entry screen reached through a notification
-- **Evaluation of a specific point in a flow**: users supplied the preceding interaction path, such as completing a filing process before reaching a confirmation screen
-- **Pre-interface concept evaluation**: these requests accounted for approximately one-third of calls and occurred during specification, before a Figma design existed
-- **Specification-level evaluation**: some users supplied a complete draft product-requirements document
-- **Follow-up inquiry**: users asked whether the context was comprehensible or what the persona expected to occur after selecting an interface element
+- **A single screen**: the home screen on first opening the app, a redesigned step counter, an attendance event for new users, or an entry screen reached through a notification message
+- **A particular point in a flow**: the requester also described the path that brought the user to the screen, such as, “I have just finished filing and reached the completion screen”
+- **A concept with no screen yet**: “We are considering adding a feature like this. What do you think?” These accounted for roughly one in three calls. People used the panel to expose an idea to scrutiny at the planning-document stage, before it had even reached Figma
+- **An entire planning document**: one person pasted in a complete draft product requirements document (PRD) and asked for reactions. I had never imagined the tool being used this way
+- **A deeper follow-up**: “Did you understand the overall context, and was it difficult?” or “What do you think will happen if you press this button?”
 
-The prototype was designed for screenshot evaluation, but actual use extended from reviewing draft specifications to checking individual lines of entry-point copy.
+I had built “a tool in which personas respond to a screenshot,” but people were using it both to review early planning drafts and to check a single line of entry-point copy. I found that fascinating.
 
 ---
 
-## Worked example: evaluation of an attendance-reward screen
+## Example: evaluating an attendance-event screen
 
-The following example is adapted from an observed workflow. Input typically consists of two elements: the path by which the user reached the screen and the purpose of the screen.
+The following example is adapted from an actual workflow. The input is usually two lines: how the user encountered the screen and what the screen is.
 
 ~~~
 Context: Arrived by tapping the [Check in and get a coffee coupon] banner at the top of home
@@ -173,7 +173,7 @@ Screen:  Attendance reward screen shown to new users.
 + 1 screenshot
 ~~~
 
-Three panel members produced the following responses.
+Placing the responses from three panel members side by side produces the following result.
 
 ~~~
 [ A ]  Trust 9/10 · Useful 10/10
@@ -197,15 +197,15 @@ Three panel members produced the following responses.
   Emotion           Disappointed: "Even the event is twisted like this, it's annoying"
 ~~~
 
-Usefulness scores ranged from 2 to 10, but all three responses addressed the same discrepancy: the entry banner promised a coffee coupon for checking in, while the event screen required ten stamps. Persona A accepted the discrepancy, Persona B described it as “slightly deceiving,” and Persona C called it “a trick.”
+The usefulness scores diverged sharply, at 10 and 2, but all three personas identified the same issue. The banner said, “Check in and get a coffee coupon,” while the screen revealed a requirement to collect ten stamps. Persona A merely overlooked the gap; Persona B felt “slightly deceived,” and Persona C called it “a trick.”
 
-The evaluator can then direct a follow-up question to a specific persona—for example, asking Persona C how the banner could state the condition more clearly—and receive a response in the same register.
+It is also possible to select a specific persona and explore the issue further. If I ask Persona C, “Then how should we change the banner wording so that it does not feel like bait?” the reply continues in that persona's voice.
 
 ---
 
-## Appendix: institutional context
+## Appendix: where the project began
 
-The tool originated during the second day of an internal “AI Week.” Approximately forty teams and more than eighty participants took part voluntarily, with developers and non-developers forming teams to address workplace problems within one day. The winning project was an internal communication platform that used retrieval-augmented generation (RAG) to answer questions about company policies and announcements.
+The internal artificial intelligence (AI) challenge that gave rise to this tool was held on the second day of the company's “AI Week.” Approximately forty teams and more than eighty people participated voluntarily. Developers and non-developers formed teams to solve problems of their choosing within a single day. The winning project was an internal communication platform that used retrieval-augmented generation (RAG) to learn from company policies and announcements and answer employees' questions conversationally.
 
 - [3o3 holds "AI Week", accelerating its AI-native transition (2026.06.29)](https://blog.3o3.co.kr/260629-news/)
 - [Jobis&Villains' AI voyage has begun (2026.07.10)](https://blog.3o3.co.kr/culture-ai-week/)`

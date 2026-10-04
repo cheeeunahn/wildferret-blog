@@ -1,30 +1,30 @@
 export const researchWikiForLlmContentEn = `
 
-Over the past eighteen months, our user-research archive had grown to include usability tests, in-depth interviews, concept tests, surveys, and weekly voice-of-customer (VOC) analyses. The material was distributed across PDFs, slide decks, transcripts, Markdown files, and Confluence pages; a single study could span dozens of pages.
+I often need to revisit the user research accumulated over the past eighteen months: usability tests, in-depth interviews, concept tests, surveys, and weekly voice-of-customer (VOC) analyses. When I opened the folder, I found a jumble of PDFs, slide decks, text transcripts, Markdown files, and Confluence pages. Some individual studies ran to dozens of pages.
 
 ![Illustration of a person holding a single sheet of paper, looking lost in front of a desk piled high with research documents](/assets/images/research-wiki-for-llm-scattered-files.webp "Files of every format and length, stacked up in one folder exactly as they landed (AI-generated)")
 
-The archive was difficult to review manually and too large to provide to an LLM in full. It was therefore reorganised as a wiki designed for efficient human and machine reading.
+There was too much material to read through in full, yet it was also too large to feed wholesale into a large language model (LLM). I therefore decided to organise it into a wiki that an LLM could read quickly and easily.
 
 ---
 
-## Conceptual foundations: Open Knowledge Format and the LLM Wiki
+## Open Knowledge Format and the LLM Wiki
 
-The design draws on two proposed formats for LLM-based knowledge systems.
+My highly capable team lead recently introduced me to two document formats designed specifically for LLMs.
 
-The first is Google's **[Open Knowledge Format](https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing)**. Its premise is that shared conventions can be more useful than another knowledge-management service. Each Markdown file represents one concept; YAML frontmatter supplies minimal metadata, with document type as the only required field. File paths encode the hierarchy, and Markdown links form the graph. The format requires neither a vector database nor an SDK, so people and agents can read the same files.
+The first is Google's **[Open Knowledge Format](https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing)**. The idea is to define a format rather than build yet another service for storing knowledge. Each Markdown file represents one concept. YAML front matter controls only a minimum set of metadata, while authors decide everything else. Document type is the sole required field. File paths create the hierarchy, and Markdown links form the graph. Without a vector database or software development kit (SDK), people and agents can read the same files.
 
-The second is Andrej Karpathy's **[LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)** proposal. Rather than retrieving fragments from the source material for every query, an LLM maintains the wiki itself: it incorporates new material, updates existing pages, preserves cross-references, and flags contradictions.
+The second is Andrej Karpathy's **[LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)** note. Instead of retrieving chunks from the original material for every question, an LLM continually revises the wiki. When new material arrives, it reads it, updates existing pages, maintains cross-references, and flags any contradictions it finds.
 
 ---
 
 ## Document architecture
 
-The system has three layers. Original research remains in an immutable source layer. A curated wiki sits above it, while a schema document defines the wiki's structure and maintenance rules.
+I began by defining the hierarchy. The original research data occupies an immutable layer and is never altered. Above it sits the organised wiki layer, with a schema document at the top defining its structure and rules.
 
-**Sources** provide one summary page for each original study. **Entities** denote the subjects of research, such as a service or feature. **Concepts** capture patterns that recur across multiple studies. Ordinary Markdown links connect the pages.
+A **source** is a single summary page for one original study. An **entity** is something examined by the research, such as a service or feature. A **concept** is a recurring pattern that appears across multiple studies. The pages are connected with ordinary Markdown links.
 
-Each page begins with YAML frontmatter. The document type is restricted to one of fourteen values; all other fields are optional. The body follows a fixed structure: a table recording the method, sample size, and fieldwork date; a list of key findings; and links to related pages. Consequently, each page can function as a self-contained retrieval unit.
+Every page begins with YAML front matter. The document type is restricted to one of fourteen values, while all other fields are optional. The body structure is also fixed: a table containing the research method, sample size, and timing; a list of key findings; and links to related pages, in that order. With this structure, each page serves as a single chunk in its own right.
 
 The architecture can be represented as follows.
 
@@ -69,14 +69,14 @@ The architecture can be represented as follows.
 ~~~
 
 
-Every quotation is accompanied by the research method and sample size, and each concept page records the number of studies that support the concept.
+Every quotation includes the research method and sample size, and each concept page states how many pieces of evidence support that concept.
 
-Each VOC quotation includes the identifier of the original response, enabling statements to be traced to their source.
+Each VOC quotation includes the original response identifier, making it possible to trace any statement back to the source.
 
-A pattern observed in only one study is not registered as a concept. Because readers and agents may interpret a concept page as established knowledge, a single observation remains on its source page until a subsequent study corroborates it.
+A pattern supported by only one piece of evidence is not registered as a concept. Once something is elevated to a concept page, both the next person and the next agent to read it may accept it as something "we know." I leave it on the source page for the time being and promote it to a standalone concept only when a later study confirms it again.
 
 ---
 
-The wiki is updated whenever new research becomes available. In practice, this has substantially reduced the time required to locate earlier findings across Slack, Google Docs, and Confluence.
+I update the research wiki whenever new material becomes available. I no longer spend more than thirty minutes rummaging through Slack, Google Docs, Confluence, and other tools for a single research insight, thinking, "I am sure we looked into that last year."
 
 `

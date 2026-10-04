@@ -24,23 +24,19 @@ const strings = t(locale.lang)
       rather than bled to its edges — flush, it read as a second panel welded
       on rather than as an element of the card. The row collapses to a stack
       under sm, where a square would eat half the card. */}
-  <article
-    class="article-card rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row gap-4 sm:gap-5"
-  >
-    {
-      article.cardImage && (
-        <div class="article-thumb shrink-0 overflow-hidden rounded-lg sm:w-[168px] sm:self-center">
-          <img
-            src={resolveAssetUrl(article.cardImage)}
-            alt=""
-            aria-hidden="true"
-            loading="lazy"
-            decoding="async"
-            class="w-full h-40 object-contain sm:h-auto sm:aspect-square sm:object-cover"
-          />
-        </div>
-      )
-    }
+  <article class="article-card rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row gap-4 sm:gap-5">
+    {article.cardImage && (
+      <div class="article-thumb shrink-0 overflow-hidden rounded-lg sm:w-[168px] sm:self-center">
+        <img
+          src={resolveAssetUrl(article.cardImage)}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          decoding="async"
+          class="w-full h-40 object-contain sm:h-auto sm:aspect-square sm:object-cover"
+        />
+      </div>
+    )}
 
     {/* Padding here plus the card's own adds up to the 24/28px the card used
         to carry on its own, so the text block sits where it always did. */}
@@ -53,16 +49,12 @@ const strings = t(locale.lang)
       </div>
 
       {/* Title */}
-      <h2
-        class="text-xl sm:text-[22px] font-semibold text-ink-900 leading-snug tracking-tight mb-2 group-hover:text-ink-600 transition-colors"
-      >
+      <h2 class="text-xl sm:text-[22px] font-semibold text-ink-900 leading-snug tracking-tight mb-2 group-hover:text-ink-600 transition-colors">
         {article.title}
       </h2>
 
       {/* Subtitle */}
-      <p class="text-[15px] text-ink-600 leading-relaxed line-clamp-2">
-        {article.subtitle}
-      </p>
+      <p class="text-[15px] text-ink-600 leading-relaxed line-clamp-2">{article.subtitle}</p>
 
       {/* Read time */}
       <div class="mt-4 flex items-center gap-2 text-xs text-ink-500">

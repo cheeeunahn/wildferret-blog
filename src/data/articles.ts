@@ -11,35 +11,48 @@ export const articles: Article[] = [
     readMinutes: 12,
     category: 'Research',
     cardImage: '/assets/images/synthetic-user-reading-card.webp',
-    loadContent: () => import('./article-content/synthetic-user-reading').then(({ syntheticUserReadingContent }) => syntheticUserReadingContent),
+    loadContent: () =>
+      import('./article-content/synthetic-user-reading').then(
+        ({ syntheticUserReadingContent }) => syntheticUserReadingContent,
+      ),
     translations: {
       en: {
         title: 'Can synthetic users replace user research with real people?',
         subtitle:
           'The synthetic user literature I went looking for while building a virtual research panel',
-        loadContent: () => import('./article-content/en/synthetic-user-reading').then(({ syntheticUserReadingContentEn }) => syntheticUserReadingContentEn),
+        loadContent: () =>
+          import('./article-content/en/synthetic-user-reading').then(
+            ({ syntheticUserReadingContentEn }) => syntheticUserReadingContentEn,
+          ),
       },
     },
   },
   {
     slug: 'mgs-2026-play-hall',
     title: 'MGS 2026에서 들은 5가지 세션 요약해보기',
-    subtitle: '구독 결제, AI가 인용하는 브랜드, 게임 마케팅, 가상자산 광고, 그리고 AI로 일하는 방식',
+    subtitle:
+      '구독 결제, AI가 인용하는 브랜드, 게임 마케팅, 가상자산 광고, 그리고 AI로 일하는 방식',
     date: '2026.08.18',
     readMinutes: 12,
     category: 'Conference',
     cardImage: '/assets/images/mgs-2026-play-hall-card.webp',
-    loadContent: () => import('./article-content/mgs-2026-play-hall').then(({ mgs2026PlayHallContent }) => mgs2026PlayHallContent),
+    loadContent: () =>
+      import('./article-content/mgs-2026-play-hall').then(
+        ({ mgs2026PlayHallContent }) => mgs2026PlayHallContent,
+      ),
     translations: {
       en: {
         title: 'Five sessions I sat in on at MGS 2026',
         subtitle:
           'Subscription payments, the brands AI cites, game marketing, crypto ads, and working with AI',
-        loadContent: () => import('./article-content/en/mgs-2026-play-hall').then(({ mgs2026PlayHallContentEn }) => mgs2026PlayHallContentEn),
+        loadContent: () =>
+          import('./article-content/en/mgs-2026-play-hall').then(
+            ({ mgs2026PlayHallContentEn }) => mgs2026PlayHallContentEn,
+          ),
       },
     },
   },
-  {
+  /* {
     slug: 'research-wiki-for-llm',
     title: 'LLM 유저 리서치 위키 만들기',
     subtitle: '방대한 유저 리서치 자료를 한 곳에, AI 에이전트가 이해하기 쉬운 방식으로 정리하기',
@@ -73,7 +86,7 @@ export const articles: Article[] = [
         loadContent: () => import('./article-content/en/synthetic-user-research-panel').then(({ syntheticUserResearchPanelContentEn }) => syntheticUserResearchPanelContentEn),
       },
     },
-  },
+  },*/
   {
     slug: 'ai-git-101-for-designers',
     title: 'AI는 신이 아니고, 그저 확률 기반으로 움직이는 똑똑한 시스템일 뿐',
@@ -82,12 +95,18 @@ export const articles: Article[] = [
     date: '2026.04.23',
     readMinutes: 7,
     category: 'Personal',
-    loadContent: () => import('./article-content/ai-git-101-for-designers').then(({ aiGit101ForDesignersContent }) => aiGit101ForDesignersContent),
+    loadContent: () =>
+      import('./article-content/ai-git-101-for-designers').then(
+        ({ aiGit101ForDesignersContent }) => aiGit101ForDesignersContent,
+      ),
     translations: {
       en: {
         title: 'AI is not a god — just a clever system running on probabilities',
         subtitle: 'Notes from preparing an AI 101 session for product designers',
-        loadContent: () => import('./article-content/en/ai-git-101-for-designers').then(({ aiGit101ForDesignersContentEn }) => aiGit101ForDesignersContentEn),
+        loadContent: () =>
+          import('./article-content/en/ai-git-101-for-designers').then(
+            ({ aiGit101ForDesignersContentEn }) => aiGit101ForDesignersContentEn,
+          ),
       },
     },
   },

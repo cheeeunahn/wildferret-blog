@@ -3,13 +3,29 @@
 # Skip a run with `git commit --no-verify` or `LEFTHOOK=0 git push`.
 
 pre-commit:
-  parallel: true
+  # piped, not parallel: both jobs rewrite files, so prettier runs after
+  # eslint --fix instead of racing it for the same staged files.
+  piped: true
   jobs:
     - name: eslint
       glob: '*.{js,mjs,ts,tsx,astro}'
       run: pnpm exec eslint --fix --no-warn-ignored {staged_files}
       # --fix rewrites files behind git's back, so re-stage what it touched.
       stage_fixed: true
+    - name: prettier
+      glob: '*.{js,mjs,ts,tsx,astro,css,json,jsonc,md,yml,yaml}'
+      run: pnpm exec prettier --write --ignore-unknown {staged_files}
+      stage_fixed: true
+
+post-commit:
+  jobs:
+    # Commit a Korean article and its English version follows as a second
+    # commit. The script checks what HEAD touched and what translation-status
+    # reports, so a commit with nothing to translate returns instantly. It
+    # guards its own translation commit, and rebases/merges, against re-running.
+    # Skip one commit with AUTO_TRANSLATE=0.
+    - name: auto-translate
+      run: node scripts/auto-translate.mjs
 
 pre-push:
   jobs:
