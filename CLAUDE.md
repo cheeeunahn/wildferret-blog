@@ -13,6 +13,8 @@ pnpm test      # unit tests for the article-content parser
 pnpm translation:status  # which articles have no English version yet
 pnpm translate           # write the missing English versions (opens Claude Code)
 pnpm astro     # the Astro CLI directly
+pnpm astryx component <Name>  # Astryx component API docs — look props up here, don't guess
+pnpm theme:build              # rebuild src/styles/astryx/wildferret.theme.css after editing the theme
 ```
 
 Vitest (`vitest.config.ts`) runs `src/**/*.test.ts`, `eslint-rules/*.test.js`, and `scripts/*.test.js`. No single-file build commands.
@@ -21,7 +23,7 @@ Astro 7 requires **Node 22.12+**; pnpm 10 is pinned via `packageManager`.
 
 ## Architecture
 
-**Stack:** Astro 7 (static output + one on-demand route, `@astrojs/cloudflare` adapter), React 19 islands, TypeScript 5 (strict), Tailwind CSS 4 (`@tailwindcss/vite`)
+**Stack:** Astro 7 (static output + one on-demand route, `@astrojs/cloudflare` adapter), React 19 islands, TypeScript 5 (strict), Tailwind CSS 4 (`@tailwindcss/vite`), Astryx design system (`@astryxdesign/core`, pinned — see Design Tokens)
 
 Every page is prerendered to a real HTML file at build time. The one exception is `src/pages/api/comments.ts` (`prerender = false`), which runs as Worker code — see Comments. There is no client-side router.
 
@@ -63,9 +65,11 @@ The import rules, enforced by `local/no-cross-layer-import` (zones in `eslint-ru
 This is the rule that is easiest to break by accident.
 
 - Pages, the layout, and `ArticleCard.astro` are `.astro` and ship **zero** JavaScript.
-- There are exactly **three** hydrated islands, and they hydrate differently on purpose:
+- Astryx components (`Heading`, `Text`, `Card`, `Table`, …) are React, but used in `.astro` **without** `client:*` they render to static HTML and ship nothing. Only use display components that way; anything needing a click handler would render dead (switch such features off — `CodeBlock hasCopyButton={false}`, `Text hasTruncateTooltip={false}`). Interactive Astryx controls belong inside a listed island only (see below). Importing one into `ThemeToggle` would put Astryx's ~31 KB button chunk on every page, which is why that toggle stays a native `<button>`.
+- There are exactly **four** hydrated islands, and they hydrate differently on purpose:
   - `src/components/ThemeToggle.tsx` — `client:only="react"`, because it reads `document.documentElement` in a `useState` initializer, which has no server equivalent. Its fixed-size wrapper in `Base.astro` reserves layout space so the header does not shift on mount.
   - `src/components/Comments.tsx` — `client:visible` in `ArticleView.astro` (so all three language trees get it from one place). It has no server-hostile code, so the shell prerenders and the React runtime downloads only once a reader scrolls to the bottom of an article. Article pages keep a zero-JS first paint. Do not "simplify" this to `client:load`, which would ship React to every article on load.
+  - `src/components/CategoryFilter.tsx` — `client:load` in `HomeView.astro`. The home page's Astryx `SegmentedControl`. It does not render the cards (they are static HTML outside it); it only sets `data-filter` on `.cat-scope`, and per-category rules generated in `HomeView.astro` hide non-matching cards. With no JS, every post stays visible. Costs the home page ~29 KB gzipped (its own chunk plus an Astryx chunk it shares with Comments); React itself was already there for ThemeToggle.
   - `src/components/AiSummary.tsx` — `client:summarizer`, a custom directive (`src/directives/summarizer.ts`, registered in `astro.config.mjs`). The button sits in the article header, which is in view on load, so `client:visible` would ship React to every article view — mostly to readers whose browser cannot run it. The directive hydrates only where Chrome's built-in Prompt API (`LanguageModel`) exists; everyone else downloads neither the island nor React. See AI Summary below.
 - The allowlist for the above lives in `eslint.config.js` (the `allow` option on `local/no-unlisted-island`), not in the rule file.
 
@@ -175,7 +179,11 @@ The "AI로 요약하기 / Summarize with AI" button in the article header summar
 
 ## Design Tokens
 
-`src/styles/global.css` holds the Tailwind entry (`@import "tailwindcss"`), the Nanum `@font-face` declarations, and an `@theme` block defining a custom ink/paper token scale (e.g. `text-ink-900`, `bg-paper-warm`). Dark mode is a `.dark` class on `<html>` that reassigns the same tokens, which is why almost nothing in the codebase needs a `dark:` variant. Stick to the existing token names — don't introduce arbitrary hex colors or raw Tailwind palette colors.
+The site uses **Astryx's default color system** and Astryx typography (ADR 0002, TRD in `docs/trd/astryx-design-system.md`). `<html data-astryx-theme="wildferret">` in `Base.astro` applies the theme page-wide; the theme (`src/styles/astryx/wildferretTheme.ts`, built with `pnpm theme:build`, output committed) only swaps in NanumBarunGothic — it sets no colors.
+
+`src/styles/global.css` holds the layered imports (Tailwind theme/preflight/utilities around Astryx `reset.css` + `astryx.css` + the built theme — the `@layer` order is deliberate, see its comment), the Nanum `@font-face` declarations, and an `@theme` block in which the old token names (`text-ink-900`, `bg-paper-warm`, …) are **aliases of Astryx semantic tokens** (`--color-text-primary`, `--color-background-muted`, …). Astryx defines those with `light-dark()`, driven by `color-scheme` (set by the pre-paint script along with `data-theme`), so there is no dark palette to maintain and almost nothing needs a `dark:` variant. `--color-accent` is Astryx's own name: it lives in `@theme reference inline`, never in `@theme` (that would be a self-reference cycle). To change a color, change which Astryx role it maps to — don't add hex values. Astryx's `tailwind-theme.css` bridge is not imported; its names clash with ours.
+
+**Astryx only.** Use only Astryx's colors, tokens and components: an Astryx component where one exists, an Astryx semantic token (or one of the aliases above) for any color, never a raw hex/`rgb()`, a stock Tailwind palette class, or a new token of our own. The old `local/no-raw-colors` rule enforced the ink/paper palette and was retired with it (ADR 0002), so this is a review rule, not a lint error. Two deliberate exceptions in `global.css` keep raw colors: the hero fireflies' glow (`.hero-firefly`), because a warm light source has no Astryx role, and `--color-thumb-plate: #ffffff`, the white behind card illustrations, which must stay white in dark mode too and Astryx has no theme-fixed white.
 
 Entrance motion: `.page-enter` on each page's wrapper plus `.animate-reveal` (and the `.delay-*` scale) on its children. The `.boot-shell` / `.boot-header` keyframes are leftovers from the SPA and are deliberately unused — applying them to the layout chrome would replay the header animation on every navigation.
 
@@ -253,13 +261,12 @@ Article bodies are template literals, which Prettier leaves alone, so formatting
 
 `pnpm lint` runs ESLint over `src/**/*.{ts,tsx}` **and** `src/**/*.astro`. Alongside the published rule sets, `eslint-rules/` is a repo-local plugin (registered as `local` in `eslint.config.js`) that turns the conventions above into errors:
 
-| Rule                           | Scope          | Enforces                                                                                                                                                            |
-| ------------------------------ | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `local/no-bare-internal-href`  | ts, tsx, astro | Linking — no bare `href="/about"` / `src="/assets/…"`, no hardcoded base prefix in any string (this half also reaches markdown links inside `article-content/*.ts`) |
-| `local/no-raw-colors`          | ts, tsx, astro | Design Tokens — no stock Tailwind palette classes, no hex/`rgb()` in `class`/`style`/`fill`/`stroke`                                                                |
-| `local/no-unlisted-island`     | astro          | Islands policy — `client:*` only on `<ThemeToggle>`, `<Comments>` and `<AiSummary>` (allowlist is the rule's `allow` option, set in `eslint.config.js`)             |
-| `local/no-unescaped-user-html` | ts, tsx        | Comments — no `dangerouslySetInnerHTML`; no importing `formatInline` (from `content/parser`) into `src/components/`                                                 |
-| `local/no-cross-layer-import`  | ts, tsx, astro | Layers — the import rules above (zones in `eslint-rules/layer-zones.js`)                                                                                            |
+| Rule                           | Scope          | Enforces                                                                                                                                                                    |
+| ------------------------------ | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `local/no-bare-internal-href`  | ts, tsx, astro | Linking — no bare `href="/about"` / `src="/assets/…"`, no hardcoded base prefix in any string (this half also reaches markdown links inside `article-content/*.ts`)         |
+| `local/no-unlisted-island`     | astro          | Islands policy — `client:*` only on `<ThemeToggle>`, `<Comments>`, `<CategoryFilter>` and `<AiSummary>` (allowlist is the rule's `allow` option, set in `eslint.config.js`) |
+| `local/no-unescaped-user-html` | ts, tsx        | Comments — no `dangerouslySetInnerHTML`; no importing `formatInline` (from `content/parser`) into `src/components/`                                                         |
+| `local/no-cross-layer-import`  | ts, tsx, astro | Layers — the import rules above (zones in `eslint-rules/layer-zones.js`)                                                                                                    |
 
 **Adding a rule:** write `eslint-rules/<name>.js` exporting the standard `{ meta, create }` object (plain ESM, no build step), register it in `eslint-rules/index.js`, enable it in the right block of `eslint.config.js`, and add `RuleTester` cases to `eslint-rules/rules.test.js` — `pnpm test` runs those alongside the unit tests.
 

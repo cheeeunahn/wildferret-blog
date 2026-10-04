@@ -15,17 +15,22 @@
     "translate": "claude \"/translate-articles\"",
     "mint:api-jwt": "node scripts/mint-api-jwt.mjs",
     "astro": "astro",
+    "astryx": "node node_modules/@astryxdesign/cli/clients/cli/bin/astryx.mjs",
+    "theme:build": "pnpm astryx theme build src/styles/astryx/wildferretTheme.ts --out src/styles/astryx/wildferret.theme.css",
     "prepare": "lefthook install"
   },
   "dependencies": {
     "@astrojs/cloudflare": "14.2.6",
     "@astrojs/react": "6.0.2",
+    "@astryxdesign/core": "0.6.5",
+    "@stylexjs/stylex": "0.19.1",
     "astro": "7.2.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@astryxdesign/cli": "0.6.5",
     "@eslint/js": "^9.39.4",
     "@tailwindcss/vite": "^4.2.2",
     "@types/dom-chromium-ai": "^0.0.17",

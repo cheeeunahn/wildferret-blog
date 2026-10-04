@@ -3,6 +3,11 @@ import type { LocalizedArticle } from '../content/service'
 import { localeHref, type Locale } from '../shared/i18n'
 import { t } from '../copy/strings'
 import { resolveAssetUrl } from '../shared/assetUrl'
+import { Badge } from '@astryxdesign/core/Badge'
+import { Card } from '@astryxdesign/core/Card'
+import { Divider } from '@astryxdesign/core/Divider'
+import { Heading } from '@astryxdesign/core/Heading'
+import { Text } from '@astryxdesign/core/Text'
 
 interface Props {
   article: LocalizedArticle
@@ -24,55 +29,61 @@ const strings = t(locale.lang)
       rather than bled to its edges — flush, it read as a second panel welded
       on rather than as an element of the card. The row collapses to a stack
       under sm, where a square would eat half the card. */}
-  <article class="article-card rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row gap-4 sm:gap-5">
-    {article.cardImage && (
-      <div class="article-thumb shrink-0 overflow-hidden rounded-lg sm:w-[168px] sm:self-center">
-        <img
-          src={resolveAssetUrl(article.cardImage)}
-          alt=""
-          aria-hidden="true"
-          loading="lazy"
-          decoding="async"
-          class="w-full h-40 object-contain sm:h-auto sm:aspect-square sm:object-cover"
-        />
-      </div>
-    )}
+  {/* Astryx Card, rendered to static HTML. The padding and the row layout stay
+      as utilities because they change at the sm breakpoint. */}
+  <article>
+    <Card padding={0} className="article-card p-4 sm:p-5 flex flex-col sm:flex-row gap-4 sm:gap-5">
+      {article.cardImage && (
+        <div class="article-thumb shrink-0 overflow-hidden rounded-lg sm:w-[168px] sm:self-center">
+          <img
+            src={resolveAssetUrl(article.cardImage)}
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            decoding="async"
+            class="w-full h-40 object-contain sm:h-auto sm:aspect-square sm:object-cover"
+          />
+        </div>
+      )}
 
-    {/* Padding here plus the card's own adds up to the 24/28px the card used
+      {/* Padding here plus the card's own adds up to the 24/28px the card used
         to carry on its own, so the text block sits where it always did. */}
-    <div class="min-w-0 flex-1 p-2 sm:p-3">
-      {/* Meta */}
-      <div class="flex items-center gap-2 text-xs text-ink-500 mb-3">
-        <span>{article.date}</span>
-        <span class="w-px h-2.5 bg-ink-200"></span>
-        <span class="text-accent">{article.category}</span>
+      <div class="min-w-0 flex-1 p-2 sm:p-3">
+        {/* Meta */}
+        <div class="flex items-center gap-2 mb-3">
+          <Text type="supporting">{article.date}</Text>
+          <Divider orientation="vertical" className="h-2.5" />
+          <Badge variant="blue" label={article.category} />
+        </div>
+
+        {/* Title */}
+        <Heading level={2} className="mb-2 group-hover:text-ink-600 transition-colors">
+          {article.title}
+        </Heading>
+
+        {/* Subtitle */}
+        <Text as="p" display="block" color="secondary" maxLines={2} hasTruncateTooltip={false}>
+          {article.subtitle}
+        </Text>
+
+        {/* Read time */}
+        <div class="mt-4 flex items-center gap-2 text-ink-500">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <Text type="supporting">{strings.article.readTime(article.readMinutes)}</Text>
+        </div>
       </div>
-
-      {/* Title */}
-      <h2 class="text-xl sm:text-[22px] font-semibold text-ink-900 leading-snug tracking-tight mb-2 group-hover:text-ink-600 transition-colors">
-        {article.title}
-      </h2>
-
-      {/* Subtitle */}
-      <p class="text-[15px] text-ink-600 leading-relaxed line-clamp-2">{article.subtitle}</p>
-
-      {/* Read time */}
-      <div class="mt-4 flex items-center gap-2 text-xs text-ink-500">
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <circle cx="12" cy="12" r="10"></circle>
-          <polyline points="12 6 12 12 16 14"></polyline>
-        </svg>
-        {strings.article.readTime(article.readMinutes)}
-      </div>
-    </div>
+    </Card>
   </article>
 </a>

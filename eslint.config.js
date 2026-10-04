@@ -9,10 +9,9 @@ import local from './eslint-rules/index.js'
 import { layerZones } from './eslint-rules/layer-zones.js'
 
 // The `local` plugin turns the conventions written up in CLAUDE.md — Linking,
-// the Islands policy, Design Tokens, Layers — into lint errors. See eslint-rules/.
+// the Islands policy, Layers — into lint errors. See eslint-rules/.
 const localRules = {
   'local/no-bare-internal-href': 'error',
-  'local/no-raw-colors': 'error',
   'local/no-cross-layer-import': ['error', { zones: layerZones }],
 }
 
@@ -60,9 +59,13 @@ export default defineConfig([
       ...localRules,
       // Comments is the second island: client:visible, so the React runtime
       // loads only when a reader scrolls to the bottom of an article.
-      // AiSummary is the third: client:summarizer, so it loads only in browsers
+      // CategoryFilter is the third: the home page's Astryx SegmentedControl.
+      // AiSummary is the fourth: client:summarizer, so it loads only in browsers
       // that have Chrome's built-in Prompt API.
-      'local/no-unlisted-island': ['error', { allow: ['ThemeToggle', 'Comments', 'AiSummary'] }],
+      'local/no-unlisted-island': [
+        'error',
+        { allow: ['ThemeToggle', 'Comments', 'CategoryFilter', 'AiSummary'] },
+      ],
     },
   },
 ])

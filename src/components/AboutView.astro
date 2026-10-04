@@ -2,6 +2,10 @@
 import { resolveAssetUrl } from '../shared/assetUrl'
 import { aboutCopy } from '../content/service'
 import type { Locale } from '../shared/i18n'
+import { Badge } from '@astryxdesign/core/Badge'
+import { Heading } from '@astryxdesign/core/Heading'
+import { HStack } from '@astryxdesign/core/HStack'
+import { Text } from '@astryxdesign/core/Text'
 
 interface Props {
   locale: Locale
@@ -13,10 +17,11 @@ const profileImageUrl = resolveAssetUrl('/assets/images/profile-ferret-desk.webp
 ---
 
 <div class="page-enter">
-  <section class="max-w-[640px] mx-auto px-6 pt-10 sm:pt-14 pb-20">
-    {/* Profile */}
-    <div class="animate-reveal mb-12">
-      <div class="w-20 h-20 rounded-full border border-ink-200 overflow-hidden mb-6">
+  <section class="max-w-[720px] mx-auto px-6 pt-10 sm:pt-14 pb-20">
+    {/* Profile. Same 720px column as the header and footer, so the page shares
+        their left edge; avatar beside the heading rather than stacked above. */}
+    <HStack gap={5} align="center" className="animate-reveal mb-12">
+      <div class="w-20 h-20 shrink-0 rounded-full border border-ink-200 overflow-hidden">
         <img
           src={profileImageUrl}
           alt={copy.profileAlt}
@@ -24,35 +29,43 @@ const profileImageUrl = resolveAssetUrl('/assets/images/profile-ferret-desk.webp
           loading="eager"
         />
       </div>
-      <h1 class="text-2xl sm:text-3xl font-bold text-ink-950 tracking-tight mb-3">
-        {copy.heading}
-      </h1>
-      <p class="text-ink-600 text-[15px]">{copy.intro}</p>
-    </div>
+      <div>
+        <Heading level={1} className="mb-2">
+          {copy.heading}
+        </Heading>
+        <Text as="p" display="block" type="large" color="secondary">
+          {copy.intro}
+        </Text>
+      </div>
+    </HStack>
 
     {/* Interests */}
     <div class="animate-reveal delay-2">
-      <h2 class="text-sm font-medium text-ink-600 uppercase tracking-widest mb-6">
+      <Heading level={2} className="mb-6">
         {copy.interestsHeading}
-      </h2>
-      <p class="text-ink-700 text-[15px]">{copy.interests.join(' · ')}</p>
+      </Heading>
+      <HStack gap={2} wrap="wrap">
+        {copy.interests.map((interest) => (
+          <Badge label={interest} />
+        ))}
+      </HStack>
     </div>
 
     {/* Career */}
     <div class="mt-16 animate-reveal delay-3">
-      <h2 class="text-sm font-medium text-ink-600 uppercase tracking-widest mb-6">
+      <Heading level={2} className="mb-6">
         {copy.careerHeading}
-      </h2>
+      </Heading>
       <ul class="space-y-3">
         {copy.career.map((item) => (
           <li class="flex flex-col sm:flex-row sm:gap-4 text-[15px]">
-            <span class="text-ink-600 text-xs sm:text-[13px] sm:w-32 sm:shrink-0 sm:pt-1 tabular-nums">
+            <Text type="supporting" hasTabularNumbers className="sm:w-32 sm:shrink-0 sm:pt-1">
               {item.period}
-            </span>
-            <span class="text-ink-700">
+            </Text>
+            <Text>
               {item.role}
-              <span class="text-ink-600">{` · ${item.org}`}</span>
-            </span>
+              <Text type="inherit" color="secondary">{` · ${item.org}`}</Text>
+            </Text>
           </li>
         ))}
       </ul>

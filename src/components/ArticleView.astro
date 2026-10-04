@@ -6,6 +6,14 @@ import { formatInline, parseArticleBody } from '../content/parser'
 import { resolveAssetUrl } from '../shared/assetUrl'
 import { localeHref, type Locale } from '../shared/i18n'
 import { t } from '../copy/strings'
+import { createElement } from 'react'
+import { Blockquote } from '@astryxdesign/core/Blockquote'
+import { Card } from '@astryxdesign/core/Card'
+import { CodeBlock } from '@astryxdesign/core/CodeBlock'
+import { Divider } from '@astryxdesign/core/Divider'
+import { Heading } from '@astryxdesign/core/Heading'
+import { Table } from '@astryxdesign/core/Table'
+import { Text } from '@astryxdesign/core/Text'
 
 interface Props {
   locale: Locale
@@ -25,7 +33,33 @@ const langLabels: Record<string, string> = {
   ts: 'TypeScript',
 }
 
+// Two spellings of the same stagger: a CSS string for plain elements, a React
+// style object for Astryx components.
 const delay = (i: number) => `animation-delay: ${i * 0.05}s`
+const delayStyle = (i: number) => ({ animationDelay: `${i * 0.05}s` })
+
+// Astryx components here render to static HTML at build time (no client:*), so
+// the page stays zero-JS. Anything that needs a click handler to work — the
+// CodeBlock copy button, for one — is switched off rather than shipped dead.
+
+// Table cells carry inline markdown (bold, code, links). Astryx's Table takes
+// cell renderers rather than children, so the author's own formatInline output
+// goes in as HTML here, exactly as set:html does elsewhere in this file. Never
+// pass reader-supplied text through this.
+const inlineCell = (html: string) =>
+  createElement('span', { dangerouslySetInnerHTML: { __html: html } })
+
+type TableBlock = Extract<(typeof blocks)[number], { type: 'table' }>
+type Row = Record<string, string>
+
+const tableProps = (block: TableBlock) => ({
+  columns: block.header.map((header, c) => ({
+    key: `c${c}`,
+    header,
+    renderCell: (row: Row) => inlineCell(formatInline(row[`c${c}`])),
+  })),
+  data: block.rows.map((cells): Row => Object.fromEntries(cells.map((cell, c) => [`c${c}`, cell]))),
+})
 const MAX_CAROUSEL_SLIDES = 6
 ---
 
@@ -34,15 +68,17 @@ const MAX_CAROUSEL_SLIDES = 6
   <header class="max-w-[720px] mx-auto px-6 pt-10 sm:pt-14 pb-8">
     <div class="animate-reveal">
       <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-5">
-        <span class="text-xs text-ink-500">{article.date}</span>
-        <span class="w-px h-3 bg-ink-200"></span>
-        <span class="text-xs text-ink-500">{strings.article.readTime(article.readMinutes)}</span>
+        <Text type="supporting">{article.date}</Text>
+        <Divider orientation="vertical" className="h-3" />
+        <Text type="supporting">{strings.article.readTime(article.readMinutes)}</Text>
       </div>
 
-      <h1 class="text-[28px] sm:text-[36px] font-bold text-ink-950 leading-tight tracking-tight mb-3">
+      <Heading level={1} className="mb-3">
         {article.title}
-      </h1>
-      <p class="text-ink-600 text-base leading-relaxed">{article.subtitle}</p>
+      </Heading>
+      <Text as="p" display="block" type="large" color="secondary">
+        {article.subtitle}
+      </Text>
       {/* AI summary button. client:summarizer (src/directives/summarizer.ts)
             hydrates it only in browsers that have Chrome's Prompt API, so
             everyone else downloads neither the island nor React. */}
@@ -63,87 +99,93 @@ const MAX_CAROUSEL_SLIDES = 6
               loading="eager"
             />
           </div>
-          <p class="mt-3 text-sm text-ink-600 leading-relaxed">{strings.article.coverImageNote}</p>
+          <Text as="p" display="block" type="supporting" className="mt-3">
+            {strings.article.coverImageNote}
+          </Text>
         </div>
       )}
     </div>
   </header>
 
-  <hr class="ink-divider max-w-[720px] mx-auto" />
+  <div class="max-w-[720px] mx-auto">
+    <Divider />
+  </div>
 
   {/* Article Body */}
   <article class="max-w-[720px] mx-auto px-6 pt-9 pb-12 prose-blog" data-article-body>
     {summary && (
-      <aside
-        data-summary-card
-        class="mb-10 rounded-xl border border-ink-100 overflow-hidden animate-reveal"
-        aria-label={summary.label}
-      >
-        <div class="px-4 py-2 border-b border-ink-100 bg-ink-50/60 text-[13px] text-ink-600">
-          {summary.label}
-        </div>
-        <div class="px-5 py-4">
-          <ul class="list-disc pl-5 space-y-2.5 marker:text-ink-300 text-ink-700 text-[15px] leading-relaxed">
+      <aside data-summary-card class="mb-10 animate-reveal" aria-label={summary.label}>
+        <Card variant="muted">
+          <Text as="div" display="block" type="label" color="secondary" className="mb-2">
+            {summary.label}
+          </Text>
+          <ul class="list-disc pl-5 space-y-2.5 marker:text-ink-300">
             {summary.items.map((item) => (
-              <li set:html={formatInline(item)} />
+              <li>
+                <Text>
+                  <Fragment set:html={formatInline(item)} />
+                </Text>
+              </li>
             ))}
           </ul>
-        </div>
+        </Card>
       </aside>
     )}
     {blocks.map((block, i) => {
       if (block.type === 'divider') {
-        return <hr class="ink-divider my-10" />
+        // An authored `---` is a pause in the writing, not a section rule, so it
+        // gets the labelled divider rather than a bare line.
+        return <Divider label="· · ·" className="my-10" />
       }
 
       if (block.type === 'code') {
-        const label = langLabels[block.lang] || block.lang
         return (
-          <div
-            class="my-6 rounded-xl border border-ink-100 overflow-hidden animate-reveal"
-            style={delay(i)}
-          >
-            <div class="flex items-center gap-1.5 px-4 py-2 border-b border-ink-100 bg-ink-50/60">
-              <div class="w-[7px] h-[7px] rounded-full border border-ink-300/70" />
-              <div class="w-[7px] h-[7px] rounded-full border border-ink-300/70" />
-              <div class="w-[7px] h-[7px] rounded-full border border-ink-300/70" />
-              {label && <span class="ml-2 text-[11px] text-ink-600">{label}</span>}
-            </div>
-            <pre class="px-4 py-3 bg-paper-warm/40 overflow-x-auto"><code class="text-[13px] text-ink-600 leading-relaxed whitespace-pre block font-mono">{block.code}</code></pre>
-          </div>
+          <CodeBlock
+            code={block.code}
+            language={block.lang || 'plaintext'}
+            title={langLabels[block.lang] || block.lang || undefined}
+            hasLanguageLabel={false}
+            hasCopyButton={false}
+            width="100%"
+            className="my-6 animate-reveal"
+            style={delayStyle(i)}
+          />
         )
       }
 
       if (block.type === 'heading' && block.level === 3) {
         return (
-          <h3 class="text-lg font-semibold text-ink-900 mt-8 mb-4 animate-reveal" style={delay(i)}>
+          <Heading level={3} className="mt-8 mb-4 animate-reveal" style={delayStyle(i)}>
             {block.text}
-          </h3>
+          </Heading>
         )
       }
 
       if (block.type === 'heading') {
         return (
-          <h2 class="animate-reveal" style={delay(i)}>
+          <Heading level={2} className="animate-reveal" style={delayStyle(i)}>
             {block.text}
-          </h2>
+          </Heading>
         )
       }
 
       if (block.type === 'quote') {
         return (
-          <blockquote class="animate-reveal" style={delay(i)} set:html={formatInline(block.text)} />
+          <Blockquote className="animate-reveal" style={delayStyle(i)}>
+            <Fragment set:html={formatInline(block.text)} />
+          </Blockquote>
         )
       }
 
       if (block.type === 'list' && !block.ordered) {
         return (
-          <ul
-            class="list-disc pl-5 mb-6 space-y-2 text-ink-700 text-[17px] leading-relaxed animate-reveal"
-            style={delay(i)}
-          >
+          <ul class="list-disc pl-5 mb-6 space-y-2 animate-reveal" style={delay(i)}>
             {block.items.map((item) => (
-              <li set:html={formatInline(item)} />
+              <li>
+                <Text>
+                  <Fragment set:html={formatInline(item)} />
+                </Text>
+              </li>
             ))}
           </ul>
         )
@@ -151,46 +193,23 @@ const MAX_CAROUSEL_SLIDES = 6
 
       if (block.type === 'list') {
         return (
-          <ol
-            class="list-decimal pl-5 mb-6 space-y-2 text-ink-700 text-[17px] leading-relaxed animate-reveal"
-            style={delay(i)}
-          >
+          <ol class="list-decimal pl-5 mb-6 space-y-2 animate-reveal" style={delay(i)}>
             {block.items.map((item) => (
-              <li set:html={formatInline(item)} />
+              <li>
+                <Text>
+                  <Fragment set:html={formatInline(item)} />
+                </Text>
+              </li>
             ))}
           </ol>
         )
       }
 
       if (block.type === 'table') {
+        const { columns, data } = tableProps(block)
         return (
-          <div
-            class="my-6 overflow-x-auto rounded-xl border border-ink-100 animate-reveal"
-            style={delay(i)}
-          >
-            <table class="w-full min-w-[560px] text-[15px]">
-              <thead>
-                <tr class="border-b border-ink-100 bg-ink-50/60">
-                  {block.header.map((cell) => (
-                    <th class="px-4 py-2.5 text-left text-xs font-semibold text-ink-500 uppercase tracking-wide">
-                      {cell}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {block.rows.map((cells, j) => (
-                  <tr class={j < block.rows.length - 1 ? 'border-b border-ink-50' : ''}>
-                    {cells.map((cell) => (
-                      <td
-                        class="px-4 py-2.5 text-ink-700 leading-relaxed"
-                        set:html={formatInline(cell)}
-                      />
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div class="my-6 overflow-x-auto animate-reveal" style={delay(i)}>
+            <Table columns={columns} data={data} />
           </div>
         )
       }
@@ -308,7 +327,11 @@ const MAX_CAROUSEL_SLIDES = 6
         )
       }
 
-      return <p class="animate-reveal" style={delay(i)} set:html={formatInline(block.text)} />
+      return (
+        <Text as="p" display="block" className="animate-reveal" style={delayStyle(i)}>
+          <Fragment set:html={formatInline(block.text)} />
+        </Text>
+      )
     })}
   </article>
 
@@ -318,7 +341,7 @@ const MAX_CAROUSEL_SLIDES = 6
         Keyed by slug alone, so a post's thread is shared across all three
         language trees rather than split per language. */}
   <div class="max-w-[720px] mx-auto px-6 pb-4">
-    <hr class="ink-divider mb-10" />
+    <Divider className="mb-10" />
     <Comments
       client:visible
       articleSlug={article.slug}
@@ -329,7 +352,7 @@ const MAX_CAROUSEL_SLIDES = 6
 
   {/* Back link */}
   <div class="max-w-[720px] mx-auto px-6 pb-20">
-    <hr class="ink-divider mb-10" />
+    <Divider className="mb-10" />
     <a
       href={localeHref(locale, '/')}
       class="inline-flex items-center gap-2 text-sm text-ink-600 no-underline hover:text-ink-700 transition-colors"

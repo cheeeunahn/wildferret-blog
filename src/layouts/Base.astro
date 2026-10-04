@@ -14,6 +14,7 @@ import {
 } from '../shared/i18n'
 import { t } from '../copy/strings'
 import { resolveAssetUrl } from '../shared/assetUrl'
+import { Text } from '@astryxdesign/core/Text'
 
 interface Props {
   locale: Locale
@@ -40,7 +41,10 @@ const navLinkClass = (path: string) =>
 ---
 
 <!doctype html>
-<html lang={HTML_LANGS[locale.lang]}>
+<!-- data-astryx-theme scopes the wildferret Astryx theme (src/styles/astryx/) to
+     the whole page, so every Astryx component, and the h1–h6/p typography the
+     theme sets, applies everywhere. See docs/adr/0002-astryx-design-system.md. -->
+<html lang={HTML_LANGS[locale.lang]} data-astryx-theme="wildferret">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -68,6 +72,8 @@ const navLinkClass = (path: string) =>
             : window.matchMedia('(prefers-color-scheme: dark)').matches
           if (dark) document.documentElement.classList.add('dark')
           document.documentElement.style.colorScheme = dark ? 'dark' : 'light'
+          // Astryx's reset.css keys color-scheme off this attribute
+          document.documentElement.dataset.theme = dark ? 'dark' : 'light'
         } catch (e) {}
       })()
     </script>
@@ -132,13 +138,17 @@ const navLinkClass = (path: string) =>
 
       <footer class="border-t border-ink-100 bg-paper-warm">
         <div class="max-w-[720px] mx-auto px-6 py-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <p class="text-ink-900 font-semibold text-sm">wildferret</p>
-            <p class="text-ink-600 text-xs mt-1">
+          <div class="flex flex-col gap-1">
+            <Text as="p" display="block" type="label" weight="bold">
+              wildferret
+            </Text>
+            <Text as="p" display="block" type="supporting">
               Just another product IT startup person out there, in the wild!
-            </p>
+            </Text>
           </div>
-          <p class="text-ink-500 text-xs">&copy; {year} wildferret</p>
+          <Text as="p" display="block" type="supporting">
+            &copy; {year} wildferret
+          </Text>
         </div>
       </footer>
     </div>

@@ -1,9 +1,13 @@
 ---
 import ArticleCard from './ArticleCard.astro'
+import CategoryFilter from './CategoryFilter'
 import { articlesIn, CATEGORIES } from '../content/service'
 import { resolveAssetUrl } from '../shared/assetUrl'
 import { t } from '../copy/strings'
 import type { Locale } from '../shared/i18n'
+import { Heading } from '@astryxdesign/core/Heading'
+import { HStack } from '@astryxdesign/core/HStack'
+import { Text } from '@astryxdesign/core/Text'
 
 interface Props {
   locale: Locale
@@ -20,9 +24,6 @@ const articles = articlesIn(locale.lang)
 // CATEGORIES order rather than in publication order.
 const usedCategories = CATEGORIES.filter((c) => articles.some((a) => a.category === c))
 
-// The filter is CSS-only (radio + :has(), like the carousel), so the rule that
-// hides non-matching cards has to exist per category. Generated from the data
-// here so adding a category to articleTypes.ts is the only edit needed.
 // The hero's later frames: same ferret, turned to face the reader, then
 // greeting them properly. Stepped through by the radio group below.
 const GREET_FRAMES = [
@@ -36,23 +37,22 @@ const GREET_FRAMES = [
   },
 ]
 
+// The CategoryFilter island writes the chosen category to .cat-scope's
+// data-filter; these rules do the hiding, so the cards stay static HTML. One
+// rule per category, generated from the data so adding a category to
+// articleTypes.ts is the only edit needed. Category names are our own data,
+// never reader input.
 const filterCss = usedCategories
-  .map(
-    (c, i) =>
-      `.cat-scope:has(#cat-${i + 1}:checked) [data-cat]:not([data-cat="${c}"]){display:none}`,
-  )
+  .map((c) => `.cat-scope[data-filter="${c}"] [data-cat]:not([data-cat="${c}"]){display:none}`)
   .join('\n')
 ---
 
 <div class="page-enter">
-  {/* Hero, on a full-bleed tonal band. This is what separates the hero from
-      the article list — a change of ground rather than a rule across it. A
-      hairline says "here is a boundary" and nothing more; a band says the two
-      regions are different kinds of thing, which is the actual relationship.
-      It also means the separation survives at any width without a 720px line
-      floating in the middle of a wide screen. */}
-  <div class="bg-paper-warm">
-    <section class="max-w-[720px] mx-auto px-6 pt-10 sm:pt-14 pb-12">
+  {/* Hero. No tonal band any more: Astryx's muted background is translucent and
+      vanished in dark mode, leaving a band-sized hole between the hero and the
+      list. The two regions now share one vertical rhythm instead. */}
+  <div>
+    <section class="max-w-[720px] mx-auto px-6 pt-8 sm:pt-10">
       {/* The box is taller than the source's 16:9, so object-cover crops the
           sides and the ferret renders larger. Its focal point is right of
           centre and high, hence object-[62%_38%] rather than the default.
@@ -189,7 +189,9 @@ const filterCss = usedCategories
           busy at the bottom edge and an overlay would need a scrim to stay
           legible, which reads as a header band on a photo. Small and quiet —
           this labels the picture, it is not the page's headline. */}
-        <figcaption class="mt-3 text-sm text-ink-500">{strings.home.heroCaption}</figcaption>
+        <figcaption class="mt-3 text-center">
+          <Text type="supporting">{strings.home.heroCaption}</Text>
+        </figcaption>
       </figure>
 
       {/* The one bit the CSS state machine cannot do: drop back to the idle
@@ -249,9 +251,9 @@ const filterCss = usedCategories
     </section>
   </div>
 
-  {/* Category filter + article list. The :has() rules read from .cat-scope,
-      so the radios and the cards must stay inside this one element. */}
-  <div class="cat-scope pt-12 sm:pt-14">
+  {/* Category filter + article list. The filter rules key off .cat-scope's
+      data-filter, so the cards must stay inside this one element. */}
+  <div class="cat-scope pt-10 sm:pt-12">
     <style is:inline set:html={filterCss}></style>
 
     {/* The filter sticks below the header so it stays reachable while you
@@ -269,23 +271,26 @@ const filterCss = usedCategories
     <div class="cat-sentinel" aria-hidden="true"></div>
     <div class="cat-bar sticky top-16 z-40 bg-paper py-4 sm:py-5">
       <section class="max-w-[720px] mx-auto px-6">
-        <fieldset class="flex flex-wrap items-center gap-2.5 animate-reveal delay-3">
-          <legend class="sr-only">{strings.home.filterLegend}</legend>
-
-          <input type="radio" name="category" id="cat-0" class="cat-input sr-only" checked />
-          <label for="cat-0" class="cat-pill">
-            {strings.home.filterAll}
-          </label>
-
-          {usedCategories.map((c, i) => (
-            <>
-              <input type="radio" name="category" id={`cat-${i + 1}`} class="cat-input sr-only" />
-              <label for={`cat-${i + 1}`} class="cat-pill">
-                {c}
-              </label>
-            </>
-          ))}
-        </fieldset>
+        {/* client:load, not :visible — the bar is near the top of the page and
+            sticky, so it is on screen almost at once. The React runtime is
+            already on this page for ThemeToggle; the cost is Astryx's chunk. */}
+        {/* The list's header row: what this is on the left, how to narrow it
+            on the right, so the filter no longer sits alone on one side. */}
+        <HStack
+          justify="between"
+          align="center"
+          wrap="wrap"
+          gap={3}
+          className="animate-reveal delay-3"
+        >
+          <Heading level={2}>{strings.nav.posts}</Heading>
+          <CategoryFilter
+            client:load
+            categories={usedCategories}
+            allLabel={strings.home.filterAll}
+            legend={strings.home.filterLegend}
+          />
+        </HStack>
       </section>
     </div>
 
@@ -314,7 +319,9 @@ const filterCss = usedCategories
       {articles.length > 0 ? (
         articles.map((article, i) => <ArticleCard article={article} index={i} locale={locale} />)
       ) : (
-        <p class="text-ink-600 text-[15px] animate-reveal delay-4">{strings.home.emptyList}</p>
+        <Text as="p" display="block" color="secondary" className="animate-reveal delay-4">
+          {strings.home.emptyList}
+        </Text>
       )}
     </section>
   </div>

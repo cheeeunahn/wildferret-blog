@@ -6,7 +6,6 @@ import { describe, it } from 'vitest'
 import noBareInternalHref from './no-bare-internal-href.js'
 import noCrossLayerImport from './no-cross-layer-import.js'
 import { layerZones } from './layer-zones.js'
-import noRawColors from './no-raw-colors.js'
 import noUnescapedUserHtml from './no-unescaped-user-html.js'
 import noUnlistedIsland from './no-unlisted-island.js'
 
@@ -131,45 +130,6 @@ tsx.run('no-unescaped-user-html', noUnescapedUserHtml, {
       errors: [{ messageId: 'formatInline' }],
     },
   ],
-})
-
-tsx.run('no-raw-colors (tsx)', noRawColors, {
-  valid: [
-    'const a = <div className="bg-paper-warm/30 border border-ink-100" />',
-    'const a = <span className="text-[12px] text-ink-600" />',
-    'const a = <line stroke="currentColor" fill="none" />',
-    // ink-500 must survive: a bare `[a-z]+-\\d{3}` check would eat it.
-    'const a = <svg className="text-ink-500 shrink-0 mx-1" />',
-    'const a = <div className="grid grid-cols-2 gap-3" />',
-  ],
-  invalid: [
-    {
-      code: 'const a = <div className="text-slate-500" />',
-      errors: [{ messageId: 'palette', data: { cls: 'text-slate-500' } }],
-    },
-    {
-      // Variants and an opacity suffix are stripped before matching.
-      code: 'const a = <div className="hover:bg-blue-600/30" />',
-      errors: [{ messageId: 'palette' }],
-    },
-    {
-      code: 'const a = <div className={`p-2 ${x} border-red-200`} />',
-      errors: [{ messageId: 'palette' }],
-    },
-    {
-      code: 'const a = <rect fill="#1d2023" />',
-      errors: [{ messageId: 'literal', data: { value: '#1d2023' } }],
-    },
-    {
-      code: 'const a = <div style="color: rgb(0 0 0)" />',
-      errors: [{ messageId: 'literal' }],
-    },
-  ],
-})
-
-astro.run('no-raw-colors (astro)', noRawColors, {
-  valid: [astroCase('<div class="bg-surface text-ink-900" />')],
-  invalid: [astroCase('<div class="bg-zinc-800" />', [{ messageId: 'palette' }])],
 })
 
 // Run against the real zone map, so a loosened zone fails here rather than
