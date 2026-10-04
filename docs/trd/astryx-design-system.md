@@ -115,8 +115,8 @@ Where each component is used:
 
 - `ArticleView`: Heading, Text, Blockquote, Divider (`---` as `label="· · ·"`), Table, CodeBlock, and a muted Card for the summary.
 - `ArticleCard`: Card, Heading, Text, Badge, Divider.
-- `AboutView`: Heading, Text.
-- `HomeView`: Text.
+- `AboutView`: Heading, Text, HStack (avatar beside the heading), Badge (one per interest). Its column is 720px, matching the header and footer.
+- `HomeView`: Text, and an HStack header row for the list (Heading on the left, the CategoryFilter island on the right). The hero no longer sits on a tonal band: Astryx's muted background is translucent and the band vanished in dark mode, leaving an empty gap.
 - `Base` footer: Text.
 
 Lists stay native `<ul>`/`<ol>` with `Text` items. The hero and carousel stay CSS radios.
