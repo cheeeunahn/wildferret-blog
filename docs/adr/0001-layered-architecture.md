@@ -1,6 +1,6 @@
 # ADR 0001: Separate presentation, logic, and data layers
 
-- Status: Proposed
+- Status: Accepted (PR 1: #33; PR 2: comments server API)
 - Date: 2026-10-04
 - Tracking: https://github.com/cheeeunahn/wildferret-blog/issues/32
 

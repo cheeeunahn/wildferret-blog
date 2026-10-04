@@ -1,0 +1,17 @@
+# Worker secrets for /api/comments. Copy to .dev.vars for `pnpm dev`.
+#
+# These are RUNTIME secrets read by the Worker (src/pages/api/comments.ts),
+# not build-time vars: nothing here is inlined into the browser bundle. In
+# production set each one with `npx wrangler secret put <NAME>`.
+
+SUPABASE_URL=https://your-project.supabase.co
+
+# The publishable key (sb_publishable_… or the legacy anon JWT). The Supabase
+# gateway requires it as the `apikey` header; once migration 0003 is applied it
+# grants no access to the comments table on its own.
+SUPABASE_PUBLISHABLE_KEY=your-publishable-key
+
+# A JWT whose role claim is `blog_api`, minted with:
+#   SUPABASE_JWT_SECRET=... pnpm mint:api-jwt
+# NEVER a service_role / secret key — it bypasses row level security.
+SUPABASE_API_JWT=your-blog-api-jwt

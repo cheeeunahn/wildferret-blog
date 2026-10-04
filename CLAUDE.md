@@ -21,11 +21,11 @@ Astro 7 requires **Node 22.12+**; pnpm 10 is pinned via `packageManager`.
 
 ## Architecture
 
-**Stack:** Astro 7 (static output), React 19 islands, TypeScript 5 (strict), Tailwind CSS 4 (`@tailwindcss/vite`)
+**Stack:** Astro 7 (static output + one on-demand route, `@astrojs/cloudflare` adapter), React 19 islands, TypeScript 5 (strict), Tailwind CSS 4 (`@tailwindcss/vite`)
 
-Every route is prerendered to a real HTML file at build time. There is no client-side router.
+Every page is prerendered to a real HTML file at build time. The one exception is `src/pages/api/comments.ts` (`prerender = false`), which runs as Worker code — see Comments. There is no client-side router.
 
-**Deployment:** a root-path Cloudflare static worker. `astro.config.mjs` uses `base: '/'`, overridable via the `BASE_PATH` env var for a path-prefixed host. `wrangler.jsonc` uploads `./dist` with `not_found_handling: "404-page"`, served by the prerendered `dist/404.html`.
+**Deployment:** one root-path Cloudflare Worker. `astro.config.mjs` uses `base: '/'`, overridable via the `BASE_PATH` env var for a path-prefixed host. The build writes prerendered pages to `dist/client/` (served as static assets, with `not_found_handling: "404-page"` → `dist/client/404.html`) and the Worker to `dist/server/`; the adapter generates the deployable `dist/server/wrangler.json` from `wrangler.jsonc`. The adapter is pinned to `@astrojs/cloudflare@14.2.6`: 14.3.x needs an Astro newer than the pinned 7.2.2 despite its peer range. Sessions are off (`session: false`) so no KV namespace is required, and the adapter is skipped under Vitest (see the comment in `astro.config.mjs`).
 
 **Routing** (file-based, `src/pages/`). Every page exists in three prerendered trees — see Languages below:
 
@@ -44,7 +44,8 @@ The page files are thin: each resolves a `Locale`, then renders a view component
 | Layer              | Folder                                                                 | Holds                                                                                                                                                    |
 | ------------------ | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Presentation       | `src/pages`, `src/layouts`, `src/components`, `src/copy`, `src/styles` | Templates, islands, UI copy (`copy/strings.ts`), Tailwind                                                                                                |
-| Browser client     | `src/client`                                                           | Code an island uses to reach anything outside the page (today: `supabaseComments.ts`)                                                                    |
+| Browser client     | `src/client`                                                           | Code an island uses to reach anything outside the page (today: `commentsApi.ts` → `/api/comments`)                                                       |
+| Logic (runtime)    | `src/server`                                                           | Code that runs per request in the Worker (today: `comments/`)                                                                                            |
 | Logic (build time) | `src/content`                                                          | `service.ts` — every read of article/about data (`articlesIn`, `langsForSlug`, `localizeArticle`, `aboutCopy`); `parser.ts` — the article-content parser |
 | Data               | `src/data`                                                             | Article metadata, bodies, about copy, and their types. No functions beyond `loadContent`                                                                 |
 | Shared             | `src/shared`                                                           | Pure helpers any layer may use: `i18n`, `siteUrl`, `assetUrl`, `moderation`                                                                              |
@@ -55,7 +56,7 @@ The import rules, enforced by `local/no-cross-layer-import` (zones in `eslint-ru
 - `.tsx` components and `src/client` ship to the browser, so they never import `src/content`, `src/server` or `src/data`.
 - `src/content` never imports presentation; `src/data` imports nothing but `src/shared`; `src/shared` imports nothing from the app.
 
-`src/content` runs at build time (inside `getStaticPaths` and page frontmatter), not on a request server — that is why it is not called `server/`. A `src/server/` folder is reserved for code that runs per request; the zones already cover it.
+`src/content` runs at build time (inside `getStaticPaths` and page frontmatter), not on a request server — that is why it is not called `server/`. `src/server/` holds the code that does run per request.
 
 ## Islands policy
 
@@ -178,12 +179,24 @@ Entrance motion: `.page-enter` on each page's wrapper plus `.animate-reveal` (an
 
 ## Comments
 
-Anonymous, nickname-only comments on article pages, stored in Supabase. Schema and moderation live in `supabase/migrations/0001_blog_user_comments.sql`; apply it in the Supabase SQL editor.
+Anonymous, nickname-only comments on article pages, stored in Supabase. Schema and moderation live in `supabase/migrations/`; apply each file in order in the Supabase SQL editor (but see Cutover below for when).
 
-The site is static with no server runtime, so the browser talks to PostgREST directly (`src/client/supabaseComments.ts`, plain `fetch` — deliberately **not** `@supabase/supabase-js`, which is ~40kB for two REST calls). Two consequences that drive the whole design:
+The browser never talks to Supabase. Three layers, one direction:
 
-- **The publishable key is public.** It is inlined into the built JS, and anyone can POST to the REST endpoint without going through the form. So nothing in the frontend is a security control. Access is enforced by RLS plus _column-level_ grants (`grant insert (article_slug, nickname, body)`), and content by the `moderate_comment()` BEFORE INSERT trigger. `src/shared/moderation.ts` is a client-side subset of that trigger for instant feedback only — it deliberately omits the profanity list, which lives in a table `anon` cannot read.
-- **Rejections travel as reason codes, never messages.** The trigger raises with a `hint` (`pii_phone`, `profanity`, `too_fast`, …); the copy lives in `REJECTION_MESSAGES` (Korean) and `REJECTION_MESSAGES_EN` in `moderation.ts`, picked by `messageFor(reason, lang)` — `lang` defaults to `'ko'`. Never render a PostgREST `message`/`details` string — that would make the error path an injection channel.
+| Layer    | File                                                        | Role                                                                                                          |
+| -------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Browser  | `src/client/commentsApi.ts`                                 | Same-origin `fetch` to `/api/comments`. Holds no URL or key                                                   |
+| HTTP     | `src/pages/api/comments.ts` → `src/server/comments/http.ts` | The only non-prerendered route. Status codes, body-size limit (16 KB), `{ reason }` error bodies              |
+| Logic    | `src/server/comments/service.ts`                            | Validates input, re-runs `checkComment()` (the browser cannot be trusted), maps trigger hints to reason codes |
+| Data     | `src/server/comments/repository.ts`                         | The only code that calls PostgREST — plain `fetch`, deliberately **not** `@supabase/supabase-js`              |
+| Database | `supabase/migrations/`                                      | RLS, column grants, and the `moderate_comment()` trigger — the final authority                                |
+
+The wire shape (`Comment`) lives in `src/shared/comments.ts`, because the client and server may not import each other.
+
+- **The Worker connects as `blog_api`, never `service_role`.** `blog_api` (0002) has exactly the privileges anon used to have: `select` on visible rows only, `insert` on the three user columns only. A bug in the Worker therefore still cannot return a hidden comment or set `is_hidden`/`created_at` — the database refuses. Using `service_role` would bypass RLS and make `repository.ts` the only line of defense; do not.
+- **Moderation runs in three places, on purpose.** The browser runs `checkComment()` for instant feedback; the service runs it again because a request can skip the browser; the trigger enforces everything, including the profanity list that neither copy ever sees.
+- **Rejections travel as reason codes, never messages.** The trigger raises with a `hint` (`pii_phone`, `profanity`, `too_fast`, …); the repository keeps only that hint, the service keeps it only if it is a known code, and the API answers `{ "reason": <code> }`. The copy lives in `REJECTION_MESSAGES` (Korean) and `REJECTION_MESSAGES_EN` in `src/shared/moderation.ts`, picked by `messageFor(reason, lang)`. Never forward or render a PostgREST `message`/`details` string — that would make the error path an injection channel.
+- **Statuses:** 200/201 success · 400 malformed request · 413 body too large · 422 moderation rejection · 429 `too_fast` · 502 database failure · 503 Worker missing its secrets (the island then renders nothing).
 
 ### Languages
 
@@ -201,11 +214,32 @@ Comment text is attacker-controlled and stored verbatim. **The moderation trigge
 - `local/no-unescaped-user-html` enforces the mechanical half (no `dangerouslySetInnerHTML`, no `formatInline` import in `src/components/`).
 - If you ever add markdown to comments, that needs a real sanitizer on the output — not the article parser. If you ever autolink URLs, allowlist `http:`/`https:`; React does not escape a `javascript:` href.
 
-`public/_headers` carries a CSP, but note what it is not: `script-src` must allow `'unsafe-inline'` because Astro emits its island runtime as inline scripts, so the CSP is **not** a backstop against script injection. It still buys `connect-src` (no exfiltration to arbitrary hosts), `object-src`, `base-uri`, and `frame-ancestors`.
+`public/_headers` carries a CSP, but note what it is not: `script-src` must allow `'unsafe-inline'` because Astro emits its island runtime as inline scripts, so the CSP is **not** a backstop against script injection. It still buys `connect-src 'self'` (no exfiltration to any other host — the comment API is same-origin), `object-src`, `base-uri`, and `frame-ancestors`.
 
 ### Environment
 
-`PUBLIC_SUPABASE_URL` and `PUBLIC_SUPABASE_ANON_KEY` (see `.env.example`) are inlined at **build** time, so they must be set wherever `pnpm build` runs — locally in `.env`, and as build environment variables in Cloudflare. Setting them as Worker runtime secrets does nothing. Use the publishable key, never `service_role`, which bypasses RLS.
+Three **runtime** Worker secrets, read through `env` from `cloudflare:workers` (typed in `src/env.d.ts`). Nothing is inlined at build time, so the build no longer needs any Supabase variable.
+
+| Secret                     | Value                                                                                                                                                                        |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SUPABASE_URL`             | `https://<project>.supabase.co`                                                                                                                                              |
+| `SUPABASE_PUBLISHABLE_KEY` | The publishable key. The Supabase gateway requires it as `apikey`; after 0003 it grants nothing on its own                                                                   |
+| `SUPABASE_API_JWT`         | A JWT with `role: blog_api`, from `SUPABASE_JWT_SECRET=… pnpm mint:api-jwt` (signed with the project's legacy HS256 JWT secret, which must still be an accepted signing key) |
+
+Production: `npx wrangler secret put <NAME>` for each. Local `pnpm dev`: copy `.dev.vars.example` to `.dev.vars` (gitignored). Never use a `service_role` / secret key for any of these.
+
+The JWT is valid for 365 days by default (`--days` to change). Rotate by minting a new one and putting it again before it expires; rotating the project's JWT secret revokes it immediately.
+
+### Cutover
+
+Order matters, because the old bundle calls PostgREST as anon until the new Worker is live:
+
+1. Apply `0002_blog_api_role.sql` (adds `blog_api`; anon is untouched).
+2. Set the three Worker secrets, and remove the old `PUBLIC_SUPABASE_*` build variables from the Cloudflare build settings.
+3. Deploy, and confirm comments load and post on `/`, `/kr/` and `/en/`.
+4. Apply `0003_revoke_anon.sql`. Confirm that a direct PostgREST call with only the publishable key is now refused.
+
+Rollback: re-grant anon (see the comment at the top of 0003), then revert the deploy.
 
 ## Formatting
 

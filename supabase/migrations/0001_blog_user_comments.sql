@@ -5,6 +5,10 @@
 -- ships inlined in the built JS and anyone can POST to the REST endpoint without
 -- going through the React form. So every rule that matters is enforced HERE, in
 -- Postgres. Nothing in the frontend is a security control.
+--
+-- Superseded access model: 0002 and 0003 move the API to a server-side
+-- `blog_api` role and revoke everything anon is granted below. The table,
+-- trigger, and blocklist defined here are unchanged.
 
 create table if not exists public.blog_user_comments (
   id            uuid primary key default gen_random_uuid(),
@@ -166,8 +170,6 @@ create trigger moderate_comment
 -- No single crafted request can pin a connection.
 alter role anon set statement_timeout = '3s';
 
--- Seed. Add to this from the dashboard; no redeploy needed.
-insert into public.moderation_terms (term) values
-  ('시발'), ('씨발'), ('개새끼'), ('병신'), ('좆'), ('니미'), ('썅'),
-  ('fuck'), ('shit'), ('bitch'), ('asshole'), ('cunt')
-on conflict (term) do nothing;
+-- The blocklist is NOT seeded here. This repo is public, and a committed word
+-- list tells anyone exactly what to misspell. Add terms from the Supabase
+-- dashboard (Table editor > moderation_terms); no redeploy is needed.

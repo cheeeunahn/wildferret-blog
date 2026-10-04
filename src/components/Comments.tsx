@@ -2,13 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { checkComment, LIMITS, messageFor, type RejectionReason } from '../shared/moderation'
 import type { Lang } from '../shared/i18n'
 import type { Strings } from '../copy/strings'
-import {
-  CommentError,
-  fetchComments,
-  isConfigured,
-  postComment,
-  type Comment,
-} from '../client/supabaseComments'
+import { CommentError, fetchComments, postComment, type Comment } from '../client/commentsApi'
 
 /**
  * The comment island. Mounted client:visible in ArticleView.astro, so the
@@ -49,12 +43,9 @@ export default function Comments({
   strings: Strings['comments']
   lang?: Lang
 }) {
-  // Build-time constant, so it can settle during render rather than in an
-  // effect — setState in an effect body would cascade a second render.
-  const configured = isConfigured()
   const [comments, setComments] = useState<Comment[]>([])
-  const [loading, setLoading] = useState(configured)
-  const [loadFailed, setLoadFailed] = useState(!configured)
+  const [loading, setLoading] = useState(true)
+  const [loadFailed, setLoadFailed] = useState(false)
   const [nickname, setNickname] = useState('')
   const [body, setBody] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -62,7 +53,6 @@ export default function Comments({
   const bodyRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
-    if (!configured) return
     let cancelled = false
     fetchComments(articleSlug)
       .then((rows) => {
@@ -77,7 +67,7 @@ export default function Comments({
     return () => {
       cancelled = true
     }
-  }, [articleSlug, configured])
+  }, [articleSlug])
 
   const reject = useCallback(
     (reason: RejectionReason) => {
@@ -92,7 +82,7 @@ export default function Comments({
     if (submitting) return
     setError(null)
 
-    // Instant feedback only — the trigger is what actually enforces this.
+    // Instant feedback only — the server and the trigger are what enforce this.
     const local = checkComment(nickname, body)
     if (local) {
       reject(local)

@@ -1,29 +1,35 @@
 /**
- * Client-side pre-check, deliberately a SUBSET of the moderate_comment()
+ * The comment pre-check, deliberately a SUBSET of the moderate_comment()
  * trigger in supabase/migrations/0001_blog_user_comments.sql.
  *
- * This is not a security control. The publishable key is public, so anyone can
- * POST straight to PostgREST and skip this file entirely — the trigger is the
- * only enforcement point. This exists so a reader gets instant feedback instead
- * of a round-trip.
- *
- * It checks only the structural rules, never profanity: the blocklist lives in
- * a table anon cannot read, and shipping a copy of it here would publish it.
+ * It runs twice: in the browser for instant feedback, and again in the server
+ * (src/server/comments/service.ts) because the browser cannot be trusted. Only
+ * the trigger is complete — this file never sees the profanity list, which
+ * lives in a table no API role can read, and shipping a copy here would
+ * publish it.
  */
 
-export type RejectionReason =
-  | 'pii_card'
-  | 'pii_rrn'
-  | 'pii_phone'
-  | 'pii_email'
-  | 'profanity'
-  | 'link_spam'
-  | 'duplicate'
-  | 'too_fast'
-  | 'too_short'
-  | 'too_long'
-  | 'no_nickname'
-  | 'unknown'
+export const REJECTION_REASONS = [
+  'pii_card',
+  'pii_rrn',
+  'pii_phone',
+  'pii_email',
+  'profanity',
+  'link_spam',
+  'duplicate',
+  'too_fast',
+  'too_short',
+  'too_long',
+  'no_nickname',
+  'unknown',
+] as const
+
+export type RejectionReason = (typeof REJECTION_REASONS)[number]
+
+/** Narrows an untrusted value (e.g. a parsed response body) to a known reason code. */
+export function isRejectionReason(value: unknown): value is RejectionReason {
+  return (REJECTION_REASONS as readonly unknown[]).includes(value)
+}
 
 /** Mirrors the check constraints on the table. */
 export const LIMITS = {

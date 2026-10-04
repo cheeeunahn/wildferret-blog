@@ -1,13 +1,18 @@
 {
-  // Static-assets-only Worker: no server code, so no "main" entrypoint.
-  // Build with `npm run build` (assets resolve at the root), then Wrangler
-  // uploads ./dist.
+  // One Worker serving both halves of the site. Every page is prerendered to
+  // dist/client and served as a static asset; only /api/comments runs as code
+  // (src/pages/api/comments.ts). The @astrojs/cloudflare adapter generates the
+  // deployable config (dist/server/wrangler.json) from this file at build time.
+  //
+  // Secrets are set with `wrangler secret put`, never committed — see the
+  // Comments > Environment section of CLAUDE.md.
   "name": "wildferret-blog",
+  "main": "@astrojs/cloudflare/entrypoints/server",
   "compatibility_date": "2026-08-13",
   "assets": {
-    "directory": "./dist",
+    "directory": "./dist/client",
     // Astro prerenders a real file per route, so unknown paths should genuinely
-    // 404 rather than rewrite to index.html. dist/404.html is built from
+    // 404 rather than rewrite to index.html. dist/client/404.html is built from
     // src/pages/404.astro.
     "not_found_handling": "404-page",
   },
