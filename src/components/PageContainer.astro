@@ -1,0 +1,27 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+
+/**
+ * The site's one horizontal frame. Every page region sits in one of two widths,
+ * so their left edges line up with the header's:
+ *
+ * - `content` (720px) — reading pages: article, about, 404.
+ * - `wide` (1200px) — the shell and the home grid.
+ *
+ * Gutters are 16px on phones and 24px from `sm`, so nothing touches the screen
+ * edge at 360px.
+ */
+interface Props extends HTMLAttributes<'div'> {
+  width?: 'content' | 'wide'
+  as?: 'div' | 'section' | 'header' | 'nav' | 'article'
+  /** Passed straight through; the summarizer finds the body by it. */
+  'data-article-body'?: boolean
+}
+
+const { width = 'content', as: Tag = 'div', class: className = '', ...rest } = Astro.props
+const max = width === 'wide' ? 'max-w-[1200px]' : 'max-w-[720px]'
+---
+
+<Tag class:list={['mx-auto w-full px-4 sm:px-6', max, className]} {...rest}>
+  <slot />
+</Tag>

@@ -1,7 +1,12 @@
+---
+title: 'ADR 0002: Adopt Astryx as the design system, rendered statically'
+status: Proposed
+status-note: 'spike on `feat/astryx-design-system`'
+date: 2026-10-05
+---
+
 # ADR 0002: Adopt Astryx as the design system, rendered statically
 
-- Status: Proposed (spike on `feat/astryx-design-system`)
-- Date: 2026-10-05
 - Requirements: [`docs/trd/astryx-design-system.md`](../trd/astryx-design-system.md)
 
 ## Context

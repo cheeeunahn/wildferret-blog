@@ -1,4 +1,5 @@
 // @ts-check
+import { readdirSync, readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'astro/config'
 import react from '@astrojs/react'
@@ -24,6 +25,27 @@ const summarizerDirective = {
   },
 }
 
+// Every Astryx subpath the app imports ('@astryxdesign/core/Heading', …), read
+// from src/ when the config loads. See `optimizeDeps` below for why.
+function astryxImports() {
+  const src = fileURLToPath(new URL('./src', import.meta.url))
+  const found = new Set()
+  for (const file of readdirSync(src, { recursive: true, encoding: 'utf8' })) {
+    if (!/\.(astro|tsx?)$/.test(file)) continue
+    const text = readFileSync(`${src}/${file}`, 'utf8')
+    for (const [, id] of text.matchAll(/['"](@astryxdesign\/core\/[A-Za-z]+)['"]/g)) found.add(id)
+  }
+  return [...found].sort()
+}
+
+// Pre-bundled up front, in the browser and in the Worker. Vite otherwise
+// discovers these on the first request to each page, re-optimizes, and deletes
+// the chunks the Cloudflare workerd runner already holds — `pnpm dev` then dies
+// with "process exited before becoming ready", or a page 500s with "The file
+// does not exist at node_modules/.vite/deps_ssr/…". `astro/assets/services/noop`
+// is pulled in by `imageService: 'passthrough'`.
+const prebundle = [...astryxImports(), 'astro/assets/services/noop']
+
 export default defineConfig({
   base,
   outDir: './dist',
@@ -43,5 +65,9 @@ export default defineConfig({
   adapter: process.env.VITEST ? undefined : cloudflare({ imageService: 'passthrough' }),
   session: false,
   integrations: [react(), summarizerDirective],
-  vite: { plugins: [tailwindcss()] },
+  vite: {
+    plugins: [tailwindcss()],
+    optimizeDeps: { include: prebundle.filter((id) => id.startsWith('@astryxdesign/')) },
+    ssr: { optimizeDeps: { include: prebundle } },
+  },
 })

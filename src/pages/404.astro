@@ -4,6 +4,7 @@
 // language at build time. It answers in both rather than guessing — and needs
 // no script to do it.
 import Base from '../layouts/Base.astro'
+import PageContainer from '../components/PageContainer.astro'
 import { LANGS, ROOT_LOCALE, switchLangHref } from '../shared/i18n'
 import { t } from '../copy/strings'
 
@@ -19,7 +20,7 @@ const options = LANGS.map((lang) => ({
   title={`${t('ko').notFound.title} · ${t('en').notFound.title}`}
   availableLangs={[]}
 >
-  <div class="max-w-[720px] mx-auto px-6 py-32 text-center page-enter">
+  <PageContainer class="py-24 sm:py-32 text-center page-enter">
     {options.map(({ lang, strings, home }, i) => (
       <div class={i > 0 ? 'mt-10' : ''} lang={lang}>
         <h1 class="text-2xl font-semibold text-ink-900 mb-4">{strings.notFound.title}</h1>
@@ -28,5 +29,5 @@ const options = LANGS.map((lang) => ({
         </a>
       </div>
     ))}
-  </div>
+  </PageContainer>
 </Base>

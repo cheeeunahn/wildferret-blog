@@ -2,6 +2,7 @@
 import type { LocalizedArticle } from '../content/service'
 import AiSummary from './AiSummary'
 import Comments from './Comments'
+import PageContainer from './PageContainer.astro'
 import { formatInline, parseArticleBody } from '../content/parser'
 import { resolveAssetUrl } from '../shared/assetUrl'
 import { localeHref, type Locale } from '../shared/i18n'
@@ -64,24 +65,28 @@ const MAX_CAROUSEL_SLIDES = 6
 ---
 
 <div class="page-enter">
-  {/* Article Header */}
-  <header class="max-w-[720px] mx-auto px-6 pt-10 sm:pt-14 pb-8">
+  {/* Article header, after the Astryx "Documentation Technical" example: a
+      large title, one muted meta line, the subtitle, then the AI card. There
+      is deliberately no cover image here; cards still use cardImage. */}
+  <PageContainer as="header" class="pt-8 sm:pt-14 pb-6 sm:pb-8">
     <div class="animate-reveal">
-      <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-5">
-        <Text type="supporting">{article.date}</Text>
-        <Divider orientation="vertical" className="h-3" />
-        <Text type="supporting">{strings.article.readTime(article.readMinutes)}</Text>
-      </div>
-
-      <Heading level={1} className="mb-3">
+      <Heading level={1} type="display-3" className="page-title mb-3">
         {article.title}
       </Heading>
-      <Text as="p" display="block" type="large" color="secondary">
+      <div class="page-meta mb-5">
+        <Text type="supporting">{article.date}</Text>
+        <span class="text-ink-300" aria-hidden="true">
+          ·
+        </span>
+        <Text type="supporting">{strings.article.readTime(article.readMinutes)}</Text>
+      </div>
+      <Text as="p" display="block" type="large" color="secondary" className="page-subtitle">
         {article.subtitle}
       </Text>
-      {/* AI summary button. client:summarizer (src/directives/summarizer.ts)
+      {/* AI summary card. client:summarizer (src/directives/summarizer.ts)
             hydrates it only in browsers that have Chrome's Prompt API, so
-            everyone else downloads neither the island nor React. */}
+            everyone else downloads neither the island nor React — and sees
+            nothing here, rather than a card that cannot work. */}
       <AiSummary
         client:summarizer
         slug={article.slug}
@@ -89,30 +94,11 @@ const MAX_CAROUSEL_SLIDES = 6
         lang={locale.lang}
         strings={strings.summarizer}
       />
-      {article.coverImage && (
-        <div class="mt-8">
-          <div class="overflow-hidden rounded-2xl border border-ink-100">
-            <img
-              src={resolveAssetUrl(article.coverImage)}
-              alt={article.title}
-              class="w-full h-auto object-cover"
-              loading="eager"
-            />
-          </div>
-          <Text as="p" display="block" type="supporting" className="mt-3">
-            {strings.article.coverImageNote}
-          </Text>
-        </div>
-      )}
     </div>
-  </header>
-
-  <div class="max-w-[720px] mx-auto">
-    <Divider />
-  </div>
+  </PageContainer>
 
   {/* Article Body */}
-  <article class="max-w-[720px] mx-auto px-6 pt-9 pb-12 prose-blog" data-article-body>
+  <PageContainer as="article" class="pt-4 sm:pt-6 pb-12 prose-blog" data-article-body>
     {summary && (
       <aside data-summary-card class="mb-10 animate-reveal" aria-label={summary.label}>
         <Card variant="muted">
@@ -333,14 +319,14 @@ const MAX_CAROUSEL_SLIDES = 6
         </Text>
       )
     })}
-  </article>
+  </PageContainer>
 
   {/* Comments. client:visible, not client:only — the island has no
         server-hostile code, so the shell prerenders and the React runtime only
         downloads once a reader actually scrolls this far.
         Keyed by slug alone, so a post's thread is shared across all three
         language trees rather than split per language. */}
-  <div class="max-w-[720px] mx-auto px-6 pb-4">
+  <PageContainer class="pb-4">
     <Divider className="mb-10" />
     <Comments
       client:visible
@@ -348,14 +334,14 @@ const MAX_CAROUSEL_SLIDES = 6
       strings={strings.comments}
       lang={locale.lang}
     />
-  </div>
+  </PageContainer>
 
   {/* Back link */}
-  <div class="max-w-[720px] mx-auto px-6 pb-20">
+  <PageContainer class="pb-16 sm:pb-20">
     <Divider className="mb-10" />
     <a
       href={localeHref(locale, '/')}
-      class="inline-flex items-center gap-2 text-sm text-ink-600 no-underline hover:text-ink-700 transition-colors"
+      class="inline-flex items-center gap-2 min-h-11 text-sm text-ink-600 no-underline hover:text-ink-700 transition-colors"
     >
       <svg
         width="16"
@@ -372,5 +358,5 @@ const MAX_CAROUSEL_SLIDES = 6
       </svg>
       {strings.article.back}
     </a>
-  </div>
+  </PageContainer>
 </div>

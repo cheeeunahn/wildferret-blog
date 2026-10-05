@@ -1,10 +1,12 @@
 ---
+import PageContainer from './PageContainer.astro'
 import { resolveAssetUrl } from '../shared/assetUrl'
 import { aboutCopy } from '../content/service'
 import type { Locale } from '../shared/i18n'
 import { Badge } from '@astryxdesign/core/Badge'
 import { Heading } from '@astryxdesign/core/Heading'
 import { HStack } from '@astryxdesign/core/HStack'
+import { Table, pixel } from '@astryxdesign/core/Table'
 import { Text } from '@astryxdesign/core/Text'
 
 interface Props {
@@ -14,14 +16,32 @@ interface Props {
 const { locale } = Astro.props
 const copy = aboutCopy(locale.lang)
 const profileImageUrl = resolveAssetUrl('/assets/images/profile-ferret-desk.webp')
+
+// Career as Astryx Table rows: the period, then role and org together.
+type CareerRow = { period: string; role: string; org: string }
+const careerColumns = [
+  { key: 'period', header: copy.careerPeriodHeader, width: pixel(160) },
+  {
+    key: 'role',
+    header: copy.careerRoleHeader,
+    renderCell: (row: CareerRow) => `${row.role} · ${row.org}`,
+  },
+]
 ---
 
+{/* After the Astryx "Documentation Design" example: a large title, a muted
+    panel standing in for the example's preview area, then sections divided by
+    hairlines. One 720px column, the same as the article page. */}
 <div class="page-enter">
-  <section class="max-w-[720px] mx-auto px-6 pt-10 sm:pt-14 pb-20">
-    {/* Profile. Same 720px column as the header and footer, so the page shares
-        their left edge; avatar beside the heading rather than stacked above. */}
-    <HStack gap={5} align="center" className="animate-reveal mb-12">
-      <div class="w-20 h-20 shrink-0 rounded-full border border-ink-200 overflow-hidden">
+  <PageContainer as="section" class="pt-8 sm:pt-14 pb-16 sm:pb-20">
+    <Heading level={1} type="display-3" className="page-title mb-6 sm:mb-8 animate-reveal">
+      {copy.pageTitle}
+    </Heading>
+
+    {/* Profile panel. Stacked and centred on phones, avatar beside the text
+        from sm. */}
+    <div class="profile-panel animate-reveal delay-1 px-5 py-8 sm:p-10 flex flex-col sm:flex-row items-center sm:items-center gap-5 sm:gap-8 text-center sm:text-left">
+      <div class="w-24 h-24 sm:w-28 sm:h-28 shrink-0 rounded-full border border-ink-200 overflow-hidden">
         <img
           src={profileImageUrl}
           alt={copy.profileAlt}
@@ -29,19 +49,19 @@ const profileImageUrl = resolveAssetUrl('/assets/images/profile-ferret-desk.webp
           loading="eager"
         />
       </div>
-      <div>
-        <Heading level={1} className="mb-2">
+      <div class="min-w-0">
+        <Heading level={2} className="about-name mb-2">
           {copy.heading}
         </Heading>
-        <Text as="p" display="block" type="large" color="secondary">
+        <Text as="p" display="block" type="large" color="secondary" className="page-subtitle">
           {copy.intro}
         </Text>
       </div>
-    </HStack>
+    </div>
 
     {/* Interests */}
-    <div class="animate-reveal delay-2">
-      <Heading level={2} className="mb-6">
+    <div class="about-section animate-reveal delay-2">
+      <Heading level={2} className="mb-5">
         {copy.interestsHeading}
       </Heading>
       <HStack gap={2} wrap="wrap">
@@ -51,18 +71,23 @@ const profileImageUrl = resolveAssetUrl('/assets/images/profile-ferret-desk.webp
       </HStack>
     </div>
 
-    {/* Career */}
-    <div class="mt-16 animate-reveal delay-3">
-      <Heading level={2} className="mb-6">
+    {/* Career. A two-column Astryx Table from sm; on phones the period sits
+        above the role instead, since two columns at 360px would squeeze the
+        role into a sliver. */}
+    <div class="about-section animate-reveal delay-3">
+      <Heading level={2} className="mb-5">
         {copy.careerHeading}
       </Heading>
-      <ul class="space-y-3">
+      <div class="hidden sm:block">
+        <Table columns={careerColumns} data={copy.career} verticalAlign="top" />
+      </div>
+      <ul class="sm:hidden flex flex-col">
         {copy.career.map((item) => (
-          <li class="flex flex-col sm:flex-row sm:gap-4 text-[15px]">
-            <Text type="supporting" hasTabularNumbers className="sm:w-32 sm:shrink-0 sm:pt-1">
+          <li class="py-3 border-b border-ink-100 last:border-b-0">
+            <Text as="p" display="block" type="supporting" hasTabularNumbers className="mb-1">
               {item.period}
             </Text>
-            <Text>
+            <Text as="p" display="block">
               {item.role}
               <Text type="inherit" color="secondary">{` · ${item.org}`}</Text>
             </Text>
@@ -70,5 +95,5 @@ const profileImageUrl = resolveAssetUrl('/assets/images/profile-ferret-desk.webp
         ))}
       </ul>
     </div>
-  </section>
+  </PageContainer>
 </div>

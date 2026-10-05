@@ -5,7 +5,7 @@
 // This is the deterministic half of the automatic translation pipeline: the
 // GitHub workflow in .github/workflows/translate-articles.yml runs it with
 // --json to decide whether there is anything for Claude to translate, and the
-// `/translate-articles` command runs it to pick its targets. Keeping the
+// `/translate-articles` skill runs it to pick its targets. Keeping the
 // detection here — rather than in a prompt — means the decision to translate is
 // reproducible and reviewable, and the model is only asked to do the writing.
 //

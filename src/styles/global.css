@@ -188,6 +188,25 @@ html.dark body::before {
   margin-bottom: 0.75rem;
 }
 
+/* Every section after the first opens on a hairline, as in the Astryx
+   "Documentation Technical" example — the rule, not just the heading, marks
+   where one part of the post ends. */
+.prose-blog h2 ~ h2 {
+  margin-top: 3rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--color-border);
+}
+
+/* Wide blocks scroll inside their own box, never the page. */
+.prose-blog pre {
+  overflow-x: auto;
+}
+
+.page-subtitle {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
 .prose-blog p {
   margin-bottom: 1.5rem;
   word-break: keep-all;
@@ -595,14 +614,22 @@ html:not(.dark) .hero-firefly {
 }
 
 /* Header nav.
-   The active state was colour plus `font-medium` — and 500 collapses to Regular
-   in Nanum Barun Gothic (see the @font-face note above), so the weight signal
-   was doing nothing at all. Real 700 plus a rule under the label carries it. */
+   Quiet text links with a muted pill on hover and on the current page, after
+   the Astryx docs top bar. The active state is weight plus the pill — 500
+   collapses to Regular in Nanum Barun Gothic (see the @font-face note above),
+   so it is real 700. Every item is a 44px-tall tap target. */
 .nav-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 0.625rem;
+  border-radius: var(--radius-full);
+  font-size: 14px;
   color: var(--color-ink-600);
+  text-decoration: none;
   transition:
     color 0.15s ease,
-    text-decoration-color 0.15s ease;
+    background-color 0.15s ease;
 }
 
 .nav-link:hover {
@@ -610,54 +637,152 @@ html:not(.dark) .hero-firefly {
 }
 
 .nav-link-active {
-  color: var(--color-accent);
+  color: var(--color-ink-900);
   font-weight: 700;
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 9px;
-  text-decoration-color: var(--color-accent);
 }
 
-/* Language switcher.
-   Sits beside the nav links but is deliberately quieter than them: it names
-   which of three trees you are in (/, /kr, /en), which is orientation rather
-   than navigation. Hence the smaller type and the ink-500 ground — an active
-   nav-link's accent underline would read as a fourth destination. */
-.lang-switch {
+.nav-link:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -4px;
+}
+
+/* Logo: the long form, and the short one on phones under 400px so the nav,
+   the language menu and the theme toggle still fit on one line at 360px. */
+.site-logo-short {
+  display: none;
+}
+
+@media (max-width: 399.98px) {
+  .site-logo-long {
+    display: none;
+  }
+  .site-logo-short {
+    display: inline;
+  }
+}
+
+/* Notched phones in landscape: keep the bar's content out of the cutout. */
+.site-header > nav,
+.site-footer-inner {
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+
+@media (min-width: 40rem) {
+  .site-header > nav,
+  .site-footer-inner {
+    padding-left: max(1.5rem, env(safe-area-inset-left));
+    padding-right: max(1.5rem, env(safe-area-inset-right));
+  }
+}
+
+.site-footer-inner {
+  padding-bottom: max(2.5rem, env(safe-area-inset-bottom));
+}
+
+/* Language menu.
+   A native <details>: the <summary> is the trigger, the list is a popover in
+   Astryx's popover colours. It opens right-aligned under the trigger, so at
+   360px it grows leftwards into the screen rather than off its edge. */
+.lang-menu {
+  position: relative;
+}
+
+.lang-menu-trigger {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
+  min-height: 2.75rem;
+  padding: 0 0.625rem;
+  border-radius: var(--radius-full);
   font-size: 12px;
-  line-height: 1;
+  font-weight: 700;
   letter-spacing: 0.04em;
+  color: var(--color-ink-700);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  transition: background-color 0.15s ease;
 }
 
-.lang-switch-link {
-  color: var(--color-ink-500);
+/* Safari still draws its own disclosure triangle without this. */
+.lang-menu-trigger::-webkit-details-marker {
+  display: none;
+}
+
+.lang-menu-trigger:hover,
+.lang-menu[open] > .lang-menu-trigger {
+  background-color: var(--color-ink-50);
+}
+
+.lang-menu-trigger:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -4px;
+}
+
+.lang-menu-chevron {
+  transition: transform 0.15s ease;
+}
+
+.lang-menu[open] .lang-menu-chevron {
+  transform: rotate(180deg);
+}
+
+.lang-menu-list {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  right: 0;
+  z-index: 60;
+  min-width: 10rem;
+  margin: 0;
+  padding: 0.25rem;
+  list-style: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-container);
+  background-color: var(--color-background-popover);
+  box-shadow: var(--shadow-med);
+}
+
+.lang-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0 0.75rem;
+  border-radius: var(--radius-element);
+  font-size: 14px;
+  color: var(--color-ink-700);
   text-decoration: none;
-  padding: 0.15rem 0.1rem;
-  transition: color 0.15s ease;
 }
 
-.lang-switch-link:hover {
+.lang-menu-item:hover {
+  background-color: var(--color-ink-50);
   color: var(--color-ink-900);
 }
 
-/* The current language is stated, not offered — weight and full-strength ink,
-   with no underline, so it does not read as somewhere else to go. */
-.lang-switch-link.is-current {
+.lang-menu-item:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+}
+
+/* The check holds its space on every row so the names line up. */
+.lang-menu-check {
+  visibility: hidden;
+}
+
+.lang-menu-item.is-current {
   color: var(--color-ink-900);
   font-weight: 700;
 }
 
-.lang-switch-link:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-  border-radius: 3px;
+.lang-menu-item.is-current .lang-menu-check {
+  visibility: visible;
 }
 
-.lang-switch-sep {
-  color: var(--color-ink-200);
+@media (prefers-reduced-motion: reduce) {
+  .lang-menu-chevron {
+    transition: none;
+  }
 }
 
 /* Article card.
@@ -687,6 +812,7 @@ html.dark .article-card:hover {
    as one square in either theme. */
 .article-thumb {
   background-color: var(--color-thumb-plate);
+  border: 1px solid var(--color-border);
 }
 
 .article-thumb img {
@@ -735,6 +861,133 @@ html.dark .cat-bar.is-stuck {
 @media (prefers-reduced-motion: reduce) {
   .cat-bar {
     transition: none;
+  }
+}
+
+/* Display titles: the home hero, and each reading page's h1.
+   Astryx's display type sets the face, weight and leading; this only scales
+   the size with the viewport so a long Korean title still fits a phone, and
+   wraps it on word boundaries rather than mid-word. */
+.display-title,
+.page-title {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  letter-spacing: -0.02em;
+}
+
+.display-title {
+  font-size: clamp(2rem, 1.5rem + 2.2vw, 3rem);
+  line-height: 1.15;
+}
+
+.page-title {
+  font-size: clamp(1.75rem, 1.35rem + 1.8vw, 2.75rem);
+  line-height: 1.2;
+}
+
+/* Muted meta line under a page title ("date · 8 min read"). */
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.5rem;
+}
+
+/* Hero / profile panel: surface on body with a hairline, at Astryx's
+   container radius — the "grey panel" of the Astryx docs examples, in this
+   palette's terms. */
+.hero-panel,
+.profile-panel {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-page);
+}
+
+/* On phones the panel's big radius would crowd the image's corners. */
+@media (max-width: 39.98rem) {
+  .hero-panel,
+  .profile-panel {
+    border-radius: var(--radius-container);
+  }
+}
+
+.hero-tagline {
+  word-break: keep-all;
+  max-width: 34rem;
+}
+
+/* Filter chips: one row that scrolls sideways on narrow screens instead of
+   wrapping, with a fade on the trailing edge to say there is more. */
+.cat-chips {
+  overflow-x: auto;
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 1.5rem), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 1.5rem), transparent);
+}
+
+.cat-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.cat-chips .astryx-toggle-button-group {
+  flex-wrap: nowrap;
+  padding-right: 1.5rem;
+}
+
+.cat-chips .astryx-toggle-button {
+  flex-shrink: 0;
+  scroll-snap-align: start;
+}
+
+/* Once everything fits (sm and up), drop the fade. */
+@media (min-width: 40rem) {
+  .cat-chips {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .cat-chips .astryx-toggle-button-group {
+    padding-right: 0;
+  }
+}
+
+/* A full 44px tap target on touch screens. */
+@media (pointer: coarse) {
+  .cat-chips .astryx-toggle-button {
+    min-height: 2.75rem;
+  }
+}
+
+/* About page sections: a hairline between each, as in the Astryx
+   "Documentation Design" example. */
+.about-section {
+  margin-top: 2.5rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--color-border);
+}
+
+/* The panel already closes off the top of the page; no rule under it. */
+.profile-panel + .about-section {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.about-name {
+  word-break: keep-all;
+}
+
+/* Card title: smaller than a section heading, bold, wraps on words. */
+.card-title {
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 700;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+@media (min-width: 40rem) {
+  .card-title {
+    font-size: 16px;
   }
 }
 

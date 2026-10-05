@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react'
-import { SegmentedControl, SegmentedControlItem } from '@astryxdesign/core/SegmentedControl'
+import { ToggleButton, ToggleButtonGroup } from '@astryxdesign/core/ToggleButton'
 
 const ALL = 'all'
 
 /**
- * The home page's category filter — an Astryx SegmentedControl, mounted
- * client:load in HomeView.astro (the third island; see CLAUDE.md).
+ * The home page's category filter — a row of Astryx toggle-button chips, after
+ * the Astryx "Card Grid" example, mounted client:load in HomeView.astro (see
+ * the islands policy in CLAUDE.md).
  *
  * The cards are static HTML outside this island, so it does not render them.
  * It only writes the chosen category to `data-filter` on `.cat-scope`, and the
- * per-category rules HomeView generates hide the cards that do not match. With
- * no JS the control renders but does nothing, and every post stays visible.
+ * per-category rules HomeView generates hide the other sections. With no JS
+ * the chips render but do nothing, and every post stays visible.
  */
 export default function CategoryFilter({
   categories,
@@ -31,11 +32,18 @@ export default function CategoryFilter({
   }, [value])
 
   return (
-    <SegmentedControl label={legend} value={value} onChange={setValue}>
-      <SegmentedControlItem value={ALL} label={allLabel} />
+    <ToggleButtonGroup
+      label={legend}
+      type="single"
+      value={value}
+      // A single-select group reports null when the pressed chip is clicked
+      // again. There is always exactly one filter, so that means "All".
+      onChange={(next) => setValue(typeof next === 'string' ? next : ALL)}
+    >
+      <ToggleButton value={ALL} label={allLabel} />
       {categories.map((c) => (
-        <SegmentedControlItem key={c} value={c} label={c} />
+        <ToggleButton key={c} value={c} label={c} />
       ))}
-    </SegmentedControl>
+    </ToggleButtonGroup>
   )
 }

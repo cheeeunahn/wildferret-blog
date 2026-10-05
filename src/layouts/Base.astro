@@ -2,6 +2,7 @@
 import '../styles/global.css'
 import ThemeToggle from '../components/ThemeToggle'
 import LangSwitcher from '../components/LangSwitcher.astro'
+import PageContainer from '../components/PageContainer.astro'
 import {
   HTML_LANGS,
   LANGS,
@@ -37,7 +38,7 @@ const year = new Date().getFullYear()
 const canonical = canonicalPath(locale.lang, appPath)
 
 const navLinkClass = (path: string) =>
-  `nav-link text-sm ${isActiveInLocale(pathname, path) ? 'nav-link-active' : 'no-underline'}`
+  `nav-link ${isActiveInLocale(pathname, path) ? 'nav-link-active' : ''}`
 ---
 
 <!doctype html>
@@ -95,17 +96,29 @@ const navLinkClass = (path: string) =>
         once-per-SPA-boot animations and would replay on every real navigation.
         Per-page entrance motion lives on each page's .page-enter wrapper. */}
     <div class="min-h-screen flex flex-col">
-      <header class="sticky top-0 z-50 bg-paper/80 backdrop-blur-md border-b border-ink-100">
-        <nav class="max-w-[720px] mx-auto px-6 h-16 flex items-center justify-between">
+      {/* Plain top bar, after the Astryx docs examples: body background and a
+          hairline, no blur. 56px on phones, 64px from sm — the home filter bar
+          sticks at that same offset (.cat-bar). */}
+      <header class="site-header sticky top-0 z-50 bg-paper border-b border-ink-100">
+        <PageContainer
+          as="nav"
+          width="wide"
+          class="h-14 sm:h-16 flex items-center justify-between gap-2"
+        >
           {/* Every internal link goes through localeHref, so a reader who
               arrived under /en stays under /en for the rest of the visit. */}
           <a
             href={localeHref(locale, '/')}
-            class="text-ink-900 text-lg font-semibold tracking-tight no-underline hover:opacity-70 transition-opacity"
+            class="site-logo text-ink-900 text-base sm:text-lg font-semibold tracking-tight no-underline hover:opacity-70 transition-opacity"
           >
-            wildferret's blog
+            {/* The brand is a name, not chrome copy, so it is not translated.
+                Phones under 400px get the short form so the nav still fits. */}
+            <span class="site-logo-long">wildferret's blog</span>
+            <span class="site-logo-short" aria-hidden="true">
+              wildferret
+            </span>
           </a>
-          <div class="flex items-center gap-4 sm:gap-6">
+          <div class="flex items-center gap-1 sm:gap-3">
             <a
               href={localeHref(locale, '/')}
               class={navLinkClass('/')}
@@ -123,21 +136,43 @@ const navLinkClass = (path: string) =>
             <LangSwitcher locale={locale} appPath={appPath} availableLangs={availableLangs} />
             <!-- client:only — ThemeToggle reads document.documentElement in a
                  useState initializer, which has no server equivalent. The fixed
-                 30px box (p-1.5 + 18px svg) reserves its space so the header
+                 44px box (a full tap target) reserves its space so the header
                  does not shift when the island mounts. -->
-            <span class="inline-flex w-[30px] h-[30px] items-center justify-center -mr-1.5">
+            <span class="inline-flex w-11 h-11 items-center justify-center -mr-2.5">
               <ThemeToggle client:only="react" />
             </span>
           </div>
-        </nav>
+        </PageContainer>
       </header>
 
+      {/* Closes the language <details> menu on an outside click or Escape — the
+          two things a native <details> does not do by itself. Inline and
+          dependency-free, like the hero script: not a hydrated island. */}
+      <script is:inline>
+        ;(() => {
+          const close = (except) =>
+            document.querySelectorAll('details.lang-menu[open]').forEach((d) => {
+              if (d !== except) d.removeAttribute('open')
+            })
+          document.addEventListener('click', (e) => close(e.target.closest('details.lang-menu')))
+          document.addEventListener('keydown', (e) => {
+            if (e.key !== 'Escape') return
+            const open = document.querySelector('details.lang-menu[open]')
+            if (!open) return
+            open.removeAttribute('open')
+            open.querySelector('summary')?.focus()
+          })
+        })()
+      </script>
       <main class="flex-1">
         <slot />
       </main>
 
       <footer class="border-t border-ink-100 bg-paper-warm">
-        <div class="max-w-[720px] mx-auto px-6 py-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <PageContainer
+          width="wide"
+          class="site-footer-inner py-10 sm:py-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+        >
           <div class="flex flex-col gap-1">
             <Text as="p" display="block" type="label" weight="bold">
               wildferret
@@ -149,7 +184,7 @@ const navLinkClass = (path: string) =>
           <Text as="p" display="block" type="supporting">
             &copy; {year} wildferret
           </Text>
-        </div>
+        </PageContainer>
       </footer>
     </div>
   </body>

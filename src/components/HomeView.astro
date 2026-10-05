@@ -1,12 +1,13 @@
 ---
 import ArticleCard from './ArticleCard.astro'
 import CategoryFilter from './CategoryFilter'
+import PageContainer from './PageContainer.astro'
 import { articlesIn, CATEGORIES } from '../content/service'
 import { resolveAssetUrl } from '../shared/assetUrl'
 import { t } from '../copy/strings'
 import type { Locale } from '../shared/i18n'
+import { Grid } from '@astryxdesign/core/Grid'
 import { Heading } from '@astryxdesign/core/Heading'
-import { HStack } from '@astryxdesign/core/HStack'
 import { Text } from '@astryxdesign/core/Text'
 
 interface Props {
@@ -38,8 +39,8 @@ const GREET_FRAMES = [
 ]
 
 // The CategoryFilter island writes the chosen category to .cat-scope's
-// data-filter; these rules do the hiding, so the cards stay static HTML. One
-// rule per category, generated from the data so adding a category to
+// data-filter; these rules hide the cards of other categories, so the cards
+// stay static HTML. One rule per category, generated from the data so adding a category to
 // articleTypes.ts is the only edit needed. Category names are our own data,
 // never reader input.
 const filterCss = usedCategories
@@ -48,18 +49,28 @@ const filterCss = usedCategories
 ---
 
 <div class="page-enter">
-  {/* Hero. No tonal band any more: Astryx's muted background is translucent and
-      vanished in dark mode, leaving a band-sized hole between the hero and the
-      list. The two regions now share one vertical rhythm instead. */}
-  <div>
-    <section class="max-w-[720px] mx-auto px-6 pt-8 sm:pt-10">
-      {/* The box is taller than the source's 16:9, so object-cover crops the
-          sides and the ferret renders larger. Its focal point is right of
-          centre and high, hence object-[62%_38%] rather than the default.
-          The <label> makes the whole illustration the click target for the
-          greeting; the checkbox inside it is the state. */}
-      <figure class="m-0 animate-reveal-media delay-1">
-        <div class="hero-greet relative block overflow-hidden rounded-2xl bg-paper-warm/30">
+  {/* Hero, after the Astryx "Documentation Catalog" example: one panel with
+      the site's title and a line about it, beside the illustration.
+      The panel is surface-on-body with a hairline rather than a muted tint —
+      Astryx's muted background is translucent and all but vanishes in dark
+      mode. Phones and tablets stack it with the illustration on top; from lg
+      the copy sits on the left. */}
+  <PageContainer as="section" width="wide" class="pt-4 sm:pt-8">
+    <div class="hero-panel grid items-center gap-5 sm:gap-8 p-3 sm:p-6 lg:p-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+      <div class="order-2 lg:order-1 px-1 pb-2 sm:px-2 lg:pb-0 animate-reveal delay-2">
+        <Heading level={1} type="display-2" className="display-title mb-3">
+          {strings.siteTitle}
+        </Heading>
+        <Text as="p" display="block" type="large" color="secondary" className="hero-tagline">
+          {strings.siteDescription}
+        </Text>
+      </div>
+
+      {/* The illustration and everything in it — the greeting cycle, the
+          fireflies, the sound toggle and the script below — is unchanged;
+          only its frame moved into the panel. */}
+      <figure class="order-1 lg:order-2 m-0 animate-reveal-media delay-1">
+        <div class="hero-greet relative block overflow-hidden rounded-xl bg-paper-warm/30">
           <input
             type="radio"
             name="hero-state"
@@ -86,7 +97,7 @@ const filterCss = usedCategories
           <img
             src={resolveAssetUrl('/assets/images/wildferret-hero-coding.webp')}
             alt={strings.home.heroCodingAlt}
-            class="w-full h-[260px] sm:h-[440px] object-cover object-[62%_38%]"
+            class="w-full h-[260px] sm:h-[400px] object-cover object-[62%_38%]"
             loading="eager"
           />
           {GREET_FRAMES.map((frame, i) => (
@@ -248,81 +259,80 @@ const filterCss = usedCategories
           })
         })()
       </script>
-    </section>
-  </div>
+    </div>
+  </PageContainer>
 
   {/* Category filter + article list. The filter rules key off .cat-scope's
       data-filter, so the cards must stay inside this one element. */}
-  <div class="cat-scope pt-10 sm:pt-12">
+  <div class="cat-scope pt-8 sm:pt-12">
     <style is:inline set:html={filterCss}></style>
 
     {/* The filter sticks below the header so it stays reachable while you
-        scroll the list — top-16 is the header's own h-16, and z-40 keeps it
-        under the header rather than sliding over it. The band is a full-bleed
-        div and only the inner section is width-capped, so the cards pass
-        behind an opaque strip instead of showing through beside a 720px box.
-        The region's top spacing moved up to .cat-scope: left on this element
-        it would have travelled with it and parked a 3rem gap of paper above
-        the pills once stuck. */}
-    {/* The sentinel is what tells us the bar has stuck: it sits one pixel
-        above the sticky element in normal flow, so the moment it passes
-        under the header the bar is at its stop. Observing the bar itself
-        would never fire — a stuck element stays in view by definition. */}
+        scroll the list. Its top offset is the header's own height (h-14, then
+        h-16 from sm), and z-40 keeps it under the header rather than sliding
+        over it. The band is full-bleed and only the inner row is width-capped,
+        so the cards pass behind an opaque strip.
+        The sentinel is what tells us the bar has stuck: it sits one pixel
+        above the sticky element in normal flow, so the moment it passes under
+        the header the bar is at its stop. */}
     <div class="cat-sentinel" aria-hidden="true"></div>
-    <div class="cat-bar sticky top-16 z-40 bg-paper py-4 sm:py-5">
-      <section class="max-w-[720px] mx-auto px-6">
-        {/* client:load, not :visible — the bar is near the top of the page and
-            sticky, so it is on screen almost at once. The React runtime is
-            already on this page for ThemeToggle; the cost is Astryx's chunk. */}
-        {/* The list's header row: what this is on the left, how to narrow it
-            on the right, so the filter no longer sits alone on one side. */}
-        <HStack
-          justify="between"
-          align="center"
-          wrap="wrap"
-          gap={3}
-          className="animate-reveal delay-3"
-        >
-          <Heading level={2}>{strings.nav.posts}</Heading>
+    <div class="cat-bar sticky top-14 sm:top-16 z-40 bg-paper py-3 sm:py-4">
+      <PageContainer
+        width="wide"
+        class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-6 animate-reveal delay-3"
+      >
+        <Heading level={2}>{strings.nav.posts}</Heading>
+        {/* One row that scrolls sideways on phones rather than wrapping to two.
+            client:load, not :visible — the bar is near the top of the page and
+            sticky, so it is on screen almost at once. */}
+        <div class="cat-chips min-w-0">
           <CategoryFilter
             client:load
             categories={usedCategories}
             allLabel={strings.home.filterAll}
             legend={strings.home.filterLegend}
           />
-        </HStack>
-      </section>
+        </div>
+      </PageContainer>
     </div>
 
-    {/* Same idiom as the hero script below: inline, dependency-free, not a
-        hydrated component (see the islands policy in CLAUDE.md). There is no
-        CSS selector for "is currently stuck", so this is the one job that
-        needs script. If it never runs the bar still sticks — it just does
-        not gain the shadow. */}
+    {/* Same idiom as the hero script: inline, dependency-free, not a hydrated
+        component (see the islands policy in CLAUDE.md). There is no CSS
+        selector for "is currently stuck", so this is the one job that needs
+        script. If it never runs the bar still sticks — it just does not gain
+        the shadow. */}
     <script is:inline>
       ;(() => {
         const bar = document.querySelector('.cat-bar')
         const sentinel = document.querySelector('.cat-sentinel')
+        const header = document.querySelector('.site-header')
         if (!bar || !sentinel || !('IntersectionObserver' in window)) return
+        // The header is fixed chrome over the viewport (56px on phones, 64px
+        // from sm); shrink the root by its height so the sentinel counts as
+        // gone when it slides under the header, not when it leaves the screen.
+        const top = header ? header.offsetHeight : 64
         new IntersectionObserver(
           ([entry]) => bar.classList.toggle('is-stuck', !entry.isIntersecting),
-          // The header is 64px of fixed chrome over the viewport; shrink the
-          // root by that much so the sentinel counts as gone when it slides
-          // under the header, not when it leaves the screen entirely.
-          { rootMargin: '-64px 0px 0px 0px', threshold: 0 },
+          { rootMargin: `-${top}px 0px 0px 0px`, threshold: 0 },
         ).observe(sentinel)
       })()
     </script>
-    {/* flex + gap, not space-y: a card the filter hides is display:none, and
-        gap collapses around it where a sibling margin would leave a hole. */}
-    <section class="max-w-[720px] mx-auto px-6 pt-4 pb-20 flex flex-col gap-5 sm:gap-6">
+    <PageContainer width="wide" class="pt-2 pb-16 sm:pb-20">
+      {/* One grid of every post, as in the Astryx "Documentation Catalog"
+          example: one column on phones (compact row cards), then as many
+          240px+ columns as fit, up to four. With only a handful of posts per
+          category, per-category sections left each one a lone card. */}
       {articles.length > 0 ? (
-        articles.map((article, i) => <ArticleCard article={article} index={i} locale={locale} />)
+        <Grid columns={{ minWidth: 240, max: 4 }} gap={5}>
+          {articles.map((article, i) => (
+            <ArticleCard article={article} index={Math.min(i, 8)} locale={locale} />
+          ))}
+        </Grid>
       ) : (
         <Text as="p" display="block" color="secondary" className="animate-reveal delay-4">
           {strings.home.emptyList}
         </Text>
       )}
-    </section>
+    </PageContainer>
   </div>
 </div>

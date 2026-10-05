@@ -107,35 +107,63 @@ export default function AiSummary({
   if (status === 'checking' || status === 'hidden') return null
 
   const busy = status === 'downloading' || status === 'summarizing'
+  const showButton = status === 'idle' || status === 'continue' || busy
 
+  // The "AI Assistance" card of the Astryx "Documentation Technical" example:
+  // a label row with the action on the right, the summary underneath. Below
+  // sm the button drops under the label at full width, a proper tap target.
   return (
-    <div className="mt-6">
-      {(status === 'idle' || status === 'continue' || busy) && (
-        <button
-          type="button"
-          onClick={() => void run()}
-          disabled={busy}
-          aria-busy={busy}
-          className="inline-flex items-center gap-2 rounded-lg border border-ink-100 bg-surface px-3.5 py-2 text-sm text-ink-800 transition-colors hover:bg-surface-hover hover:border-ink-200 disabled:text-ink-600 disabled:hover:bg-surface disabled:hover:border-ink-100 cursor-pointer disabled:cursor-default"
-        >
-          {busy && (
-            <span
-              aria-hidden="true"
-              className="size-3.5 shrink-0 rounded-full border-2 border-ink-200 border-t-ink-700 motion-safe:animate-spin"
-            />
-          )}
-          {status === 'downloading'
-            ? strings.downloading
-            : status === 'summarizing'
-              ? strings.summarizing
-              : status === 'continue'
-                ? strings.continue
-                : strings.button}
-        </button>
-      )}
+    <section
+      aria-label={strings.heading}
+      className="mt-6 rounded-xl border border-ink-100 bg-surface overflow-hidden"
+    >
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-4 py-3">
+        <span className="inline-flex items-center gap-2 text-sm font-bold text-ink-800">
+          {/* Sparkle, the conventional mark for machine-written text. */}
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z" />
+            <path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z" />
+          </svg>
+          {strings.heading}
+        </span>
+
+        {showButton && (
+          <button
+            type="button"
+            onClick={() => void run()}
+            disabled={busy}
+            aria-busy={busy}
+            className="inline-flex items-center justify-center gap-2 min-h-11 sm:min-h-9 w-full sm:w-auto rounded-lg border border-ink-100 bg-surface px-3.5 text-sm text-ink-800 transition-colors hover:bg-surface-hover hover:border-ink-200 disabled:text-ink-600 disabled:hover:bg-surface disabled:hover:border-ink-100 cursor-pointer disabled:cursor-default"
+          >
+            {busy && (
+              <span
+                aria-hidden="true"
+                className="size-3.5 shrink-0 rounded-full border-2 border-ink-200 border-t-ink-700 motion-safe:animate-spin"
+              />
+            )}
+            {status === 'downloading'
+              ? strings.downloading
+              : status === 'summarizing'
+                ? strings.summarizing
+                : status === 'continue'
+                  ? strings.continue
+                  : strings.button}
+          </button>
+        )}
+      </div>
 
       {status === 'error' && (
-        <p role="alert" className="text-sm text-copper m-0">
+        <p role="alert" className="border-t border-ink-100 px-4 py-3 text-sm text-copper m-0">
           {strings.error}{' '}
           <button
             type="button"
@@ -148,27 +176,18 @@ export default function AiSummary({
       )}
 
       {summary && (
-        <section
-          aria-label={strings.heading}
-          aria-live="polite"
-          className="mt-4 rounded-xl border border-ink-100 overflow-hidden"
-        >
-          <div className="px-4 py-2 border-b border-ink-100 bg-ink-50/60 text-[13px] text-ink-600">
-            {strings.heading}
-          </div>
-          <div className="px-5 py-4">
-            {/* Same look as the author-written summary card in ArticleView. */}
-            <ul className="list-disc pl-5 m-0 space-y-2.5 marker:text-ink-300 text-ink-700 text-[15px] leading-relaxed break-words">
-              {toSentences(summary)
-                .slice(0, MAX_SENTENCES)
-                .map((sentence, i) => (
-                  <li key={i}>{sentence}</li>
-                ))}
-            </ul>
-            <p className="mt-3 mb-0 text-xs text-ink-500">{strings.disclaimer}</p>
-          </div>
-        </section>
+        <div aria-live="polite" className="border-t border-ink-100 px-4 sm:px-5 py-4">
+          {/* Same look as the author-written summary card in ArticleView. */}
+          <ul className="list-disc pl-5 m-0 space-y-2.5 marker:text-ink-300 text-ink-700 text-[15px] leading-relaxed break-words">
+            {toSentences(summary)
+              .slice(0, MAX_SENTENCES)
+              .map((sentence, i) => (
+                <li key={i}>{sentence}</li>
+              ))}
+          </ul>
+          <p className="mt-3 mb-0 text-xs text-ink-500">{strings.disclaimer}</p>
+        </div>
       )}
-    </div>
+    </section>
   )
 }

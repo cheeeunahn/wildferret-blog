@@ -1,7 +1,12 @@
+---
+title: 'TRD: Astryx design system'
+status: Draft
+status-note: 'spike implemented on `feat/astryx-design-system`'
+date: 2026-10-05
+---
+
 # TRD: Astryx design system
 
-- Status: Draft (spike implemented on `feat/astryx-design-system`)
-- Date: 2026-10-05
 - Decision record: [ADR 0002](../adr/0002-astryx-design-system.md)
 
 ## Background
