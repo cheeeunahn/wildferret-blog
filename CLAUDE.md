@@ -28,7 +28,7 @@ Astro 7 requires **Node 22.12+**; pnpm 10 is pinned via `packageManager`.
 
 Every page is prerendered to a real HTML file at build time. The one exception is `src/pages/api/comments.ts` (`prerender = false`), which runs as Worker code — see Comments. There is no client-side router.
 
-**Deployment:** one root-path Cloudflare Worker. `astro.config.mjs` uses `base: '/'`, overridable via the `BASE_PATH` env var for a path-prefixed host. The build writes prerendered pages to `dist/client/` (served as static assets, with `not_found_handling: "404-page"` → `dist/client/404.html`) and the Worker to `dist/server/`; the adapter generates the deployable `dist/server/wrangler.json` from `wrangler.jsonc`. The adapter is pinned to `@astrojs/cloudflare@14.2.6`: 14.3.x needs an Astro newer than the pinned 7.2.2 despite its peer range. Sessions are off (`session: false`) so no KV namespace is required, and the adapter is skipped under Vitest (see the comment in `astro.config.mjs`).
+**Deployment:** one root-path Cloudflare Worker. `astro.config.mjs` uses `base: '/'`, overridable via the `BASE_PATH` env var for a path-prefixed host. The build writes prerendered pages to `dist/client/` (served as static assets, with `not_found_handling: "404-page"` → `dist/client/404.html`) and the Worker to `dist/server/`; the adapter generates the deployable `dist/server/wrangler.json` from `wrangler.jsonc`. The adapter is pinned to `@astrojs/cloudflare@14.2.6`: 14.3.x needed an Astro newer than 7.2.2 despite its peer range; Astro is now 7.2.10, so re-test 14.3.x before lifting that pin. Sessions are off (`session: false`) so no KV namespace is required, and the adapter is skipped under Vitest (see the comment in `astro.config.mjs`).
 
 **Routing** (file-based, `src/pages/`). Every page exists in three prerendered trees — see Languages below:
 
@@ -198,20 +198,23 @@ Anonymous, nickname-only comments on article pages, stored in Supabase. Schema a
 
 The browser never talks to Supabase. Three layers, one direction:
 
-| Layer    | File                                                        | Role                                                                                                          |
-| -------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Browser  | `src/client/commentsApi.ts`                                 | Same-origin `fetch` to `/api/comments`. Holds no URL or key                                                   |
-| HTTP     | `src/pages/api/comments.ts` → `src/server/comments/http.ts` | The only non-prerendered route. Status codes, body-size limit (16 KB), `{ reason }` error bodies              |
-| Logic    | `src/server/comments/service.ts`                            | Validates input, re-runs `checkComment()` (the browser cannot be trusted), maps trigger hints to reason codes |
-| Data     | `src/server/comments/repository.ts`                         | The only code that calls PostgREST — plain `fetch`, deliberately **not** `@supabase/supabase-js`              |
-| Database | `supabase/migrations/`                                      | RLS, column grants, and the `moderate_comment()` trigger — the final authority                                |
+| Layer    | File                                                        | Role                                                                                                                                             |
+| -------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Browser  | `src/client/commentsApi.ts`                                 | Same-origin `fetch` to `/api/comments`. Holds no URL or key                                                                                      |
+| HTTP     | `src/pages/api/comments.ts` → `src/server/comments/http.ts` | The only non-prerendered route. Status codes, same-origin JSON only, streamed body-size limit (16 KB), `{ reason }` error bodies                 |
+| Logic    | `src/server/comments/service.ts`                            | Validates input (slug must be a published article), re-runs `checkComment()` (the browser cannot be trusted), maps trigger hints to reason codes |
+| Data     | `src/server/comments/repository.ts`                         | The only code that calls PostgREST — plain `fetch`, deliberately **not** `@supabase/supabase-js`                                                 |
+| Database | `supabase/migrations/`                                      | RLS, column grants, and the `moderate_comment()` trigger — the final authority                                                                   |
 
 The wire shape (`Comment`) lives in `src/shared/comments.ts`, because the client and server may not import each other.
 
 - **The Worker connects as `blog_api`, never `service_role`.** `blog_api` (0002) has exactly the privileges anon used to have: `select` on visible rows only, `insert` on the three user columns only. A bug in the Worker therefore still cannot return a hidden comment or set `is_hidden`/`created_at` — the database refuses. Using `service_role` would bypass RLS and make `repository.ts` the only line of defense; do not.
 - **Moderation runs in three places, on purpose.** The browser runs `checkComment()` for instant feedback; the service runs it again because a request can skip the browser; the trigger enforces everything, including the profanity list that neither copy ever sees.
 - **Rejections travel as reason codes, never messages.** The trigger raises with a `hint` (`pii_phone`, `profanity`, `too_fast`, …); the repository keeps only that hint, the service keeps it only if it is a known code, and the API answers `{ "reason": <code> }`. The copy lives in `REJECTION_MESSAGES` (Korean) and `REJECTION_MESSAGES_EN` in `src/shared/moderation.ts`, picked by `messageFor(reason, lang)`. Never forward or render a PostgREST `message`/`details` string — that would make the error path an injection channel.
-- **Statuses:** 200/201 success · 400 malformed request · 413 body too large · 422 moderation rejection · 429 `too_fast` · 502 database failure · 503 Worker missing its secrets (the island then renders nothing).
+- **Statuses:** 200/201 success · 400 malformed request or unknown slug · 403 POST from another origin · 413 body too large · 415 POST not `application/json` · 422 moderation rejection · 429 `too_fast` · 502 database failure · 503 Worker missing its secrets (the island then renders nothing).
+- **The body limit is enforced while reading.** `readBounded()` cancels the stream as soon as it passes 16 KB, so a body with no (or a false) `Content-Length` is never buffered past it. Do not swap it back for `request.text()`.
+- **Only published slugs are accepted.** The route builds the set from `articlesIn('ko')` (metadata only, no bodies) and passes it down. A made-up slug never reaches the database, so it cannot create orphan threads or occupy an article's cooldown.
+- **The trigger's limits are serialized.** The duplicate, cooldown and table-wide checks are look-then-insert; `0004` takes a table-wide advisory lock in a trigger that fires before `moderate_comment` (triggers fire in name order), so concurrent inserts cannot all pass. Apply it in the SQL editor like the others.
 
 ### Languages
 

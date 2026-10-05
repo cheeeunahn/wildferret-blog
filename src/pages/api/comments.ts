@@ -9,10 +9,15 @@
 
 import type { APIRoute } from 'astro'
 import { env } from 'cloudflare:workers'
+import { articlesIn } from '../../content/service'
 import { handleGet, handlePost } from '../../server/comments/http'
 import { createCommentRepository } from '../../server/comments/repository'
 
 export const prerender = false
+
+// Every published article is in the Korean index (English is a subset of it).
+// Read from article metadata only; no body is loaded.
+const KNOWN_SLUGS: ReadonlySet<string> = new Set(articlesIn('ko').map((a) => a.slug))
 
 function repository() {
   const { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, SUPABASE_API_JWT } = env
@@ -24,5 +29,5 @@ function repository() {
   })
 }
 
-export const GET: APIRoute = ({ url }) => handleGet(url, repository())
-export const POST: APIRoute = ({ request }) => handlePost(request, repository())
+export const GET: APIRoute = ({ url }) => handleGet(url, repository(), KNOWN_SLUGS)
+export const POST: APIRoute = ({ request }) => handlePost(request, repository(), KNOWN_SLUGS)
