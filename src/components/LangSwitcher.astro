@@ -8,8 +8,8 @@ interface Props {
   appPath: string
   /**
    * Languages this particular page exists in. A language left out still gets a
-   * button — it points at that language's home rather than at a URL that would
-   * 404. Defaults to every language, which is right for the chrome pages.
+   * menu item — it points at that language's home rather than at a URL that
+   * would 404. Defaults to every language, which is right for the chrome pages.
    */
   availableLangs?: Lang[]
 }
@@ -22,35 +22,64 @@ const strings = t(locale.lang)
 // destination the switcher produces.
 const targets = LANGS.map((lang) => ({
   lang,
-  // The visible label is the URL segment ('KR'), not the language code
-  // ('ko') — the reader is picking a URL, and the two must agree on screen.
-  label: LANG_SEGMENTS[lang].toUpperCase(),
   name: strings.langNames[lang],
   href: switchLangHref(lang, availableLangs.includes(lang) ? appPath : '/'),
   current: lang === locale.lang,
 }))
+// The trigger shows the URL segment ('KR'), not the language code ('ko') — the
+// reader is picking a URL, and the two must agree on screen.
+const currentLabel = LANG_SEGMENTS[locale.lang].toUpperCase()
 ---
 
-{/* Plain links — the whole site is prerendered, so switching language is a
-    navigation, not state. No island, no JS. */}
-<div class="lang-switch" role="group" aria-label={strings.langSwitchLabel}>
-  {targets.map(({ lang, label, name, href: target, current }, i) => (
-    <>
-      {i > 0 && (
-        <span class="lang-switch-sep" aria-hidden="true">
-          /
-        </span>
-      )}
-      <a
-        href={target}
-        hreflang={lang}
-        lang={lang}
-        class={`lang-switch-link ${current ? 'is-current' : ''}`}
-        aria-current={current ? 'true' : undefined}
-      >
-        <span aria-hidden="true">{label}</span>
-        <span class="sr-only">{name}</span>
-      </a>
-    </>
-  ))}
-</div>
+{/* A native <details> dropdown of plain links. Switching language is a
+    navigation, not state, so there is still no island: an Astryx DropdownMenu
+    would hydrate React on every page for a two-item list. Escape and outside
+    clicks close it via the small inline script in Base.astro. */}
+<details class="lang-menu">
+  <summary class="lang-menu-trigger" aria-label={strings.langSwitchLabel}>
+    <span aria-hidden="true">{currentLabel}</span>
+    <svg
+      class="lang-menu-chevron"
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+  </summary>
+  <ul class="lang-menu-list" aria-label={strings.langSwitchLabel}>
+    {targets.map(({ lang, name, href: target, current }) => (
+      <li>
+        <a
+          href={target}
+          hreflang={lang}
+          lang={lang}
+          class={`lang-menu-item ${current ? 'is-current' : ''}`}
+          aria-current={current ? 'true' : undefined}
+        >
+          <svg
+            class="lang-menu-check"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          {name}
+        </a>
+      </li>
+    ))}
+  </ul>
+</details>

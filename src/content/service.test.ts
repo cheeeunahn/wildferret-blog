@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest'
+import { existsSync, readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { articles } from '../data/articles'
 import type { Article } from '../data/articleTypes'
 import { aboutCopy, articleLangs, articlesIn, langsForSlug, localizeArticle } from './service'
@@ -10,6 +12,7 @@ const post: Article = {
   date: '2026.01.01',
   readMinutes: 3,
   category: 'Research',
+  cardImage: '/assets/images/x-card.webp',
   loadContent: async () => '본문',
   translations: {
     en: { title: 'Title', subtitle: 'Subtitle', loadContent: async () => 'Body' },
@@ -65,4 +68,34 @@ describe('aboutCopy', () => {
     expect(aboutCopy('ko').heading).toBeTruthy()
     expect(aboutCopy('en').heading).toBeTruthy()
   })
+})
+
+// Width × height of a WebP, from its first chunk (VP8X, VP8L or VP8).
+function webpSize(buf: Buffer): { width: number; height: number } | null {
+  if (buf.toString('ascii', 0, 4) !== 'RIFF' || buf.toString('ascii', 8, 12) !== 'WEBP') return null
+  const chunk = buf.toString('ascii', 12, 16)
+  if (chunk === 'VP8X')
+    return { width: buf.readUIntLE(24, 3) + 1, height: buf.readUIntLE(27, 3) + 1 }
+  if (chunk === 'VP8L') {
+    const bits = buf.readUInt32LE(21)
+    return { width: (bits & 0x3fff) + 1, height: ((bits >> 14) & 0x3fff) + 1 }
+  }
+  if (chunk === 'VP8 ')
+    return { width: buf.readUInt16LE(26) & 0x3fff, height: buf.readUInt16LE(28) & 0x3fff }
+  return null
+}
+
+describe('card thumbnails', () => {
+  // Every post needs one — see the article-thumbnail skill for how to make it.
+  it.each(articles.map((a) => [a.slug, a.cardImage] as const))(
+    '%s has a square WebP thumbnail at /assets/images/<slug>-card.webp',
+    (slug, cardImage) => {
+      expect(cardImage).toBe(`/assets/images/${slug}-card.webp`)
+      const file = resolve('public', cardImage.slice(1))
+      expect(existsSync(file), `${file} is missing`).toBe(true)
+      const size = webpSize(readFileSync(file))
+      expect(size, `${file} is not a WebP`).not.toBeNull()
+      expect(size!.width).toBe(size!.height)
+    },
+  )
 })

@@ -9,9 +9,10 @@ pnpm dev       # dev server (astro dev)
 pnpm build     # astro check + astro build → dist/
 pnpm preview   # serve dist/ locally (at the configured base path)
 pnpm lint      # ESLint
-pnpm test      # unit tests for the article-content parser
+pnpm test      # unit tests, plus repo checks (card thumbnails, doc frontmatter)
 pnpm translation:status  # which articles have no English version yet
 pnpm translate           # write the missing English versions (opens Claude Code)
+pnpm docs:check          # frontmatter on docs/ and skills
 pnpm astro     # the Astro CLI directly
 pnpm astryx component <Name>  # Astryx component API docs — look props up here, don't guess
 pnpm theme:build              # rebuild src/styles/astryx/wildferret.theme.css after editing the theme
@@ -36,6 +37,8 @@ Every page is prerendered to a real HTML file at build time. The one exception i
 - `404.astro` → `dist/404.html` — one file serves every miss, `/en/` included, so it answers in **both** languages
 
 The page files are thin: each resolves a `Locale`, then renders a view component (`HomeView`, `AboutView`, `ArticleView` in `src/components/`) that holds the actual markup. The markup lives in exactly one place — edit the view, not one of the two routes that mount it.
+
+**Page width:** every page region sits in `src/components/PageContainer.astro` — `width="content"` (720px) for reading pages, `width="wide"` (1200px) for the header, footer and home grid — with 16px gutters on phones and 24px from `sm`. Do not hardcode `max-w-[…] mx-auto px-…` in a view. Layouts are mobile-first and must not scroll sideways at 360px; tap targets are at least 44px. The page designs follow the Astryx Community Figma "Content" examples (Documentation Catalog/Card Grid → home, Documentation Technical → article, Documentation Design → about).
 
 `src/layouts/Base.astro` is the shared shell: `<head>` (title, favicon, fonts, canonical + `hreflang` alternates, the pre-paint theme script), header, footer, and a `<slot />`. It takes a required `locale` prop.
 
@@ -69,7 +72,7 @@ This is the rule that is easiest to break by accident.
 - There are exactly **four** hydrated islands, and they hydrate differently on purpose:
   - `src/components/ThemeToggle.tsx` — `client:only="react"`, because it reads `document.documentElement` in a `useState` initializer, which has no server equivalent. Its fixed-size wrapper in `Base.astro` reserves layout space so the header does not shift on mount.
   - `src/components/Comments.tsx` — `client:visible` in `ArticleView.astro` (so all three language trees get it from one place). It has no server-hostile code, so the shell prerenders and the React runtime downloads only once a reader scrolls to the bottom of an article. Article pages keep a zero-JS first paint. Do not "simplify" this to `client:load`, which would ship React to every article on load.
-  - `src/components/CategoryFilter.tsx` — `client:load` in `HomeView.astro`. The home page's Astryx `SegmentedControl`. It does not render the cards (they are static HTML outside it); it only sets `data-filter` on `.cat-scope`, and per-category rules generated in `HomeView.astro` hide non-matching cards. With no JS, every post stays visible. Costs the home page ~29 KB gzipped (its own chunk plus an Astryx chunk it shares with Comments); React itself was already there for ThemeToggle.
+  - `src/components/CategoryFilter.tsx` — `client:load` in `HomeView.astro`. The home page's row of Astryx `ToggleButtonGroup` chips. It does not render the cards (they are static HTML outside it); it only sets `data-filter` on `.cat-scope`, and per-category rules generated in `HomeView.astro` hide non-matching cards. With no JS, every post stays visible. Costs the home page ~29 KB gzipped (its own chunk plus an Astryx chunk it shares with Comments); React itself was already there for ThemeToggle.
   - `src/components/AiSummary.tsx` — `client:summarizer`, a custom directive (`src/directives/summarizer.ts`, registered in `astro.config.mjs`). The button sits in the article header, which is in view on load, so `client:visible` would ship React to every article view — mostly to readers whose browser cannot run it. The directive hydrates only where Chrome's built-in Prompt API (`LanguageModel`) exists; everyone else downloads neither the island nor React. See AI Summary below.
 - The allowlist for the above lives in `eslint.config.js` (the `allow` option on `local/no-unlisted-island`), not in the rule file.
 
@@ -103,7 +106,7 @@ Language lives in the **URL**, never in client state — every page is a static 
 
 **All chrome text lives in `src/copy/strings.ts`**, keyed by language behind the `Strings` interface, and about-page copy in `src/data/about.ts` (read through `aboutCopy()` in `src/content/service.ts`). Never put a user-visible literal in a template — a missing key is a type error, but a hardcoded Korean string is a silent leak into `/en/`. The one `is:inline` script that needs translated text (the hero's sound toggle) reads it off `data-*` attributes rather than being templated, so the script stays static.
 
-The header switcher (`src/components/LangSwitcher.astro`) is plain links, no island. It always targets an explicit prefix, so `/en/about ↔ /kr/about` round-trips.
+The header switcher (`src/components/LangSwitcher.astro`) is a native `<details>` dropdown of plain links, no island; a small `is:inline` script in `Base.astro` closes it on an outside click or Escape. It always targets an explicit prefix, so `/en/about ↔ /kr/about` round-trips.
 
 **Adding a language:** add it to `LANGS` + `LANG_SEGMENTS` + `HTML_LANGS` in `i18n.ts`, then add its column to `strings.ts` and `about.ts`. TypeScript will point at every remaining hole; the routes and the switcher pick it up with no further edits.
 
@@ -111,14 +114,14 @@ The header switcher (`src/components/LangSwitcher.astro`) is plain links, no isl
 
 Article data lives in `src/data/`; everything that reads it lives in `src/content/service.ts`:
 
-- `articleTypes.ts` — `Article` (`slug`, `title`, `subtitle`, `date`, `readMinutes`, `category`, `coverImage?`, `cardImage?`, `loadContent`, `translations?`) — types only, plus the `CATEGORIES` list
+- `articleTypes.ts` — `Article` (`slug`, `title`, `subtitle`, `date`, `readMinutes`, `category`, `coverImage?`, `cardImage`, `loadContent`, `translations?`) — types only, plus the `CATEGORIES` list
 - `article-content/*.ts` — each article exports its Korean content as a template literal string; `article-content/en/*.ts` holds the English versions
 - `articles.ts` — declares metadata and the `loadContent` dynamic imports (newest first). Pure data
 - `src/content/service.ts` — `localizeArticle()`, `articlesIn(lang)`, `langsForSlug(slug)`; covered by `service.test.ts`
 
 `readMinutes` is a **number**, formatted per language (`12분 읽기` / `12 min read`). Never store a unit string like `'12분'` in the data.
 
-**Adding an article:** create a new file in `src/data/article-content/`, export the content string, add a dynamic `loadContent` import in `articles.ts`, and prepend a new entry to the array.
+**Adding an article:** create a new file in `src/data/article-content/`, export the content string, add a dynamic `loadContent` import in `articles.ts`, prepend a new entry to the array, and give it a card thumbnail (below).
 
 **Translating an article:** add `src/data/article-content/en/<slug>.ts` exporting `<name>ContentEn`, then add a `translations.en` block (`title`, `subtitle`, `loadContent`) to that article's entry. The base fields stay Korean. A post with no `translations.en` is simply **left out** of the English index and gets no `/en/article/:slug` route — untranslated Korean is never served at an English URL, and the switcher on such a post falls back to the `/en` home rather than a 404.
 
@@ -141,17 +144,19 @@ Bodies are read at **build time** in `getStaticPaths`, so a broken `loadContent`
 
 `parseArticleBody()` classifies every block into a typed `ArticleBlock` (plus the leading summary card, if any); `ArticleView.astro` only switches on `block.type` and renders. A new block type therefore starts in the parser: add it to the `ArticleBlock` union and `classifyBlock()`, then give it a branch in the view. `classifyBlock()` is order-dependent — table detection must stay after list detection, and the single-image check after the carousel check.
 
-**Cover images** go in `public/assets/images/`. Reference them in `articles.ts` with a leading slash and no base prefix — `resolveAssetUrl` handles it at render time.
+**Card images** (and the currently unrendered `coverImage`) go in `public/assets/images/`. The article page does not show a cover image. Reference them in `articles.ts` with a leading slash and no base prefix — `resolveAssetUrl` handles it at render time.
+
+**Every article needs a card thumbnail.** `cardImage` is required, and must be `/assets/images/<slug>-card.webp` — a square WebP that exists on disk (checked by the `card thumbnails` test in `src/content/service.test.ts`). They share one look: hand-drawn black marker doodle on white, one centered motif, no text. Don't draw or source one by hand — run the `article-thumbnail` skill (`.claude/skills/article-thumbnail/`), which has the Codex CLI draw it against the existing cards as style references and converts it to a 640×640 WebP.
 
 ## Automatic Translation
 
 Publishing is a one-language job: write the Korean post, push, and the English
-version is written for you. Three pieces, in the order they run:
+version is written for you. Four pieces, in the order they run:
 
 | Piece                                      | Role                                                                                                                                                                                                                                |
 | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `scripts/translation-status.mjs`           | **Decides what needs translating.** Scans `articles.ts` for entries with no `translations.en` block and checks the ones that have it against the files on disk. Plain text, or `--json` for `{ pending, translated, problems }`     |
-| `.claude/commands/translate-articles.md`   | **Does the translating.** The procedure — register, what must survive a translation untouched, how to wire up `articles.ts`, how to verify. Run locally as `/translate-articles [slugs]` or `pnpm translate`                        |
+| `.claude/skills/translate-articles/`       | **Does the translating.** The procedure — register, what must survive a translation untouched, how to wire up `articles.ts`, how to verify. Run locally as `/translate-articles [slugs]` or `pnpm translate`                        |
 | `.github/workflows/translate-articles.yml` | **Runs it automatically.** On any push touching `src/data/article-content/**` or `articles.ts`                                                                                                                                      |
 | `scripts/auto-translate.mjs`               | **Runs it locally, earlier.** A lefthook `post-commit` job: commit a Korean article and the English version follows as a second commit, so by push time the workflow finds nothing pending. Skip one commit with `AUTO_TRANSLATE=0` |
 
@@ -251,11 +256,33 @@ Order matters, because the old bundle calls PostgREST as anon until the new Work
 
 Rollback: re-grant anon (see the comment at the top of 0003), then revert the deploy.
 
+## Claude Code Skills
+
+Repo workflows for Claude Code are **skills**, one folder each under `.claude/skills/<name>/` with a `SKILL.md` (plus any script it runs, kept beside it). Each one is invoked as `/<name>`, and Claude also picks it up from its `description`. There is no `.claude/commands/` folder. A new workflow goes in as a skill, not a command:
+
+| Skill                | Does                                                                                                                             |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `translate-articles` | Writes missing English versions — see Automatic Translation. Also run by `pnpm translate`, the post-commit hook and the workflow |
+| `article-thumbnail`  | Draws a post's card thumbnail with the Codex CLI (`generate.sh`) — see Article System                                            |
+
+Scripts and workflows call a skill by its slash name, never by file path. Moving a skill's files therefore breaks nothing, but renaming the skill means updating every `/<name>` caller: `package.json`, `scripts/auto-translate.mjs`, `.github/workflows/translate-articles.yml`.
+
 ## Formatting
 
-Prettier (`.prettierrc.json`, with `prettier-plugin-astro`) owns layout: no semicolons, single quotes, trailing commas, 100 columns. ESLint owns correctness and the repo conventions below, and carries no stylistic rules, so the two never disagree. The pre-commit hook runs `eslint --fix` and then `prettier --write` on staged files. `public/` is ignored because the worker serves it verbatim.
+Prettier (`.prettierrc.json`, with `prettier-plugin-astro`) owns layout: no semicolons, single quotes, trailing commas, 100 columns. ESLint owns correctness and the repo conventions below, and carries no stylistic rules, so the two never disagree. The pre-commit hook runs `eslint --fix` and then `prettier --write` on staged files, then checks staged `.md` files for frontmatter (see Doc Frontmatter). `public/` is ignored because the worker serves it verbatim.
 
 Article bodies are template literals, which Prettier leaves alone, so formatting never touches post content.
+
+## Doc Frontmatter
+
+Markdown docs must open with a YAML frontmatter block. `scripts/doc-frontmatter.mjs` holds the rules, the pre-commit hook runs it on staged `.md` files, and `pnpm test` runs it over the whole repo:
+
+| Files                       | Required fields                                                                                                                                                                             |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docs/**/*.md` (ADRs, TRDs) | `title` (identical to the `#` heading), `status` (`Draft`, `Proposed`, `Accepted`, `Superseded`, `Deprecated`), `date` (`YYYY-MM-DD`). Optional `status-note` for the detail in parentheses |
+| `.claude/skills/*/SKILL.md` | `name` (= its folder), `description`                                                                                                                                                        |
+
+Status and date live **only** in frontmatter, not repeated as `- Status:` bullets in the body. Other links (tracking issue, related ADR) stay as body bullets. `README.md`, `CLAUDE.md` and `.github/pull_request_template.md` are exempt on purpose: GitHub pastes the PR template into each PR body verbatim, and frontmatter would show up there as text.
 
 ## Lint Rules
 

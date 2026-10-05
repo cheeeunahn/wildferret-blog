@@ -1,4 +1,5 @@
 ---
+name: translate-articles
 description: Write the English version of every Korean article that does not have one yet, and wire it into articles.ts.
 allowed-tools: Bash(pnpm:*), Bash(node scripts/translation-status.mjs:*), Bash(git status:*), Bash(git diff:*), Read, Write, Edit, Grep, Glob
 ---

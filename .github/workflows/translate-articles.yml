@@ -81,7 +81,7 @@ jobs:
           prompt: |
             Run `/translate-articles ${{ github.event.inputs.slugs || steps.status.outputs.slugs }}`.
 
-            Follow that command's instructions exactly — it is the single source
+            Follow that skill's instructions exactly — it is the single source
             of truth for how this repo translates an article, and it is the same
             procedure a human runs locally. Read CLAUDE.md first for the content
             format and the project conventions it documents.

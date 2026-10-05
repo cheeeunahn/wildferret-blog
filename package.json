@@ -13,6 +13,7 @@
     "test": "vitest run",
     "translation:status": "node scripts/translation-status.mjs",
     "translate": "claude \"/translate-articles\"",
+    "docs:check": "node scripts/doc-frontmatter.mjs",
     "mint:api-jwt": "node scripts/mint-api-jwt.mjs",
     "astro": "astro",
     "astryx": "node node_modules/@astryxdesign/cli/clients/cli/bin/astryx.mjs",

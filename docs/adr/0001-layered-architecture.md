@@ -1,7 +1,12 @@
+---
+title: 'ADR 0001: Separate presentation, logic, and data layers'
+status: Accepted
+status-note: 'PR 1: #33; PR 2: comments server API'
+date: 2026-10-04
+---
+
 # ADR 0001: Separate presentation, logic, and data layers
 
-- Status: Accepted (PR 1: #33; PR 2: comments server API)
-- Date: 2026-10-04
 - Tracking: https://github.com/cheeeunahn/wildferret-blog/issues/32
 
 ## Context

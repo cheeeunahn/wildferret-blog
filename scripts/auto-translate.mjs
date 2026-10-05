@@ -60,7 +60,7 @@ function main() {
     'claude',
     [
       '-p',
-      `Run \`/translate-articles ${slugs.join(' ')}\`. Follow that command exactly. ` +
+      `Run \`/translate-articles ${slugs.join(' ')}\`. Follow that skill exactly. ` +
         'Write and verify the files, but do not commit: the hook that invoked you does that. ' +
         'End with one bullet per slug and a "Needs a human" list.',
       '--allowed-tools',

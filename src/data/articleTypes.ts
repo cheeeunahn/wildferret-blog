@@ -22,8 +22,12 @@ export interface Article extends ArticleText {
   category: Category
   /** Full-width hero on the article page. */
   coverImage?: string
-  /** Square thumbnail on the index card only — never rendered in the article. */
-  cardImage?: string
+  /**
+   * Square thumbnail on the index card only — never rendered in the article.
+   * Required: every post gets one, at /assets/images/<slug>-card.webp, drawn in
+   * the house doodle style by the article-thumbnail skill.
+   */
+  cardImage: string
   /**
    * Written versions in other languages. Absent means the post has no version
    * in that language yet: it is left out of that language's index and its

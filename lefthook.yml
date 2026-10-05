@@ -16,6 +16,11 @@ pre-commit:
       glob: '*.{js,mjs,ts,tsx,astro,css,json,jsonc,md,yml,yaml}'
       run: pnpm exec prettier --write --ignore-unknown {staged_files}
       stage_fixed: true
+    # Docs and skills must open with frontmatter (rules in the
+    # script). The script ignores any other .md it is handed.
+    - name: doc-frontmatter
+      glob: '*.md'
+      run: node scripts/doc-frontmatter.mjs {staged_files}
 
 post-commit:
   jobs:
