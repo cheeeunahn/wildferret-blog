@@ -131,7 +131,11 @@ const canonical = canonicalPath(locale.lang, appPath)
                  icon out to the page edge, as its box is padding the icon
                  does not fill. -->
             <span class="inline-flex size-9 items-center justify-center -mr-2">
-              <ThemeToggle client:only="react" />
+              <ThemeToggle
+                client:only="react"
+                toLight={strings.theme.toLight}
+                toDark={strings.theme.toDark}
+              />
             </span>
           </div>
         </nav>

@@ -66,18 +66,26 @@ const GREET_FRAMES = [
       aria-label={strings.hero.stateGreetMore}
     />
 
+    {/* Lazy: the hero closes the about page, several screens down on a phone,
+        so its ~336 KB of frames should not compete with the page's fonts on
+        load. The greeting frames are hidden with opacity (.hero-frame), not
+        display: none, so they keep a layout box and still load as the figure
+        nears the viewport — the first click does not fade into a blank frame.
+        The box has a fixed height, so a late image shifts nothing. */}
     <img
       src={resolveAssetUrl('/assets/images/wildferret-hero-coding.webp')}
       alt={strings.hero.codingAlt}
       class="w-full h-[260px] sm:h-[560px] object-cover object-[62%_38%]"
-      loading="eager"
+      loading="lazy"
+      decoding="async"
     />
     {GREET_FRAMES.map((frame, i) => (
       <img
         src={resolveAssetUrl(frame.src)}
         alt={frame.alt}
         class={`hero-frame hero-frame-${i + 1} absolute inset-0 w-full h-full object-cover object-[62%_38%]`}
-        loading="eager"
+        loading="lazy"
+        decoding="async"
       />
     ))}
 

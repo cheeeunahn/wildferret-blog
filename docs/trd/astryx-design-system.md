@@ -114,7 +114,7 @@ Astryx components in `.astro` files carry no `client:*`, so they render to HTML 
 Where each component is used:
 
 - `ArticleView`: Heading, Text, Blockquote, Divider (`---` as `label="· · ·"`), Table, CodeBlock, and a muted Card for the summary.
-- `ArticleCard`: Card, Heading (level 3), Text. Artwork at the top in a 16:10 frame (a muted plate when a post has none), then category, title, a two-line summary, and date · read time.
+- `ArticleCard`: ClickableCard, Heading (level 3), Text. Artwork at the top in a 4:3 frame, contained on a white plate (a muted plate when a post has none), then category, title, a two-line summary, and date · read time. The ClickableCard's visually hidden anchor is stretched over the card so it links with no JS (ADR 0003, decision 3).
 - `AboutView`: Heading, Text, HStack (the interest badges), Badge (one per interest), and `FerretHero` at the foot of the page. There is no avatar.
 - `HomeView`: a Heading over a rule, the CategoryFilter island (search + category pills, after Astryx's Library template), and one grid of `ArticleCard`s (3/2/1 columns).
 - `FerretHero`: the CSS-radio greeting illustration with fireflies and the opt-in sound toggle, plus its `is:inline` script. It sits on no tonal band, because Astryx's muted background is translucent and the band vanished in dark mode.

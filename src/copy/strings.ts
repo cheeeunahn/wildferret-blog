@@ -38,6 +38,11 @@ export interface Strings {
     searchPlaceholder: string
     /** Shown when the search and category leave no post visible. */
     noMatches: string
+    /**
+     * Announced to screen readers after the search or a pill changes the list,
+     * given how many posts are still shown (at least 1; 0 reads `noMatches`).
+     */
+    resultsCount: (count: number) => string
     /** Shown on the English index while a post has no English version yet. */
     emptyList: string
   }
@@ -50,6 +55,8 @@ export interface Strings {
     back: string
   }
   notFound: { title: string; back: string }
+  /** Accessible name and tooltip of the header's theme toggle, by what it switches to. */
+  theme: { toLight: string; toDark: string }
   /**
    * Passed to the Comments island as a prop rather than looked up inside it.
    * The island would otherwise have to bundle every language's dictionary to
@@ -108,6 +115,7 @@ const ko: Strings = {
     searchLabel: '글 검색',
     searchPlaceholder: '제목이나 요약으로 검색…',
     noMatches: '조건에 맞는 글이 없어요.',
+    resultsCount: (count) => `글 ${count}개를 찾았어요.`,
     emptyList: '아직 이 언어로 옮긴 글이 없어요.',
   },
   article: {
@@ -117,6 +125,7 @@ const ko: Strings = {
     back: '목록으로 돌아가기',
   },
   notFound: { title: '페이지를 찾을 수 없습니다', back: '목록으로 돌아가기' },
+  theme: { toLight: '밝은 테마로 전환', toDark: '어두운 테마로 전환' },
   comments: {
     heading: '댓글',
     loading: '댓글을 불러오는 중…',
@@ -167,6 +176,7 @@ const en: Strings = {
     searchLabel: 'Search posts',
     searchPlaceholder: 'Search by title or summary…',
     noMatches: 'No posts match.',
+    resultsCount: (count) => (count === 1 ? '1 post found.' : `${count} posts found.`),
     emptyList: 'Nothing has been translated into this language yet.',
   },
   article: {
@@ -176,6 +186,7 @@ const en: Strings = {
     back: 'Back to all posts',
   },
   notFound: { title: 'Page not found', back: 'Back to all posts' },
+  theme: { toLight: 'Switch to light theme', toDark: 'Switch to dark theme' },
   comments: {
     heading: 'Comments',
     loading: 'Loading comments…',

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { TextInput } from '@astryxdesign/core/TextInput'
 import { ToggleButton, ToggleButtonGroup } from '@astryxdesign/core/ToggleButton'
 
@@ -19,6 +19,16 @@ const normalize = (s: string) => s.normalize('NFC').toLowerCase().trim()
  * The query is never written into a selector or into markup — it is only
  * compared against each card's `data-search` text — so reader input has no
  * path into CSS or HTML.
+ *
+ * A sighted reader sees the grid change; a screen-reader user, whose focus
+ * stays in the search box or on a pill, would hear nothing. So the island
+ * also owns a polite live region with the result count. It is rendered from
+ * the start (a region that is itself un-hidden is announced unreliably) and
+ * only its text changes. The effect writes that text directly, as it writes
+ * `hidden` on the cards: React renders the region empty and never touches it
+ * again, so state here would only cost a second render per keystroke. `resultLabels[n - 1]` is the label for n posts:
+ * precomputed by HomeView, because a function cannot cross into an island as
+ * a prop.
  */
 export default function CategoryFilter({
   categories,
@@ -26,15 +36,21 @@ export default function CategoryFilter({
   legend,
   searchLabel,
   searchPlaceholder,
+  noMatches,
+  resultLabels,
 }: {
   categories: string[]
   allLabel: string
   legend: string
   searchLabel: string
   searchPlaceholder: string
+  noMatches: string
+  resultLabels: string[]
 }) {
   const [category, setCategory] = useState(ALL)
   const [query, setQuery] = useState('')
+  // Empty until the reader first filters, so nothing is announced on load.
+  const statusRef = useRef<HTMLParagraphElement>(null)
 
   useEffect(() => {
     const scope = document.querySelector<HTMLElement>('.cat-scope')
@@ -44,19 +60,25 @@ export default function CategoryFilter({
     // animation; global.css drops the load-time stagger under this flag so it
     // does not sit blank for half a second first.
     if (category !== ALL || q !== '') scope.dataset.filtered = ''
-    let anyVisible = false
+    let visible = 0
 
     scope.querySelectorAll<HTMLElement>('[data-cat]').forEach((card) => {
       const matches =
         (category === ALL || card.dataset.cat === category) &&
         (q === '' || normalize(card.dataset.search ?? '').includes(q))
       card.hidden = !matches
-      if (matches) anyVisible = true
+      if (matches) visible++
     })
 
     const empty = scope.querySelector<HTMLElement>('.cat-empty')
-    if (empty) empty.hidden = anyVisible
-  }, [category, query])
+    if (empty) empty.hidden = visible > 0
+
+    // Once filtered, keep announcing — including the full count when the
+    // reader clears the search or goes back to "all".
+    if ('filtered' in scope.dataset && statusRef.current) {
+      statusRef.current.textContent = visible === 0 ? noMatches : (resultLabels[visible - 1] ?? '')
+    }
+  }, [category, query, noMatches, resultLabels])
 
   return (
     // gap-3, tighter than the 20px around the toolbar: the search and the
@@ -96,6 +118,7 @@ export default function CategoryFilter({
           </ToggleButtonGroup>
         </div>
       </div>
+      <p ref={statusRef} role="status" className="sr-only" />
     </div>
   )
 }

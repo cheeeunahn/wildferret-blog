@@ -21,6 +21,10 @@ const articles = articlesIn(locale.lang)
 // Only offer a pill for a category that actually has articles, in the fixed
 // CATEGORIES order rather than in publication order.
 const usedCategories = CATEGORIES.filter((c) => articles.some((a) => a.category === c))
+
+// The filter's screen-reader count, one label per possible result (1…n), since
+// the island cannot take strings.home.resultsCount itself as a prop.
+const resultLabels = articles.map((_, i) => strings.home.resultsCount(i + 1))
 ---
 
 <div class="animate-page-enter">
@@ -58,6 +62,8 @@ const usedCategories = CATEGORIES.filter((c) => articles.some((a) => a.category 
           legend={strings.home.filterLegend}
           searchLabel={strings.home.searchLabel}
           searchPlaceholder={strings.home.searchPlaceholder}
+          noMatches={strings.home.noMatches}
+          resultLabels={resultLabels}
         />
       </section>
     </div>

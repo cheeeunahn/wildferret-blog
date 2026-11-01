@@ -10,7 +10,10 @@ function readTheme(): Theme {
   return document.documentElement.classList.contains('dark') ? 'dark' : 'light'
 }
 
-export default function ThemeToggle() {
+// The labels arrive as props (from strings.theme in Base.astro) rather than
+// being looked up here, so the island ships only the two strings it renders
+// and an /en/ page never announces Korean.
+export default function ThemeToggle({ toLight, toDark }: { toLight: string; toDark: string }) {
   const [theme, setTheme] = useState<Theme>(readTheme)
 
   useEffect(() => {
@@ -45,6 +48,7 @@ export default function ThemeToggle() {
   }
 
   const isDark = theme === 'dark'
+  const label = isDark ? toLight : toDark
 
   // A native button, not Astryx's IconButton: this island loads on every page,
   // and IconButton pulls in Astryx's shared button chunk (~31 KB gzipped) for a
@@ -53,8 +57,8 @@ export default function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      aria-label={isDark ? '밝은 테마로 전환' : '어두운 테마로 전환'}
-      title={isDark ? '밝은 테마로 전환' : '어두운 테마로 전환'}
+      aria-label={label}
+      title={label}
       className="inline-flex size-9 items-center justify-center rounded-lg text-ink-600 hover:text-ink-900 hover:bg-ink-50 transition-colors cursor-pointer"
     >
       <svg
