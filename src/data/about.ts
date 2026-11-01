@@ -11,9 +11,6 @@ export interface AboutCopy {
   interestsHeading: string
   interests: string[]
   careerHeading: string
-  /** Column headers for the career table. */
-  careerPeriodHeader: string
-  careerRoleHeader: string
   career: { period: string; role: string; org: string }[]
 }
 
@@ -25,8 +22,6 @@ const ko: AboutCopy = {
   interestsHeading: '관심사',
   interests: ['Product Management', 'User Research', 'AI', 'Data Analysis'],
   careerHeading: '경력',
-  careerPeriodHeader: '기간',
-  careerRoleHeader: '역할 · 소속',
   career: [
     { period: '2024 — 현재', role: 'UX Researcher → Product Manager', org: '세금 도메인' },
     { period: '2022 — 2024', role: 'UX Researcher', org: '인테리어 및 커머스 도메인' },
@@ -44,8 +39,6 @@ const en: AboutCopy = {
   interestsHeading: 'Interests',
   interests: ['Product Management', 'User Research', 'AI', 'Data Analysis'],
   careerHeading: 'Career',
-  careerPeriodHeader: 'Period',
-  careerRoleHeader: 'Role · Organization',
   career: [
     { period: '2024 — present', role: 'UX Researcher → Product Manager', org: 'Tax domain' },
     { period: '2022 — 2024', role: 'UX Researcher', org: 'Interiors and commerce domain' },
