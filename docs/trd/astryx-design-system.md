@@ -2,7 +2,7 @@
 
 - Status: Draft (spike implemented on `feat/astryx-design-system`)
 - Date: 2026-10-05
-- Decision record: [ADR 0002](../adr/0002-astryx-design-system.md)
+- Decision records: [ADR 0002](../adr/0002-astryx-design-system.md); [ADR 0003](../adr/0003-library-layout-and-reading-scale.md) for the Library-style list, page width and type scale
 
 ## Background
 
@@ -11,10 +11,10 @@ The blog's design system was Tailwind 4 plus a hand-maintained ink/paper palette
 ## Goals
 
 - Use Astryx's default color system site-wide, with dark mode from its `light-dark()` tokens.
-- Use NanumBarunGothic as Astryx's body and heading font.
+- Use NanumBarunGothic as Astryx's body and heading font, on a 16px-base type scale.
 - Render every display element (headings, text, cards, badges, quotes, dividers, tables, code) with Astryx components, article prose included.
 - Use Astryx controls in the comment form, with Astryx's own i18n for its built-in strings.
-- Keep zero-JS pages where they were: one new island (the home page's category filter) and no new JS elsewhere.
+- Keep zero-JS pages where they were: one new island (the home page's search and category filter) and no new JS elsewhere.
 - Retire `local/no-raw-colors`, which enforced the old palette; the site uses Astryx colors, tokens and components only.
 
 ## Non-goals
@@ -27,15 +27,15 @@ The blog's design system was Tailwind 4 plus a hand-maintained ink/paper palette
 
 ### Functional
 
-| ID  | Requirement                                                                                                                                       |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| F1  | Comments load, post, and show rejection messages on `/`, `/kr/` and `/en/`, as before.                                                            |
-| F2  | Colors follow the theme toggle and, with no stored choice, the OS `prefers-color-scheme`.                                                         |
-| F3  | Every page's colors come from Astryx's default tokens; no ink/paper hex values remain.                                                            |
-| F4  | Body and heading text use NanumBarunGothic, in and outside Astryx components.                                                                     |
-| F5  | Article blocks render through Astryx: Heading, Text, Blockquote, Divider, Table, CodeBlock.                                                       |
-| F6  | Astryx's built-in component text renders in Korean on `/` and `/kr/` and in English on `/en/`.                                                    |
-| F7  | The hero and carousel keep working without JS. The category filter is an Astryx `SegmentedControl`; without JS it degrades to showing every post. |
+| ID  | Requirement                                                                                                                                                                     |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| F1  | Comments load, post, and show rejection messages on `/`, `/kr/` and `/en/`, as before.                                                                                          |
+| F2  | Colors follow the theme toggle and, with no stored choice, the OS `prefers-color-scheme`.                                                                                       |
+| F3  | Every page's colors come from Astryx's default tokens; no ink/paper hex values remain.                                                                                          |
+| F4  | Body and heading text use NanumBarunGothic, in and outside Astryx components.                                                                                                   |
+| F5  | Article blocks render through Astryx: Heading, Text, Blockquote, Divider, Table, CodeBlock.                                                                                     |
+| F6  | Astryx's built-in component text renders in Korean on `/` and `/kr/` and in English on `/en/`.                                                                                  |
+| F7  | The hero and carousel keep working without JS. The search and category filter are an Astryx `TextInput` and `ToggleButtonGroup`; without JS they degrade to showing every post. |
 
 ### Non-functional
 
@@ -96,7 +96,7 @@ Decorative colors (hero glow, sound-toggle overlay, card shadows) stay literal; 
 
 ### 3. Theme (`src/styles/astryx/wildferretTheme.ts`)
 
-`defineTheme({ name: 'wildferret', typography: { body, heading } })`. The font is NanumBarunGothic, with the rest of `--font-body` as fallbacks. There are no color tokens, so every color is Astryx's default. The `@font-face` declarations stay in `global.css`. NanumBarunGothic has only Regular and Bold, so Astryx's 500/600 weights render as 400/700.
+`defineTheme({ name: 'wildferret', typography: { scale, body, heading }, components })`. The font is NanumBarunGothic, with the rest of `--font-body` as fallbacks. `scale: { base: 16, ratio: 1.2 }` raises Astryx's 14px base to a reading size, which puts body text at 16px, headings at 19/23/28px and supporting text at 13px. `components['text-input']['size:lg']` sets the large input (the home search box) to 44px tall with 12px side padding. There are no color tokens, so every color is Astryx's default. The `@font-face` declarations stay in `global.css`. NanumBarunGothic has only Regular and Bold, so Astryx's 500/600 weights render as 400/700.
 
 ### 4. Theme scope and dark mode
 
@@ -114,18 +114,21 @@ Astryx components in `.astro` files carry no `client:*`, so they render to HTML 
 Where each component is used:
 
 - `ArticleView`: Heading, Text, Blockquote, Divider (`---` as `label="· · ·"`), Table, CodeBlock, and a muted Card for the summary.
-- `ArticleCard`: Card, Heading, Text, Badge, Divider.
-- `AboutView`: Heading, Text, HStack (avatar beside the heading), Badge (one per interest). Its column is 720px, matching the header and footer.
-- `HomeView`: Text, and an HStack header row for the list (Heading on the left, the CategoryFilter island on the right). The hero no longer sits on a tonal band: Astryx's muted background is translucent and the band vanished in dark mode, leaving an empty gap.
+- `ArticleCard`: Card, Heading (level 3), Text. Artwork at the top in a 16:10 frame (a muted plate when a post has none), then category, title, a two-line summary, and date · read time.
+- `AboutView`: Heading, Text, HStack (the interest badges), Badge (one per interest), and `FerretHero` at the foot of the page. There is no avatar.
+- `HomeView`: a Heading over a rule, the CategoryFilter island (search + category pills, after Astryx's Library template), and one grid of `ArticleCard`s (3/2/1 columns).
+- `FerretHero`: the CSS-radio greeting illustration with fireflies and the opt-in sound toggle, plus its `is:inline` script. It sits on no tonal band, because Astryx's muted background is translucent and the band vanished in dark mode.
 - `Base` footer: Text.
 
 Lists stay native `<ul>`/`<ol>` with `Text` items. The hero and carousel stay CSS radios.
 
-### 5a. Category filter island
+Every page uses one 1040px column: header, footer, home, article, about and 404 share the same edges.
 
-`src/components/CategoryFilter.tsx` renders an Astryx `SegmentedControl` ("All" plus each category in use), mounted `client:load` inside the sticky `.cat-bar` in `HomeView.astro`. It does not render the cards. On change, it sets `data-filter` on `.cat-scope` (or removes it for "All"). `HomeView.astro` generates one rule per category: `.cat-scope[data-filter="X"] [data-cat]:not([data-cat="X"]) { display: none }`. Category names are our own data. Without JS the control renders but does nothing, and every post stays visible. The island is on the `local/no-unlisted-island` allowlist. The old radio pills and their CSS are gone; the sticky bar and its shadow script are unchanged.
+### 5a. Search and category filter island
 
-`.prose-blog` keeps only block spacing and Korean `word-break: keep-all`. Its unlayered type and color rules were removed, because they would beat Astryx's layered styles.
+`src/components/CategoryFilter.tsx` renders an Astryx `TextInput` (`size="lg"`, hidden label, search icon, clear button) above a `ToggleButtonGroup` ("All" plus each category in use). It is mounted `client:load` inside the sticky `.cat-bar` in `HomeView.astro`. It does not render the cards. On every change it sets `hidden` on each `[data-cat]` card that fails the category or the query, and toggles `.cat-empty` ("no matches"). The query is lower-cased, NFC-normalized and compared with the card's `data-search` (title + summary, our own content). Reader input is never written into a selector or markup. `.cat-scope [hidden]` is forced to `display: none` so the cards' display utilities cannot override it. Once the reader has filtered, the island sets `data-filtered`, which drops the cards' load-time entrance delay so returning cards do not sit blank. Clicking the selected pill again returns to "All". The pill row scrolls sideways on narrow phones instead of truncating labels. Without JS the controls render but do nothing, and every post stays visible. The island is on the `local/no-unlisted-island` allowlist.
+
+The article body's rules are utilities in `ArticleView.astro`, not a `.prose-blog` stylesheet: block spacing on each block, Korean `break-keep` set once on the `<article>` (code blocks reset it with `break-normal`), and one type rule — `leading-[1.75]` on paragraphs, list items and quotes, because Astryx's 1.5 is tight for long Korean prose. The old unlayered type and color rules were removed, because they would beat Astryx's layered styles.
 
 ### 6. Comments island
 
@@ -147,25 +150,28 @@ The toggle stays a native `<button>`. `IconButton` would put Astryx's shared but
 
 Gzipped sizes, from the build before Astryx (`main`) and this branch:
 
-| Asset                 | Before                | After                                  |
-| --------------------- | --------------------- | -------------------------------------- |
-| Global stylesheet     | 8.7 KB                | 39.2 KB                                |
-| Comments island chunk | 2.7 KB                | 26.3 KB + 23.6 KB shared chunk         |
-| CategoryFilter chunk  | —                     | 5.1 KB + the same 23.6 KB shared chunk |
-| ThemeToggle chunk     | 0.9 KB                | 0.9 KB                                 |
-| React client runtime  | 57.3 KB               | 56.5 KB                                |
-| Module scripts on `/` | 0                     | 0                                      |
-| Islands on `/`        | ThemeToggle           | ThemeToggle, CategoryFilter            |
-| Islands on an article | ThemeToggle, Comments | ThemeToggle, Comments                  |
+| Asset                 | Before                | After                          |
+| --------------------- | --------------------- | ------------------------------ |
+| Global stylesheet     | 8.7 KB                | 39.2 KB                        |
+| Comments island chunk | 2.7 KB                | 26.3 KB + shared chunk¹        |
+| CategoryFilter chunk  | —                     | 1.8 KB + the same shared chunk |
+| ThemeToggle chunk     | 0.9 KB                | 0.9 KB                         |
+| React client runtime  | 57.3 KB               | 56.5 KB                        |
+| Module scripts on `/` | 0                     | 0                              |
+| Islands on `/`        | ThemeToggle           | ThemeToggle, CategoryFilter    |
+| Islands on an article | ThemeToggle, Comments | ThemeToggle, Comments          |
 
 The same three article pages are built before and after.
+
+¹ The Astryx chunk shared by Comments and CategoryFilter was 23.6 KB under ADR 0002. With the search `TextInput` and `ToggleButton` (ADR 0003) it is 38.9 KB, and the filter island itself shrank from 5.1 KB to 1.8 KB.
 
 ## Verification
 
 | Check                   | Status                                                                                                                                                             |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Lint, tests, build      | Pass                                                                                                                                                               |
-| Category filter         | Pass: hydrates on load, selecting Research leaves only Research posts, aria-checked follows                                                                        |
+| Category filter, search | Pass: hydrates on load; a category pill leaves only its posts; a query narrows the grid; a query matching nothing shows the "no matches" line                      |
+| Mobile (390px, 320px)   | Pass: no horizontal overflow on home, article or about; pills scroll sideways at 320px; header stays on one line                                                   |
 | Zero-JS pages           | Pass: no page gained a module script                                                                                                                               |
 | Default colors, light   | Pass: text `#0A1317`, page `#F1F4F7`, accent `#0064E0`                                                                                                             |
 | Default colors, dark    | Pass: text `#DFE2E5`, page `#111112`, card `#1F1F22`                                                                                                               |
@@ -176,16 +182,17 @@ The same three article pages are built before and after.
 
 ## Risks and mitigations
 
-| Risk                                                             | Mitigation                                                                                                      |
-| ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| 14px default body text is small for long-form reading            | Raise `typography.scale.base` in the theme, or use `Text type="large"` for article paragraphs (open question 1) |
-| `astryx.css` (~30 KB gzipped) loads on every page                | Measured above; swizzle the few components used and drop the global sheet if it becomes the blocker             |
-| Beta API churn between 0.x releases                              | Exact pins; upgrade deliberately with `astryx upgrade --apply`, then `pnpm theme:build`                         |
-| A static component quietly gains a click-only feature on upgrade | Review the rendered page after upgrades; only display components are used outside islands                       |
-| Color discipline drifts with `no-raw-colors` retired             | "Astryx only" is written into CLAUDE.md (Design Tokens) and checked in review                                   |
+| Risk                                                             | Mitigation                                                                                          |
+| ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Long article lines at the 1040px column (~70+ Korean characters) | Accepted for consistent margins (ADR 0003); narrow the prose column if reading suffers              |
+| An Astryx upgrade renames the `text-input` `size:lg` variant     | Re-check the home search box's height after upgrades                                                |
+| `astryx.css` (~30 KB gzipped) loads on every page                | Measured above; swizzle the few components used and drop the global sheet if it becomes the blocker |
+| Beta API churn between 0.x releases                              | Exact pins; upgrade deliberately with `astryx upgrade --apply`, then `pnpm theme:build`             |
+| A static component quietly gains a click-only feature on upgrade | Review the rendered page after upgrades; only display components are used outside islands           |
+| Color discipline drifts with `no-raw-colors` retired             | "Astryx only" is written into CLAUDE.md (Design Tokens) and checked in review                       |
 
 ## Open questions
 
-1. **Reading size:** keep Astryx's 14px body, or raise it for article prose? **Resolved:** keep Astryx's default.
+1. **Reading size:** keep Astryx's 14px body, or raise it for article prose? **Resolved:** raised to a 16px base, with 1.75 line height for prose (ADR 0003).
 2. **Alias retirement:** rename `ink-*`/`paper` utilities in templates to Astryx role names (or adopt the Tailwind bridge under non-clashing names) and delete the alias block?
 3. **`no-raw-colors`:** re-enable it rewritten for Astryx token names, or retire it? **Resolved:** retired; Astryx colors, tokens and components only.

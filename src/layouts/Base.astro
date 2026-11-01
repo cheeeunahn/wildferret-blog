@@ -15,6 +15,7 @@ import {
 import { t } from '../copy/strings'
 import { resolveAssetUrl } from '../shared/assetUrl'
 import { Text } from '@astryxdesign/core/Text'
+import { TopNavItem } from '@astryxdesign/core/TopNav'
 
 interface Props {
   locale: Locale
@@ -35,16 +36,20 @@ const year = new Date().getFullYear()
 // Korean is served at both '/' and '/kr/'; point both at the unprefixed URL so
 // they are not indexed as two competing pages.
 const canonical = canonicalPath(locale.lang, appPath)
-
-const navLinkClass = (path: string) =>
-  `nav-link text-sm ${isActiveInLocale(pathname, path) ? 'nav-link-active' : 'no-underline'}`
 ---
 
 <!doctype html>
 <!-- data-astryx-theme scopes the wildferret Astryx theme (src/styles/astryx/) to
      the whole page, so every Astryx component, and the h1–h6/p typography the
      theme sets, applies everywhere. See docs/adr/0002-astryx-design-system.md. -->
-<html lang={HTML_LANGS[locale.lang]} data-astryx-theme="wildferret">
+<!-- The page-wide base styles are utilities on <html> and <body>: Astryx's
+     reset already handles margins and font smoothing, so what is left is the
+     family, the ground and ink colours, smooth scrolling and selection colour. -->
+<html
+  lang={HTML_LANGS[locale.lang]}
+  data-astryx-theme="wildferret"
+  class="font-body text-ink-900 bg-paper scroll-smooth motion-reduce:scroll-auto"
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -83,49 +88,49 @@ const navLinkClass = (path: string) =>
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Gaegu:wght@300;400;700&display=swap"
-    />
   </head>
-  <body>
-    {/* boot-shell / boot-header are deliberately not applied: they were
-        once-per-SPA-boot animations and would replay on every real navigation.
-        Per-page entrance motion lives on each page's .page-enter wrapper. */}
+  <body class="selection:bg-accent-soft selection:text-ink-950">
     <div class="min-h-screen flex flex-col">
       <header class="sticky top-0 z-50 bg-paper/80 backdrop-blur-md border-b border-ink-100">
-        <nav class="max-w-[720px] mx-auto px-6 h-16 flex items-center justify-between">
+        <nav class="max-w-[1040px] mx-auto px-6 h-16 flex items-center justify-between gap-3">
           {/* Every internal link goes through localeHref, so a reader who
               arrived under /en stays under /en for the rest of the visit. */}
           <a
             href={localeHref(locale, '/')}
-            class="text-ink-900 text-lg font-semibold tracking-tight no-underline hover:opacity-70 transition-opacity"
+            class="text-ink-900 text-base sm:text-lg font-semibold tracking-tight whitespace-nowrap no-underline hover:opacity-70 transition-opacity"
           >
-            wildferret's blog
+            {/* Under 360px (a 320px phone) the English nav ("Posts", "About")
+                leaves no room for the full name, so the logo drops "'s blog"
+                rather than pushing the theme toggle off-screen. */}
+            wildferret<span class="max-[359px]:hidden">'s blog</span>
           </a>
-          <div class="flex items-center gap-4 sm:gap-6">
-            <a
+          {/* Every item on the right is the same 36px, 8px-radius box with its
+              own side padding (TopNavItem, the language trigger, the theme
+              toggle), so the gap between boxes stays small: the padding
+              already spaces the labels.
+              whitespace-nowrap: on a 320px phone the row is tight, and without
+              it "소개" breaks onto two lines instead of the gaps giving way.
+              Below sm the gaps go to zero (and the logo shortens under 360px,
+              see above), or the theme toggle is pushed off a 320px screen. */}
+          <div class="flex items-center sm:gap-1 whitespace-nowrap">
+            <TopNavItem
               href={localeHref(locale, '/')}
-              class={navLinkClass('/')}
-              aria-current={isActiveInLocale(pathname, '/') ? 'page' : undefined}
-            >
-              {strings.nav.posts}
-            </a>
-            <a
+              label={strings.nav.posts}
+              isSelected={isActiveInLocale(pathname, '/')}
+            />
+            <TopNavItem
               href={localeHref(locale, '/about')}
-              class={navLinkClass('/about')}
-              aria-current={isActiveInLocale(pathname, '/about') ? 'page' : undefined}
-            >
-              {strings.nav.about}
-            </a>
+              label={strings.nav.about}
+              isSelected={isActiveInLocale(pathname, '/about')}
+            />
             <LangSwitcher locale={locale} appPath={appPath} availableLangs={availableLangs} />
             <!-- client:only — ThemeToggle reads document.documentElement in a
                  useState initializer, which has no server equivalent. The fixed
-                 30px box (p-1.5 + 18px svg) reserves its space so the header
-                 does not shift when the island mounts. -->
-            <span class="inline-flex w-[30px] h-[30px] items-center justify-center -mr-1.5">
+                 36px box (the button's own size-9) reserves its space so the
+                 header does not shift when the island mounts. -mr-2 pulls the
+                 icon out to the page edge, as its box is padding the icon
+                 does not fill. -->
+            <span class="inline-flex size-9 items-center justify-center -mr-2">
               <ThemeToggle client:only="react" />
             </span>
           </div>
@@ -137,7 +142,7 @@ const navLinkClass = (path: string) =>
       </main>
 
       <footer class="border-t border-ink-100 bg-paper-warm">
-        <div class="max-w-[720px] mx-auto px-6 py-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="max-w-[1040px] mx-auto px-6 py-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div class="flex flex-col gap-1">
             <Text as="p" display="block" type="label" weight="bold">
               wildferret

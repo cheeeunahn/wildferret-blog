@@ -2,7 +2,14 @@
    (docs/trd/astryx-design-system.md §2). `base` (Tailwind preflight) sits
    before `astryx-base`, so element resets never override Astryx's component
    styles. `theme` holds only custom properties, and its color tokens are
-   aliases of Astryx's (see @theme below), so its position does not matter. */
+   aliases of Astryx's (see @theme below), so its position does not matter.
+
+   Styling is Astryx first: an Astryx component where one exists, otherwise
+   Tailwind utilities on the Astryx token aliases below, written in the
+   template. What is left in this file is what neither can express — the
+   webfont, the token aliases, a few page-wide base rules, the CSS-only state
+   machines (carousel, hero greeting) and the fireflies. Every rule here sits in
+   a layer, so a utility in a template can always override it. */
 @layer reset, base, astryx-base, theme, astryx-theme, components, utilities;
 
 @import 'tailwindcss/theme.css' layer(theme);
@@ -12,6 +19,8 @@
 @import './astryx/wildferret.theme.css';
 @import 'tailwindcss/utilities.css' layer(utilities);
 
+/* `dark:` follows the .dark class the pre-paint script and ThemeToggle set,
+   not the OS preference — the reader's toggle wins. */
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* Nanum Barun Gothic, from Naver's official webfont CDN.
@@ -63,14 +72,13 @@
     'NanumBarunGothic', 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont,
     system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR',
     'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
-  --font-sketch: 'Gaegu', 'Pretendard Variable', cursive;
 
   /* Colors are Astryx's default palette (docs/adr/0002-astryx-design-system.md).
      The names below are the site's old token names, kept as aliases so the
-     templates and the prose CSS did not have to change: each one points at the
-     Astryx semantic token that plays the same role. Astryx defines those with
-     light-dark(), driven by the color-scheme the pre-paint script sets, so dark
-     mode needs no override block here — the old html.dark palette is gone.
+     templates did not have to change: each one points at the Astryx semantic
+     token that plays the same role. Astryx defines those with light-dark(),
+     driven by the color-scheme the pre-paint script sets, so dark mode needs no
+     override block here — the old html.dark palette is gone.
 
      The ink scale had eleven steps; Astryx has four text/border roles, so
      several steps now share one. To change a color, change the role, not this. */
@@ -103,344 +111,320 @@
      raw value, one of the two exceptions to "Astryx only" (CLAUDE.md, Design
      Tokens): Astryx has no white that holds in both themes. */
   --color-thumb-plate: #ffffff;
-}
 
-/* --color-accent is Astryx's own token name, so it cannot be aliased above —
-   `--color-accent: var(--color-accent)` is a cycle. `reference inline` gives
-   Tailwind the key (text-accent, bg-accent, …) without declaring the variable,
-   so every use resolves straight to Astryx's value. */
-@theme reference inline {
-  --color-accent: var(--color-accent);
-}
+  /* Entrance motion, as Tailwind animation tokens: each --animate-<name>
+     becomes an `animate-<name>` utility. Stagger them with `reveal-delay-<n>`
+     (below) or an inline animation-delay. */
+  --animate-reveal: reveal-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-reveal-media: reveal-media 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-page-enter: fade-in 0.4s ease-out both;
 
-/* Base styles */
-html {
-  font-family: var(--font-body);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  color: var(--color-ink-900);
-  background-color: var(--color-paper);
-  scroll-behavior: smooth;
-}
+  @keyframes reveal-up {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
-/* Theme swap should glide, not snap.
-   Deliberately excludes .group/article hovers so their snappier
-   transition-colors timing is not overridden. */
-html,
-body,
-header,
-footer,
-img,
-pre {
-  transition:
-    background-color 0.35s ease,
-    border-color 0.35s ease,
-    color 0.35s ease,
-    filter 0.35s ease;
-}
+  /* Media settles in with a touch of scale so it feels like it lands */
+  @keyframes reveal-media {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(1.025);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
 
-body {
-  margin: 0;
-}
-
-/* Illustrations run bright; take the glare off in dark */
-html.dark img {
-  filter: brightness(0.92);
-}
-
-/* Ink wash grain texture overlay */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.02;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 256px 256px;
-}
-
-/* Black-on-black grain reads as nothing — flip it */
-html.dark body::before {
-  opacity: 0.045;
-  filter: invert(1);
-}
-
-/* Selection */
-::selection {
-  background-color: var(--color-accent-soft);
-  color: var(--color-ink-950);
-}
-
-/* Article prose */
-/* The body's own top padding already spaces the first block from the rule
-   above it — an h2's 2.5rem margin-top on top of that reads as a hole. */
-.prose-blog > :first-child {
-  margin-top: 0;
-}
-
-/* Type size, weight, leading and color come from Astryx (Heading, Text,
-   Blockquote — see ArticleView.astro); these rules only space the blocks. */
-.prose-blog h2 {
-  margin-top: 2.5rem;
-  margin-bottom: 0.75rem;
-}
-
-.prose-blog p {
-  margin-bottom: 1.5rem;
-  word-break: keep-all;
-  overflow-wrap: break-word;
-}
-
-/* Korean wraps on word boundaries, not mid-word — the same rule <p> already had.
-   Code blocks are excluded: their ASCII diagrams rely on literal line breaks. */
-.prose-blog li,
-.prose-blog blockquote,
-.prose-blog h2,
-.prose-blog h3,
-.prose-blog td,
-.prose-blog th,
-.prose-blog figcaption {
-  word-break: keep-all;
-  overflow-wrap: break-word;
-}
-
-.prose-blog blockquote {
-  margin: 2rem 0;
-}
-
-/* Spacing lives on the <figure> (my-8), so the image itself carries none — a
-   margin here would open a gap inside the figure's border and inside a
-   carousel slide. */
-.prose-blog img {
-  width: 100%;
-}
-
-.prose-blog strong {
-  font-weight: 700;
-}
-
-/* Image carousel — the dots and arrows are <label>s for a hidden radio group, and
-   the checked radio slides the track with a transform. No fragment navigation, so
-   the page never jumps, and no client JS, so article pages stay at zero
-   JavaScript. Supports up to six slides. */
-.carousel-track {
-  transition: translate 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.carousel:has(.carousel-input:nth-of-type(2):checked) .carousel-track {
-  translate: -100% 0;
-}
-.carousel:has(.carousel-input:nth-of-type(3):checked) .carousel-track {
-  translate: -200% 0;
-}
-.carousel:has(.carousel-input:nth-of-type(4):checked) .carousel-track {
-  translate: -300% 0;
-}
-.carousel:has(.carousel-input:nth-of-type(5):checked) .carousel-track {
-  translate: -400% 0;
-}
-.carousel:has(.carousel-input:nth-of-type(6):checked) .carousel-track {
-  translate: -500% 0;
-}
-
-.carousel-arrow {
-  position: absolute;
-  top: 50%;
-  translate: 0 -50%;
-  display: grid;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 9999px;
-  border: 1px solid var(--color-ink-100);
-  background-color: var(--color-paper);
-  color: var(--color-ink-600);
-  opacity: 0.85;
-  cursor: pointer;
-  transition:
-    opacity 0.15s ease,
-    color 0.15s ease;
-}
-
-.carousel-arrow:hover {
-  opacity: 1;
-  color: var(--color-ink-900);
-}
-
-.carousel-arrow-prev {
-  left: 0.75rem;
-}
-
-.carousel-arrow-next {
-  right: 0.75rem;
-}
-
-.carousel-dot {
-  display: block;
-  width: 6px;
-  height: 6px;
-  border-radius: 9999px;
-  background-color: var(--color-ink-200);
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-}
-
-.carousel-dot:hover {
-  background-color: var(--color-ink-400);
-}
-
-.carousel:has(.carousel-input:nth-of-type(1):checked) .carousel-dot:nth-child(1),
-.carousel:has(.carousel-input:nth-of-type(2):checked) .carousel-dot:nth-child(2),
-.carousel:has(.carousel-input:nth-of-type(3):checked) .carousel-dot:nth-child(3),
-.carousel:has(.carousel-input:nth-of-type(4):checked) .carousel-dot:nth-child(4),
-.carousel:has(.carousel-input:nth-of-type(5):checked) .carousel-dot:nth-child(5),
-.carousel:has(.carousel-input:nth-of-type(6):checked) .carousel-dot:nth-child(6) {
-  background-color: var(--color-ink-600);
-}
-
-/* The radios are visually hidden, so surface keyboard focus on the dots row —
-   the arrow keys move through the group from there. */
-.carousel:has(.carousel-input:focus-visible) .carousel-dots {
-  outline: 2px solid var(--color-ink-300);
-  outline-offset: 6px;
-  border-radius: 9999px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .carousel-track {
-    transition: none;
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 }
 
-/* Hero greeting — clicking the illustration steps the ferret through three
-   frames: at the desk → waving → waving with a big open-mouth hello → back.
-   A radio group holds the state and three stacked <label>s cover the image;
-   only the label for the NEXT state is displayed, so repeated clicks in the
-   same spot advance the cycle. No JavaScript, same idiom as the carousel. */
-.hero-frame {
-  opacity: 0;
-  transition: opacity 0.45s ease;
+/* These are Astryx's own token names, so they cannot be aliased above —
+   `--color-accent: var(--color-accent)` is a cycle. `reference inline` gives
+   Tailwind the key (text-accent, shadow-med, …) without declaring the
+   variable, so every use resolves straight to Astryx's value. */
+@theme reference inline {
+  --color-accent: var(--color-accent);
+  --shadow-low: var(--shadow-low);
+  --shadow-med: var(--shadow-med);
+  --shadow-high: var(--shadow-high);
 }
 
-/* A frame stays opaque once reached, rather than fading out as the next one
-   fades in: two half-transparent frames would let the base desk shot show
-   through the middle of the wave → hello step and read as a flicker. Frame 2
-   is later in the DOM, so it simply fades in on top of an opaque frame 1. */
-.hero-greet:has(#hero-s1:checked) .hero-frame-1,
-.hero-greet:has(#hero-s2:checked) .hero-frame-1,
-.hero-greet:has(#hero-s2:checked) .hero-frame-2 {
-  opacity: 1;
+/* `reveal-delay-3` → 0.3s. Tailwind's own `delay-*` is transition-delay, so
+   the entrance stagger needs its own name. */
+@utility reveal-delay-* {
+  animation-delay: calc(--value(integer) * 0.1s);
 }
 
-/* Fireflies drifting over the hero illustration. Pure CSS: one wandering
-   translate loop per light, with a slower opacity pulse layered on top so the
-   fade in and out never lands on the same beat as the drift. Warm gold, small,
-   and mostly transparent — this should read as air in the room, not as an
-   effect. */
-.hero-fireflies {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  overflow: hidden;
+@layer base {
+  /* Theme swap should glide, not snap. Deliberately excludes .group/article
+     hovers so their snappier transition-colors timing is not overridden. */
+  html,
+  body,
+  header,
+  footer,
+  img,
+  pre {
+    transition:
+      background-color 0.35s ease,
+      border-color 0.35s ease,
+      color 0.35s ease,
+      filter 0.35s ease;
+  }
+
+  /* Illustrations run bright; take the glare off in dark. A card thumbnail
+     opts out with `dark:filter-none`, which wins because this sits in a layer. */
+  html.dark img {
+    filter: brightness(0.92);
+  }
+
+  /* Ink wash grain texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.02;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+  }
+
+  /* Black-on-black grain reads as nothing — flip it */
+  html.dark body::before {
+    opacity: 0.045;
+    filter: invert(1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-reveal,
+    .animate-reveal-media,
+    .animate-page-enter {
+      animation: none !important;
+    }
+  }
 }
 
-.hero-firefly {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: #ffe6a3;
-  /* Two shadows: a tight halo for the body of the light and a wide, very faint
-     one for the bloom it throws. A blur filter would soften the core away. */
-  box-shadow:
-    0 0 7px 3px rgb(255 214 130 / 0.7),
-    0 0 20px 8px rgb(255 196 92 / 0.3);
-  opacity: 0;
-  animation:
-    firefly-drift 18s ease-in-out infinite,
-    firefly-pulse 5s ease-in-out infinite;
-  will-change: transform, opacity;
-}
+@layer components {
+  /* Image carousel — the dots and arrows are <label>s for a hidden radio group,
+     and the checked radio slides the track. No fragment navigation, so the page
+     never jumps, and no client JS, so article pages stay at zero JavaScript —
+     which is why this is not Astryx's Carousel, a React island. Supports up to
+     six slides. Only the state machine is here; the look is utilities in
+     ArticleView.astro. */
+  .carousel-track {
+    transition: translate 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
 
-/* Spread over the frame and detuned against each other — shared durations
-   would sync the lights into a single pulsing cluster. The two drift paths
-   alternate so neighbours never trace the same arc. */
-.hero-firefly-1 {
-  top: 22%;
-  left: 12%;
-  animation-duration: 19s, 4.6s;
-  animation-delay:
-    0s,
-    -1.2s;
-}
+  .carousel:has(.carousel-input:nth-of-type(2):checked) .carousel-track {
+    translate: -100% 0;
+  }
+  .carousel:has(.carousel-input:nth-of-type(3):checked) .carousel-track {
+    translate: -200% 0;
+  }
+  .carousel:has(.carousel-input:nth-of-type(4):checked) .carousel-track {
+    translate: -300% 0;
+  }
+  .carousel:has(.carousel-input:nth-of-type(5):checked) .carousel-track {
+    translate: -400% 0;
+  }
+  .carousel:has(.carousel-input:nth-of-type(6):checked) .carousel-track {
+    translate: -500% 0;
+  }
 
-.hero-firefly-2 {
-  top: 58%;
-  left: 24%;
-  width: 3px;
-  height: 3px;
-  animation-name: firefly-drift-alt, firefly-pulse;
-  animation-duration: 23s, 6.1s;
-  animation-delay:
-    -6s,
-    -3.4s;
-}
+  /* The dot colors live here rather than in utilities because the checked
+     state changes them, and a utility would beat this layer. */
+  .carousel-dot {
+    background-color: var(--color-ink-200);
+  }
 
-.hero-firefly-3 {
-  top: 12%;
-  left: 42%;
-  animation-duration: 16s, 5.4s;
-  animation-delay:
-    -11s,
-    -0.6s;
-}
+  .carousel-dot:hover {
+    background-color: var(--color-ink-400);
+  }
 
-.hero-firefly-4 {
-  top: 74%;
-  left: 52%;
-  width: 5px;
-  height: 5px;
-  animation-name: firefly-drift-alt, firefly-pulse;
-  animation-duration: 21s, 7.2s;
-  animation-delay:
-    -3s,
-    -4.8s;
-}
+  .carousel:has(.carousel-input:nth-of-type(1):checked) .carousel-dot:nth-child(1),
+  .carousel:has(.carousel-input:nth-of-type(2):checked) .carousel-dot:nth-child(2),
+  .carousel:has(.carousel-input:nth-of-type(3):checked) .carousel-dot:nth-child(3),
+  .carousel:has(.carousel-input:nth-of-type(4):checked) .carousel-dot:nth-child(4),
+  .carousel:has(.carousel-input:nth-of-type(5):checked) .carousel-dot:nth-child(5),
+  .carousel:has(.carousel-input:nth-of-type(6):checked) .carousel-dot:nth-child(6) {
+    background-color: var(--color-ink-600);
+  }
 
-.hero-firefly-5 {
-  top: 34%;
-  left: 71%;
-  width: 3px;
-  height: 3px;
-  animation-duration: 25s, 5.8s;
-  animation-delay:
-    -14s,
-    -2.1s;
-}
+  @media (prefers-reduced-motion: reduce) {
+    .carousel-track {
+      transition: none;
+    }
+  }
 
-.hero-firefly-6 {
-  top: 66%;
-  left: 86%;
-  animation-name: firefly-drift-alt, firefly-pulse;
-  animation-duration: 17s, 4.9s;
-  animation-delay:
-    -8s,
-    -3.9s;
-}
+  /* Hero greeting — clicking the illustration steps the ferret through three
+     frames: at the desk → waving → waving with a big open-mouth hello → back.
+     A radio group holds the state and three stacked <label>s cover the image;
+     only the label for the NEXT state is displayed, so repeated clicks in the
+     same spot advance the cycle. No JavaScript, same idiom as the carousel.
+     As there, only the properties the state flips are here. */
+  .hero-frame {
+    opacity: 0;
+    transition: opacity 0.45s ease;
+  }
 
-.hero-firefly-7 {
-  top: 8%;
-  left: 62%;
-  width: 3px;
-  height: 3px;
-  animation-duration: 27s, 6.6s;
-  animation-delay:
-    -19s,
-    -1.7s;
+  /* A frame stays opaque once reached, rather than fading out as the next one
+     fades in: two half-transparent frames would let the base desk shot show
+     through the middle of the wave → hello step and read as a flicker. Frame 2
+     is later in the DOM, so it simply fades in on top of an opaque frame 1. */
+  .hero-greet:has(#hero-s1:checked) .hero-frame-1,
+  .hero-greet:has(#hero-s2:checked) .hero-frame-1,
+  .hero-greet:has(#hero-s2:checked) .hero-frame-2 {
+    opacity: 1;
+  }
+
+  .hero-step {
+    display: none;
+  }
+
+  .hero-greet:has(#hero-s0:checked) .hero-step-1,
+  .hero-greet:has(#hero-s1:checked) .hero-step-2,
+  .hero-greet:has(#hero-s2:checked) .hero-step-0 {
+    display: block;
+  }
+
+  /* Fireflies drifting over the hero illustration. Pure CSS: one wandering
+     translate loop per light, with a slower opacity pulse layered on top so the
+     fade in and out never lands on the same beat as the drift. Warm gold, small,
+     and mostly transparent — this should read as air in the room, not as an
+     effect.
+     The firefly colors are deliberate raw values, an exception to "Astryx only"
+     (CLAUDE.md, Design Tokens): a warm light source has no Astryx role. */
+  .hero-firefly {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #ffe6a3;
+    /* Two shadows: a tight halo for the body of the light and a wide, very faint
+       one for the bloom it throws. A blur filter would soften the core away. */
+    box-shadow:
+      0 0 7px 3px rgb(255 214 130 / 0.7),
+      0 0 20px 8px rgb(255 196 92 / 0.3);
+    opacity: 0;
+    animation:
+      firefly-drift 18s ease-in-out infinite,
+      firefly-pulse 5s ease-in-out infinite;
+    will-change: transform, opacity;
+  }
+
+  /* Spread over the frame and detuned against each other — shared durations
+     would sync the lights into a single pulsing cluster. The two drift paths
+     alternate so neighbours never trace the same arc. */
+  .hero-firefly-1 {
+    top: 22%;
+    left: 12%;
+    animation-duration: 19s, 4.6s;
+    animation-delay:
+      0s,
+      -1.2s;
+  }
+
+  .hero-firefly-2 {
+    top: 58%;
+    left: 24%;
+    width: 3px;
+    height: 3px;
+    animation-name: firefly-drift-alt, firefly-pulse;
+    animation-duration: 23s, 6.1s;
+    animation-delay:
+      -6s,
+      -3.4s;
+  }
+
+  .hero-firefly-3 {
+    top: 12%;
+    left: 42%;
+    animation-duration: 16s, 5.4s;
+    animation-delay:
+      -11s,
+      -0.6s;
+  }
+
+  .hero-firefly-4 {
+    top: 74%;
+    left: 52%;
+    width: 5px;
+    height: 5px;
+    animation-name: firefly-drift-alt, firefly-pulse;
+    animation-duration: 21s, 7.2s;
+    animation-delay:
+      -3s,
+      -4.8s;
+  }
+
+  .hero-firefly-5 {
+    top: 34%;
+    left: 71%;
+    width: 3px;
+    height: 3px;
+    animation-duration: 25s, 5.8s;
+    animation-delay:
+      -14s,
+      -2.1s;
+  }
+
+  .hero-firefly-6 {
+    top: 66%;
+    left: 86%;
+    animation-name: firefly-drift-alt, firefly-pulse;
+    animation-duration: 17s, 4.9s;
+    animation-delay:
+      -8s,
+      -3.9s;
+  }
+
+  .hero-firefly-7 {
+    top: 8%;
+    left: 62%;
+    width: 3px;
+    height: 3px;
+    animation-duration: 27s, 6.6s;
+    animation-delay:
+      -19s,
+      -1.7s;
+  }
+
+  /* The illustration is bright in light mode, so the same glow reads as haze
+     there — hold it back and let dark carry the effect. */
+  html:not(.dark) .hero-firefly {
+    box-shadow:
+      0 0 6px 2px rgb(201 134 32 / 0.55),
+      0 0 16px 6px rgb(201 134 32 / 0.22);
+    background: #ffcf6e;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-frame {
+      transition: none;
+    }
+
+    /* Drifting points of light are exactly what this query is for. Hold them
+       still and dim rather than removing them, so the frame keeps its warmth. */
+    .hero-firefly {
+      animation: none;
+      opacity: 0.4;
+    }
+  }
 }
 
 /* Percentage translates would scale the paths with the frame, which makes the
@@ -482,7 +466,7 @@ html.dark body::before {
   }
 }
 
-/* Never fully lit: 0.75 at the top of the pulse, and a long dark stretch
+/* Never fully lit: 0.95 at the top of the pulse, and a long dark stretch
    between flashes. */
 @keyframes firefly-pulse {
   0%,
@@ -495,378 +479,4 @@ html.dark body::before {
   70% {
     opacity: 0.18;
   }
-}
-
-/* The illustration is bright in light mode, so the same glow reads as haze
-   there — hold it back and let dark carry the effect.
-   The firefly colors are deliberate raw values, an exception to "Astryx only"
-   (CLAUDE.md, Design Tokens): a warm light source has no Astryx role. */
-html:not(.dark) .hero-firefly {
-  box-shadow:
-    0 0 6px 2px rgb(201 134 32 / 0.55),
-    0 0 16px 6px rgb(201 134 32 / 0.22);
-  background: #ffcf6e;
-}
-
-.hero-step {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: none;
-  cursor: pointer;
-}
-
-.hero-greet:has(#hero-s0:checked) .hero-step-1,
-.hero-greet:has(#hero-s1:checked) .hero-step-2,
-.hero-greet:has(#hero-s2:checked) .hero-step-0 {
-  display: block;
-}
-
-/* Sound toggle, bottom-right inside the frame. z-index 3 puts it over the
-   step labels (2), so clicking it never advances the greeting. A themed
-   floating chip in Astryx's popover colors, like any control over content. */
-.hero-sound {
-  position: absolute;
-  right: 0.75rem;
-  bottom: 0.75rem;
-  z-index: 3;
-  display: grid;
-  place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  padding: 0;
-  border: 1px solid var(--color-border-emphasized);
-  border-radius: 9999px;
-  background: var(--color-background-popover);
-  box-shadow: var(--shadow-low);
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease;
-}
-
-.hero-sound:hover {
-  background:
-    linear-gradient(var(--color-overlay-hover), var(--color-overlay-hover)),
-    var(--color-background-popover);
-  color: var(--color-text-primary);
-}
-
-.hero-sound:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-}
-
-/* Lit while playing, so the state is legible without reading the icon. */
-.hero-sound[aria-pressed='true'] {
-  color: var(--color-text-yellow);
-  border-color: var(--color-border-yellow);
-}
-
-.hero-sound-icon {
-  width: 1.125rem;
-  height: 1.125rem;
-}
-
-.hero-sound[aria-pressed='false'] .hero-sound-on,
-.hero-sound[aria-pressed='true'] .hero-sound-off {
-  display: none;
-}
-
-/* The radios are visually hidden, so surface their focus on the frame */
-.hero-greet:has(.hero-state:focus-visible) {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 3px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-frame {
-    transition: none;
-  }
-
-  /* Drifting points of light are exactly what this query is for. Hold them
-     still and dim rather than removing them, so the frame keeps its warmth. */
-  .hero-firefly {
-    animation: none;
-    opacity: 0.4;
-  }
-}
-
-/* Header nav.
-   The active state was colour plus `font-medium` — and 500 collapses to Regular
-   in Nanum Barun Gothic (see the @font-face note above), so the weight signal
-   was doing nothing at all. Real 700 plus a rule under the label carries it. */
-.nav-link {
-  color: var(--color-ink-600);
-  transition:
-    color 0.15s ease,
-    text-decoration-color 0.15s ease;
-}
-
-.nav-link:hover {
-  color: var(--color-ink-900);
-}
-
-.nav-link-active {
-  color: var(--color-accent);
-  font-weight: 700;
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 9px;
-  text-decoration-color: var(--color-accent);
-}
-
-/* Language switcher.
-   Sits beside the nav links but is deliberately quieter than them: it names
-   which of three trees you are in (/, /kr, /en), which is orientation rather
-   than navigation. Hence the smaller type and the ink-500 ground — an active
-   nav-link's accent underline would read as a fourth destination. */
-.lang-switch {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-size: 12px;
-  line-height: 1;
-  letter-spacing: 0.04em;
-}
-
-.lang-switch-link {
-  color: var(--color-ink-500);
-  text-decoration: none;
-  padding: 0.15rem 0.1rem;
-  transition: color 0.15s ease;
-}
-
-.lang-switch-link:hover {
-  color: var(--color-ink-900);
-}
-
-/* The current language is stated, not offered — weight and full-strength ink,
-   with no underline, so it does not read as somewhere else to go. */
-.lang-switch-link.is-current {
-  color: var(--color-ink-900);
-  font-weight: 700;
-}
-
-.lang-switch-link:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-  border-radius: 3px;
-}
-
-.lang-switch-sep {
-  color: var(--color-ink-200);
-}
-
-/* Article card.
-   Light: white paper on the tinted page, lifted on hover by a shadow rather
-   than a colour change — there is no lighter value than white to move to.
-   Dark: a shadow on a near-black page is invisible, so the same hover moves a
-   value step instead. Same gesture, different mechanism. */
-.article-card {
-  background-color: var(--color-surface);
-  transition:
-    background-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.article-card:hover {
-  box-shadow: var(--shadow-med);
-}
-
-html.dark .article-card:hover {
-  background-color: var(--color-surface-hover);
-  box-shadow: none;
-}
-
-/* Card thumbnail.
-   The covers are black line art on white and are shown as drawn — no invert,
-   no blend. The tile carries the same white so the plate and the image read
-   as one square in either theme. */
-.article-thumb {
-  background-color: var(--color-thumb-plate);
-}
-
-.article-thumb img {
-  transition: transform 0.35s ease;
-}
-
-/* Opt out of the site-wide `html.dark img { brightness(0.92) }` glare trim —
-   it greys the artwork's white ground, and these read as plain black on white
-   in both themes. Needs to match that rule's specificity to win. */
-html.dark .article-thumb img {
-  filter: none;
-}
-
-.group:hover .article-thumb img {
-  transform: scale(1.04);
-}
-
-/* Category filter bar.
-   The sentinel is a zero-height marker in normal flow directly above the
-   sticky bar; an IntersectionObserver in index.astro watches it and toggles
-   .is-stuck. It needs a real box to be observable, hence the 1px. */
-.cat-sentinel {
-  height: 1px;
-}
-
-.cat-bar {
-  /* No shadow at rest — the bar is the same ground as the page until it
-     actually lifts off it. */
-  box-shadow: 0 0 0 0 transparent;
-  transition: box-shadow 0.2s ease;
-}
-
-.cat-bar.is-stuck {
-  box-shadow: var(--shadow-med);
-}
-
-/* A soft shadow on a near-black page is invisible — the same problem the
-   article card hover has. Add a hairline edge and Astryx's heaviest shadow so
-   the bar still reads as an overlap rather than as nothing. */
-html.dark .cat-bar.is-stuck {
-  box-shadow:
-    0 1px 0 0 var(--color-border-emphasized),
-    var(--shadow-high);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .cat-bar {
-    transition: none;
-  }
-}
-
-/* Reveal animation */
-@keyframes reveal-up {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-reveal {
-  animation: reveal-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.delay-1 {
-  animation-delay: 0.1s;
-}
-.delay-2 {
-  animation-delay: 0.2s;
-}
-.delay-3 {
-  animation-delay: 0.3s;
-}
-.delay-4 {
-  animation-delay: 0.4s;
-}
-.delay-5 {
-  animation-delay: 0.5s;
-}
-.delay-6 {
-  animation-delay: 0.6s;
-}
-
-/* ---- Intro (first paint) ---- UNUSED, kept for reference.
-   These were written for the React SPA, where Layout mounted once per page load
-   and never unmounted on route changes, so they played exactly once. Astro does
-   real page navigations, so applying them to the layout chrome would re-run the
-   header slide on every click. Per-page entrance motion is .page-enter plus
-   .animate-reveal on its children instead. */
-
-@keyframes boot-shell {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes boot-header {
-  from {
-    opacity: 0;
-    transform: translateY(-12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.boot-shell {
-  animation: boot-shell 0.5s ease-out both;
-}
-
-.boot-header {
-  animation: boot-header 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
-}
-
-/* Media settles in with a touch of scale so it feels like it lands */
-@keyframes reveal-media {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(1.025);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.animate-reveal-media {
-  animation: reveal-media 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-/* Headline drifts in slightly unfocused, then sharpens */
-@keyframes reveal-soft {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-    filter: blur(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
-  }
-}
-
-.animate-reveal-soft {
-  animation: reveal-soft 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-reveal,
-  .animate-reveal-soft,
-  .animate-reveal-media,
-  .boot-shell,
-  .boot-header,
-  .page-enter {
-    animation: none !important;
-  }
-
-  html {
-    scroll-behavior: auto;
-  }
-}
-
-/* Page fade-in */
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.page-enter {
-  animation: fade-in 0.4s ease-out both;
 }

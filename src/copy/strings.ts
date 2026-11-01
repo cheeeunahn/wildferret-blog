@@ -15,21 +15,29 @@ export interface Strings {
   /** Accessible name for the language switcher group. */
   langSwitchLabel: string
   langNames: Record<Lang, string>
-  home: {
-    heroCodingAlt: string
-    heroGreetAlt: string
-    heroGreetMoreAlt: string
-    heroStateIdle: string
-    heroStateGreet: string
-    heroStateGreetMore: string
-    heroStepGreet: string
-    heroStepGreetMore: string
-    heroStepReset: string
-    heroCaption: string
+  /** The interactive ferret illustration at the top of the about page. */
+  hero: {
+    codingAlt: string
+    greetAlt: string
+    greetMoreAlt: string
+    stateIdle: string
+    stateGreet: string
+    stateGreetMore: string
+    stepGreet: string
+    stepGreetMore: string
+    stepReset: string
+    caption: string
     soundOn: string
     soundOff: string
+  }
+  home: {
     filterLegend: string
     filterAll: string
+    /** Accessible name of the post search box. */
+    searchLabel: string
+    searchPlaceholder: string
+    /** Shown when the search and category leave no post visible. */
+    noMatches: string
     /** Shown on the English index while a post has no English version yet. */
     emptyList: string
   }
@@ -80,21 +88,26 @@ const ko: Strings = {
   nav: { posts: '글', about: '소개' },
   langSwitchLabel: '언어 선택',
   langNames: { ko: '한국어', en: 'English' },
-  home: {
-    heroCodingAlt: '안경을 쓴 페럿이 책상에서 노트북으로 코드를 작성하는 일러스트',
-    heroGreetAlt: '페럿이 고개를 들어 정면을 바라보며 손을 흔들어 인사하는 일러스트',
-    heroGreetMoreAlt: '페럿이 활짝 웃으며 반갑게 인사하는 일러스트',
-    heroStateIdle: '작업 중인 페럿',
-    heroStateGreet: '인사하는 페럿',
-    heroStateGreetMore: '활짝 웃으며 인사하는 페럿',
-    heroStepGreet: '페럿에게 인사 건네기',
-    heroStepGreetMore: '페럿의 인사 더 보기',
-    heroStepReset: '처음 모습으로 돌아가기',
-    heroCaption: '소리 키고 클릭하면 좋은 일이 있을 수도? 위 이미지를 눌러보세요 🍀',
+  hero: {
+    codingAlt: '안경을 쓴 페럿이 책상에서 노트북으로 코드를 작성하는 일러스트',
+    greetAlt: '페럿이 고개를 들어 정면을 바라보며 손을 흔들어 인사하는 일러스트',
+    greetMoreAlt: '페럿이 활짝 웃으며 반갑게 인사하는 일러스트',
+    stateIdle: '작업 중인 페럿',
+    stateGreet: '인사하는 페럿',
+    stateGreetMore: '활짝 웃으며 인사하는 페럿',
+    stepGreet: '페럿에게 인사 건네기',
+    stepGreetMore: '페럿의 인사 더 보기',
+    stepReset: '처음 모습으로 돌아가기',
+    caption: '소리 키고 클릭하면 좋은 일이 있을 수도? 위 이미지를 눌러보세요 🍀',
     soundOn: '주변 소리 켜기',
     soundOff: '주변 소리 끄기',
+  },
+  home: {
     filterLegend: '카테고리로 글 고르기',
     filterAll: '전체',
+    searchLabel: '글 검색',
+    searchPlaceholder: '제목이나 내용으로 검색…',
+    noMatches: '조건에 맞는 글이 없어요.',
     emptyList: '아직 이 언어로 옮긴 글이 없어요.',
   },
   article: {
@@ -134,22 +147,26 @@ const en: Strings = {
   nav: { posts: 'Posts', about: 'About' },
   langSwitchLabel: 'Choose a language',
   langNames: { ko: '한국어', en: 'English' },
-  home: {
-    heroCodingAlt: 'Illustration of a ferret in glasses writing code on a laptop at a desk',
-    heroGreetAlt: 'Illustration of the ferret looking up and waving hello',
-    heroGreetMoreAlt: 'Illustration of the ferret beaming and greeting the reader',
-    heroStateIdle: 'The ferret at work',
-    heroStateGreet: 'The ferret waving hello',
-    heroStateGreetMore: 'The ferret beaming a greeting',
-    heroStepGreet: 'Say hello to the ferret',
-    heroStepGreetMore: 'See more of the greeting',
-    heroStepReset: 'Go back to the first frame',
-    heroCaption:
-      'Turn the sound on and click — something good might happen. Try the image above 🍀',
+  hero: {
+    codingAlt: 'Illustration of a ferret in glasses writing code on a laptop at a desk',
+    greetAlt: 'Illustration of the ferret looking up and waving hello',
+    greetMoreAlt: 'Illustration of the ferret beaming and greeting the reader',
+    stateIdle: 'The ferret at work',
+    stateGreet: 'The ferret waving hello',
+    stateGreetMore: 'The ferret beaming a greeting',
+    stepGreet: 'Say hello to the ferret',
+    stepGreetMore: 'See more of the greeting',
+    stepReset: 'Go back to the first frame',
+    caption: 'Turn the sound on and click — something good might happen. Try the image above 🍀',
     soundOn: 'Turn ambient sound on',
     soundOff: 'Turn ambient sound off',
+  },
+  home: {
     filterLegend: 'Filter posts by category',
     filterAll: 'All',
+    searchLabel: 'Search posts',
+    searchPlaceholder: 'Search by title or summary…',
+    noMatches: 'No posts match.',
     emptyList: 'Nothing has been translated into this language yet.',
   },
   article: {

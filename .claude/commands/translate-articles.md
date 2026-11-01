@@ -43,7 +43,7 @@ import in `articles.ts`, and a mismatch fails the build.
 **Register.** The English articles are deliberately more formal than the
 Korean: full sentences, no contractions in body prose, technical terms spelled
 out on first use with the abbreviation in parentheses. Read an existing pair —
-`research-wiki-for-llm.ts` against `en/research-wiki-for-llm.ts` — and match
+`synthetic-user-reading.ts` against `en/synthetic-user-reading.ts` — and match
 that voice. Translate the meaning, not the word order; a Korean sentence that
 runs on is better rendered as two English ones.
 

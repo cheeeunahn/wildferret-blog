@@ -15,6 +15,7 @@ pnpm translate           # write the missing English versions (opens Claude Code
 pnpm astro     # the Astro CLI directly
 pnpm astryx component <Name>  # Astryx component API docs — look props up here, don't guess
 pnpm theme:build              # rebuild src/styles/astryx/wildferret.theme.css after editing the theme
+pnpm sbom                     # regenerate docs/sbom/ (CycloneDX SBOM + summary) after a dependency change
 ```
 
 Vitest (`vitest.config.ts`) runs `src/**/*.test.ts`, `eslint-rules/*.test.js`, and `scripts/*.test.js`. No single-file build commands.
@@ -69,7 +70,7 @@ This is the rule that is easiest to break by accident.
 - There are exactly **four** hydrated islands, and they hydrate differently on purpose:
   - `src/components/ThemeToggle.tsx` — `client:only="react"`, because it reads `document.documentElement` in a `useState` initializer, which has no server equivalent. Its fixed-size wrapper in `Base.astro` reserves layout space so the header does not shift on mount.
   - `src/components/Comments.tsx` — `client:visible` in `ArticleView.astro` (so all three language trees get it from one place). It has no server-hostile code, so the shell prerenders and the React runtime downloads only once a reader scrolls to the bottom of an article. Article pages keep a zero-JS first paint. Do not "simplify" this to `client:load`, which would ship React to every article on load.
-  - `src/components/CategoryFilter.tsx` — `client:load` in `HomeView.astro`. The home page's Astryx `SegmentedControl`. It does not render the cards (they are static HTML outside it); it only sets `data-filter` on `.cat-scope`, and per-category rules generated in `HomeView.astro` hide non-matching cards. With no JS, every post stays visible. Costs the home page ~29 KB gzipped (its own chunk plus an Astryx chunk it shares with Comments); React itself was already there for ThemeToggle.
+  - `src/components/CategoryFilter.tsx` — `client:load` in `HomeView.astro`. The home page's toolbar, laid out after Astryx's Library template: a `TextInput` search and a `ToggleButtonGroup` of category pills. It does not render the cards (they are static HTML outside it); it sets `hidden` on each card that fails the query or category, matching the query against the card's `data-search` text only — reader input is never written into a selector or markup. With no JS, every post stays visible. React itself was already on the page for ThemeToggle.
   - `src/components/AiSummary.tsx` — `client:summarizer`, a custom directive (`src/directives/summarizer.ts`, registered in `astro.config.mjs`). The button sits in the article header, which is in view on load, so `client:visible` would ship React to every article view — mostly to readers whose browser cannot run it. The directive hydrates only where Chrome's built-in Prompt API (`LanguageModel`) exists; everyone else downloads neither the island nor React. See AI Summary below.
 - The allowlist for the above lives in `eslint.config.js` (the `allow` option on `local/no-unlisted-island`), not in the rule file.
 
@@ -163,7 +164,7 @@ Where the translation lands depends on the branch it was pushed to: on a feature
 
 Two things the pipeline deliberately does not do, both of which need a human:
 
-- **Text inside images is not translated.** Alt text and captions are, but an image with Korean baked into it (the diagram screenshots in `agent-teams-and-claude-peers`, for one) still shows Korean on `/en/`. The workflow's summary calls this out per article.
+- **Text inside images is not translated.** Alt text and captions are, but an image with Korean baked into it still shows Korean on `/en/`. The workflow's summary calls this out per article.
 - **It does not track drift.** An English version is written once. Edit the Korean afterwards and the two fall out of sync with nothing to detect it — re-run `/translate-articles <slug>` against the updated Korean when that happens.
 
 ## AI Summary
@@ -179,13 +180,13 @@ The "AI로 요약하기 / Summarize with AI" button in the article header summar
 
 ## Design Tokens
 
-The site uses **Astryx's default color system** and Astryx typography (ADR 0002, TRD in `docs/trd/astryx-design-system.md`). `<html data-astryx-theme="wildferret">` in `Base.astro` applies the theme page-wide; the theme (`src/styles/astryx/wildferretTheme.ts`, built with `pnpm theme:build`, output committed) only swaps in NanumBarunGothic — it sets no colors.
+The site uses **Astryx's default color system** and Astryx typography (ADR 0002; ADR 0003 for the Library-style list, the single 1040px page width and the 16px type scale; TRD in `docs/trd/astryx-design-system.md`). `<html data-astryx-theme="wildferret">` in `Base.astro` applies the theme page-wide; the theme (`src/styles/astryx/wildferretTheme.ts`, built with `pnpm theme:build`, output committed) swaps in NanumBarunGothic and raises the type scale's base from Astryx's 14px to 16px (ratio unchanged), so every Heading/Text size grows together — change sizes there, not per component. It sets no colors. Article paragraphs, list items and quotes additionally get a 1.75 line height (`leading-[1.75]` in `ArticleView.astro`).
 
 `src/styles/global.css` holds the layered imports (Tailwind theme/preflight/utilities around Astryx `reset.css` + `astryx.css` + the built theme — the `@layer` order is deliberate, see its comment), the Nanum `@font-face` declarations, and an `@theme` block in which the old token names (`text-ink-900`, `bg-paper-warm`, …) are **aliases of Astryx semantic tokens** (`--color-text-primary`, `--color-background-muted`, …). Astryx defines those with `light-dark()`, driven by `color-scheme` (set by the pre-paint script along with `data-theme`), so there is no dark palette to maintain and almost nothing needs a `dark:` variant. `--color-accent` is Astryx's own name: it lives in `@theme reference inline`, never in `@theme` (that would be a self-reference cycle). To change a color, change which Astryx role it maps to — don't add hex values. Astryx's `tailwind-theme.css` bridge is not imported; its names clash with ours.
 
-**Astryx only.** Use only Astryx's colors, tokens and components: an Astryx component where one exists, an Astryx semantic token (or one of the aliases above) for any color, never a raw hex/`rgb()`, a stock Tailwind palette class, or a new token of our own. The old `local/no-raw-colors` rule enforced the ink/paper palette and was retired with it (ADR 0002), so this is a review rule, not a lint error. Two deliberate exceptions in `global.css` keep raw colors: the hero fireflies' glow (`.hero-firefly`), because a warm light source has no Astryx role, and `--color-thumb-plate: #ffffff`, the white behind card illustrations, which must stay white in dark mode too and Astryx has no theme-fixed white.
+**Astryx only.** Use only Astryx's colors, tokens and components: an Astryx component where one exists, an Astryx semantic token (or one of the aliases above) for any color, never a raw hex/`rgb()`, a stock Tailwind palette class, or a new token of our own. The old `local/no-raw-colors` rule enforced the ink/paper palette and was retired with it (ADR 0002), so this is a review rule, not a lint error. The same goes for styling in general: prefer an Astryx component (nav links are `TopNavItem`, the language switcher is `Link`, article cards are `ClickableCard`, the hero's sound button is `IconButton`), then Tailwind utilities on the token aliases, written in the template. `global.css` keeps only what neither can express — the webfont, the aliases, a few page-wide base rules, the CSS-only state machines (carousel, hero greeting) and the fireflies — and every rule in it sits in a layer, so a utility can always override it. Astryx components rendered from `.astro` without `client:*` are static HTML, so a stateful look comes from attributes the inline scripts set (`aria-pressed:`, `data-stuck:` variants), not from Astryx's own React state. Two deliberate exceptions in `global.css` keep raw colors: the hero fireflies' glow (`.hero-firefly`), because a warm light source has no Astryx role, and `--color-thumb-plate: #ffffff`, the white behind card illustrations, which must stay white in dark mode too and Astryx has no theme-fixed white.
 
-Entrance motion: `.page-enter` on each page's wrapper plus `.animate-reveal` (and the `.delay-*` scale) on its children. The `.boot-shell` / `.boot-header` keyframes are leftovers from the SPA and are deliberately unused — applying them to the layout chrome would replay the header animation on every navigation.
+Entrance motion: `animate-page-enter` on each page's wrapper plus `animate-reveal` (or `animate-reveal-media`) on its children, staggered with `reveal-delay-<n>` (n × 0.1s) or an inline `animation-delay`. They are Tailwind animation tokens (`--animate-*` in `@theme`), not hand-written classes; Tailwind's own `delay-*` is transition-delay, hence the separate name. Do not animate the layout chrome: Astro does real page navigations, so a header entrance would replay on every click.
 
 ## Comments
 
@@ -250,6 +251,15 @@ Order matters, because the old bundle calls PostgREST as anon until the new Work
 4. Apply `0003_revoke_anon.sql`. Confirm that a direct PostgREST call with only the publishable key is now refused.
 
 Rollback: re-grant anon (see the comment at the top of 0003), then revert the deploy.
+
+## SBOM
+
+`docs/sbom/sbom.cdx.json` (CycloneDX 1.6) is generated by `pnpm sbom` (`scripts/sbom.mjs`, tested in `scripts/sbom.test.js`); `docs/sbom/README.md` explains it and carries a generated summary between its `sbom:summary` markers. Re-run it in any PR that changes `pnpm-lock.yaml`, and commit both files. Hand edits to either are overwritten.
+
+- **The lockfile is the source**, not `node_modules`. Licences come from the local pnpm store at the locked version, so the script needs no network access.
+- **`scope: required` means "served to readers".** The script measures that with a throwaway sourcemap build, because `dependencies` vs `devDependencies` does not say what ships. If a copyleft package (the LGPL libvips under `sharp`, MPL `lightningcss`) ever shows up as shipped, look at it before merging.
+- **CDN fonts and external services are listed by hand** in `EXTERNAL_COMPONENTS` / `EXTERNAL_SERVICES` in the script. Add an entry when `Base.astro` or `global.css` loads something new from another host, or the Worker starts calling a new service.
+- The output is deterministic and already Prettier-formatted, so an unchanged dependency tree gives an empty diff.
 
 ## Formatting
 
