@@ -19,9 +19,12 @@ const strings = t(locale.lang)
 
 {/* A library tile: artwork bled to the card's top edge, text below. The
     wrapper is the grid item, so h-full lets every card in a row share one
-    height. Astryx's ClickableCard renders a real <a> stretched over the card,
-    so it navigates with no JS and brings its own hover and focus states.
-    data-search is what the CategoryFilter island matches the query against —
+    height. Astryx's ClickableCard renders a real <a href>, but visually hidden
+    (1px, clipped): a click on the card surface navigates through a React
+    onClick, which never ships here because the card is static HTML. So the
+    [&>a] utilities undo that hiding and stretch the anchor over the whole card
+    — one real link, Astryx's own label and focus target, no JS. They need `!`
+    to beat StyleX's high-specificity selectors. data-search is what the CategoryFilter island matches the query against —
     our own content, never reader input. Once the reader has filtered, a card
     coming back replays its entrance with no stagger (in-data-filtered). */}
 <div
@@ -35,7 +38,7 @@ const strings = t(locale.lang)
       href={localeHref(locale, `/article/${article.slug}`)}
       label={article.title}
       padding={0}
-      className="h-full overflow-hidden flex flex-col"
+      className="h-full overflow-hidden flex flex-col [&>a]:inset-0! [&>a]:size-auto! [&>a]:m-0! [&>a]:[clip:auto]! [&>a]:z-1!"
     >
       {/* Every card gets the same 4:3 plate, so a post without artwork keeps
           the row's rhythm instead of collapsing to a text-only tile. The
