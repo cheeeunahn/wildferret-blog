@@ -10,6 +10,11 @@ on:
 
 jobs:
   claude-review:
+    # claude-code-action refuses to run when a bot triggers the workflow
+    # ("Workflow initiated by non-human actor"), so Renovate's PRs failed here.
+    # Skip bot-triggered runs instead: dependency bumps get a skipped check
+    # rather than a red one. A human pushing to a bot's PR still gets a review.
+    if: github.event.sender.type != 'Bot'
     runs-on: ubuntu-latest
     permissions:
       contents: read
