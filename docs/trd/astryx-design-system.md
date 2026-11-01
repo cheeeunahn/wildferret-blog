@@ -116,7 +116,7 @@ Where each component is used:
 - `ArticleView`: Heading, Text, Blockquote, Divider (`---` as `label="· · ·"`), Table, CodeBlock, and a muted Card for the summary.
 - `ArticleCard`: ClickableCard, Heading (level 3), Text. Artwork at the top in a 4:3 frame, contained on a white plate (a muted plate when a post has none), then category, title, a two-line summary, and date · read time. The ClickableCard's visually hidden anchor is stretched over the card so it links with no JS (ADR 0003, decision 3).
 - `AboutView`: Heading, Text, HStack (the interest badges), Badge (one per interest), and `FerretHero` at the foot of the page. There is no avatar.
-- `HomeView`: a Heading over a rule, the CategoryFilter island (search + category pills, after Astryx's Library template), and one grid of `ArticleCard`s (2 columns from `sm`, 1 below).
+- `HomeView`: the CategoryFilter island (search + category pills, after Astryx's Library template) and one single-column list of wide `ArticleCard`s (artwork left, text right).
 - `FerretHero`: the CSS-radio greeting illustration with fireflies and the opt-in sound toggle, plus its `is:inline` script. It sits on no tonal band, because Astryx's muted background is translucent and the band vanished in dark mode.
 - `Base` footer: Text.
 
@@ -170,7 +170,7 @@ The same three article pages are built before and after.
 | Check                   | Status                                                                                                                                                             |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Lint, tests, build      | Pass                                                                                                                                                               |
-| Category filter, search | Pass: hydrates on load; a category pill leaves only its posts; a query narrows the grid; a query matching nothing shows the "no matches" line                      |
+| Category filter, search | Pass: hydrates on load; a category pill leaves only its posts; a query narrows the list; a query matching nothing shows the "no matches" line                      |
 | Mobile (390px, 320px)   | Pass: no horizontal overflow on home, article or about; pills scroll sideways at 320px; header stays on one line                                                   |
 | Zero-JS pages           | Pass: no page gained a module script                                                                                                                               |
 | Default colors, light   | Pass: text `#0A1317`, page `#F1F4F7`, accent `#0064E0`                                                                                                             |

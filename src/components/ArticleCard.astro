@@ -17,39 +17,39 @@ const { article, index, locale } = Astro.props
 const strings = t(locale.lang)
 ---
 
-{/* A library tile: artwork bled to the card's top edge, text below. The
-    wrapper is the grid item, so h-full lets every card in a row share one
-    height. Astryx's ClickableCard renders a real <a href>, but visually hidden
-    (1px, clipped): a click on the card surface navigates through a React
-    onClick, which never ships here because the card is static HTML. So the
-    [&>a] utilities undo that hiding and stretch the anchor over the whole card
-    — one real link, Astryx's own label and focus target, no JS. They need `!`
-    to beat StyleX's high-specificity selectors. data-search is what the CategoryFilter island matches the query against —
+{/* A list row: a square artwork plate on the left, text on the right, one
+    card per row across the page column. Astryx's ClickableCard renders a real
+    <a href>, but visually hidden (1px, clipped): a click on the card surface
+    navigates through a React onClick, which never ships here because the card
+    is static HTML. So the [&>a] utilities undo that hiding and stretch the
+    anchor over the whole card — one real link, Astryx's own label and focus
+    target, no JS. They need `!` to beat StyleX's high-specificity selectors.
+    The anchor is absolutely positioned, so it stays out of the row's flex flow.
+    data-search is what the CategoryFilter island matches the query against —
     our own content, never reader input. Once the reader has filtered, a card
     coming back replays its entrance with no stagger (in-data-filtered). */}
 <div
-  class="group h-full animate-reveal in-data-filtered:[animation-delay:0s]!"
+  class="group animate-reveal in-data-filtered:[animation-delay:0s]!"
   data-cat={article.category}
   data-search={`${article.title} ${article.subtitle}`}
   style={`animation-delay: ${0.4 + index * 0.06}s`}
 >
-  <article class="h-full">
+  <article>
     <ClickableCard
       href={localeHref(locale, `/article/${article.slug}`)}
       label={article.title}
       padding={0}
-      className="h-full overflow-hidden flex flex-col [&>a]:inset-0! [&>a]:size-auto! [&>a]:m-0! [&>a]:[clip:auto]! [&>a]:z-1!"
+      className="flex gap-4 p-4 sm:gap-5 sm:p-5 [&>a]:inset-0! [&>a]:size-auto! [&>a]:m-0! [&>a]:[clip:auto]! [&>a]:z-1!"
     >
-      {/* Every card gets the same 4:3 plate, so a post without artwork keeps
-          the row's rhythm instead of collapsing to a text-only tile. The
-          covers are square line art, so they are contained (with a little
-          inset) rather than cropped to the frame, which cut off their edges.
-          They are black on white and are shown as drawn, so the
+      {/* Every card gets the same square plate, so a post without artwork keeps
+          the list's rhythm. The covers are square line art, so they are
+          contained (with a little inset) rather than cropped, which cut off
+          their edges. They are black on white and are shown as drawn, so the
           plate is the same white in both themes; a post with no artwork gets a
           quiet muted plate instead, which would otherwise read as a missing
-          image. */}
+          image. Smaller below sm, so a 320px screen keeps room for the text. */}
       <div
-        class={`aspect-[4/3] overflow-hidden ${article.cardImage ? 'bg-thumb-plate' : 'bg-ink-50'}`}
+        class={`size-24 sm:size-36 shrink-0 overflow-hidden rounded-lg ${article.cardImage ? 'bg-thumb-plate' : 'bg-ink-50'}`}
       >
         {article.cardImage ? (
           <img
@@ -58,7 +58,7 @@ const strings = t(locale.lang)
             aria-hidden="true"
             loading="lazy"
             decoding="async"
-            class="w-full h-full object-contain p-2 transition-transform duration-[350ms] group-hover:scale-[1.04] dark:filter-none"
+            class="w-full h-full object-contain p-1.5 transition-transform duration-[350ms] group-hover:scale-[1.04] dark:filter-none"
           />
         ) : (
           <div class="w-full h-full flex items-center justify-center" aria-hidden="true">
@@ -67,7 +67,9 @@ const strings = t(locale.lang)
         )}
       </div>
 
-      <div class="flex flex-1 flex-col gap-1.5 p-5">
+      {/* min-w-0 lets the column shrink below its content's width, so a long
+          title wraps instead of pushing the row wider than the card. */}
+      <div class="flex min-w-0 flex-1 flex-col gap-1.5">
         <Text type="supporting">{article.category}</Text>
         {/* break-keep: Korean wraps between words, as it does in articles,
             instead of splitting one ("요 / 약해보기"). text-pretty keeps a
@@ -88,9 +90,9 @@ const strings = t(locale.lang)
         >
           {article.subtitle}
         </Text>
-        {/* mt-auto pins the meta to the card's foot, so dates line up across a
-            row whatever the title length. */}
-        <div class="mt-auto pt-3">
+        {/* mt-auto pins the meta to the foot of the row, level with the bottom
+            of the artwork when the text is shorter than it. */}
+        <div class="mt-auto pt-2">
           <Text type="supporting">
             {article.date} · {strings.article.readTime(article.readMinutes)}
           </Text>

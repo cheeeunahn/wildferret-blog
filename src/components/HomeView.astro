@@ -29,10 +29,10 @@ const resultLabels = articles.map((_, i) => strings.home.resultsCount(i + 1))
 <div class="animate-page-enter">
   {/* Category filter + article list, laid out like Astryx's Library
       template minus its titled header (the nav tab already says 글 / Posts):
-      a full-width search, category pills, then a grid of image-topped cards.
+      a full-width search, category pills, then a list of wide cards.
       The island hides cards by setting `hidden` inside this element, so they
       must all stay within it. */}
-  <div class="cat-scope pt-10 sm:pt-12">
+  <div class="cat-scope pt-2 sm:pt-4">
     {/* The toolbar sticks below the header so it stays reachable while you
         scroll the list — top-16 is the header's own h-16, and z-40 keeps it
         under the header rather than sliding over it. The band is full-bleed
@@ -84,13 +84,12 @@ const resultLabels = articles.map((_, i) => strings.home.resultsCount(i + 1))
     <div class="max-w-[720px] mx-auto px-6 pb-20">
       {articles.length > 0 ? (
         <>
-          {/* One grid rather than the template's per-category sections: with a
+          {/* One list rather than the template's per-category sections: with a
               handful of posts spread over the categories, sections would each
-              hold a single card. The pills narrow this grid instead. Two
-              columns at most: the page is a 720px column, and three would
-              squeeze each card to ~208px. gap-6 matches the page's own 24px
-              side margin. */}
-          <div class="border-t border-ink-100 pt-6 grid gap-6 sm:grid-cols-2">
+              hold a single card. The pills narrow this list instead. One card
+              per row, artwork on the left, so each post gets the full 720px
+              column for its title and summary. */}
+          <div class="border-t border-ink-100 pt-6 flex flex-col gap-4">
             {articles.map((article, i) => (
               <ArticleCard article={article} index={i} locale={locale} />
             ))}

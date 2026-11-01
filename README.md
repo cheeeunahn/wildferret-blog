@@ -78,7 +78,7 @@ src/
 ├── components/
 │   ├── AboutView.astro       # About page markup, mounted by /about and /[lang]/about
 │   ├── AiSummary.tsx         # Island: on-device "Summarize with AI"
-│   ├── ArticleCard.astro     # A post tile on the home grid
+│   ├── ArticleCard.astro     # A post row on the home list
 │   ├── ArticleView.astro     # Article page markup (header, body, comments)
 │   ├── CategoryFilter.tsx    # Island: home search + category pills
 │   ├── Comments.tsx          # Island: an article's comment thread
@@ -171,8 +171,8 @@ The site uses **Astryx's** default colors, typography and components
 ([ADR 0002](docs/adr/0002-astryx-design-system.md)). The theme in
 `src/styles/astryx/wildferretTheme.ts` swaps in the webfont and raises the type
 scale's base to 16px. Every page shares one 720px column, and the home page is a
-search box, category pills and a two-column grid of cards after Astryx's Library
-template ([ADR 0003](docs/adr/0003-library-layout-and-reading-scale.md)).
+search box, category pills and a list of wide cards (artwork left, text right),
+after Astryx's Library template ([ADR 0003](docs/adr/0003-library-layout-and-reading-scale.md)).
 
 Use Astryx components and Astryx semantic tokens only: no raw hex values and no
 stock Tailwind palette classes. The older token names (`text-ink-900`,
