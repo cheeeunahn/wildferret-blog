@@ -1,6 +1,12 @@
 import { describe, expect, it, vi } from 'vitest'
 import { RepositoryError, type CommentRepository } from './repository'
-import { createComment, listComments } from './service'
+import * as service from './service'
+
+const KNOWN = new Set(['my-post'])
+const listComments = (repo: CommentRepository, slug: unknown) =>
+  service.listComments(repo, KNOWN, slug)
+const createComment = (repo: CommentRepository, input: unknown) =>
+  service.createComment(repo, KNOWN, input)
 
 const saved = { id: '1', nickname: 'n', body: 'hello there', created_at: '2026-10-04T00:00:00Z' }
 
@@ -30,6 +36,12 @@ describe('listComments', () => {
     },
   )
 
+  it('refuses a well-formed slug that is not a published article', async () => {
+    const repo = fakeRepo()
+    expect(await listComments(repo, 'not-an-article')).toMatchObject({ kind: 'invalid' })
+    expect(repo.list).not.toHaveBeenCalled()
+  })
+
   it('reports an unreachable database as unavailable', async () => {
     const repo = fakeRepo({ list: vi.fn().mockRejectedValue(new TypeError('fetch failed')) })
     expect(await listComments(repo, 'my-post')).toMatchObject({ ok: false, kind: 'unavailable' })
@@ -58,6 +70,7 @@ describe('createComment', () => {
     { slug: 'my-post', nickname: 'n' },
     { slug: 'my-post', nickname: 1, body: 'hello' },
     { slug: 'BAD SLUG', nickname: 'n', body: 'hello' },
+    { slug: 'not-an-article', nickname: 'n', body: 'hello there' },
   ])('refuses malformed input %j', async (input) => {
     const repo = fakeRepo()
     expect(await createComment(repo, input)).toMatchObject({ ok: false, kind: 'invalid' })

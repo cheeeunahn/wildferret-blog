@@ -54,11 +54,19 @@ export function isValidSlug(slug: unknown): slug is string {
   return typeof slug === 'string' && SLUG.test(slug)
 }
 
+/**
+ * The slugs of published articles. Checked before the database is touched, so a
+ * client rotating made-up slugs cannot spread rows (or the per-article cooldown)
+ * across threads no page will ever show.
+ */
+export type KnownSlugs = ReadonlySet<string>
+
 export async function listComments(
   repo: CommentRepository,
+  known: KnownSlugs,
   slug: unknown,
 ): Promise<Result<Comment[]>> {
-  if (!isValidSlug(slug)) return invalid
+  if (!isValidSlug(slug) || !known.has(slug)) return invalid
   try {
     return { ok: true, value: await repo.list(slug) }
   } catch (err) {
@@ -68,11 +76,17 @@ export async function listComments(
 
 export async function createComment(
   repo: CommentRepository,
+  known: KnownSlugs,
   input: unknown,
 ): Promise<Result<Comment>> {
   if (typeof input !== 'object' || input === null) return invalid
   const { slug, nickname, body } = input as Record<string, unknown>
-  if (!isValidSlug(slug) || typeof nickname !== 'string' || typeof body !== 'string') {
+  if (
+    !isValidSlug(slug) ||
+    !known.has(slug) ||
+    typeof nickname !== 'string' ||
+    typeof body !== 'string'
+  ) {
     return invalid
   }
 
