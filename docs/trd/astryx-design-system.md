@@ -116,13 +116,13 @@ Where each component is used:
 - `ArticleView`: Heading, Text, Blockquote, Divider (`---` as `label="· · ·"`), Table, CodeBlock, and a muted Card for the summary.
 - `ArticleCard`: ClickableCard, Heading (level 3), Text. Artwork at the top in a 4:3 frame, contained on a white plate (a muted plate when a post has none), then category, title, a two-line summary, and date · read time. The ClickableCard's visually hidden anchor is stretched over the card so it links with no JS (ADR 0003, decision 3).
 - `AboutView`: Heading, Text, HStack (the interest badges), Badge (one per interest), and `FerretHero` at the foot of the page. There is no avatar.
-- `HomeView`: a Heading over a rule, the CategoryFilter island (search + category pills, after Astryx's Library template), and one grid of `ArticleCard`s (3/2/1 columns).
+- `HomeView`: a Heading over a rule, the CategoryFilter island (search + category pills, after Astryx's Library template), and one grid of `ArticleCard`s (2 columns from `sm`, 1 below).
 - `FerretHero`: the CSS-radio greeting illustration with fireflies and the opt-in sound toggle, plus its `is:inline` script. It sits on no tonal band, because Astryx's muted background is translucent and the band vanished in dark mode.
 - `Base` footer: Text.
 
 Lists stay native `<ul>`/`<ol>` with `Text` items. The hero and carousel stay CSS radios.
 
-Every page uses one 1040px column: header, footer, home, article, about and 404 share the same edges.
+Every page uses one 720px column: header, footer, home, article, about and 404 share the same edges.
 
 ### 5a. Search and category filter island
 
@@ -184,7 +184,6 @@ The same three article pages are built before and after.
 
 | Risk                                                             | Mitigation                                                                                          |
 | ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| Long article lines at the 1040px column (~70+ Korean characters) | Accepted for consistent margins (ADR 0003); narrow the prose column if reading suffers              |
 | An Astryx upgrade renames the `text-input` `size:lg` variant     | Re-check the home search box's height after upgrades                                                |
 | `astryx.css` (~30 KB gzipped) loads on every page                | Measured above; swizzle the few components used and drop the global sheet if it becomes the blocker |
 | Beta API churn between 0.x releases                              | Exact pins; upgrade deliberately with `astryx upgrade --apply`, then `pnpm theme:build`             |

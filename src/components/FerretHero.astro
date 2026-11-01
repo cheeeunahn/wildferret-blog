@@ -34,8 +34,9 @@ const GREET_FRAMES = [
 ]
 ---
 
-{/* At the page's 1040px column the sm+ box is close to the source's 16:9,
-      so little is cropped; on phones it is taller than 16:9 and
+{/* At sm+ the box is 376px tall in the page's 720px column (672px inside
+      its padding), close to the source's 1024×571 (16:9), so little is
+      cropped; on phones it is taller than 16:9 and
       object-cover crops the sides. The focal point is right of centre and
       high, hence object-[62%_38%] rather than the default.
       The <label> makes the whole illustration the click target for the
@@ -75,7 +76,7 @@ const GREET_FRAMES = [
     <img
       src={resolveAssetUrl('/assets/images/wildferret-hero-coding.webp')}
       alt={strings.hero.codingAlt}
-      class="w-full h-[260px] sm:h-[560px] object-cover object-[62%_38%]"
+      class="w-full h-[260px] sm:h-[376px] object-cover object-[62%_38%]"
       loading="lazy"
       decoding="async"
     />

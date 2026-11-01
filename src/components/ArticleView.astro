@@ -72,7 +72,7 @@ const carouselArrowClass =
 
 <div class="animate-page-enter">
   {/* Article Header */}
-  <header class="max-w-[1040px] mx-auto px-6 pt-10 sm:pt-14 pb-8">
+  <header class="max-w-[720px] mx-auto px-6 pt-10 sm:pt-14 pb-8">
     <div class="animate-reveal">
       <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-5">
         <Text type="supporting">{article.date}</Text>
@@ -114,7 +114,7 @@ const carouselArrowClass =
     </div>
   </header>
 
-  <div class="max-w-[1040px] mx-auto">
+  <div class="max-w-[720px] mx-auto">
     <Divider />
   </div>
 
@@ -127,7 +127,7 @@ const carouselArrowClass =
       - The first block sits flush: the body's own top padding already spaces
         it from the rule above, and an h2's margin on top reads as a hole. */}
   <article
-    class="max-w-[1040px] mx-auto px-6 pt-9 pb-12 break-keep wrap-break-word [&>:first-child]:mt-0"
+    class="max-w-[720px] mx-auto px-6 pt-9 pb-12 break-keep wrap-break-word [&>:first-child]:mt-0"
     data-article-body
   >
     {summary && (
@@ -350,7 +350,7 @@ const carouselArrowClass =
         downloads once a reader actually scrolls this far.
         Keyed by slug alone, so a post's thread is shared across all three
         language trees rather than split per language. */}
-  <div class="max-w-[1040px] mx-auto px-6 pb-4">
+  <div class="max-w-[720px] mx-auto px-6 pb-4">
     <Divider className="mb-10" />
     <Comments
       client:visible
@@ -361,7 +361,7 @@ const carouselArrowClass =
   </div>
 
   {/* Back link */}
-  <div class="max-w-[1040px] mx-auto px-6 pb-20">
+  <div class="max-w-[720px] mx-auto px-6 pb-20">
     <Divider className="mb-10" />
     <a
       href={localeHref(locale, '/')}
