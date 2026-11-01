@@ -15,8 +15,8 @@ importers:
         specifier: 7.1.2
         version: 7.1.2(@types/node@26.6.6)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(esbuild@0.28.2)(jiti@2.7.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(yaml@2.9.1)
       '@astryxdesign/core':
-        specifier: 0.6.5
-        version: 0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+        specifier: 0.7.5
+        version: 0.7.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@stylexjs/stylex':
         specifier: 0.19.1
         version: 0.19.1
@@ -35,7 +35,7 @@ importers:
         version: 0.9.12(@emnapi/runtime@1.11.3)(prettier-plugin-astro@1.1.2(prettier@3.9.10))(prettier@3.9.10)(typescript@5.9.3)
       '@astryxdesign/cli':
         specifier: 0.6.5
-        version: 0.6.5(@astryxdesign/core@0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))
+        version: 0.6.5(@astryxdesign/core@0.7.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))
       '@eslint/js':
         specifier: ^9.39.5
         version: 9.39.5
@@ -256,8 +256,8 @@ packages:
       '@astryxdesign/theme-neutral':
         optional: true
 
-  '@astryxdesign/core@0.6.5':
-    resolution: {integrity: sha512-fI2ELLMxoPHKOJWKYyoTWi31q9Dg0SLWjuBMrkl6tQY3WFf3TjTrDn4f7KyOF6mryjbTsf93uQNOUJKbay1o/A==}
+  '@astryxdesign/core@0.7.5':
+    resolution: {integrity: sha512-nqFT7xiPiz5FYr0aUjyPVsf5AJwcKqnHTw1tFjy25uUvbvHvAVpcG3W84euq1w2C2soE2ZZRqRJ/OjbVKPbFBw==}
     peerDependencies:
       '@stylexjs/stylex': ^0.19.0
       react: '>=19.0.0'
@@ -3558,7 +3558,7 @@ snapshots:
     dependencies:
       yaml: 2.9.1
 
-  '@astryxdesign/cli@0.6.5(@astryxdesign/core@0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))':
+  '@astryxdesign/cli@0.6.5(@astryxdesign/core@0.7.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))':
     dependencies:
       '@babel/core': 7.29.7
       '@babel/parser': 7.29.8
@@ -3575,12 +3575,12 @@ snapshots:
       recast: 0.23.21
       zod: 4.6.7
     optionalDependencies:
-      '@astryxdesign/core': 0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@astryxdesign/core': 0.7.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
     transitivePeerDependencies:
       - '@babel/preset-env'
       - supports-color
 
-  '@astryxdesign/core@0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
+  '@astryxdesign/core@0.7.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
       '@stylexjs/stylex': 0.19.1
       intl-messageformat: 11.2.15
