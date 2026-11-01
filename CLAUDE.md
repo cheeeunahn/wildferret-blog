@@ -31,7 +31,7 @@ pnpm theme:build              # rebuild src/styles/astryx/wildferret.theme.css a
 
 Vitest (`vitest.config.ts`) runs `src/**/*.test.ts`, `eslint-rules/*.test.js`, and `scripts/*.test.js`. No single-file build commands.
 
-Astro 7 requires **Node 22.12+**; pnpm 10 is pinned via `packageManager`.
+Astro 7.4 requires **Node 22.23.4+**; pnpm 10 is pinned via `packageManager`.
 
 ## Architecture
 
@@ -39,7 +39,7 @@ Astro 7 requires **Node 22.12+**; pnpm 10 is pinned via `packageManager`.
 
 Every page is prerendered to a real HTML file at build time. The one exception is `src/pages/api/comments.ts` (`prerender = false`), which runs as Worker code — see Comments. There is no client-side router.
 
-**Deployment:** one root-path Cloudflare Worker. `astro.config.mjs` uses `base: '/'`, overridable via the `BASE_PATH` env var for a path-prefixed host. The build writes prerendered pages to `dist/client/` (served as static assets, with `not_found_handling: "404-page"` → `dist/client/404.html`) and the Worker to `dist/server/`; the adapter generates the deployable `dist/server/wrangler.json` from `wrangler.jsonc`. The adapter is pinned to `@astrojs/cloudflare@14.2.6`: 14.3.x needed an Astro newer than 7.2.2 despite its peer range; Astro is now 7.2.10, so re-test 14.3.x before lifting that pin. Sessions are off (`session: false`) so no KV namespace is required, and the adapter is skipped under Vitest (see the comment in `astro.config.mjs`).
+**Deployment:** one root-path Cloudflare Worker. `astro.config.mjs` uses `base: '/'`, overridable via the `BASE_PATH` env var for a path-prefixed host. The build writes prerendered pages to `dist/client/` (served as static assets, with `not_found_handling: "404-page"` → `dist/client/404.html`) and the Worker to `dist/server/`; the adapter generates the deployable `dist/server/wrangler.json` from `wrangler.jsonc`. The adapter is pinned to `@astrojs/cloudflare@14.4.3`, which needs Astro `^7.4.0`; bump the two together. Sessions are off (`session: false`) so no KV namespace is required, and the adapter is skipped under Vitest (see the comment in `astro.config.mjs`).
 
 **Routing** (file-based, `src/pages/`). Every page exists in three prerendered trees — see Languages below:
 
