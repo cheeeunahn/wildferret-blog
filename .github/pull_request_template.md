@@ -45,7 +45,7 @@
 - [ ] No user-visible literals in templates; new copy is in `src/copy/strings.ts` for every language
 - [ ] Internal links use `localeHref()`, and images use `resolveAssetUrl()`
 - [ ] No new `client:*` islands
-- [ ] Colors use the ink/paper tokens only
+- [ ] Colors use Astryx semantic tokens (or their aliases) only: no raw hex/`rgb()` or stock Tailwind palette classes
 
 ### If this adds or edits an article
 
