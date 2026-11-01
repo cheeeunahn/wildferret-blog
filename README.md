@@ -18,7 +18,7 @@ Thanks for stopping by 👋🏻
 
 ## Prerequisites
 
-- **Node.js 22.12+**: required by Astro 7 (`engines.node: >=22.12.0`).
+- **Node.js 22.23.4+**: required by Astro 7.4 (`engines.node: >=22.23.4`).
 - **pnpm 10**: Corepack enables the pinned version automatically with
   `corepack enable`.
 
