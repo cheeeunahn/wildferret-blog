@@ -20,7 +20,7 @@ const ko: AboutCopy = {
   pageTitle: '소개',
   heading: '안녕하세요, wildferret(안치은)입니다',
   intro:
-    'UX 리서치에서 출발한 Product Manager입니다.\n사람을 깊이 이해하고, AI 에이전트와 함께 조용하지만 분명한 차이를 만드는 제품을 만듭니다.',
+    'UX 리서처 출신의 Product Manager입니다.\n사용자 조사로 문제를 찾고, AI 에이전트와 함께 제품을 만듭니다.',
   careerHeading: '경력',
   career: [
     { period: '2026 — 현재', role: 'Product Manager', org: '세금 도메인' },
@@ -34,12 +34,12 @@ const ko: AboutCopy = {
     {
       year: '2026',
       name: '정부 혜택 알림 서비스',
-      summary: '정부 API와 연동해 받을 수 있는 혜택을 알려 주는 서비스를 0→1로 출시',
+      summary: '정부 API와 연동해 사용자가 받을 수 있는 혜택을 알려 주는 서비스 출시',
     },
     {
       year: '2026',
       name: '월별 소득 조회',
-      summary: '유저 인터뷰에서 찾은 니즈를 매달 다시 찾게 되는 피처로 기획·출시',
+      summary: '사용자 인터뷰를 바탕으로 월별 소득 조회 기능을 기획·출시',
     },
     {
       year: '2026',
@@ -65,7 +65,7 @@ const en: AboutCopy = {
   pageTitle: 'About',
   heading: "Hello, I'm wildferret",
   intro:
-    'A Product Manager who started in UX research. I work to understand people deeply, and build products with AI agents that make a quiet but unmistakable difference.',
+    "I'm a product manager with a background in UX research.\nI use user research to identify problems and work with AI agents to build products.",
   careerHeading: 'Career',
   career: [
     { period: '2026 — present', role: 'Product Manager', org: 'Tax domain' },
@@ -84,13 +84,12 @@ const en: AboutCopy = {
       year: '2026',
       name: 'Government benefit alerts',
       summary:
-        'Launched, from zero, a service that tells people which public benefits they can claim',
+        'Launched a service that uses government APIs to show users which benefits they can claim',
     },
     {
       year: '2026',
       name: 'Monthly income view',
-      summary:
-        'Turned a need found in user interviews into a feature people come back to every month',
+      summary: 'Designed and launched a monthly income lookup based on user interviews',
     },
     {
       year: '2026',
