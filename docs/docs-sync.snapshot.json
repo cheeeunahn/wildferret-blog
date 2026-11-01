@@ -95,6 +95,7 @@
     "supabase/migrations/0001_blog_user_comments.sql",
     "supabase/migrations/0002_blog_api_role.sql",
     "supabase/migrations/0003_revoke_anon.sql",
+    "supabase/migrations/0004_serialize_comment_inserts.sql",
     "tsconfig.json",
     "vitest.config.ts",
     "wrangler.jsonc"

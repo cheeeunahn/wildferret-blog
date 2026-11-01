@@ -10,6 +10,13 @@ name: Sync README and CLAUDE.md
 # pushes stop at step 1. Unreviewed docs are a valid state, so this workflow
 # never fails a build over them.
 #
+# Two runs, because claude-code-action rejects `push` events ("Unsupported
+# event type: push"; it accepts workflow_dispatch, schedule, PR and issue
+# events). A push run only does the cheap check. If there is work, it starts a
+# workflow_dispatch run of this same workflow on the same branch, and that run
+# calls Claude. GITHUB_TOKEN may start workflow_dispatch runs (the one event it
+# may trigger), which is why the job needs `actions: write`.
+#
 # Loop safety: the commit this workflow pushes uses GITHUB_TOKEN, and pushes
 # made with GITHUB_TOKEN do not trigger workflows. The scan is a second guard:
 # /sync-docs ends with --accept, so a re-run finds nothing and exits at step 1.
@@ -32,8 +39,10 @@ on:
         default: ''
 
 concurrency:
-  # One docs run per branch; a newer push supersedes an in-flight one.
-  group: sync-docs-${{ github.ref }}
+  # One docs run per branch and event; a newer push supersedes an in-flight
+  # one. The event is in the key so the dispatched run does not cancel the push
+  # run that started it.
+  group: sync-docs-${{ github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
 jobs:
@@ -42,6 +51,7 @@ jobs:
     permissions:
       contents: write # commits the doc update back
       pull-requests: write # opens the PR when the push was to main
+      actions: write # a push run hands the work to a workflow_dispatch run
       id-token: write
 
     steps:
@@ -70,8 +80,17 @@ jobs:
           work=$(jq '(.changes | length) + (.unnoted | length) + (.stale | length) + (.problems | length)' "$RUNNER_TEMP/docs.json")
           echo "work=$work" >> "$GITHUB_OUTPUT"
 
+      - name: Hand the update to a workflow_dispatch run
+        # claude-code-action cannot run on push; see the header.
+        if: github.event_name == 'push' && steps.status.outputs.work != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Through env, never an expression inside the script.
+          REF_NAME: ${{ github.ref_name }}
+        run: gh workflow run sync-docs.yml --ref "$REF_NAME"
+
       - name: Update the docs
-        if: steps.status.outputs.work != '0' || github.event.inputs.focus != ''
+        if: github.event_name == 'workflow_dispatch' && (steps.status.outputs.work != '0' || github.event.inputs.focus != '')
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -94,7 +113,7 @@ jobs:
             --max-turns 80
 
       - name: Commit the doc update
-        if: steps.status.outputs.work != '0' || github.event.inputs.focus != ''
+        if: github.event_name == 'workflow_dispatch' && (steps.status.outputs.work != '0' || github.event.inputs.focus != '')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
