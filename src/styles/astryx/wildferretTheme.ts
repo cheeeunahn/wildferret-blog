@@ -1,8 +1,8 @@
 import { defineTheme } from '@astryxdesign/core/theme'
 
 // The site's Astryx theme. Colors are Astryx's defaults, so the theme sets none;
-// it exists to put NanumBarunGothic in place of Astryx's own font family, and
-// to be the one place later overrides go. Rebuild the CSS with `pnpm theme:build`
+// it puts NanumBarunGothic in place of Astryx's own font family, raises the
+// type scale's base to a reading size, and is the one place later overrides go. Rebuild the CSS with `pnpm theme:build`
 // after editing. See docs/trd/astryx-design-system.md §3.
 
 // global.css's --font-body stack minus its first entry, which is the family itself.
@@ -15,7 +15,19 @@ const FONT_FALLBACKS =
 export const wildferretTheme = defineTheme({
   name: 'wildferret',
   typography: {
+    // Astryx's default ramp starts at 14px, sized for dense app UI. This is a
+    // reading site, so the base is 16px; the 1.2 ratio is Astryx's own, so
+    // every step (headings, supporting text) scales up together.
+    scale: { base: 16, ratio: 1.2 },
     body: { family: 'NanumBarunGothic', fallbacks: FONT_FALLBACKS },
     heading: { family: 'NanumBarunGothic', fallbacks: FONT_FALLBACKS },
+  },
+  components: {
+    // The large text input is the home page's search box (the only lg one).
+    // Astryx's lg is 36px with 4px of vertical padding, which crowds 16px text;
+    // 44px gives it room and matches a comfortable touch target.
+    'text-input': {
+      'size:lg': { height: '44px', paddingInline: '12px' },
+    },
   },
 })

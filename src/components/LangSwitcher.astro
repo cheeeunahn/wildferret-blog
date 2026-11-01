@@ -1,6 +1,7 @@
 ---
 import { LANGS, LANG_SEGMENTS, switchLangHref, type Lang, type Locale } from '../shared/i18n'
 import { t } from '../copy/strings'
+import { Text } from '@astryxdesign/core/Text'
 
 interface Props {
   locale: Locale
@@ -8,7 +9,7 @@ interface Props {
   appPath: string
   /**
    * Languages this particular page exists in. A language left out still gets a
-   * button — it points at that language's home rather than at a URL that would
+   * menu item — it points at that language's home rather than at a URL that would
    * 404. Defaults to every language, which is right for the chrome pages.
    */
   availableLangs?: Lang[]
@@ -22,35 +23,99 @@ const strings = t(locale.lang)
 // destination the switcher produces.
 const targets = LANGS.map((lang) => ({
   lang,
-  // The visible label is the URL segment ('KR'), not the language code
-  // ('ko') — the reader is picking a URL, and the two must agree on screen.
-  label: LANG_SEGMENTS[lang].toUpperCase(),
   name: strings.langNames[lang],
   href: switchLangHref(lang, availableLangs.includes(lang) ? appPath : '/'),
   current: lang === locale.lang,
 }))
 ---
 
-{/* Plain links — the whole site is prerendered, so switching language is a
-    navigation, not state. No island, no JS. */}
-<div class="lang-switch" role="group" aria-label={strings.langSwitchLabel}>
-  {targets.map(({ lang, label, name, href: target, current }, i) => (
-    <>
-      {i > 0 && (
-        <span class="lang-switch-sep" aria-hidden="true">
-          /
-        </span>
-      )}
-      <a
-        href={target}
-        hreflang={lang}
-        lang={lang}
-        class={`lang-switch-link ${current ? 'is-current' : ''}`}
-        aria-current={current ? 'true' : undefined}
-      >
-        <span aria-hidden="true">{label}</span>
-        <span class="sr-only">{name}</span>
-      </a>
-    </>
-  ))}
-</div>
+{/* A disclosure menu built on native <details>/<summary>: it opens, closes
+    and is keyboard-operable with no JS, so the header stays island-free here.
+    Astryx's DropdownMenu would need hydration on every page (the header is
+    global), which the islands policy rules out. The items are still plain
+    links — the whole site is prerendered, so switching language is a
+    navigation, not state.
+    The trigger matches the TopNavItems beside it (16px medium, a 36px box with
+    8px corners, the same hover tint) so the right side reads as one row.
+    It names the tree you are in (KR / EN, the URL segment); the menu
+    lists each language in its own name. The current one is stated, not
+    offered: aria-current, a check mark, and full-strength ink. */}
+<details class="lang-menu group relative">
+  <summary class="flex items-center gap-0.5 sm:gap-1 h-9 px-2 sm:px-3 rounded-lg cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden text-ink-700 hover:bg-ink-50 hover:text-ink-900 group-open:bg-ink-50 group-open:text-ink-900 focus-visible:outline-2 focus-visible:outline-accent transition-colors">
+    <Text weight="medium" color="inherit">
+      <span aria-hidden="true">{LANG_SEGMENTS[locale.lang].toUpperCase()}</span>
+      <span class="sr-only">{`${strings.langSwitchLabel}: ${strings.langNames[locale.lang]}`}</span>
+    </Text>
+    <svg
+      class="size-3 transition-transform group-open:rotate-180 motion-reduce:transition-none"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="m6 9 6 6 6-6"></path>
+    </svg>
+  </summary>
+
+  {/* Right-aligned under the trigger, so it never runs off a phone's edge. */}
+  <ul
+    class="absolute right-0 top-full mt-2 min-w-36 p-1 m-0 list-none rounded-lg border border-ink-100 bg-(--color-background-popover) shadow-med z-50"
+    aria-label={strings.langSwitchLabel}
+  >
+    {targets.map(({ lang, name, href: target, current }) => (
+      <li>
+        <a
+          href={target}
+          hreflang={lang}
+          lang={lang}
+          aria-current={current ? 'true' : undefined}
+          class={`flex items-center justify-between gap-4 px-3 py-2 rounded-md no-underline hover:bg-ink-50 focus-visible:outline-2 focus-visible:outline-accent ${current ? 'text-ink-900' : 'text-ink-700 hover:text-ink-900'}`}
+        >
+          <Text weight={current ? 'semibold' : undefined} color="inherit">
+            {name}
+          </Text>
+          {current && (
+            <svg
+              class="size-4 text-accent"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M20 6 9 17l-5-5"></path>
+            </svg>
+          )}
+        </a>
+      </li>
+    ))}
+  </ul>
+</details>
+
+{/* <details> has no light-dismiss of its own. This closes it on a click
+    outside or on Escape (returning focus to the trigger). Inline and
+    dependency-free, like the other header-adjacent scripts; without it the
+    menu still works, it just stays open until toggled. */}
+<script is:inline>
+  ;(() => {
+    const menus = document.querySelectorAll('details.lang-menu')
+    document.addEventListener('click', (e) => {
+      menus.forEach((m) => {
+        if (m.open && !m.contains(e.target)) m.open = false
+      })
+    })
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return
+      menus.forEach((m) => {
+        if (!m.open) return
+        m.open = false
+        m.querySelector('summary')?.focus()
+      })
+    })
+  })()
+</script>

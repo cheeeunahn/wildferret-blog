@@ -1,0 +1,206 @@
+---
+import { resolveAssetUrl } from '../shared/assetUrl'
+import { t } from '../copy/strings'
+import type { Locale } from '../shared/i18n'
+import { Text } from '@astryxdesign/core/Text'
+import HeroSoundButton from './HeroSoundButton'
+
+/**
+ * The interactive ferret illustration: three frames stepped by a CSS radio
+ * group, drifting fireflies, and an opt-in ambient sound toggle. Lives on the
+ * about page. Its state machine and fireflies are the .hero-* rules in
+ * global.css, everything else is utilities here; the only script
+ * is the is:inline block at the bottom (idle reset + sound), so this ships no
+ * island.
+ */
+interface Props {
+  locale: Locale
+}
+
+const { locale } = Astro.props
+const strings = t(locale.lang)
+
+// The hero's later frames: same ferret, turned to face the reader, then
+// greeting them properly. Stepped through by the radio group below.
+const GREET_FRAMES = [
+  {
+    src: '/assets/images/wildferret-hero-greeting.webp',
+    alt: strings.hero.greetAlt,
+  },
+  {
+    src: '/assets/images/wildferret-hero-greeting-2.webp',
+    alt: strings.hero.greetMoreAlt,
+  },
+]
+---
+
+{/* At sm+ the box is 376px tall in the page's 720px column (672px inside
+      its padding), close to the source's 1024×571 (16:9), so little is
+      cropped; on phones it is taller than 16:9 and
+      object-cover crops the sides. The focal point is right of centre and
+      high, hence object-[62%_38%] rather than the default.
+      The <label> makes the whole illustration the click target for the
+      greeting; the checkbox inside it is the state. The radios are visually
+      hidden, so their keyboard focus is surfaced on the frame (has-[…]). */}
+<figure class="m-0 animate-reveal-media reveal-delay-1">
+  <div class="hero-greet relative block overflow-hidden rounded-2xl bg-paper-warm/30 has-[.hero-state:focus-visible]:outline-2 has-[.hero-state:focus-visible]:outline-accent has-[.hero-state:focus-visible]:outline-offset-3">
+    <input
+      type="radio"
+      name="hero-state"
+      id="hero-s0"
+      class="hero-state sr-only"
+      checked
+      aria-label={strings.hero.stateIdle}
+    />
+    <input
+      type="radio"
+      name="hero-state"
+      id="hero-s1"
+      class="hero-state sr-only"
+      aria-label={strings.hero.stateGreet}
+    />
+    <input
+      type="radio"
+      name="hero-state"
+      id="hero-s2"
+      class="hero-state sr-only"
+      aria-label={strings.hero.stateGreetMore}
+    />
+
+    {/* Lazy: the hero closes the about page, several screens down on a phone,
+        so its ~336 KB of frames should not compete with the page's fonts on
+        load. The greeting frames are hidden with opacity (.hero-frame), not
+        display: none, so they keep a layout box and still load as the figure
+        nears the viewport — the first click does not fade into a blank frame.
+        The box has a fixed height, so a late image shifts nothing. */}
+    <img
+      src={resolveAssetUrl('/assets/images/wildferret-hero-coding.webp')}
+      alt={strings.hero.codingAlt}
+      class="w-full h-[260px] sm:h-[376px] object-cover object-[62%_38%]"
+      loading="lazy"
+      decoding="async"
+    />
+    {GREET_FRAMES.map((frame, i) => (
+      <img
+        src={resolveAssetUrl(frame.src)}
+        alt={frame.alt}
+        class={`hero-frame hero-frame-${i + 1} absolute inset-0 w-full h-full object-cover object-[62%_38%]`}
+        loading="lazy"
+        decoding="async"
+      />
+    ))}
+
+    {/* Fireflies. Decorative and click-through (pointer-events-none), so
+        they sit above the frames but below the labels and never block the
+        greeting. Each one carries its own drift and
+        pulse timing — see .hero-firefly-N. */}
+    <div class="absolute inset-0 z-1 pointer-events-none overflow-hidden" aria-hidden="true">
+      {Array.from({ length: 7 }, (_, i) => (
+        <span class={`hero-firefly hero-firefly-${i + 1}`} />
+      ))}
+    </div>
+
+    {/* Only the label for the next state is displayed (see global.css),
+        so clicking the same spot again advances the cycle. */}
+    <label for="hero-s1" class="hero-step hero-step-1 absolute inset-0 z-2 cursor-pointer">
+      <span class="sr-only">{strings.hero.stepGreet}</span>
+    </label>
+    <label for="hero-s2" class="hero-step hero-step-2 absolute inset-0 z-2 cursor-pointer">
+      <span class="sr-only">{strings.hero.stepGreetMore}</span>
+    </label>
+    <label for="hero-s0" class="hero-step hero-step-0 absolute inset-0 z-2 cursor-pointer">
+      <span class="sr-only">{strings.hero.stepReset}</span>
+    </label>
+
+    {/* Room tone for the desk scene: office ambience with the ferret's
+        own typing layered over it, started and stopped together. The two
+        loops are different lengths (56s and 8s), so they drift against
+        each other instead of repeating as one fixed bar.
+        Off by default and preload="none", so nothing is fetched until a
+        reader asks for it — and browsers block autoplay without a
+        gesture anyway. The button sits above the step labels so it does
+        not advance the greeting. */}
+    <audio
+      class="hero-audio"
+      src={resolveAssetUrl('/assets/audio/office-ambience.mp3')}
+      data-volume="0.35"
+      loop
+      preload="none"
+    ></audio>
+    <audio
+      class="hero-audio"
+      src={resolveAssetUrl('/assets/audio/keyboard-typing.mp3')}
+      data-volume="0.22"
+      loop
+      preload="none"
+    ></audio>
+    {/* The two labels ride on the button (data-label-*) rather than living in the
+        script below: the script is is:inline and untranslated by design,
+        so the only way it can speak the page's language is to read it
+        off the DOM. */}
+    <HeroSoundButton labelOn={strings.hero.soundOn} labelOff={strings.hero.soundOff} />
+  </div>
+
+  {/* Sits outside the frame rather than over the art: the illustration is
+      busy at the bottom edge and an overlay would need a scrim to stay
+      legible, which reads as a header band on a photo. Small and quiet —
+      this labels the picture, it is not the page's headline. */}
+  <figcaption class="mt-3 text-center">
+    <Text type="supporting">{strings.hero.caption}</Text>
+  </figcaption>
+</figure>
+
+{/* The one bit the CSS state machine cannot do: drop back to the idle
+      frame when the reader stops clicking. Inline and dependency-free on
+      purpose — see the islands policy in CLAUDE.md; this is not a
+      hydrated component. */}
+<script is:inline>
+  ;(() => {
+    const idle = document.getElementById('hero-s0')
+    if (idle) {
+      const states = document.querySelectorAll('.hero-state')
+      let timer
+      states.forEach((input) => {
+        input.addEventListener('change', () => {
+          clearTimeout(timer)
+          if (input === idle) return
+          timer = setTimeout(() => {
+            idle.checked = true
+          }, 6000)
+        })
+      })
+    }
+
+    // Sound toggle. aria-pressed is the single source of truth: the
+    // icon swap is aria-pressed: utilities, so nothing can drift out of sync.
+    const button = document.querySelector('.hero-sound')
+    const tracks = [...document.querySelectorAll('.hero-audio')]
+    if (!button || !tracks.length) return
+    // Mixed here rather than in the files: typing sits under the room
+    // tone, and both sit well under the page.
+    tracks.forEach((track) => {
+      track.volume = Number(track.dataset.volume || 0.3)
+    })
+    const setState = (on) => {
+      button.setAttribute('aria-pressed', String(on))
+      // Rendered per language into data-*; see the button's markup.
+      const label = on ? button.dataset.labelOff : button.dataset.labelOn
+      if (label) button.setAttribute('aria-label', label)
+    }
+    button.addEventListener('click', () => {
+      if (button.getAttribute('aria-pressed') === 'true') {
+        tracks.forEach((track) => track.pause())
+        setState(false)
+        return
+      }
+      setState(true)
+      // play() rejects if the browser refuses the gesture; if any
+      // layer is blocked, stop them all rather than showing sound
+      // that is only half playing.
+      Promise.all(tracks.map((track) => track.play())).catch(() => {
+        tracks.forEach((track) => track.pause())
+        setState(false)
+      })
+    })
+  })()
+</script>

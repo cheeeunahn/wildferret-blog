@@ -1,11 +1,10 @@
 ---
-import { resolveAssetUrl } from '../shared/assetUrl'
 import { aboutCopy } from '../content/service'
 import type { Locale } from '../shared/i18n'
-import { Badge } from '@astryxdesign/core/Badge'
 import { Heading } from '@astryxdesign/core/Heading'
-import { HStack } from '@astryxdesign/core/HStack'
+import { Link } from '@astryxdesign/core/Link'
 import { Text } from '@astryxdesign/core/Text'
+import FerretHero from './FerretHero.astro'
 
 interface Props {
   locale: Locale
@@ -13,46 +12,24 @@ interface Props {
 
 const { locale } = Astro.props
 const copy = aboutCopy(locale.lang)
-const profileImageUrl = resolveAssetUrl('/assets/images/profile-ferret-desk.webp')
 ---
 
-<div class="page-enter">
+<div class="animate-page-enter">
   <section class="max-w-[720px] mx-auto px-6 pt-10 sm:pt-14 pb-20">
     {/* Profile. Same 720px column as the header and footer, so the page shares
-        their left edge; avatar beside the heading rather than stacked above. */}
-    <HStack gap={5} align="center" className="animate-reveal mb-12">
-      <div class="w-20 h-20 shrink-0 rounded-full border border-ink-200 overflow-hidden">
-        <img
-          src={profileImageUrl}
-          alt={copy.profileAlt}
-          class="w-full h-full object-cover"
-          loading="eager"
-        />
-      </div>
-      <div>
-        <Heading level={1} className="mb-2">
-          {copy.heading}
-        </Heading>
-        <Text as="p" display="block" type="large" color="secondary">
-          {copy.intro}
-        </Text>
-      </div>
-    </HStack>
-
-    {/* Interests */}
-    <div class="animate-reveal delay-2">
-      <Heading level={2} className="mb-6">
-        {copy.interestsHeading}
+        their left edge. */}
+    <div class="animate-reveal mb-12">
+      <Heading level={1} className="mb-2">
+        {copy.heading}
       </Heading>
-      <HStack gap={2} wrap="wrap">
-        {copy.interests.map((interest) => (
-          <Badge label={interest} />
-        ))}
-      </HStack>
+      {/* whitespace-pre-line turns the intro's \n into a line break. */}
+      <Text as="p" display="block" type="large" color="secondary" className="whitespace-pre-line">
+        {copy.intro}
+      </Text>
     </div>
 
     {/* Career */}
-    <div class="mt-16 animate-reveal delay-3">
+    <div class="animate-reveal reveal-delay-2">
       <Heading level={2} className="mb-6">
         {copy.careerHeading}
       </Heading>
@@ -69,6 +46,64 @@ const profileImageUrl = resolveAssetUrl('/assets/images/profile-ferret-desk.webp
           </li>
         ))}
       </ul>
+    </div>
+
+    {/* Selected projects */}
+    <div class="mt-16 animate-reveal reveal-delay-3">
+      <Heading level={2} className="mb-6">
+        {copy.projectsHeading}
+      </Heading>
+      <ul class="space-y-4">
+        {copy.projects.map((project) => (
+          <li class="flex flex-col sm:flex-row sm:gap-4 text-[15px]">
+            <Text type="supporting" hasTabularNumbers className="sm:w-32 sm:shrink-0 sm:pt-1">
+              {project.year}
+            </Text>
+            <div>
+              {/* Same tab: an external-link icon and its "(opens in new tab)"
+                  text would need a translated label for every language. */}
+              <Text as="p" display="block">
+                {project.link ? (
+                  <Link href={project.link} hasUnderline>
+                    {project.name}
+                  </Link>
+                ) : (
+                  project.name
+                )}
+              </Text>
+              <Text as="p" display="block" color="secondary">
+                {project.summary}
+              </Text>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    {/* Certifications. Name and issuer only — no credential numbers. */}
+    <div class="mt-16 animate-reveal reveal-delay-4">
+      <Heading level={2} className="mb-6">
+        {copy.certificationsHeading}
+      </Heading>
+      <ul class="space-y-3">
+        {copy.certifications.map((cert) => (
+          <li class="flex flex-col sm:flex-row sm:gap-4 text-[15px]">
+            <Text type="supporting" hasTabularNumbers className="sm:w-32 sm:shrink-0 sm:pt-1">
+              {cert.year}
+            </Text>
+            <Text>
+              {cert.name}
+              <Text type="inherit" color="secondary">{` · ${cert.issuer}`}</Text>
+            </Text>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    {/* The ferret illustration closes the page, below the profile, career, projects and certifications:
+        a sign-off from the site's character rather than a banner. */}
+    <div class="mt-16">
+      <FerretHero locale={locale} />
     </div>
   </section>
 </div>

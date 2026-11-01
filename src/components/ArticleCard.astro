@@ -3,9 +3,7 @@ import type { LocalizedArticle } from '../content/service'
 import { localeHref, type Locale } from '../shared/i18n'
 import { t } from '../copy/strings'
 import { resolveAssetUrl } from '../shared/assetUrl'
-import { Badge } from '@astryxdesign/core/Badge'
-import { Card } from '@astryxdesign/core/Card'
-import { Divider } from '@astryxdesign/core/Divider'
+import { ClickableCard } from '@astryxdesign/core/ClickableCard'
 import { Heading } from '@astryxdesign/core/Heading'
 import { Text } from '@astryxdesign/core/Text'
 
@@ -19,71 +17,87 @@ const { article, index, locale } = Astro.props
 const strings = t(locale.lang)
 ---
 
-<a
-  href={localeHref(locale, `/article/${article.slug}`)}
-  class="group block no-underline animate-reveal"
+{/* A list row: a square artwork plate on the left, text on the right, one
+    card per row across the page column. Astryx's ClickableCard renders a real
+    <a href>, but visually hidden (1px, clipped): a click on the card surface
+    navigates through a React onClick, which never ships here because the card
+    is static HTML. So the [&>a] utilities undo that hiding and stretch the
+    anchor over the whole card — one real link, Astryx's own label and focus
+    target, no JS. They need `!` to beat StyleX's high-specificity selectors.
+    The anchor is absolutely positioned, so it stays out of the row's flex flow.
+    data-search is what the CategoryFilter island matches the query against —
+    our own content, never reader input. Once the reader has filtered, a card
+    coming back replays its entrance with no stagger (in-data-filtered). */}
+<div
+  class="group animate-reveal in-data-filtered:[animation-delay:0s]!"
   data-cat={article.category}
-  style={`animation-delay: ${0.4 + index * 0.08}s`}
+  data-search={`${article.title} ${article.subtitle}`}
+  style={`animation-delay: ${0.4 + index * 0.06}s`}
 >
-  {/* Thumbnail left, text right. The tile is inset in the card's own padding
-      rather than bled to its edges — flush, it read as a second panel welded
-      on rather than as an element of the card. The row collapses to a stack
-      under sm, where a square would eat half the card. */}
-  {/* Astryx Card, rendered to static HTML. The padding and the row layout stay
-      as utilities because they change at the sm breakpoint. */}
   <article>
-    <Card padding={0} className="article-card p-4 sm:p-5 flex flex-col sm:flex-row gap-4 sm:gap-5">
-      {article.cardImage && (
-        <div class="article-thumb shrink-0 overflow-hidden rounded-lg sm:w-[168px] sm:self-center">
+    <ClickableCard
+      href={localeHref(locale, `/article/${article.slug}`)}
+      label={article.title}
+      padding={0}
+      className="flex gap-4 p-4 sm:gap-5 sm:p-5 [&>a]:inset-0! [&>a]:size-auto! [&>a]:m-0! [&>a]:[clip:auto]! [&>a]:z-1!"
+    >
+      {/* Every card gets the same square plate, so a post without artwork keeps
+          the list's rhythm. The covers are square line art, so they are
+          contained (with a little inset) rather than cropped, which cut off
+          their edges. They are black on white and are shown as drawn, so the
+          plate is the same white in both themes; a post with no artwork gets a
+          quiet muted plate instead, which would otherwise read as a missing
+          image. Smaller below sm, so a 320px screen keeps room for the text. */}
+      <div
+        class={`size-24 sm:size-36 shrink-0 overflow-hidden rounded-lg ${article.cardImage ? 'bg-thumb-plate' : 'bg-ink-50'}`}
+      >
+        {article.cardImage ? (
           <img
             src={resolveAssetUrl(article.cardImage)}
             alt=""
             aria-hidden="true"
             loading="lazy"
             decoding="async"
-            class="w-full h-40 object-contain sm:h-auto sm:aspect-square sm:object-cover"
+            class="w-full h-full object-contain p-1.5 transition-transform duration-[350ms] group-hover:scale-[1.04] dark:filter-none"
           />
-        </div>
-      )}
+        ) : (
+          <div class="w-full h-full flex items-center justify-center" aria-hidden="true">
+            <Text type="supporting">{article.category}</Text>
+          </div>
+        )}
+      </div>
 
-      {/* Padding here plus the card's own adds up to the 24/28px the card used
-        to carry on its own, so the text block sits where it always did. */}
-      <div class="min-w-0 flex-1 p-2 sm:p-3">
-        {/* Meta */}
-        <div class="flex items-center gap-2 mb-3">
-          <Text type="supporting">{article.date}</Text>
-          <Divider orientation="vertical" className="h-2.5" />
-          <Badge variant="blue" label={article.category} />
-        </div>
-
-        {/* Title */}
-        <Heading level={2} className="mb-2 group-hover:text-ink-600 transition-colors">
+      {/* min-w-0 lets the column shrink below its content's width, so a long
+          title wraps instead of pushing the row wider than the card. */}
+      <div class="flex min-w-0 flex-1 flex-col gap-1.5">
+        <Text type="supporting">{article.category}</Text>
+        {/* break-keep: Korean wraps between words, as it does in articles,
+            instead of splitting one ("요 / 약해보기"). text-pretty keeps a
+            single word from being stranded on the title's last line. */}
+        <Heading
+          level={3}
+          className="break-keep text-pretty group-hover:text-ink-600 transition-colors"
+        >
           {article.title}
         </Heading>
-
-        {/* Subtitle */}
-        <Text as="p" display="block" color="secondary" maxLines={2} hasTruncateTooltip={false}>
+        <Text
+          as="p"
+          display="block"
+          color="secondary"
+          maxLines={2}
+          hasTruncateTooltip={false}
+          className="break-keep"
+        >
           {article.subtitle}
         </Text>
-
-        {/* Read time */}
-        <div class="mt-4 flex items-center gap-2 text-ink-500">
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 14"></polyline>
-          </svg>
-          <Text type="supporting">{strings.article.readTime(article.readMinutes)}</Text>
+        {/* mt-auto pins the meta to the foot of the row, level with the bottom
+            of the artwork when the text is shorter than it. */}
+        <div class="mt-auto pt-2">
+          <Text type="supporting">
+            {article.date} · {strings.article.readTime(article.readMinutes)}
+          </Text>
         </div>
       </div>
-    </Card>
+    </ClickableCard>
   </article>
-</a>
+</div>

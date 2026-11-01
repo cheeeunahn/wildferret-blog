@@ -43,5 +43,44 @@ export default defineConfig({
   adapter: process.env.VITEST ? undefined : cloudflare({ imageService: 'passthrough' }),
   session: false,
   integrations: [react(), summarizerDirective],
-  vite: { plugins: [tailwindcss()] },
+  vite: {
+    plugins: [tailwindcss()],
+    // Pre-bundle every Astryx entry the server renders, up front. Left to be
+    // discovered on first request, a new one (e.g. a component added to a page
+    // mid-session) re-runs the SSR optimizer while the old bundle is still
+    // loaded: Astryx then resolves a different React copy than react-dom/server,
+    // and every Text/Heading fails with "Invalid hook call" until a restart.
+    // The two astro/* entries are the ones the Worker runner otherwise finds
+    // late at startup, which fails the same way ("file does not exist … in the
+    // optimize deps directory"). Add a new `@astryxdesign/core/<Name>` import here too.
+    ssr: {
+      optimizeDeps: {
+        include: [
+          'astro/app/manifest',
+          'astro/assets/services/noop',
+          'react',
+          'react/jsx-runtime',
+          'react-dom/server',
+          '@astryxdesign/core/Badge',
+          '@astryxdesign/core/Blockquote',
+          '@astryxdesign/core/Button',
+          '@astryxdesign/core/Card',
+          '@astryxdesign/core/ClickableCard',
+          '@astryxdesign/core/CodeBlock',
+          '@astryxdesign/core/Divider',
+          '@astryxdesign/core/Heading',
+          '@astryxdesign/core/HStack',
+          '@astryxdesign/core/Icon',
+          '@astryxdesign/core/IconButton',
+          '@astryxdesign/core/Link',
+          '@astryxdesign/core/Table',
+          '@astryxdesign/core/Text',
+          '@astryxdesign/core/TextArea',
+          '@astryxdesign/core/TextInput',
+          '@astryxdesign/core/ToggleButton',
+          '@astryxdesign/core/TopNav',
+        ],
+      },
+    },
+  },
 })

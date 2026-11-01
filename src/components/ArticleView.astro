@@ -12,6 +12,7 @@ import { Card } from '@astryxdesign/core/Card'
 import { CodeBlock } from '@astryxdesign/core/CodeBlock'
 import { Divider } from '@astryxdesign/core/Divider'
 import { Heading } from '@astryxdesign/core/Heading'
+import { Icon } from '@astryxdesign/core/Icon'
 import { Table } from '@astryxdesign/core/Table'
 import { Text } from '@astryxdesign/core/Text'
 
@@ -61,9 +62,15 @@ const tableProps = (block: TableBlock) => ({
   data: block.rows.map((cells): Row => Object.fromEntries(cells.map((cell, c) => [`c${c}`, cell]))),
 })
 const MAX_CAROUSEL_SLIDES = 6
+
+// The carousel's prev/next controls are <label>s for its radio group, not
+// buttons, so they cannot be an Astryx IconButton; this is the same floating
+// chip in Astryx tokens. The slide/dot state machine lives in global.css.
+const carouselArrowClass =
+  'absolute top-1/2 -translate-y-1/2 grid place-items-center size-8 rounded-full border border-ink-100 bg-paper text-ink-600 opacity-85 cursor-pointer transition-[opacity,color] duration-150 hover:opacity-100 hover:text-ink-900'
 ---
 
-<div class="page-enter">
+<div class="animate-page-enter">
   {/* Article Header */}
   <header class="max-w-[720px] mx-auto px-6 pt-10 sm:pt-14 pb-8">
     <div class="animate-reveal">
@@ -111,15 +118,25 @@ const MAX_CAROUSEL_SLIDES = 6
     <Divider />
   </div>
 
-  {/* Article Body */}
-  <article class="max-w-[720px] mx-auto px-6 pt-9 pb-12 prose-blog" data-article-body>
+  {/* Article Body. Type size, weight and color come from Astryx (Heading,
+      Text, Blockquote); the utilities on each block only space it, plus two
+      things set once here:
+      - Korean wraps on word boundaries, not mid-word (break-keep). It is
+        inherited, so code blocks reset it with break-normal: their ASCII
+        diagrams rely on literal line breaks.
+      - The first block sits flush: the body's own top padding already spaces
+        it from the rule above, and an h2's margin on top reads as a hole. */}
+  <article
+    class="max-w-[720px] mx-auto px-6 pt-9 pb-12 break-keep wrap-break-word [&>:first-child]:mt-0"
+    data-article-body
+  >
     {summary && (
       <aside data-summary-card class="mb-10 animate-reveal" aria-label={summary.label}>
         <Card variant="muted">
           <Text as="div" display="block" type="label" color="secondary" className="mb-2">
             {summary.label}
           </Text>
-          <ul class="list-disc pl-5 space-y-2.5 marker:text-ink-300">
+          <ul class="list-disc pl-5 space-y-2.5 leading-[1.75] marker:text-ink-300">
             {summary.items.map((item) => (
               <li>
                 <Text>
@@ -147,7 +164,7 @@ const MAX_CAROUSEL_SLIDES = 6
             hasLanguageLabel={false}
             hasCopyButton={false}
             width="100%"
-            className="my-6 animate-reveal"
+            className="my-6 break-normal animate-reveal"
             style={delayStyle(i)}
           />
         )
@@ -163,7 +180,7 @@ const MAX_CAROUSEL_SLIDES = 6
 
       if (block.type === 'heading') {
         return (
-          <Heading level={2} className="animate-reveal" style={delayStyle(i)}>
+          <Heading level={2} className="mt-10 mb-3 animate-reveal" style={delayStyle(i)}>
             {block.text}
           </Heading>
         )
@@ -171,7 +188,7 @@ const MAX_CAROUSEL_SLIDES = 6
 
       if (block.type === 'quote') {
         return (
-          <Blockquote className="animate-reveal" style={delayStyle(i)}>
+          <Blockquote className="my-8 leading-[1.75] animate-reveal" style={delayStyle(i)}>
             <Fragment set:html={formatInline(block.text)} />
           </Blockquote>
         )
@@ -179,7 +196,7 @@ const MAX_CAROUSEL_SLIDES = 6
 
       if (block.type === 'list' && !block.ordered) {
         return (
-          <ul class="list-disc pl-5 mb-6 space-y-2 animate-reveal" style={delay(i)}>
+          <ul class="list-disc pl-5 mb-6 space-y-2 leading-[1.75] animate-reveal" style={delay(i)}>
             {block.items.map((item) => (
               <li>
                 <Text>
@@ -193,7 +210,10 @@ const MAX_CAROUSEL_SLIDES = 6
 
       if (block.type === 'list') {
         return (
-          <ol class="list-decimal pl-5 mb-6 space-y-2 animate-reveal" style={delay(i)}>
+          <ol
+            class="list-decimal pl-5 mb-6 space-y-2 leading-[1.75] animate-reveal"
+            style={delay(i)}
+          >
             {block.items.map((item) => (
               <li>
                 <Text>
@@ -225,7 +245,7 @@ const MAX_CAROUSEL_SLIDES = 6
         }
         const cid = `carousel-${i}`
         return (
-          <figure class="carousel my-8 animate-reveal" style={delay(i)}>
+          <figure class="carousel group/carousel my-8 animate-reveal" style={delay(i)}>
             {slides.map((_, n) => (
               <input
                 type="radio"
@@ -249,50 +269,35 @@ const MAX_CAROUSEL_SLIDES = 6
                     {n > 0 && (
                       <label
                         for={`${cid}-${n - 1}`}
-                        class="carousel-arrow carousel-arrow-prev"
+                        class={`${carouselArrowClass} left-3`}
                         aria-hidden="true"
                       >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="1.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        >
-                          <polyline points="15 18 9 12 15 6" />
-                        </svg>
+                        <Icon icon="chevronLeft" size="sm" />
                       </label>
                     )}
                     {n < slides.length - 1 && (
                       <label
                         for={`${cid}-${n + 1}`}
-                        class="carousel-arrow carousel-arrow-next"
+                        class={`${carouselArrowClass} right-3`}
                         aria-hidden="true"
                       >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="1.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        >
-                          <polyline points="9 6 15 12 9 18" />
-                        </svg>
+                        <Icon icon="chevronRight" size="sm" />
                       </label>
                     )}
                   </div>
                 ))}
               </div>
             </div>
-            <div class="carousel-dots mt-3 flex items-center justify-center gap-2">
+            {/* The radios are visually hidden, so their keyboard focus is
+                surfaced on the dots row — the arrow keys move through the
+                group from there. */}
+            <div class="mt-3 flex items-center justify-center gap-2 rounded-full group-has-[.carousel-input:focus-visible]/carousel:outline-2 group-has-[.carousel-input:focus-visible]/carousel:outline-ink-300 group-has-[.carousel-input:focus-visible]/carousel:outline-offset-6">
               {slides.map((_, n) => (
-                <label for={`${cid}-${n}`} class="carousel-dot" aria-hidden="true" />
+                <label
+                  for={`${cid}-${n}`}
+                  class="carousel-dot block size-1.5 rounded-full cursor-pointer transition-colors duration-150"
+                  aria-hidden="true"
+                />
               ))}
             </div>
             {caption && (
@@ -328,7 +333,12 @@ const MAX_CAROUSEL_SLIDES = 6
       }
 
       return (
-        <Text as="p" display="block" className="animate-reveal" style={delayStyle(i)}>
+        <Text
+          as="p"
+          display="block"
+          className="mb-6 leading-[1.75] animate-reveal"
+          style={delayStyle(i)}
+        >
           <Fragment set:html={formatInline(block.text)} />
         </Text>
       )

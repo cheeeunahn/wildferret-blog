@@ -52,41 +52,6 @@ export const articles: Article[] = [
       },
     },
   },
-  /* {
-    slug: 'research-wiki-for-llm',
-    title: 'LLM 유저 리서치 위키 만들기',
-    subtitle: '방대한 유저 리서치 자료를 한 곳에, AI 에이전트가 이해하기 쉬운 방식으로 정리하기',
-    date: '2026.08.13',
-    readMinutes: 5,
-    category: 'Personal',
-    cardImage: '/assets/images/research-wiki-for-llm-card.webp',
-    loadContent: () => import('./article-content/research-wiki-for-llm').then(({ researchWikiForLlmContent }) => researchWikiForLlmContent),
-    translations: {
-      en: {
-        title: 'Building a user research wiki for an LLM',
-        subtitle:
-          'Getting a sprawling pile of user research into one place, in a shape an AI agent can actually read',
-        loadContent: () => import('./article-content/en/research-wiki-for-llm').then(({ researchWikiForLlmContentEn }) => researchWikiForLlmContentEn),
-      },
-    },
-  },
-  {
-    slug: 'synthetic-user-research-panel',
-    title: '유저 없이 유저 피드백을 받을 수 있다?',
-    subtitle: '가상 유저 패널(synthetic user panel) 직접 만들어보기',
-    date: '2026.08.13',
-    readMinutes: 10,
-    category: 'Personal',
-    cardImage: '/assets/images/synthetic-user-research-panel-card.webp',
-    loadContent: () => import('./article-content/synthetic-user-research-panel').then(({ syntheticUserResearchPanelContent }) => syntheticUserResearchPanelContent),
-    translations: {
-      en: {
-        title: 'Can you get user feedback without users?',
-        subtitle: 'Building a synthetic user panel from scratch',
-        loadContent: () => import('./article-content/en/synthetic-user-research-panel').then(({ syntheticUserResearchPanelContentEn }) => syntheticUserResearchPanelContentEn),
-      },
-    },
-  },*/
   {
     slug: 'ai-git-101-for-designers',
     title: 'AI는 신이 아니고, 그저 확률 기반으로 움직이는 똑똑한 시스템일 뿐',
@@ -111,24 +76,6 @@ export const articles: Article[] = [
     },
   },
   /*{
-    slug: 'weekly-diary-0409',
-    title: '이번 주, Claude와 한 일들',
-    subtitle: 'GTM 세팅부터 데스크탑 펫까지',
-    date: '2026.04.09',
-    readMinutes: 6,
-    category: 'Personal',
-    loadContent: () => import('./article-content/weekly-diary-0409').then(({ weeklyDiary0409Content }) => weeklyDiary0409Content),
-  },
-  {
-    slug: 'agent-teams-and-claude-peers',
-    title: '혼자 일하는데 혼자가 아니다',
-    subtitle: 'AI 에이전트 팀과 Claude Peers 이야기',
-    date: '2026.03.29',
-    readMinutes: 18,
-    category: 'Personal',
-    loadContent: () => import('./article-content/agent-teams-and-claude-peers').then(({ agentTeamsAndClaudePeersContent }) => agentTeamsAndClaudePeersContent),
-  },
-  {
     slug: 'pm-ai-week',
     title: '빨라진 게 아니라, 가능해진 것들',
     subtitle: 'Claude Code와 보낸 일주일',
