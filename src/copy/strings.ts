@@ -15,7 +15,7 @@ export interface Strings {
   /** Accessible name for the language switcher group. */
   langSwitchLabel: string
   langNames: Record<Lang, string>
-  /** The interactive ferret illustration at the top of the about page. */
+  /** The interactive ferret illustration at the foot of the about page. */
   hero: {
     codingAlt: string
     greetAlt: string
@@ -106,7 +106,7 @@ const ko: Strings = {
     filterLegend: '카테고리로 글 고르기',
     filterAll: '전체',
     searchLabel: '글 검색',
-    searchPlaceholder: '제목이나 내용으로 검색…',
+    searchPlaceholder: '제목이나 요약으로 검색…',
     noMatches: '조건에 맞는 글이 없어요.',
     emptyList: '아직 이 언어로 옮긴 글이 없어요.',
   },
