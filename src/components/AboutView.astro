@@ -2,6 +2,7 @@
 import { aboutCopy } from '../content/service'
 import type { Locale } from '../shared/i18n'
 import { Heading } from '@astryxdesign/core/Heading'
+import { Link } from '@astryxdesign/core/Link'
 import { Text } from '@astryxdesign/core/Text'
 import FerretHero from './FerretHero.astro'
 
@@ -59,8 +60,16 @@ const copy = aboutCopy(locale.lang)
               {project.year}
             </Text>
             <div>
+              {/* Same tab: an external-link icon and its "(opens in new tab)"
+                  text would need a translated label for every language. */}
               <Text as="p" display="block">
-                {project.name}
+                {project.link ? (
+                  <Link href={project.link} hasUnderline>
+                    {project.name}
+                  </Link>
+                ) : (
+                  project.name
+                )}
               </Text>
               <Text as="p" display="block" color="secondary">
                 {project.summary}

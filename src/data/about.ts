@@ -11,7 +11,8 @@ export interface AboutCopy {
   careerHeading: string
   career: { period: string; role: string; org: string }[]
   projectsHeading: string
-  projects: { year: string; name: string; summary: string }[]
+  /** `link` is an outside write-up of the project (a press release, a tech-blog post); the name links to it. */
+  projects: { year: string; name: string; summary: string; link?: string }[]
   certificationsHeading: string
   certifications: { year: string; name: string; issuer: string }[]
 }
@@ -33,23 +34,15 @@ const ko: AboutCopy = {
   projects: [
     {
       year: '2026',
-      name: '정부 혜택 알림 서비스',
-      summary: '정부 API와 연동해 사용자가 받을 수 있는 혜택을 알려 주는 서비스 출시',
+      name: '정부 혜택 알림 서비스 (정부 혜택알리미)',
+      summary: '정부 API와 연동해 사용자가 받을 수 있는 정부 혜택을 알려 주는 서비스 출시',
+      link: 'https://blog.3o3.co.kr/260416-news/',
     },
     {
       year: '2026',
-      name: '월별 소득 조회',
-      summary: '사용자 인터뷰를 바탕으로 월별 소득 조회 기능을 기획·출시',
-    },
-    {
-      year: '2026',
-      name: 'LLM 가상 유저 툴',
-      summary: '사내 리서치 데이터로 만든 가상 유저 패널이 화면에 피드백을 주는 툴',
-    },
-    {
-      year: '2025',
-      name: '리서치 패널',
-      summary: '유저 패널을 구축해 피드백을 받는 데 걸리는 시간을 몇 주에서 며칠로 단축',
+      name: 'LLM 가상 유저 피드백 툴',
+      summary: '사내 리서치 데이터로 만든 가상 유저 패널이 화면에 피드백을 주는 UX 리서치 툴',
+      link: 'https://blog.3o3.co.kr/tech-pm-dev-one-repo/',
     },
   ],
   certificationsHeading: '자격증',
@@ -63,7 +56,7 @@ const ko: AboutCopy = {
 
 const en: AboutCopy = {
   pageTitle: 'About',
-  heading: "Hello, I'm wildferret",
+  heading: "Hello, I'm wildferret(Chee Eun)",
   intro:
     "I'm a product manager with a background in UX research.\nI use user research to identify problems and work with AI agents to build products.",
   careerHeading: 'Career',
@@ -82,25 +75,17 @@ const en: AboutCopy = {
   projects: [
     {
       year: '2026',
-      name: 'Government benefit alerts',
+      name: 'Government benefit alerts (정부 혜택알리미)',
       summary:
-        'Launched a service that uses government APIs to show users which benefits they can claim',
+        'Launched a service that uses government APIs to show users which government benefits they can claim',
+      link: 'https://blog.3o3.co.kr/260416-news/',
     },
     {
       year: '2026',
-      name: 'Monthly income view',
-      summary: 'Designed and launched a monthly income lookup based on user interviews',
-    },
-    {
-      year: '2026',
-      name: 'LLM synthetic-user tool',
+      name: 'LLM synthetic-user feedback tool',
       summary:
-        'A panel of synthetic users, built from in-house research, that gives feedback on screens',
-    },
-    {
-      year: '2025',
-      name: 'Research panel',
-      summary: 'Built a user panel that cut the wait for user feedback from weeks to days',
+        'A UX research tool in which a panel of synthetic users, built from in-house research data, gives feedback on screens',
+      link: 'https://blog.3o3.co.kr/tech-pm-dev-one-repo/',
     },
   ],
   certificationsHeading: 'Certifications',
