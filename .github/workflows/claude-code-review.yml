@@ -10,6 +10,11 @@ on:
 
 jobs:
   claude-review:
+    # claude-code-action refuses to run when a bot triggers the workflow
+    # ("Workflow initiated by non-human actor"), so Renovate's PRs failed here.
+    # Skip bot-triggered runs instead: dependency bumps get a skipped check
+    # rather than a red one. A human pushing to a bot's PR still gets a review.
+    if: github.event.sender.type != 'Bot'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -52,8 +57,9 @@ jobs:
             Before judging any changed hunk, read the full file it lives in and the
             files it calls into, so findings are grounded in how the code is actually
             used rather than in the diff alone. Read CLAUDE.md and follow the project
-            conventions it documents (asset URLs via `resolveAssetUrl`, the ink/paper
-            Tailwind token scale, the article content format).
+            conventions it documents (asset URLs via `resolveAssetUrl`, Astryx
+            components and semantic color tokens only — no raw hex/`rgb()` or stock
+            Tailwind palette classes, the article content format).
 
             Cover, in this order of priority:
             1. Correctness — logic errors, unhandled edge cases, null/undefined paths,
