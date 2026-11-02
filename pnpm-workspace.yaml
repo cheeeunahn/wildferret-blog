@@ -1,0 +1,14 @@
+# pnpm settings. pnpm 11+ no longer reads the "pnpm" field in package.json.
+
+# Dependencies allowed to run install (build) scripts. pnpm 12 fails the
+# install on any build it has not been told about, so each one is listed.
+# Only lefthook needs its script (it installs the git hooks binary); the rest
+# were already skipped under pnpm 10 and work without them: esbuild and
+# workerd ship their binaries as optional platform packages, and the Astryx
+# scripts only print an `astryx init` hint.
+allowBuilds:
+  lefthook: true
+  esbuild: false
+  workerd: false
+  '@astryxdesign/cli': false
+  '@astryxdesign/core': false

@@ -25,11 +25,11 @@
       },
       {
         "name": "wildferret:lockfile:sha256",
-        "value": "9ea5e609da46ef1de5f4dd30a6df3b7d966dd7121081f7d15fe560d54c465675"
+        "value": "f302f50ee82232198ee964ccbfe334a5a53d7d1c5806194b967f886de30a68c3"
       },
       {
         "name": "wildferret:packageManager",
-        "value": "pnpm@10.34.5+sha512.a4ee05f2f73658255bd6a89859c065a45c28a57daefae2c893a168ee2b73168c37b91e83e57ea67654ad03f03031746430e8bce38e362e042605fb8abc80192e"
+        "value": "pnpm@12.16.1+sha512.091d1dee7927575661b25dab3c2ae31cafc1c54d6b71ed6a6600cf0c1cb10434a447eae14015f1b23e2e6bedeed79df94a932e2164d2832280dce3fb32f656d1"
       }
     ]
   },
@@ -4231,33 +4231,18 @@
       "name": "core",
       "version": "1.11.1",
       "scope": "excluded",
-      "description": "emnapi core",
       "hashes": [
         {
           "alg": "SHA-512",
           "content": "452bdb4261f374accdb0b61aff01eb6dcdca378b182ca01d3d9c6a88cd87013aaffd2064dbf10d487a6f5c668b38c72c032cf4a68106aa49a62981b739688911"
         }
       ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
+      "licenses": [],
       "purl": "pkg:npm/%40emnapi/core@1.11.1",
       "externalReferences": [
         {
           "type": "distribution",
           "url": "https://registry.npmjs.org/@emnapi/core/-/core-1.11.1.tgz"
-        },
-        {
-          "type": "website",
-          "url": "https://github.com/toyobayashi/emnapi#readme"
-        },
-        {
-          "type": "vcs",
-          "url": "git+https://github.com/toyobayashi/emnapi.git"
         }
       ],
       "properties": [
@@ -4268,6 +4253,10 @@
         {
           "name": "wildferret:optional",
           "value": "true"
+        },
+        {
+          "name": "wildferret:manifest",
+          "value": "not-in-local-store"
         }
       ]
     },
@@ -4321,33 +4310,18 @@
       "name": "runtime",
       "version": "1.11.1",
       "scope": "excluded",
-      "description": "emnapi runtime",
       "hashes": [
         {
           "alg": "SHA-512",
           "content": "be08fb477cb75a0c76e0841a18f03f47a6055cb1d530e674b951322103da5acfab7750337c43179400b6d856303b55e4291e8d3ecabb9946a7747f2821175917"
         }
       ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
+      "licenses": [],
       "purl": "pkg:npm/%40emnapi/runtime@1.11.1",
       "externalReferences": [
         {
           "type": "distribution",
           "url": "https://registry.npmjs.org/@emnapi/runtime/-/runtime-1.11.1.tgz"
-        },
-        {
-          "type": "website",
-          "url": "https://github.com/toyobayashi/emnapi#readme"
-        },
-        {
-          "type": "vcs",
-          "url": "git+https://github.com/toyobayashi/emnapi.git"
         }
       ],
       "properties": [
@@ -4358,6 +4332,10 @@
         {
           "name": "wildferret:optional",
           "value": "true"
+        },
+        {
+          "name": "wildferret:manifest",
+          "value": "not-in-local-store"
         }
       ]
     },
@@ -4411,33 +4389,18 @@
       "name": "wasi-threads",
       "version": "1.2.2",
       "scope": "excluded",
-      "description": "WASI threads proposal implementation in JavaScript",
       "hashes": [
         {
           "alg": "SHA-512",
           "content": "73de6a39790777274d2a1b1c05379ba840b5095019a72a8e7d57c1cd0d6a833ca5de07de95d5232208036c86600cab072e09ec33e8a01fb4c9fde01ab1a56e30"
         }
       ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
+      "licenses": [],
       "purl": "pkg:npm/%40emnapi/wasi-threads@1.2.2",
       "externalReferences": [
         {
           "type": "distribution",
           "url": "https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-1.2.2.tgz"
-        },
-        {
-          "type": "website",
-          "url": "https://github.com/toyobayashi/emnapi#readme"
-        },
-        {
-          "type": "vcs",
-          "url": "git+https://github.com/toyobayashi/emnapi.git"
         }
       ],
       "properties": [
@@ -4448,6 +4411,10 @@
         {
           "name": "wildferret:optional",
           "value": "true"
+        },
+        {
+          "name": "wildferret:manifest",
+          "value": "not-in-local-store"
         }
       ]
     },
@@ -7402,31 +7369,18 @@
       "name": "sharp-wasm32",
       "version": "0.35.5",
       "scope": "excluded",
-      "description": "Prebuilt sharp for use with WebAssembly",
       "hashes": [
         {
           "alg": "SHA-512",
           "content": "3edb206b5b2ee2d431f8b2c5d44092f54ea7cf9926ad72a8e9755bb51e3c29edd9471c6069606eec80ed11ed6aba8f218aea709ba585ab15655da49fec820d19"
         }
       ],
-      "licenses": [
-        {
-          "expression": "Apache-2.0 AND LGPL-3.0-or-later AND MIT"
-        }
-      ],
+      "licenses": [],
       "purl": "pkg:npm/%40img/sharp-wasm32@0.35.5",
       "externalReferences": [
         {
           "type": "distribution",
           "url": "https://registry.npmjs.org/@img/sharp-wasm32/-/sharp-wasm32-0.35.5.tgz"
-        },
-        {
-          "type": "website",
-          "url": "https://sharp.pixelplumbing.com"
-        },
-        {
-          "type": "vcs",
-          "url": "git+https://github.com/lovell/sharp.git"
         }
       ],
       "properties": [
@@ -7437,6 +7391,10 @@
         {
           "name": "wildferret:optional",
           "value": "true"
+        },
+        {
+          "name": "wildferret:manifest",
+          "value": "not-in-local-store"
         }
       ]
     },
@@ -7928,33 +7886,18 @@
       "name": "wasm-runtime",
       "version": "1.2.6",
       "scope": "excluded",
-      "description": "Runtime and polyfill for wasm targets",
       "hashes": [
         {
           "alg": "SHA-512",
           "content": "991c83984c3dfdf0835c219f2f5b1b808c3f1942b43d5c515b863080f37ad45dcb43e7d2ca80456ab255ce01b2845ea447311067415e8c3aa6e162d749ea909b"
         }
       ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
+      "licenses": [],
       "purl": "pkg:npm/%40napi-rs/wasm-runtime@1.2.6",
       "externalReferences": [
         {
           "type": "distribution",
           "url": "https://registry.npmjs.org/@napi-rs/wasm-runtime/-/wasm-runtime-1.2.6.tgz"
-        },
-        {
-          "type": "website",
-          "url": "https://napi.rs/"
-        },
-        {
-          "type": "vcs",
-          "url": "git+https://github.com/napi-rs/napi-rs.git"
         }
       ],
       "properties": [
@@ -7965,6 +7908,10 @@
         {
           "name": "wildferret:optional",
           "value": "true"
+        },
+        {
+          "name": "wildferret:manifest",
+          "value": "not-in-local-store"
         }
       ]
     },
@@ -15431,18 +15378,33 @@
       "name": "es-module-lexer",
       "version": "2.3.2",
       "scope": "excluded",
+      "description": "Lexes ES modules returning their import/export metadata",
       "hashes": [
         {
           "alg": "SHA-512",
           "content": "a681c6a4e4400688c926e72757d29b39abc44d6f250559e98645bbec4479fc1439173ee85d2a0235e93b207def4799d18ddb04cfddba89b1585fc2ad2d099dcb"
         }
       ],
-      "licenses": [],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
       "purl": "pkg:npm/es-module-lexer@2.3.2",
       "externalReferences": [
         {
           "type": "distribution",
           "url": "https://registry.npmjs.org/es-module-lexer/-/es-module-lexer-2.3.2.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/guybedford/es-module-lexer#readme"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/guybedford/es-module-lexer.git"
         }
       ],
       "properties": [
@@ -15453,10 +15415,6 @@
         {
           "name": "cdx:npm:package:development",
           "value": "true"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
         }
       ]
     },
@@ -15466,28 +15424,39 @@
       "name": "es-module-lexer",
       "version": "3.0.4",
       "scope": "excluded",
+      "description": "Lexes ES modules returning their import/export metadata",
       "hashes": [
         {
           "alg": "SHA-512",
           "content": "06574d6399b0915bbe710e589a7ddeea107d4b1f171f1e197af59b894c996df2b127160edbb1dfd307f393121a0f908024c68697762ca4a10b8f47dfffb9c230"
         }
       ],
-      "licenses": [],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
       "purl": "pkg:npm/es-module-lexer@3.0.4",
       "externalReferences": [
         {
           "type": "distribution",
           "url": "https://registry.npmjs.org/es-module-lexer/-/es-module-lexer-3.0.4.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/guybedford/es-module-lexer#readme"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/guybedford/es-module-lexer.git"
         }
       ],
       "properties": [
         {
           "name": "wildferret:shipped",
           "value": "no"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
         }
       ]
     },
@@ -16167,18 +16136,33 @@
       "name": "esrecurse",
       "version": "4.3.0",
       "scope": "excluded",
+      "description": "ECMAScript AST recursive visitor",
       "hashes": [
         {
           "alg": "SHA-512",
           "content": "2a67ca2f76fa1be457bcff0dd6faf74ead642ffa021609f63585c4b6a3fcfcbde929aa540381bc70555aa05dd2537db7083e17ca947f7df8a81e692d8bafd36a"
         }
       ],
-      "licenses": [],
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-2-Clause"
+          }
+        }
+      ],
       "purl": "pkg:npm/esrecurse@4.3.0",
       "externalReferences": [
         {
           "type": "distribution",
           "url": "https://registry.npmjs.org/esrecurse/-/esrecurse-4.3.0.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/estools/esrecurse"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/estools/esrecurse.git"
         }
       ],
       "properties": [
@@ -16189,10 +16173,6 @@
         {
           "name": "cdx:npm:package:development",
           "value": "true"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
         }
       ]
     },
@@ -25720,28 +25700,35 @@
       "name": "sisteransi",
       "version": "1.0.5",
       "scope": "excluded",
+      "description": "ANSI escape codes for some terminal swag",
       "hashes": [
         {
           "alg": "SHA-512",
           "content": "6cb186951d50c417329e7d9de589835f83068e566fcb631104344d1cb27c548ea5ebef45522c9314d27422f78e48fd1b7178150cf45c7c6a80d298daa94a5f56"
         }
       ],
-      "licenses": [],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
       "purl": "pkg:npm/sisteransi@1.0.5",
       "externalReferences": [
         {
           "type": "distribution",
           "url": "https://registry.npmjs.org/sisteransi/-/sisteransi-1.0.5.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/terkelg/sisteransi"
         }
       ],
       "properties": [
         {
           "name": "wildferret:shipped",
           "value": "no"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
         }
       ]
     },
@@ -27940,18 +27927,33 @@
       "name": "uri-js",
       "version": "4.4.1",
       "scope": "excluded",
+      "description": "An RFC 3986/3987 compliant, scheme extendable URI/IRI parsing/validating/resolving library for JavaScript.",
       "hashes": [
         {
           "alg": "SHA-512",
           "content": "eeb294cb2df7435c9cf7ca50d430262edc17d74f45ed321f5a55b561da3c5a5d628b549e1e279e8741c77cf78bd9f3172bacf4b3c79c2acf5fac2b8b26f9dd06"
         }
       ],
-      "licenses": [],
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-2-Clause"
+          }
+        }
+      ],
       "purl": "pkg:npm/uri-js@4.4.1",
       "externalReferences": [
         {
           "type": "distribution",
           "url": "https://registry.npmjs.org/uri-js/-/uri-js-4.4.1.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/garycourt/uri-js"
+        },
+        {
+          "type": "vcs",
+          "url": "http://github.com/garycourt/uri-js"
         }
       ],
       "properties": [
@@ -27962,10 +27964,6 @@
         {
           "name": "cdx:npm:package:development",
           "value": "true"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
         }
       ]
     },

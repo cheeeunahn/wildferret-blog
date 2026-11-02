@@ -9,6 +9,7 @@ import {
   resolveDep,
   splitKey,
   toLicenses,
+  virtualStoreIndex,
 } from './sbom.mjs'
 
 // A trimmed v9 lockfile: one runtime dep (react-dom → scheduler), one dev dep,
@@ -135,8 +136,58 @@ describe('parseLockfile', () => {
     expect(lock.optional.has('@img/sharp-linux-x64@0.35.4')).toBe(true)
   })
 
+  it('reads the project document of a pnpm 11+ lockfile, not the env document', () => {
+    const ENV = `---
+lockfileVersion: '9.0'
+
+importers:
+
+  .:
+    configDependencies: {}
+    packageManagerDependencies:
+      pnpm:
+        specifier: 12.16.1
+        version: 12.16.1
+
+packages:
+
+  pnpm@12.16.1:
+    resolution: {integrity: sha512-DDDD}
+
+snapshots:
+
+  pnpm@12.16.1: {}
+
+---
+`
+    const multi = parseLockfile(ENV + LOCK)
+    expect(multi.direct).toEqual(lock.direct)
+    expect([...multi.packages.keys()]).toEqual([...lock.packages.keys()])
+    expect(multi.packages.has('pnpm@12.16.1')).toBe(false)
+  })
+
   it('refuses a lockfile format it was not written for', () => {
     expect(() => parseLockfile("lockfileVersion: '6.0'\n")).toThrow(/lockfileVersion 9/)
+  })
+})
+
+describe('virtualStoreIndex', () => {
+  it('maps virtual-store folders to name@version, peer suffixes and hashes dropped', () => {
+    const byId = virtualStoreIndex([
+      'react@19.3.1',
+      'react-dom@19.3.1_react@19.3.1',
+      '@astryxdesign+core@0.7.5_@stylexjs+stylex@0.19.1_react-dom@19.3.1_react@19.3.1__react@19.3.1',
+      '@astrojs+cloudflare@14.4.3_@types+node@26.6.6_astro@7.4.4_ff00a53e41e83445d607428ec664b676',
+      'node_modules',
+      'lock.yaml',
+    ])
+    expect([...byId.keys()].sort()).toEqual([
+      '@astrojs/cloudflare@14.4.3',
+      '@astryxdesign/core@0.7.5',
+      'react-dom@19.3.1',
+      'react@19.3.1',
+    ])
+    expect(byId.get('react-dom@19.3.1')).toBe('react-dom@19.3.1_react@19.3.1')
   })
 })
 
