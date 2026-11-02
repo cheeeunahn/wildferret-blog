@@ -60,36 +60,35 @@ If a change moves one of these into the `required` scope, the generated table be
 
 |                                                      | Packages |
 | ---------------------------------------------------- | -------: |
-| Total resolved by the lockfile                       |      788 |
-| Shipped to readers (browser or Worker)               |       21 |
-| Reachable only from devDependencies                  |      339 |
-| Toolchain reachable from `dependencies`, not shipped |      428 |
+| Total resolved by the lockfile                       |      697 |
+| Shipped to readers (browser or Worker)               |       20 |
+| Reachable only from devDependencies                  |      353 |
+| Toolchain reachable from `dependencies`, not shipped |      324 |
 
 ### Shipped npm packages
 
 | Package                              | Version | License      | Ships in       |
 | ------------------------------------ | ------- | ------------ | -------------- |
-| `@astrojs/cloudflare`                | 14.2.6  | MIT          | worker         |
-| `@astrojs/internal-helpers`          | 0.11.0  | MIT          | worker         |
-| `@astrojs/react`                     | 6.0.2   | MIT          | browser        |
-| `@astryxdesign/core`                 | 0.6.5   | MIT          | browser        |
+| `@astrojs/cloudflare`                | 14.4.3  | MIT          | worker         |
+| `@astrojs/internal-helpers`          | 0.13.0  | MIT          | worker         |
+| `@astrojs/react`                     | 7.1.2   | MIT          | browser        |
+| `@astryxdesign/core`                 | 0.7.5   | MIT          | browser        |
 | `@formatjs/fast-memoize`             | 3.1.7   | MIT          | browser        |
 | `@formatjs/icu-messageformat-parser` | 3.5.18  | MIT          | browser        |
 | `@formatjs/icu-skeleton-parser`      | 2.1.11  | MIT          | browser        |
 | `@oslojs/encoding`                   | 1.1.0   | MIT          | worker         |
 | `@stylexjs/stylex`                   | 0.19.1  | MIT          | browser        |
-| `astro`                              | 7.2.2   | MIT          | browser,worker |
+| `astro`                              | 7.4.4   | MIT          | browser,worker |
 | `clsx`                               | 2.1.1   | MIT          | worker         |
 | `cookie`                             | 2.0.1   | MIT          | worker         |
-| `devalue`                            | 5.9.0   | MIT          | worker         |
+| `devalue`                            | 6.0.3   | MIT          | worker         |
 | `html-escaper`                       | 3.0.3   | MIT          | worker         |
 | `intl-messageformat`                 | 11.2.15 | BSD-3-Clause | browser        |
-| `mrmime`                             | 2.0.1   | MIT          | worker         |
 | `piccolore`                          | 0.1.3   | ISC          | worker         |
-| `react-dom`                          | 19.2.8  | MIT          | browser        |
-| `react`                              | 19.2.8  | MIT          | browser        |
-| `scheduler`                          | 0.27.0  | MIT          | browser        |
-| `zod`                                | 4.4.3   | MIT          | worker         |
+| `react-dom`                          | 19.3.1  | MIT          | browser        |
+| `react`                              | 19.3.1  | MIT          | browser        |
+| `scheduler`                          | 0.28.0  | MIT          | browser        |
+| `zod`                                | 4.6.7   | MIT          | worker         |
 
 ### Loaded from a CDN at runtime
 
@@ -109,21 +108,21 @@ If a change moves one of these into the `required` scope, the generated table be
 
 | License                                  | All packages | Shipped |
 | ---------------------------------------- | -----------: | ------: |
-| MIT                                      |          507 |      19 |
-| unknown — not in local store¹            |          182 |       0 |
-| ISC                                      |           30 |       1 |
-| Apache-2.0                               |           25 |       0 |
-| BSD-2-Clause                             |           15 |       0 |
+| MIT                                      |          475 |      18 |
+| unknown — not in local store¹            |          129 |       0 |
+| ISC                                      |           29 |       1 |
+| Apache-2.0                               |           23 |       0 |
+| BSD-2-Clause                             |           14 |       0 |
 | BSD-3-Clause                             |            7 |       1 |
 | BlueOak-1.0.0                            |            4 |       0 |
 | MPL-2.0                                  |            4 |       0 |
 | CC0-1.0                                  |            3 |       0 |
 | MIT OR Apache-2.0                        |            3 |       0 |
-| Apache-2.0 AND LGPL-3.0-or-later AND MIT |            2 |       0 |
-| LGPL-3.0-or-later                        |            2 |       0 |
 | 0BSD                                     |            1 |       0 |
+| Apache-2.0 AND LGPL-3.0-or-later AND MIT |            1 |       0 |
 | BSD                                      |            1 |       0 |
 | CC-BY-4.0                                |            1 |       0 |
+| LGPL-3.0-or-later                        |            1 |       0 |
 | Python-2.0                               |            1 |       0 |
 
 ¹ Almost all are platform binaries for other operating systems (e.g. `@img/sharp-linux-x64`), which pnpm never downloads on the machine that ran `pnpm sbom`, so their package.json is not in the local store. The rest are lockfile versions that node_modules has drifted away from. They carry the `wildferret:manifest = not-in-local-store` property in the JSON.

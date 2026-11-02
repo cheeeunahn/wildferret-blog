@@ -3,7 +3,7 @@
  * Source: src/styles/astryx/wildferretTheme.ts
  * Command: astryx theme build src/styles/astryx/wildferretTheme.ts --out src/styles/astryx/wildferret.theme.css
  * CLI: @astryxdesign/cli@0.6.5
- * Core: @astryxdesign/core@0.6.5
+ * Core: @astryxdesign/core@0.7.5
  */
 
 @layer reset {
