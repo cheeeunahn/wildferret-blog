@@ -19,8 +19,9 @@ Thanks for stopping by 👋🏻
 ## Prerequisites
 
 - **Node.js 22.23.4+**: required by Astro 7.4 (`engines.node: >=22.23.4`).
-- **pnpm 10**: Corepack enables the pinned version automatically with
-  `corepack enable`.
+- **pnpm 12**: Corepack enables the pinned version automatically with
+  `corepack enable`. pnpm settings live in `pnpm-workspace.yaml`, not in
+  `package.json`.
 
 ## Setup
 
@@ -49,7 +50,7 @@ Without them the site still runs; the comment section just renders nothing.
 | `pnpm translation:status` | List the articles that have no English version yet                        |
 | `pnpm translate`          | Write the missing English versions (opens Claude Code)                    |
 | `pnpm mint:api-jwt`       | Mint the Worker's `blog_api` JWT (needs `SUPABASE_JWT_SECRET`)            |
-| `pnpm sbom`               | Regenerate `docs/sbom/` (CycloneDX SBOM + summary) after a dep change     |
+| `pnpm sbom:write`         | Regenerate `docs/sbom/` (CycloneDX SBOM + summary) after a dep change     |
 | `pnpm docs:status`        | Is README.md / CLAUDE.md in step with the repo? (`--json` for detail)     |
 | `pnpm docs:write`         | Rebuild the generated blocks in README.md and CLAUDE.md                   |
 | `pnpm docs:sync`          | Review and update both docs after a structural change (opens Claude Code) |
@@ -275,7 +276,7 @@ translation and docs-sync hooks. Before a push they run the translation check,
 the docs check (`pnpm docs:status`), `pnpm build` and `pnpm test`.
 
 The software bill of materials in [`docs/sbom/`](docs/sbom/README.md) is
-generated from the lockfile by `pnpm sbom`. Re-run it in any PR that changes
+generated from the lockfile by `pnpm sbom:write`. Re-run it in any PR that changes
 `pnpm-lock.yaml`.
 
 ## Automation

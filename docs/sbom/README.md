@@ -5,21 +5,21 @@
 Regenerate both files after any dependency change:
 
 ```bash
-pnpm sbom
+pnpm sbom:write
 ```
 
 It takes a few seconds, needs no network access, and is deterministic: no timestamp and no serial number, everything sorted. A re-run with no dependency change produces no diff, so a changed `sbom.cdx.json` in a PR always means a changed dependency.
 
 ## Where the data comes from
 
-| Question                      | Answered by                                                                                                                           |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| Which packages and versions?  | `pnpm-lock.yaml`. Every package it resolves, with its integrity hash and dependency edges.                                            |
-| Licence, homepage, repository | Each package's own `package.json` at the locked version, read from the local pnpm store                                               |
-| Does it reach readers?        | A one-off production build with sourcemaps into a temp directory: a package whose code is in a browser chunk or the Worker is shipped |
-| Fonts and services            | Listed by hand in `EXTERNAL_COMPONENTS` / `EXTERNAL_SERVICES` in `scripts/sbom.mjs`                                                   |
+| Question                      | Answered by                                                                                                                                                                                                      |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Which packages and versions?  | `pnpm-lock.yaml`. Every package it resolves, with its integrity hash and dependency edges.                                                                                                                       |
+| Licence, homepage, repository | Each package's own `package.json` at the locked version, read from pnpm's virtual store. Packages not installed on this OS keep what the previous `sbom.cdx.json` recorded for the same name@version and SHA-512 |
+| Does it reach readers?        | A one-off production build with sourcemaps into a temp directory: a package whose code is in a browser chunk or the Worker is shipped                                                                            |
+| Fonts and services            | Listed by hand in `EXTERNAL_COMPONENTS` / `EXTERNAL_SERVICES` in `scripts/sbom.mjs`                                                                                                                              |
 
-**The lockfile, not `node_modules`.** A clean CI or Cloudflare install is the lockfile, while a local `node_modules` can drift from it. When it has, `pnpm sbom` prints a warning listing the drifted packages. The SBOM still describes the lockfile, but the shipped/not-shipped split is measured on the installed tree. Run `pnpm install --frozen-lockfile` first for an exact result.
+**The lockfile, not `node_modules`.** A clean CI or Cloudflare install is the lockfile, while a local `node_modules` can drift from it. When it has, `pnpm sbom:write` prints a warning listing the drifted packages. The SBOM still describes the lockfile, but the shipped/not-shipped split is measured on the installed tree. Run `pnpm install --frozen-lockfile` first for an exact result.
 
 **Why not just `dependencies` vs `devDependencies`?** That split does not say what reaches readers. `astro` and `@astrojs/cloudflare` are `dependencies`, but most of their code runs only at build time. `sharp` (whose libvips binaries are LGPL-3.0) only arrives through the adapter's local dev server, miniflare. Only the build output answers "does this ship?", so that is what the generator measures.
 
@@ -29,7 +29,7 @@ It takes a few seconds, needs no network access, and is deterministic: no timest
 - **`cdx:npm:package:development: true`** (standard CycloneDX npm property): reachable only from `devDependencies`.
 - **`wildferret:shipped`**: `browser`, `worker`, `browser,worker` or `no`.
 - **`wildferret:optional`**, **`wildferret:os`**, **`wildferret:cpu`**: platform-specific optional binaries. pnpm installs only the one matching the machine.
-- **`wildferret:manifest: not-in-local-store`**: no `package.json` for that exact version in the local store, so the entry has no licence data. See the footnote under the summary.
+- **`wildferret:manifest: not-in-local-store`**: no `package.json` for that exact version in the local store, and no earlier run recorded one, so the entry has no licence data. See the footnote under the summary.
 - **`hashes`**: the lockfile's SHA-512 integrity, in hex.
 - **`dependencies`**: the full graph, rooted at `pkg:npm/wildferret-blog@0.1.0`.
 
@@ -56,7 +56,7 @@ If a change moves one of these into the `required` scope, the generated table be
 ## Summary
 
 <!-- sbom:summary:start -->
-<!-- Generated by `pnpm sbom` — do not edit by hand. -->
+<!-- Generated by `pnpm sbom:write` — do not edit by hand. -->
 
 |                                                      | Packages |
 | ---------------------------------------------------- | -------: |
@@ -108,11 +108,11 @@ If a change moves one of these into the `required` scope, the generated table be
 
 | License                                  | All packages | Shipped |
 | ---------------------------------------- | -----------: | ------: |
-| MIT                                      |          475 |      18 |
-| unknown — not in local store¹            |          129 |       0 |
+| MIT                                      |          478 |      18 |
+| unknown — not in local store¹            |          124 |       0 |
 | ISC                                      |           29 |       1 |
 | Apache-2.0                               |           23 |       0 |
-| BSD-2-Clause                             |           14 |       0 |
+| BSD-2-Clause                             |           16 |       0 |
 | BSD-3-Clause                             |            7 |       1 |
 | BlueOak-1.0.0                            |            4 |       0 |
 | MPL-2.0                                  |            4 |       0 |
@@ -125,6 +125,6 @@ If a change moves one of these into the `required` scope, the generated table be
 | LGPL-3.0-or-later                        |            1 |       0 |
 | Python-2.0                               |            1 |       0 |
 
-¹ Almost all are platform binaries for other operating systems (e.g. `@img/sharp-linux-x64`), which pnpm never downloads on the machine that ran `pnpm sbom`, so their package.json is not in the local store. The rest are lockfile versions that node_modules has drifted away from. They carry the `wildferret:manifest = not-in-local-store` property in the JSON.
+¹ Almost all are platform binaries for other operating systems (e.g. `@img/sharp-linux-x64`), which pnpm never downloads on the machine that ran `pnpm sbom:write`, so their package.json is not in the local store, and no earlier run recorded their licence (a recorded one is carried forward while the SHA-512 matches). The rest are lockfile versions that node_modules has drifted away from. They carry the `wildferret:manifest = not-in-local-store` property in the JSON.
 
 <!-- sbom:summary:end -->

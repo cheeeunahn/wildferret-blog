@@ -2,7 +2,7 @@
 // Writes the repo's SBOM: docs/sbom/sbom.cdx.json (CycloneDX 1.6) and the
 // generated summary block in docs/sbom/README.md.
 //
-//   pnpm sbom
+//   pnpm sbom:write
 //
 // Three sources, each the authority for one thing:
 //
@@ -10,8 +10,11 @@
 //   lockfile resolves, with its integrity hash and dependency edges. Not
 //   node_modules, which can drift from the lockfile (and has); a clean CI or
 //   Cloudflare install is the lockfile.
-// - The local pnpm store supplies each package's own package.json at the
-//   locked version (license, homepage, repository), so nothing is fetched.
+// - pnpm's virtual store (node_modules/.pnpm, one folder per exact version)
+//   supplies each package's own package.json at the locked version (license,
+//   homepage, repository), so nothing is fetched. A package not installed on
+//   this machine (another OS's binary) keeps the data the previous SBOM
+//   recorded for the same name@version and SHA-512; see manifestsFromBom().
 // - A one-off production build with sourcemaps, into a temp directory, decides
 //   which packages actually SHIP: a package whose code appears in a browser
 //   chunk or the Worker bundle is scope "required"; everything else is the
@@ -23,7 +26,6 @@
 // re-run with no dependency change produces no diff.
 import { createHash } from 'node:crypto'
 import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
-import { execFileSync } from 'node:child_process'
 import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -167,8 +169,15 @@ export function toLicenses(manifest) {
  * Parse a v9 pnpm-lock.yaml. Line-based on purpose: the format is regular and
  * this keeps the script free of a YAML dependency that would itself belong in
  * the SBOM.
+ *
+ * pnpm 11+ writes the file as two YAML documents: first an "env" document that
+ * locks pnpm itself (`packageManagerDependencies`) and any config
+ * dependencies, then the project's own lockfile. Only the last document
+ * describes the project; reading the first would yield an SBOM of pnpm alone.
  */
-export function parseLockfile(text) {
+export function parseLockfile(fileText) {
+  const docs = fileText.split(/^---[ \t]*$/m).filter((d) => /^lockfileVersion:/m.test(d))
+  const text = docs.at(-1) ?? fileText
   const version = /^lockfileVersion: '?([\d.]+)'?/m.exec(text)?.[1]
   if (!version?.startsWith('9')) throw new Error(`Expected lockfileVersion 9, got ${version}`)
 
@@ -295,33 +304,75 @@ export function matchShipped(found, packages) {
   return ids
 }
 
-/** The locked package.json for name@version, read from the local pnpm store. */
-function storeIndex() {
-  const store = execFileSync('pnpm', ['store', 'path'], { cwd: root, encoding: 'utf8' }).trim()
+/**
+ * Where each locked name@version is installed: pnpm's virtual store,
+ * node_modules/.pnpm/<name>@<version>[_<peers>]/node_modules/<name>. pnpm 11+
+ * keeps the content-addressed store's index in a binary database (index.db)
+ * rather than JSON files, so the virtual store is the readable copy. Its
+ * folders are keyed by exact version, so a folder either holds the locked
+ * version or does not exist; node_modules drift cannot slip in another one.
+ */
+export function virtualStoreIndex(entries) {
   const byId = new Map()
-  const indexDir = path.join(store, 'index')
-  if (!existsSync(indexDir)) return { store, byId }
-  for (const bucket of readdirSync(indexDir)) {
-    for (const file of readdirSync(path.join(indexDir, bucket))) {
-      const m = /^[0-9a-f]+-(.+)\.json$/.exec(file)
-      if (m) byId.set(m[1], path.join(indexDir, bucket, file))
-    }
+  for (const entry of entries) {
+    const m = /^(@[^+@]+\+[^@]+|[^@+][^@]*)@([^_(]+)/.exec(entry)
+    if (!m) continue
+    const id = `${m[1].replace('+', '/')}@${m[2]}`
+    if (!byId.has(id)) byId.set(id, entry)
   }
-  return { store, byId }
+  return byId
 }
 
-function readManifest({ store, byId }, name, version) {
-  const indexFile = byId.get(`${name.replace('/', '+')}@${version}`)
-  if (!indexFile) return undefined
+/** The locked package.json for name@version, from the virtual store. */
+function readManifest(byId, name, version) {
+  const entry = byId.get(`${name}@${version}`)
+  if (!entry) return undefined
   try {
-    const entry = JSON.parse(readFileSync(indexFile, 'utf8')).files?.['package.json']
-    const hash = integrityToHash(entry?.integrity)
-    if (!hash) return undefined
-    const file = path.join(store, 'files', hash.content.slice(0, 2), hash.content.slice(2))
+    const file = path.join(
+      root,
+      'node_modules',
+      '.pnpm',
+      entry,
+      'node_modules',
+      name,
+      'package.json',
+    )
     return JSON.parse(readFileSync(file, 'utf8'))
   } catch {
     return undefined
   }
+}
+
+/**
+ * Manifest data carried over from the previously written SBOM, for locked
+ * packages whose package.json this machine does not have. The virtual store
+ * holds only what this install fetched for this OS, so without this the
+ * licences of other platforms' binaries (the LGPL libvips builds under sharp,
+ * say) would depend on who ran the script, and flip on every re-run from a
+ * different OS. A published npm version never changes, so an entry is reused
+ * only when its recorded SHA-512 equals the lockfile's integrity for that
+ * name@version. Entries that were themselves unknown (`wildferret:manifest`)
+ * are not carried.
+ */
+export function manifestsFromBom(bom, packages) {
+  const byRef = new Map((bom?.components ?? []).filter((c) => c.purl).map((c) => [c.purl, c]))
+  const out = new Map()
+  for (const [id, pkg] of packages) {
+    const c = byRef.get(purl(pkg.name, pkg.version))
+    if (!c || c.properties?.some((p) => p.name === 'wildferret:manifest')) continue
+    const hash = integrityToHash(pkg.integrity)
+    const recorded = c.hashes?.find((h) => h.alg === hash?.alg)
+    if (!hash || recorded?.content !== hash.content) continue
+    const url = (type) => c.externalReferences?.find((r) => r.type === type)?.url
+    const lic = c.licenses?.[0]
+    out.set(id, {
+      license: lic?.expression ?? lic?.license?.id ?? lic?.license?.name,
+      description: c.description,
+      homepage: url('website'),
+      repository: url('vcs'),
+    })
+  }
+  return out
 }
 
 /** Package names whose code lands in the browser chunks and the Worker bundle. */
@@ -500,7 +551,7 @@ export function summarize(bom) {
 
   const lines = [
     SUMMARY_START,
-    '<!-- Generated by `pnpm sbom` — do not edit by hand. -->',
+    '<!-- Generated by `pnpm sbom:write` — do not edit by hand. -->',
     '',
     `| | Packages |`,
     `| --- | ---: |`,
@@ -541,7 +592,7 @@ export function summarize(bom) {
       .sort((a, b) => b[1].all - a[1].all || a[0].localeCompare(b[0]))
       .map(([lic, n]) => `| ${lic} | ${n.all} | ${n.shipped} |`),
     '',
-    '¹ Almost all are platform binaries for other operating systems (e.g. `@img/sharp-linux-x64`), which pnpm never downloads on the machine that ran `pnpm sbom`, so their package.json is not in the local store. The rest are lockfile versions that node_modules has drifted away from. They carry the `wildferret:manifest = not-in-local-store` property in the JSON.',
+    '¹ Almost all are platform binaries for other operating systems (e.g. `@img/sharp-linux-x64`), which pnpm never downloads on the machine that ran `pnpm sbom:write`, so their package.json is not in the local store, and no earlier run recorded their licence (a recorded one is carried forward while the SHA-512 matches). The rest are lockfile versions that node_modules has drifted away from. They carry the `wildferret:manifest = not-in-local-store` property in the JSON.',
     '',
     SUMMARY_END,
   ]
@@ -563,10 +614,29 @@ async function main() {
     )
   }
 
-  const index = storeIndex()
+  const storeDir = path.join(root, 'node_modules', '.pnpm')
+  const index = virtualStoreIndex(existsSync(storeDir) ? readdirSync(storeDir) : [])
+  // The committed SBOM is the only copy of other platforms' licences, so a
+  // missing file is a first run, but an unreadable one is an error: carrying
+  // on would silently drop those licences and commit the loss.
+  const previousFile = path.join(root, OUT_JSON)
+  let previous = new Map()
+  if (existsSync(previousFile)) {
+    let prevBom
+    try {
+      prevBom = JSON.parse(readFileSync(previousFile, 'utf8'))
+    } catch {
+      throw new Error(
+        `${OUT_JSON} is not valid JSON (an unresolved merge conflict?). Resolve it by taking ` +
+          'one whole side, e.g. `git checkout --theirs docs/sbom/sbom.cdx.json`, then re-run. ' +
+          'It carries the licences of packages not installed on this OS.',
+      )
+    }
+    previous = manifestsFromBom(prevBom, lock.packages)
+  }
   const manifests = new Map()
   for (const [id, pkg] of lock.packages) {
-    const manifest = readManifest(index, pkg.name, pkg.version)
+    const manifest = readManifest(index, pkg.name, pkg.version) ?? previous.get(id)
     if (manifest) manifests.set(id, manifest)
   }
 
