@@ -12,7 +12,9 @@
 //   Cloudflare install is the lockfile.
 // - pnpm's virtual store (node_modules/.pnpm, one folder per exact version)
 //   supplies each package's own package.json at the locked version (license,
-//   homepage, repository), so nothing is fetched.
+//   homepage, repository), so nothing is fetched. A package not installed on
+//   this machine (another OS's binary) keeps the data the previous SBOM
+//   recorded for the same name@version and SHA-512; see manifestsFromBom().
 // - A one-off production build with sourcemaps, into a temp directory, decides
 //   which packages actually SHIP: a package whose code appears in a browser
 //   chunk or the Worker bundle is scope "required"; everything else is the
@@ -341,6 +343,38 @@ function readManifest(byId, name, version) {
   }
 }
 
+/**
+ * Manifest data carried over from the previously written SBOM, for locked
+ * packages whose package.json this machine does not have. The virtual store
+ * holds only what this install fetched for this OS, so without this the
+ * licences of other platforms' binaries (the LGPL libvips builds under sharp,
+ * say) would depend on who ran the script, and flip on every re-run from a
+ * different OS. A published npm version never changes, so an entry is reused
+ * only when its recorded SHA-512 equals the lockfile's integrity for that
+ * name@version. Entries that were themselves unknown (`wildferret:manifest`)
+ * are not carried.
+ */
+export function manifestsFromBom(bom, packages) {
+  const byRef = new Map((bom?.components ?? []).filter((c) => c.purl).map((c) => [c.purl, c]))
+  const out = new Map()
+  for (const [id, pkg] of packages) {
+    const c = byRef.get(purl(pkg.name, pkg.version))
+    if (!c || c.properties?.some((p) => p.name === 'wildferret:manifest')) continue
+    const hash = integrityToHash(pkg.integrity)
+    const recorded = c.hashes?.find((h) => h.alg === hash?.alg)
+    if (!hash || recorded?.content !== hash.content) continue
+    const url = (type) => c.externalReferences?.find((r) => r.type === type)?.url
+    const lic = c.licenses?.[0]
+    out.set(id, {
+      license: lic?.expression ?? lic?.license?.id ?? lic?.license?.name,
+      description: c.description,
+      homepage: url('website'),
+      repository: url('vcs'),
+    })
+  }
+  return out
+}
+
 /** Package names whose code lands in the browser chunks and the Worker bundle. */
 async function shippedPackages() {
   const outDir = mkdtempSync(path.join(os.tmpdir(), 'wildferret-sbom-'))
@@ -558,7 +592,7 @@ export function summarize(bom) {
       .sort((a, b) => b[1].all - a[1].all || a[0].localeCompare(b[0]))
       .map(([lic, n]) => `| ${lic} | ${n.all} | ${n.shipped} |`),
     '',
-    '¹ Almost all are platform binaries for other operating systems (e.g. `@img/sharp-linux-x64`), which pnpm never downloads on the machine that ran `pnpm sbom:write`, so their package.json is not in the local store. The rest are lockfile versions that node_modules has drifted away from. They carry the `wildferret:manifest = not-in-local-store` property in the JSON.',
+    '¹ Almost all are platform binaries for other operating systems (e.g. `@img/sharp-linux-x64`), which pnpm never downloads on the machine that ran `pnpm sbom:write`, so their package.json is not in the local store, and no earlier run recorded their licence (a recorded one is carried forward while the SHA-512 matches). The rest are lockfile versions that node_modules has drifted away from. They carry the `wildferret:manifest = not-in-local-store` property in the JSON.',
     '',
     SUMMARY_END,
   ]
@@ -582,9 +616,16 @@ async function main() {
 
   const storeDir = path.join(root, 'node_modules', '.pnpm')
   const index = virtualStoreIndex(existsSync(storeDir) ? readdirSync(storeDir) : [])
+  const previousFile = path.join(root, OUT_JSON)
+  let previous
+  try {
+    previous = manifestsFromBom(JSON.parse(readFileSync(previousFile, 'utf8')), lock.packages)
+  } catch {
+    previous = new Map()
+  }
   const manifests = new Map()
   for (const [id, pkg] of lock.packages) {
-    const manifest = readManifest(index, pkg.name, pkg.version)
+    const manifest = readManifest(index, pkg.name, pkg.version) ?? previous.get(id)
     if (manifest) manifests.set(id, manifest)
   }
 

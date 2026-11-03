@@ -4231,18 +4231,33 @@
       "name": "core",
       "version": "1.11.1",
       "scope": "excluded",
+      "description": "emnapi core",
       "hashes": [
         {
           "alg": "SHA-512",
           "content": "452bdb4261f374accdb0b61aff01eb6dcdca378b182ca01d3d9c6a88cd87013aaffd2064dbf10d487a6f5c668b38c72c032cf4a68106aa49a62981b739688911"
         }
       ],
-      "licenses": [],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
       "purl": "pkg:npm/%40emnapi/core@1.11.1",
       "externalReferences": [
         {
           "type": "distribution",
           "url": "https://registry.npmjs.org/@emnapi/core/-/core-1.11.1.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/toyobayashi/emnapi#readme"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/toyobayashi/emnapi.git"
         }
       ],
       "properties": [
@@ -4253,10 +4268,6 @@
         {
           "name": "wildferret:optional",
           "value": "true"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
         }
       ]
     },
@@ -4310,18 +4321,33 @@
       "name": "runtime",
       "version": "1.11.1",
       "scope": "excluded",
+      "description": "emnapi runtime",
       "hashes": [
         {
           "alg": "SHA-512",
           "content": "be08fb477cb75a0c76e0841a18f03f47a6055cb1d530e674b951322103da5acfab7750337c43179400b6d856303b55e4291e8d3ecabb9946a7747f2821175917"
         }
       ],
-      "licenses": [],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
       "purl": "pkg:npm/%40emnapi/runtime@1.11.1",
       "externalReferences": [
         {
           "type": "distribution",
           "url": "https://registry.npmjs.org/@emnapi/runtime/-/runtime-1.11.1.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/toyobayashi/emnapi#readme"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/toyobayashi/emnapi.git"
         }
       ],
       "properties": [
@@ -4332,10 +4358,6 @@
         {
           "name": "wildferret:optional",
           "value": "true"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
         }
       ]
     },
@@ -4389,18 +4411,33 @@
       "name": "wasi-threads",
       "version": "1.2.2",
       "scope": "excluded",
+      "description": "WASI threads proposal implementation in JavaScript",
       "hashes": [
         {
           "alg": "SHA-512",
           "content": "73de6a39790777274d2a1b1c05379ba840b5095019a72a8e7d57c1cd0d6a833ca5de07de95d5232208036c86600cab072e09ec33e8a01fb4c9fde01ab1a56e30"
         }
       ],
-      "licenses": [],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
       "purl": "pkg:npm/%40emnapi/wasi-threads@1.2.2",
       "externalReferences": [
         {
           "type": "distribution",
           "url": "https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-1.2.2.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/toyobayashi/emnapi#readme"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/toyobayashi/emnapi.git"
         }
       ],
       "properties": [
@@ -4411,10 +4448,6 @@
         {
           "name": "wildferret:optional",
           "value": "true"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
         }
       ]
     },
@@ -7369,18 +7402,31 @@
       "name": "sharp-wasm32",
       "version": "0.35.5",
       "scope": "excluded",
+      "description": "Prebuilt sharp for use with WebAssembly",
       "hashes": [
         {
           "alg": "SHA-512",
           "content": "3edb206b5b2ee2d431f8b2c5d44092f54ea7cf9926ad72a8e9755bb51e3c29edd9471c6069606eec80ed11ed6aba8f218aea709ba585ab15655da49fec820d19"
         }
       ],
-      "licenses": [],
+      "licenses": [
+        {
+          "expression": "Apache-2.0 AND LGPL-3.0-or-later AND MIT"
+        }
+      ],
       "purl": "pkg:npm/%40img/sharp-wasm32@0.35.5",
       "externalReferences": [
         {
           "type": "distribution",
           "url": "https://registry.npmjs.org/@img/sharp-wasm32/-/sharp-wasm32-0.35.5.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://sharp.pixelplumbing.com"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/lovell/sharp.git"
         }
       ],
       "properties": [
@@ -7391,10 +7437,6 @@
         {
           "name": "wildferret:optional",
           "value": "true"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
         }
       ]
     },
@@ -7886,18 +7928,33 @@
       "name": "wasm-runtime",
       "version": "1.2.6",
       "scope": "excluded",
+      "description": "Runtime and polyfill for wasm targets",
       "hashes": [
         {
           "alg": "SHA-512",
           "content": "991c83984c3dfdf0835c219f2f5b1b808c3f1942b43d5c515b863080f37ad45dcb43e7d2ca80456ab255ce01b2845ea447311067415e8c3aa6e162d749ea909b"
         }
       ],
-      "licenses": [],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
       "purl": "pkg:npm/%40napi-rs/wasm-runtime@1.2.6",
       "externalReferences": [
         {
           "type": "distribution",
           "url": "https://registry.npmjs.org/@napi-rs/wasm-runtime/-/wasm-runtime-1.2.6.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://napi.rs/"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/napi-rs/napi-rs.git"
         }
       ],
       "properties": [
@@ -7908,10 +7965,6 @@
         {
           "name": "wildferret:optional",
           "value": "true"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
         }
       ]
     },

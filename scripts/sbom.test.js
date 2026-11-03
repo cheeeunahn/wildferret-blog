@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   buildBom,
   integrityToHash,
+  manifestsFromBom,
   matchShipped,
   packageOfSource,
   parseLockfile,
@@ -188,6 +189,46 @@ describe('virtualStoreIndex', () => {
       'react@19.3.1',
     ])
     expect(byId.get('react-dom@19.3.1')).toBe('react-dom@19.3.1_react@19.3.1')
+  })
+})
+
+describe('manifestsFromBom', () => {
+  const lock = parseLockfile(LOCK)
+  const manifests = new Map([
+    ['react@19.2.8', { license: 'MIT', homepage: 'https://react.dev/', description: 'React' }],
+    ['react-dom@19.2.8', { license: '(MIT OR Apache-2.0)' }],
+  ])
+  const shipped = { browser: new Set(), worker: new Set() }
+  const first = buildBom({
+    project: { name: 'p', version: '1' },
+    lock,
+    lockHash: 'x',
+    manifests,
+    shipped,
+  })
+
+  it('reproduces the same components on a machine without those manifests', () => {
+    const carried = manifestsFromBom(first, lock.packages)
+    expect([...carried.keys()].sort()).toEqual(['react-dom@19.2.8', 'react@19.2.8'])
+    const again = buildBom({
+      project: { name: 'p', version: '1' },
+      lock,
+      lockHash: 'x',
+      manifests: carried,
+      shipped,
+    })
+    expect(again).toEqual(first)
+  })
+
+  it('does not carry an entry whose hash no longer matches the lockfile', () => {
+    const changed = parseLockfile(LOCK.replace('sha512-3q2+7w==', 'sha512-AAAAAA=='))
+    expect(manifestsFromBom(first, changed.packages).has('react@19.2.8')).toBe(false)
+    expect(manifestsFromBom(first, changed.packages).has('react-dom@19.2.8')).toBe(true)
+  })
+
+  it('does not carry an entry that was itself unknown', () => {
+    expect(manifestsFromBom(first, lock.packages).has('scheduler@0.27.0')).toBe(false)
+    expect(manifestsFromBom(undefined, lock.packages).size).toBe(0)
   })
 })
 
