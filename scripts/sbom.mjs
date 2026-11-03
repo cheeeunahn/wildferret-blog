@@ -616,12 +616,23 @@ async function main() {
 
   const storeDir = path.join(root, 'node_modules', '.pnpm')
   const index = virtualStoreIndex(existsSync(storeDir) ? readdirSync(storeDir) : [])
+  // The committed SBOM is the only copy of other platforms' licences, so a
+  // missing file is a first run, but an unreadable one is an error: carrying
+  // on would silently drop those licences and commit the loss.
   const previousFile = path.join(root, OUT_JSON)
-  let previous
-  try {
-    previous = manifestsFromBom(JSON.parse(readFileSync(previousFile, 'utf8')), lock.packages)
-  } catch {
-    previous = new Map()
+  let previous = new Map()
+  if (existsSync(previousFile)) {
+    let prevBom
+    try {
+      prevBom = JSON.parse(readFileSync(previousFile, 'utf8'))
+    } catch {
+      throw new Error(
+        `${OUT_JSON} is not valid JSON (an unresolved merge conflict?). Resolve it by taking ` +
+          'one whole side, e.g. `git checkout --theirs docs/sbom/sbom.cdx.json`, then re-run. ' +
+          'It carries the licences of packages not installed on this OS.',
+      )
+    }
+    previous = manifestsFromBom(prevBom, lock.packages)
   }
   const manifests = new Map()
   for (const [id, pkg] of lock.packages) {
