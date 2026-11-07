@@ -14,8 +14,12 @@ export interface AboutCopy {
   /** `link` is an outside write-up of the project (a press release, a tech-blog post); the name links to it. */
   projects: { year: string; name: string; summary: string; link?: string }[]
   interviewsHeading: string
-  /** Newest first. `name` is the interview's own title and links to it; `outlet` is who published it. */
-  interviews: { year: string; name: string; outlet: string; link: string }[]
+  /**
+   * Newest first. `name` is the interview's own title and links to it; `outlet` is who published it.
+   * `lang` is the title's HTML language when it differs from the page's, so a screen reader
+   * switches voice (an English title on the Korean page).
+   */
+  interviews: { year: string; name: string; outlet: string; link: string; lang?: 'en' | 'ko' }[]
   certificationsHeading: string
   certifications: { year: string; name: string; issuer: string }[]
 }
@@ -61,12 +65,14 @@ const ko: AboutCopy = {
       name: 'Meet Chee Eun, UX Researcher',
       outlet: 'People of Research',
       link: 'https://www.linkedin.com/pulse/meet-chee-eun-ux-researcher-people-of-research-59qxf/',
+      lang: 'en',
     },
     {
       year: '2023',
       name: 'Meet Chee Eun, a Borderless UX Researcher with a Deep Passion for Playfulness and Interactivity',
       outlet: 'Spectrum Tokyo',
       link: 'https://spectrumtokyo.com/roots/diggin-roots-chee-eun-ahn/',
+      lang: 'en',
     },
   ],
   certificationsHeading: '자격증',

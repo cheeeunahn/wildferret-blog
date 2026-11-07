@@ -99,7 +99,7 @@ const copy = aboutCopy(locale.lang)
             <div>
               <Text as="p" display="block">
                 <Link href={interview.link} color="primary">
-                  {interview.name}
+                  <span lang={interview.lang}>{interview.name}</span>
                   <Icon icon="externalLink" size="xsm" color="secondary" className="ml-1" />
                 </Link>
               </Text>
