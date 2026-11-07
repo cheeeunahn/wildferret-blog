@@ -82,8 +82,8 @@ export const EXTERNAL_COMPONENTS = [
   },
   {
     type: 'library',
-    'bom-ref': 'cdn:nanum-barun-gothic',
-    name: 'NanumBarunGothic',
+    'bom-ref': 'cdn:nanum-square-neo',
+    name: 'NanumSquareNeo',
     scope: 'required',
     description:
       "Body webfont, loaded from Naver's hangeul.pstatic.net CDN by the @font-face rules in global.css (unversioned URL)",
@@ -91,7 +91,7 @@ export const EXTERNAL_COMPONENTS = [
     externalReferences: [
       {
         type: 'distribution',
-        url: 'https://hangeul.pstatic.net/hangeul_static/webfont/NanumBarunGothic/NanumBarunGothicWeb.woff',
+        url: 'https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.woff2',
       },
       { type: 'website', url: 'https://hangeul.naver.com/font' },
     ],

@@ -71,8 +71,8 @@
     },
     {
       "type": "library",
-      "bom-ref": "cdn:nanum-barun-gothic",
-      "name": "NanumBarunGothic",
+      "bom-ref": "cdn:nanum-square-neo",
+      "name": "NanumSquareNeo",
       "scope": "required",
       "description": "Body webfont, loaded from Naver's hangeul.pstatic.net CDN by the @font-face rules in global.css (unversioned URL)",
       "licenses": [
@@ -85,7 +85,7 @@
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://hangeul.pstatic.net/hangeul_static/webfont/NanumBarunGothic/NanumBarunGothicWeb.woff"
+          "url": "https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.woff2"
         },
         {
           "type": "website",
@@ -30242,7 +30242,7 @@
     {
       "ref": "pkg:npm/wildferret-blog@0.1.0",
       "dependsOn": [
-        "cdn:nanum-barun-gothic",
+        "cdn:nanum-square-neo",
         "cdn:pretendard@1.3.9",
         "pkg:npm/%40astrojs/check@0.9.12",
         "pkg:npm/%40astrojs/cloudflare@14.4.3",
