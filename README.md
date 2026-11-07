@@ -179,7 +179,7 @@ Use Astryx components and Astryx semantic tokens only: no raw hex values and no
 stock Tailwind palette classes. The older token names (`text-ink-900`,
 `bg-paper-warm`, …) still work, as aliases of Astryx tokens in `global.css`.
 
-Body text is **Nanum Barun Gothic**, declared with `@font-face` in
+Body text is **NanumSquare Neo**, declared with `@font-face` in
 `src/styles/global.css` and served from Naver's webfont CDN. **Pretendard**
 (loaded via `<link>` from jsDelivr in `Base.astro`) is the fallback that renders
 during the swap.

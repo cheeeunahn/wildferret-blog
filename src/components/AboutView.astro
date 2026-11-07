@@ -2,6 +2,7 @@
 import { aboutCopy } from '../content/service'
 import type { Locale } from '../shared/i18n'
 import { Heading } from '@astryxdesign/core/Heading'
+import { Icon } from '@astryxdesign/core/Icon'
 import { Link } from '@astryxdesign/core/Link'
 import { Text } from '@astryxdesign/core/Text'
 import FerretHero from './FerretHero.astro'
@@ -60,12 +61,16 @@ const copy = aboutCopy(locale.lang)
               {project.year}
             </Text>
             <div>
-              {/* Same tab: an external-link icon and its "(opens in new tab)"
-                  text would need a translated label for every language. */}
+              {/* Body-colored title, underlined only on hover, with a small
+                  external-link glyph (decorative, aria-hidden) marking it as
+                  a link off the site. It opens in the same tab: a new tab would
+                  need a translated "(opens in new tab)" label per language.
+                  The interviews list below renders its titles the same way. */}
               <Text as="p" display="block">
                 {project.link ? (
-                  <Link href={project.link} hasUnderline>
+                  <Link href={project.link} color="primary">
                     {project.name}
+                    <Icon icon="externalLink" size="xsm" color="secondary" className="ml-1" />
                   </Link>
                 ) : (
                   project.name
@@ -80,8 +85,35 @@ const copy = aboutCopy(locale.lang)
       </ul>
     </div>
 
-    {/* Certifications. Name and issuer only — no credential numbers. */}
+    {/* Interviews, newest first (the order in about.ts). */}
     <div class="mt-16 animate-reveal reveal-delay-4">
+      <Heading level={2} className="mb-6">
+        {copy.interviewsHeading}
+      </Heading>
+      <ul class="space-y-4">
+        {copy.interviews.map((interview) => (
+          <li class="flex flex-col sm:flex-row sm:gap-4 text-[15px]">
+            <Text type="supporting" hasTabularNumbers className="sm:w-32 sm:shrink-0 sm:pt-1">
+              {interview.year}
+            </Text>
+            <div>
+              <Text as="p" display="block">
+                <Link href={interview.link} color="primary">
+                  <span lang={interview.lang}>{interview.name}</span>
+                  <Icon icon="externalLink" size="xsm" color="secondary" className="ml-1" />
+                </Link>
+              </Text>
+              <Text as="p" display="block" color="secondary">
+                {interview.outlet}
+              </Text>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    {/* Certifications. Name and issuer only — no credential numbers. */}
+    <div class="mt-16 animate-reveal reveal-delay-5">
       <Heading level={2} className="mb-6">
         {copy.certificationsHeading}
       </Heading>
@@ -100,7 +132,7 @@ const copy = aboutCopy(locale.lang)
       </ul>
     </div>
 
-    {/* The ferret illustration closes the page, below the profile, career, projects and certifications:
+    {/* The ferret illustration closes the page, below the profile, career, projects, interviews and certifications:
         a sign-off from the site's character rather than a banner. */}
     <div class="mt-16">
       <FerretHero locale={locale} />

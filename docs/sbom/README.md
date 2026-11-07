@@ -92,10 +92,10 @@ If a change moves one of these into the `required` scope, the generated table be
 
 ### Loaded from a CDN at runtime
 
-| Asset            | Version     | License | Source              |
-| ---------------- | ----------- | ------- | ------------------- |
-| Pretendard       | 1.3.9       | OFL-1.1 | cdn.jsdelivr.net    |
-| NanumBarunGothic | unversioned | OFL-1.1 | hangeul.pstatic.net |
+| Asset          | Version     | License | Source              |
+| -------------- | ----------- | ------- | ------------------- |
+| Pretendard     | 1.3.9       | OFL-1.1 | cdn.jsdelivr.net    |
+| NanumSquareNeo | unversioned | OFL-1.1 | hangeul.pstatic.net |
 
 ### Services
 

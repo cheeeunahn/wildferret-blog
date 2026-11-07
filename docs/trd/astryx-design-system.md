@@ -11,7 +11,7 @@ The blog's design system was Tailwind 4 plus a hand-maintained ink/paper palette
 ## Goals
 
 - Use Astryx's default color system site-wide, with dark mode from its `light-dark()` tokens.
-- Use NanumBarunGothic as Astryx's body and heading font, on a 16px-base type scale.
+- Use NanumSquare Neo as Astryx's body and heading font, on a 16px-base type scale.
 - Render every display element (headings, text, cards, badges, quotes, dividers, tables, code) with Astryx components, article prose included.
 - Use Astryx controls in the comment form, with Astryx's own i18n for its built-in strings.
 - Keep zero-JS pages where they were: one new island (the home page's search and category filter) and no new JS elsewhere.
@@ -32,7 +32,7 @@ The blog's design system was Tailwind 4 plus a hand-maintained ink/paper palette
 | F1  | Comments load, post, and show rejection messages on `/`, `/kr/` and `/en/`, as before.                                                                                          |
 | F2  | Colors follow the theme toggle and, with no stored choice, the OS `prefers-color-scheme`.                                                                                       |
 | F3  | Every page's colors come from Astryx's default tokens; no ink/paper hex values remain.                                                                                          |
-| F4  | Body and heading text use NanumBarunGothic, in and outside Astryx components.                                                                                                   |
+| F4  | Body and heading text use NanumSquare Neo, in and outside Astryx components.                                                                                                    |
 | F5  | Article blocks render through Astryx: Heading, Text, Blockquote, Divider, Table, CodeBlock.                                                                                     |
 | F6  | Astryx's built-in component text renders in Korean on `/` and `/kr/` and in English on `/en/`.                                                                                  |
 | F7  | The hero and carousel keep working without JS. The search and category filter are an Astryx `TextInput` and `ToggleButtonGroup`; without JS they degrade to showing every post. |
@@ -96,7 +96,7 @@ Decorative colors (hero glow, sound-toggle overlay, card shadows) stay literal; 
 
 ### 3. Theme (`src/styles/astryx/wildferretTheme.ts`)
 
-`defineTheme({ name: 'wildferret', typography: { scale, body, heading }, components })`. The font is NanumBarunGothic, with the rest of `--font-body` as fallbacks. `scale: { base: 16, ratio: 1.2 }` raises Astryx's 14px base to a reading size, which puts body text at 16px, headings at 19/23/28px and supporting text at 13px. `components['text-input']['size:lg']` sets the large input (the home search box) to 44px tall with 12px side padding. There are no color tokens, so every color is Astryx's default. The `@font-face` declarations stay in `global.css`. NanumBarunGothic has only Regular and Bold, so Astryx's 500/600 weights render as 400/700.
+`defineTheme({ name: 'wildferret', typography: { scale, body, heading }, components })`. The font is NanumSquare Neo (`NanumSquareNeo`), with the rest of `--font-body` as fallbacks. `scale: { base: 16, ratio: 1.2 }` raises Astryx's 14px base to a reading size, which puts body text at 16px, headings at 19/23/28px and supporting text at 13px. `components['text-input']['size:lg']` sets the large input (the home search box) to 44px tall with 12px side padding. There are no color tokens, so every color is Astryx's default. The `@font-face` declarations stay in `global.css`. Only its Regular and Bold faces are loaded, so Astryx's 500/600 weights render as 400/700.
 
 ### 4. Theme scope and dark mode
 
@@ -175,7 +175,7 @@ The same three article pages are built before and after.
 | Zero-JS pages           | Pass: no page gained a module script                                                                                                                               |
 | Default colors, light   | Pass: text `#0A1317`, page `#F1F4F7`, accent `#0064E0`                                                                                                             |
 | Default colors, dark    | Pass: text `#DFE2E5`, page `#111112`, card `#1F1F22`                                                                                                               |
-| Font                    | Pass: NanumBarunGothic on Astryx headings, text and badges                                                                                                         |
+| Font                    | Pass: NanumSquare Neo on Astryx headings, text and badges                                                                                                          |
 | Article blocks          | Pass: headings, text, quotes, dividers and a table (with inline formatting) render; CodeBlock checked by server-rendering one, since no published article has code |
 | Comments                | Not yet verified: the form renders, but hydration was not confirmed in a foreground tab, and posting needs `.dev.vars`                                             |
 | `/en/` built-in strings | Not yet verified in the browser                                                                                                                                    |

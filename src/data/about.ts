@@ -13,6 +13,13 @@ export interface AboutCopy {
   projectsHeading: string
   /** `link` is an outside write-up of the project (a press release, a tech-blog post); the name links to it. */
   projects: { year: string; name: string; summary: string; link?: string }[]
+  interviewsHeading: string
+  /**
+   * Newest first. `name` is the interview's own title and links to it; `outlet` is who published it.
+   * `lang` is the title's HTML language when it differs from the page's, so a screen reader
+   * switches voice (an English title on the Korean page).
+   */
+  interviews: { year: string; name: string; outlet: string; link: string; lang?: 'en' | 'ko' }[]
   certificationsHeading: string
   certifications: { year: string; name: string; issuer: string }[]
 }
@@ -27,7 +34,7 @@ const ko: AboutCopy = {
     { period: '2026 — 현재', role: 'Product Manager', org: '세금 도메인' },
     { period: '2024 — 2026', role: 'UX Researcher', org: '세금 도메인' },
     { period: '2022 — 2024', role: 'UX Researcher', org: '인테리어 및 커머스 도메인' },
-    { period: '2021 — 2022', role: 'UX Researcher', org: '슬립테크 스타트업' },
+    { period: '2022', role: 'UX Researcher', org: '슬립테크 스타트업' },
     { period: '2014 — 2022', role: '산업디자인 학·석사 (HCI)', org: '공과대학' },
   ],
   projectsHeading: '주요 프로젝트',
@@ -43,6 +50,29 @@ const ko: AboutCopy = {
       name: 'LLM 가상 유저 피드백 툴',
       summary: '사내 리서치 데이터로 만든 가상 유저 패널이 화면에 피드백을 주는 UX 리서치 툴',
       link: 'https://blog.3o3.co.kr/tech-pm-dev-one-repo/',
+    },
+  ],
+  interviewsHeading: '인터뷰',
+  interviews: [
+    {
+      year: '2025',
+      name: 'UX현직자 인터뷰 ep.4 – 삼쩜삼 안치은 UX리서처님',
+      outlet: '유저스푼',
+      link: 'https://blog.userspoon.com/blog-post/inverview-ep-4',
+    },
+    {
+      year: '2024',
+      name: 'Meet Chee Eun, UX Researcher',
+      outlet: 'People of Research',
+      link: 'https://www.linkedin.com/pulse/meet-chee-eun-ux-researcher-people-of-research-59qxf/',
+      lang: 'en',
+    },
+    {
+      year: '2023',
+      name: 'Meet Chee Eun, a Borderless UX Researcher with a Deep Passion for Playfulness and Interactivity',
+      outlet: 'Spectrum Tokyo',
+      link: 'https://spectrumtokyo.com/roots/diggin-roots-chee-eun-ahn/',
+      lang: 'en',
     },
   ],
   certificationsHeading: '자격증',
@@ -64,7 +94,7 @@ const en: AboutCopy = {
     { period: '2026 — present', role: 'Product Manager', org: 'Tax domain' },
     { period: '2024 — 2026', role: 'UX Researcher', org: 'Tax domain' },
     { period: '2022 — 2024', role: 'UX Researcher', org: 'Interiors and commerce domain' },
-    { period: '2021 — 2022', role: 'UX Researcher', org: 'Sleep-tech startup' },
+    { period: '2022', role: 'UX Researcher', org: 'Sleep-tech startup' },
     {
       period: '2014 — 2022',
       role: 'BS/MS, Industrial Design (HCI)',
@@ -86,6 +116,27 @@ const en: AboutCopy = {
       summary:
         'A UX research tool in which a panel of synthetic users, built from in-house research data, gives feedback on screens',
       link: 'https://blog.3o3.co.kr/tech-pm-dev-one-repo/',
+    },
+  ],
+  interviewsHeading: 'Interviews',
+  interviews: [
+    {
+      year: '2025',
+      name: 'UX practitioner interview, ep. 4: Chee Eun Ahn, UX researcher at 3o3 (in Korean)',
+      outlet: 'UserSpoon',
+      link: 'https://blog.userspoon.com/blog-post/inverview-ep-4',
+    },
+    {
+      year: '2024',
+      name: 'Meet Chee Eun, UX Researcher',
+      outlet: 'People of Research',
+      link: 'https://www.linkedin.com/pulse/meet-chee-eun-ux-researcher-people-of-research-59qxf/',
+    },
+    {
+      year: '2023',
+      name: 'Meet Chee Eun, a Borderless UX Researcher with a Deep Passion for Playfulness and Interactivity',
+      outlet: 'Spectrum Tokyo',
+      link: 'https://spectrumtokyo.com/roots/diggin-roots-chee-eun-ahn/',
     },
   ],
   certificationsHeading: 'Certifications',
