@@ -80,8 +80,34 @@ const copy = aboutCopy(locale.lang)
       </ul>
     </div>
 
-    {/* Certifications. Name and issuer only — no credential numbers. */}
+    {/* Interviews, newest first (the order in about.ts). */}
     <div class="mt-16 animate-reveal reveal-delay-4">
+      <Heading level={2} className="mb-6">
+        {copy.interviewsHeading}
+      </Heading>
+      <ul class="space-y-4">
+        {copy.interviews.map((interview) => (
+          <li class="flex flex-col sm:flex-row sm:gap-4 text-[15px]">
+            <Text type="supporting" hasTabularNumbers className="sm:w-32 sm:shrink-0 sm:pt-1">
+              {interview.year}
+            </Text>
+            <div>
+              <Text as="p" display="block">
+                <Link href={interview.link} hasUnderline>
+                  {interview.name}
+                </Link>
+              </Text>
+              <Text as="p" display="block" color="secondary">
+                {interview.outlet}
+              </Text>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    {/* Certifications. Name and issuer only — no credential numbers. */}
+    <div class="mt-16 animate-reveal reveal-delay-5">
       <Heading level={2} className="mb-6">
         {copy.certificationsHeading}
       </Heading>
@@ -100,7 +126,7 @@ const copy = aboutCopy(locale.lang)
       </ul>
     </div>
 
-    {/* The ferret illustration closes the page, below the profile, career, projects and certifications:
+    {/* The ferret illustration closes the page, below the profile, career, projects, interviews and certifications:
         a sign-off from the site's character rather than a banner. */}
     <div class="mt-16">
       <FerretHero locale={locale} />
