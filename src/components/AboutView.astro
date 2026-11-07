@@ -2,6 +2,7 @@
 import { aboutCopy } from '../content/service'
 import type { Locale } from '../shared/i18n'
 import { Heading } from '@astryxdesign/core/Heading'
+import { Icon } from '@astryxdesign/core/Icon'
 import { Link } from '@astryxdesign/core/Link'
 import { Text } from '@astryxdesign/core/Text'
 import FerretHero from './FerretHero.astro'
@@ -60,12 +61,16 @@ const copy = aboutCopy(locale.lang)
               {project.year}
             </Text>
             <div>
-              {/* Same tab: an external-link icon and its "(opens in new tab)"
-                  text would need a translated label for every language. */}
+              {/* Body-colored title, underlined only on hover, with a small
+                  external-link glyph (decorative, aria-hidden) marking it as
+                  a link off the site. It opens in the same tab: a new tab would
+                  need a translated "(opens in new tab)" label per language.
+                  The interviews list below renders its titles the same way. */}
               <Text as="p" display="block">
                 {project.link ? (
-                  <Link href={project.link} hasUnderline>
+                  <Link href={project.link} color="primary">
                     {project.name}
+                    <Icon icon="externalLink" size="xsm" color="secondary" className="ml-1" />
                   </Link>
                 ) : (
                   project.name
@@ -93,8 +98,9 @@ const copy = aboutCopy(locale.lang)
             </Text>
             <div>
               <Text as="p" display="block">
-                <Link href={interview.link} hasUnderline>
+                <Link href={interview.link} color="primary">
                   {interview.name}
+                  <Icon icon="externalLink" size="xsm" color="secondary" className="ml-1" />
                 </Link>
               </Text>
               <Text as="p" display="block" color="secondary">
