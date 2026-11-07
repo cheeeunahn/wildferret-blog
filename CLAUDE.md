@@ -17,6 +17,8 @@ pnpm format:check             # prettier --check, no writes
 pnpm test                     # Vitest: unit, lint-rule and script tests (see below)
 pnpm translation:status       # which articles have no English version yet
 pnpm translate                # write the missing English versions (opens Claude Code)
+pnpm card:status              # which articles have no card thumbnail yet
+pnpm card:generate            # draw the missing card thumbnails with the Codex CLI — see Card Images
 pnpm mint:api-jwt             # mint the Worker's blog_api JWT — see Comments → Environment
 pnpm sbom:write               # regenerate docs/sbom/ (CycloneDX SBOM + summary) after a dependency change
 pnpm docs:status              # are README.md / CLAUDE.md in step with the repo? — see Docs Sync
@@ -181,6 +183,22 @@ Two things the pipeline deliberately does not do, both of which need a human:
 
 - **Text inside images is not translated.** Alt text and captions are, but an image with Korean baked into it still shows Korean on `/en/`. The workflow's summary calls this out per article.
 - **It does not track drift.** An English version is written once. Edit the Korean afterwards and the two fall out of sync with nothing to detect it — re-run `/translate-articles <slug>` against the updated Korean when that happens.
+
+## Card Images
+
+Every post's home-page card shows a square line drawing (`cardImage`, `public/assets/images/<slug>-card.webp`, 640×640). They are drawn by the Codex CLI's image generation, and like the translation, the decision is a script and only the drawing is a model:
+
+| Piece                          | Role                                                                                                                                                                                                                                                                              |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/card-image-prompt.md` | **The shared prompt.** The house style (black marker line art on white, no text, one centered subject) and the `{{title}}` / `{{subtitle}}` / `{{excerpt}}` slots. Change the style here, not in the script                                                                       |
+| `scripts/card-image.mjs`       | **Decides and draws.** `scanCards()` lists entries with no `cardImage`; `--generate [slugs]` runs `codex exec` in a temp folder with the filled prompt and up to three existing cards attached as style references, converts the result with sharp, and adds the `cardImage` line |
+| `scripts/auto-card-image.mjs`  | **Runs it locally.** The first lefthook `post-commit` job: commit a post with no card and the image follows as its own commit, before `auto-translate` runs. Skip one commit with `AUTO_CARD_IMAGE=0`                                                                             |
+
+- **Codex never sees the repo.** It runs in a scratch folder with everything it needs in the prompt, so it has nothing to edit. The excerpt is the post's leading `## 요약` block (or its opening), which is why a post's summary also steers its picture.
+- **sharp is borrowed from Astro** (`createRequire` from `astro/package.json`), not a dependency of ours. If an Astro upgrade drops it, the generator fails with a resolve error rather than writing a bad file.
+- **There is no CI twin.** The workflow runners have no Codex login, so a post pushed without a card just has a card without a picture until someone runs `pnpm card:generate`. The hook needs `codex` on `PATH` and logged in; without it, it logs and moves on.
+- **A model drew it, so look at it.** It can come back with stray text or a subject that misreads the post. Redraw with `pnpm card:generate <slug>`, which overwrites the file and leaves the `cardImage` line as it is.
+- The post-commit jobs guard each other: each one's own commit sets `AUTO_CARD_IMAGE=0` (and the others' switches) so a hook commit does not start Codex again from inside its own post-commit.
 
 ## Docs Sync
 
