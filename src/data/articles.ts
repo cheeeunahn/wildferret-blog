@@ -15,6 +15,17 @@ export const articles: Article[] = [
       import('./article-content/optimizing-claude-md').then(
         ({ optimizingClaudeMdContent }) => optimizingClaudeMdContent,
       ),
+    translations: {
+      en: {
+        title: 'Your CLAUDE.md outranks your code',
+        subtitle:
+          'How to write AGENTS.md and CLAUDE.md, from six papers on agent instruction files',
+        loadContent: () =>
+          import('./article-content/en/optimizing-claude-md').then(
+            ({ optimizingClaudeMdContentEn }) => optimizingClaudeMdContentEn,
+          ),
+      },
+    },
   },
   {
     slug: 'synthetic-user-reading',
