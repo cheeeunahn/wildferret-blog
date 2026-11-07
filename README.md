@@ -49,6 +49,8 @@ Without them the site still runs; the comment section just renders nothing.
 | `pnpm test`               | Vitest: unit tests, lint-rule tests and script tests                      |
 | `pnpm translation:status` | List the articles that have no English version yet                        |
 | `pnpm translate`          | Write the missing English versions (opens Claude Code)                    |
+| `pnpm card:status`        | List the articles that have no card thumbnail yet                         |
+| `pnpm card:generate`      | Draw the missing card thumbnails with the Codex CLI                       |
 | `pnpm mint:api-jwt`       | Mint the Worker's `blog_api` JWT (needs `SUPABASE_JWT_SECRET`)            |
 | `pnpm sbom:write`         | Regenerate `docs/sbom/` (CycloneDX SBOM + summary) after a dep change     |
 | `pnpm docs:status`        | Is README.md / CLAUDE.md in step with the repo? (`--json` for detail)     |
@@ -212,6 +214,12 @@ catches anything the hook missed. Either way a human reviews it in the PR. Text
 baked into images is not translated, and later edits to the Korean are not
 synced. Re-run `/translate-articles <slug>` when you change a translated post.
 See Automatic Translation in [CLAUDE.md](CLAUDE.md).
+
+**So is the card thumbnail.** A post committed with no `cardImage` gets one as
+another commit: the Codex CLI draws it from the post's summary, in the style of
+the existing cards, using the shared prompt in `scripts/card-image-prompt.md`.
+Run `pnpm card:generate <slug>` to redraw one. Needs a logged-in `codex`; look
+at the image before you push. See Card Images in [CLAUDE.md](CLAUDE.md).
 
 ### Content format
 

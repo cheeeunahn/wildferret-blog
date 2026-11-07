@@ -29,7 +29,7 @@ const EN_DIR = `${KO_DIR}/en`
  * Block comments go wholesale; line comments only when `//` opens the line, so
  * a `//` inside a string literal survives.
  */
-function stripComments(source) {
+export function stripComments(source) {
   return source
     .replace(/\/\*[\s\S]*?\*\//g, '')
     .split('\n')
@@ -42,7 +42,7 @@ function stripComments(source) {
  * own `slug:` to the next one, which is enough to ask whether that entry
  * carries a `translations.en` block without parsing TypeScript.
  */
-function splitEntries(source) {
+export function splitEntries(source) {
   const matches = [...source.matchAll(/^\s*slug:\s*'([^']+)'/gm)]
   return matches.map((match, i) => ({
     slug: match[1],

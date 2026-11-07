@@ -13,6 +13,8 @@
     "test": "vitest run",
     "translation:status": "node scripts/translation-status.mjs",
     "translate": "claude \"/translate-articles\"",
+    "card:status": "node scripts/card-image.mjs",
+    "card:generate": "node scripts/card-image.mjs --generate",
     "mint:api-jwt": "node scripts/mint-api-jwt.mjs",
     "sbom:write": "node scripts/sbom.mjs",
     "docs:status": "node scripts/docs-sync.mjs",
