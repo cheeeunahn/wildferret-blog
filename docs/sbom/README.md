@@ -69,16 +69,16 @@ If a change moves one of these into the `required` scope, the generated table be
 
 | Package                              | Version | License      | Ships in       |
 | ------------------------------------ | ------- | ------------ | -------------- |
-| `@astrojs/cloudflare`                | 14.4.3  | MIT          | worker         |
-| `@astrojs/internal-helpers`          | 0.13.0  | MIT          | worker         |
-| `@astrojs/react`                     | 7.1.2   | MIT          | browser        |
+| `@astrojs/cloudflare`                | 14.4.6  | MIT          | worker         |
+| `@astrojs/internal-helpers`          | 0.13.1  | MIT          | worker         |
+| `@astrojs/react`                     | 7.1.4   | MIT          | browser        |
 | `@astryxdesign/core`                 | 0.7.5   | MIT          | browser        |
 | `@formatjs/fast-memoize`             | 3.1.7   | MIT          | browser        |
 | `@formatjs/icu-messageformat-parser` | 3.5.18  | MIT          | browser        |
 | `@formatjs/icu-skeleton-parser`      | 2.1.11  | MIT          | browser        |
 | `@oslojs/encoding`                   | 1.1.0   | MIT          | worker         |
 | `@stylexjs/stylex`                   | 0.19.1  | MIT          | browser        |
-| `astro`                              | 7.4.4   | MIT          | browser,worker |
+| `astro`                              | 7.4.7   | MIT          | browser,worker |
 | `clsx`                               | 2.1.1   | MIT          | worker         |
 | `cookie`                             | 2.0.1   | MIT          | worker         |
 | `devalue`                            | 6.0.3   | MIT          | worker         |
@@ -108,8 +108,8 @@ If a change moves one of these into the `required` scope, the generated table be
 
 | License                                  | All packages | Shipped |
 | ---------------------------------------- | -----------: | ------: |
-| MIT                                      |          478 |      18 |
-| unknown — not in local store¹            |          124 |       0 |
+| MIT                                      |          476 |      18 |
+| unknown — not in local store¹            |          126 |       0 |
 | ISC                                      |           29 |       1 |
 | Apache-2.0                               |           23 |       0 |
 | BSD-2-Clause                             |           16 |       0 |
