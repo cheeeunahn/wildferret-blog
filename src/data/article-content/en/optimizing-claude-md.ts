@@ -1,6 +1,6 @@
-export const optimizingClaudeMdContentEn = `There are five papers on the efficiency of agent instruction files such as \`AGENTS.md\` and \`CLAUDE.md\`. Then, on October 22, a new paper appeared. It reports that when the file and the code say different things, the agent follows the file even after reading the code. Where the earlier five papers asked "does the file help?", this one asks "what happens when the file is wrong?" This article draws on all six papers to work out **what to write in an agent instruction file**. (Artificial intelligence (AI) was used to help organize the material.)
+export const optimizingClaudeMdContentEn = `Five recent papers examine the efficiency of agent instruction files such as \`AGENTS.md\` and \`CLAUDE.md\`. On October 22, a new paper appeared as well. It reports that when the file and the code say different things, the agent follows the file even after reading the code. Where the earlier five papers focused on "does the file help?", the October 22 paper investigates "what happens when the file is wrong?"
 
-What should stay in an agent instruction file as prose, and what can be replaced with code that checks it?
+Drawing on these six papers, this article sets out personal thoughts on **what to write in an agent instruction file**. What should stay in an agent instruction file as prose, and what can be replaced with code that checks it? (Artificial intelligence (AI) was used to help organize the material.)
 
 ---
 
@@ -20,7 +20,7 @@ None of the three studies found a clear improvement in success rate or merge rat
 
 [Xu & Wu (2026)](https://arxiv.org/abs/2610.30571) built 40 Python projects, each with a deliberately outdated instruction file. For example, \`CLAUDE.md\` states "print warnings and status messages with \`print()\`," while every existing module uses \`logging\`. The scenario is a team that moved from \`print\` to \`logging\` without updating the file.
 
-- **Setup:** The authors selected 16 kinds of convention, including log output, path handling, error propagation, test style, and how monetary amounts are stored. In each project, the existing code consistently uses one convention and the file requires the opposite one. Claude Code (Claude Sonnet 5.5) and Codex CLI (GPT-6 Sol) were each asked to add one feature. The task requests said nothing about conventions. There were 320 runs in total.
+- **Setup:** The authors selected 16 kinds of convention, including log output, path handling, error propagation, test style, and how monetary amounts are stored. In each project, the existing code consistently uses one convention and the file requires the opposite one. Claude Code (Claude Sonnet 5.5) and Codex CLI (GPT-6 Sol) were each asked to add one feature. The task requests said nothing about conventions. Each agent ran on the 40 projects twice, for 80 runs.
 - **Results:** Of the agents' 720 choices, 90.1% (649) followed the outdated file, and only 4.2% followed the existing code. Claude Code followed the file in 86.4% of its choices and Codex CLI in 93.9%. The file was followed more often in 14 of the 16 kinds of convention.
 
 The two agents followed the file in different ways.
@@ -28,9 +28,9 @@ The two agents followed the file in different ways.
 - **Claude Code noticed the mismatch and followed the file anyway.** In 79 of 80 runs, its final reply pointed out that the existing modules use \`logging\` while \`CLAUDE.md\` requires \`print\`. Even so, 86.2% of the choices it made in those 79 runs followed the file.
 - **Codex CLI rewrote the existing code to match the file.** In 20 of 80 runs, it rewrote working code to conform to the file, deleting a median of 198 lines across 9 files. When the original tests were restored and run after these runs, 17 of the 20 failed. In the remaining 60 runs, it followed the file without mentioning the mismatch.
 
-In the other papers, too, agents followed what the file said. Gloaguen et al.'s traces show that when the file mentioned \`uv\`, agents used it 1.6 times per task, and when it did not, they rarely used it at all. In the study by [Chatlatanagulchai et al.](https://doi.org/10.1145/3840295), the violation rate in AI-written code dropped sharply in two repositories that added a "four-space indentation" rule.
+In the other papers, too, agents followed what the file said. In Gloaguen et al.'s traces, agents used \`uv\` 1.6 times per task when the file mentioned it, and rarely used it at all when it did not. In the study by [Chatlatanagulchai et al.](https://doi.org/10.1145/3840295), the violation rate in AI-written code dropped sharply in two repositories that added a "four-space indentation" rule.
 
-This situation is common in real repositories as well. In a survey cited by Xu & Wu, 73.8% of AI configuration files across 441 enterprise repositories were never modified after their first commit. After Supabase moved its dashboard to React 19, a skill file continued for 13 days to advise that "Studio still uses React 18, so skip React 19 patterns."
+In real repositories, too, instruction files are rarely updated. In a survey cited by Xu & Wu, 73.8% of AI configuration files across 441 enterprise repositories were never modified after their first commit. An unmodified file is not necessarily stale, but stale ones do occur. After Supabase moved its dashboard to React 19, a skill file kept telling agents for 13 days that the dashboard used React 18 and that React 19 patterns should be skipped.
 
 ### Why agents give the instruction file priority
 
@@ -55,7 +55,7 @@ When a repository's documentation and its existing code disagree, follow the con
 The sentence asks the agent to follow the existing code's conventions whenever the repository's documentation and its code disagree, and to list each inconsistency between them in its final reply.
 
 - Choices that followed the code rose from 4.2% to 91.4%: from 7.5% to 94.4% for Claude Code, and from 0.8% to 88.3% for Codex CLI.
-- Both agents reported the mismatches they found in all 160 of their runs.
+- Both agents reported the mismatches they found in all 80 of their runs.
 - No run rewrote existing code, and the test pass rate rose from 89.4% to 100%. Tool calls and run time also decreased slightly.
 
 ![A horizontal bar chart showing whether the agents' choices matched the file, the code, or neither. Without the sentence, Claude Code followed the file in 86.4% of its choices and Codex CLI in 93.9%. With the sentence, the share that followed the code became 94.4% for Claude Code and 88.3% for Codex CLI](/assets/images/optimizing-claude-md-one-sentence-fix.webp "Whether the agents' choices matched the file or the code, before and after adding the sentence. Source: [Xu & Wu](https://arxiv.org/abs/2610.30571), 2026")
@@ -65,74 +65,65 @@ The advantage of this method is that no one needs to find and fix the outdated l
 Two points call for caution.
 
 - The subjects were 40 small Python projects built by the authors, and only cases in which the file was the outdated side were examined. The tasks were feature additions completed in a single pass without human involvement. There is no guarantee that the same proportions would hold in large real-world repositories or in interactive work.
-- The opposite case also exists. For a team that is **in the middle of moving** from \`print\` to \`logging\` and has written the new convention into the file first, this sentence would pull the agent back toward the old code.
+- The opposite case was not tested. For a team that is **in the middle of moving** from \`print\` to \`logging\` and has written the new convention into the file first, this sentence could pull the agent back toward the old code.
 
-The sentence only makes the agent report mismatches; a person still has to fix the outdated lines. It is better to write fewer lines that will go stale in the first place.
-
----
-
-## What to keep in the file, and what to move into tests
-
-Writing fewer lines that will go stale means deciding which content to write as instructions and which to move into checks such as linters, tests, and hooks.
-
-### Rules and descriptions of the code in instruction files
-
-Another cause that Xu & Wu point to is the style in which instruction files are written. "Print progress messages with \`print()\`" is phrased as a command, but what it actually records is **what the code looked like when the line was written**. When the code changes, the content becomes wrong, but the form of a command remains.
-
-The authors therefore suggest that model developers train models to distinguish **rules**, such as "run the tests before committing," from **descriptions of the code**, such as "print progress messages with \`print\`," because descriptions can be checked against the code.
-
-It is also questionable whether content that can be checked against the code needs to be written as a sentence at all. The agent can read the code directly. In Gloaguen et al.'s experiment, too, a repository overview did not help agents find the files to fix any faster. If such a description must be enforced, it can be replaced with check code that verifies it instead of a sentence.
-
-### How linters and tests differ from instruction files
-
-The same convention goes stale differently depending on where it is kept.
-
-- **When a rule kept in a linter or test goes stale,** the check fails. If someone moves the code to \`logging\`, the check that required \`print\` breaks, and it gets fixed on the spot.
-- **When a rule kept in an instruction file goes stale,** no check fails. The agent writes code according to the outdated rule (Xu & Wu), and a person has to catch it in review.
-
-Chatlatanagulchai et al.'s "four-space indentation" case shows that instructions do have an effect, but indentation is something a formatter does the same way every time. The authors also suggest reviewing whether the instruction file needs changes in any PR that alters the build or core modules, and **automatically checking** that the commands written in the file match \`package.json\`. Arabat & Sayagh propose treating instruction files, like Infrastructure as Code, as an artifact with standards and review, which they call **Instructions-as-Code**.
+Even with the sentence in place, the outdated lines remain in the file, and a person has to fix them. It is better to write fewer lines that are likely to go stale in the first place.
 
 ---
 
 ## Some thoughts on what to include and what to leave out
 
-From here on is an interpretation drawn from the papers' results. The papers did not validate this table, and the answer will differ from one repository and team to another. The papers sometimes give different answers to the same question. Gloaguen et al. found no relationship between file length and success rate, while Arabat & Sayagh found longer files alongside improved merge rates. Neither tells us what the right length is.
+Writing fewer lines that will go stale means deciding what to write as prose and what to move into checks such as linters and tests. The table below sorts the lines commonly found in instruction files into those to delete, those to move into checks, and those to keep in the file. It is an interpretation drawn from the papers' results; the papers did not validate this table, and the answer will differ from one repository and team to another.
 
 | Line in the file | Where it belongs | Basis |
 | --- | --- | --- |
-| A description that can be learned by reading the code | Delete it, or link to another document such as the README. The agent reads the code directly | Gloaguen et al., Xu & Wu |
-| A rule a machine can check (indentation, import paths) | Move it into a linter, formatter, or hook. When it goes stale, the check fails first | Chatlatanagulchai et al. |
-| A command written in the file | Check with a script that it matches \`package.json\` | Chatlatanagulchai et al. |
-| Content that duplicates other files | Consolidate it in \`AGENTS.md\` and have tool-specific files point to it | [Galster et al.](https://doi.org/10.1145/3805760.3814887), Gloaguen et al. |
-| Notes about finished work | Delete them in the PR that adds lines | Chatlatanagulchai et al. |
-| The reasons behind decisions, places that must not be touched | Keep them in the file. Code does not show why another approach was not taken | Xu & Wu |
-| A procedure needed only for particular tasks | Keep it in the file, together with when it is needed | Gloaguen et al. |
-| A convention that is being migrated | Keep it in the file, with its scope stated | Not tested in the papers |
+| Descriptions that can be read from the code | Delete them, or link to another document such as the README. The agent reads the code directly | Gloaguen et al., Xu & Wu |
+| Content duplicated in other files | Gather it into a single \`AGENTS.md\` and have the tool-specific files point to it | [Galster et al.](https://doi.org/10.1145/3805760.3814887), Gloaguen et al. |
+| Notes on finished work | Delete them in the same PR that adds new lines | Chatlatanagulchai et al. |
+| Rules a machine can check (indentation, import paths) | Move them into linters, formatters, and hooks. When they go stale, a check fails first | Chatlatanagulchai et al. |
+| Commands written in the file | Keep them in the file, and check with a script that they match \`package.json\` | Chatlatanagulchai et al. |
+| Reasons for decisions, and areas not to touch | Keep them in the file. The code does not show why another approach was not taken | Xu & Wu |
+| Procedures needed only for certain tasks | Keep them in the file, together with when they apply | Gloaguen et al. |
+| Conventions in the middle of a migration | Keep them in the file, with their scope stated | Not validated by the papers |
 
-Galster et al. warn that content duplicated across several files can come into conflict. In an additional experiment by Gloaguen et al., when the repository's other documentation was deleted, LLM-generated files raised the success rate by about 2.7 percentage points on average. When a file's content overlaps with the repository's documentation, the effect of the file may not show.
+Files generated automatically with \`/init\` are worth reviewing against this table as well. They are filled with what was read from the code, so they tend to contain lines to delete. In Gloaguen et al.'s experiment, on the same tasks, files written by developers also did significantly better than LLM-generated ones.
 
-Notes about finished work pile up because no one deletes them. In the \`CLAUDE.md\` files analyzed by Chatlatanagulchai et al., the median addition per commit was 57 words, while deletions were under 15 words. The authors call this state, in which instructions pile up and become hard to manage, **context debt**.
+### Lines to delete
 
-A procedure needed only for particular tasks is written together with its condition. In Gloaguen et al.'s experiment, removing the testing instructions reduced cost from $0.47 to $0.37, with no significant difference in success rate. For example:
+**Descriptions that can be read from the code.** "Print progress messages with \`print()\`" reads like an instruction. In fact it records what the code looked like when the line was written. Once the code moves to \`logging\`, it becomes a wrong description, yet it still looks like an instruction, so the agent follows it (Xu & Wu). Lines of this kind can go. The agent reads the code directly. In Gloaguen et al.'s experiment, a repository overview did not help agents find the files to fix any faster.
+
+**Content duplicated in other files.** When the same content sits separately in \`CLAUDE.md\`, \`AGENTS.md\`, and the README, editing only one of them makes them say different things (Galster et al.). The overlap also adds little. In Gloaguen et al.'s experiment, LLM-generated instruction files did not raise the success rate. In a supplementary check in the appendix, however, once all of the repository's other documentation was deleted, they raised it by about 2.7 percentage points on average (Claude Code was excluded, and no significance test was reported). Repeating in the file what another document already says gives the agent no new information.
+
+**Notes on finished work.** A note such as "migration of X in progress" remains after the work is done, because lines are added to the file but rarely deleted. In the \`CLAUDE.md\` files that Chatlatanagulchai et al. studied, a commit typically added 57 words (median) and deleted fewer than 15. Notes on finished work should be deleted in the same PR that adds new lines.
+
+### Lines to move into checks
+
+**Rules a machine can check.** Rules such as indentation or import paths should move into linters, formatters, and hooks. As the "four-space indentation" case from Chatlatanagulchai et al. showed earlier, writing them in the file does have an effect. A rule written in the file, however, makes nothing fail when it no longer matches the code. A rule kept in a linter makes the check fail as soon as the code diverges, so it cannot quietly go stale.
+
+**Commands written in the file.** A line such as "run the tests with \`pnpm test\`" has to stay in the file. If the script is renamed in \`package.json\`, however, the line goes stale. Chatlatanagulchai et al. suggest automatically checking that the commands written in the file match \`package.json\`.
+
+### Lines to keep in the file
+
+**Reasons for decisions, and areas not to touch.** The code shows what it does, but not why another approach was not taken. A line such as "calls are made one at a time on purpose, because of the external API's rate limit" cannot be read from the code.
+
+**Procedures needed only for certain tasks.** If "run the tests when the work is done" is written without a condition, the agent runs the tests even when it fixes a single typo in the documentation. In Gloaguen et al.'s experiment with GPT-5.2, removing the testing instructions cut the average cost from $0.33 to $0.28 on SWE-bench Lite, and from $0.47 to $0.37 on the 138 tasks with developer-written files. On neither benchmark was the difference in success rate significant. The condition should therefore be written alongside the procedure.
 
 ~~~md
-- If only document text is edited, check the links only.
-- If executable code is edited, run the related tests.
-- If shared styles or routes are edited, check the build and the affected screens.
-- If a required check could not be run, state it in the completion report along with the reason.
+- If only the body of a document changes, check only the links.
+- If executable code changes, run the related tests.
+- If shared styles or routes change, check the build and the affected screens.
+- Record any required check that could not be run, with the reason, in the completion report.
 ~~~
 
-A convention that is being migrated, like the \`logging\` counterexample above, cannot be read from the code. State its scope, for example: "New code uses \`logging\`. The existing \`print\` calls are being migrated."
+**Conventions in the middle of a migration.** This is the opposite case noted after the one-sentence experiment. The paper did not cover it, so what follows is interpretation. During a move from \`print\` to \`logging\`, the code contains both. The code alone cannot tell the agent which one is the new rule, so the file should state the scope: "New code uses \`logging\`. Existing \`print\` calls are being migrated."
 
-The lines that remain seem to work better the more concrete they are. In Arabat & Sayagh's study, the files in projects whose merge rate rose were longer and more finely divided (a median of 976 words against 569). These "longer files" may be a proxy for **files that received more care** (this is not the paper's interpretation). Writing out paths, commands, and examples concretely and dividing the content by topic tends to make a file longer.
-
-Files generated automatically with \`/init\` are also worth reviewing against this table. In Gloaguen et al.'s experiment, developer-written files performed better than LLM-generated ones.
+**Being specific.** The lines that stay should spell out paths, commands, and examples. Length on its own is not a criterion. Gloaguen et al. found no relationship between file length and success rate, while in Arabat & Sayagh's study, projects whose merge rate rose had longer files (median word count 976 versus 569). Rather than length helping on its own, files written in specific detail may simply have ended up longer (this is not the paper's interpretation).
 
 ---
 
 ## Closing thoughts
 
-Applying the above to this blog would likely mean removing the descriptions in the blog's \`CLAUDE.md\` that can be learned by reading the code, and moving into checks whatever can be moved. It would then be possible to see whether the agent's results change with the trimmed \`CLAUDE.md\`.
+Applying the above to this blog would mean removing the descriptions in its \`CLAUDE.md\` that can be learned by reading the code, and trying to move the rules that can be checked into checks. It would then be possible to see whether the agent's results change with the trimmed \`CLAUDE.md\`.
 
 ---
 
