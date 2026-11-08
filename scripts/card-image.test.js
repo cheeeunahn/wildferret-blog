@@ -9,7 +9,7 @@ const ARTICLES = `export const articles: Article[] = [
     subtitle: '부제',
     date: '2026.11.07',
     readMinutes: 5,
-    category: 'Research',
+    category: 'Paper Review',
     loadContent: () => import('./article-content/new-post').then(({ c }) => c),
   },
   {
@@ -53,7 +53,7 @@ describe('setCardImage', () => {
   it('adds the line after category, in that entry only', () => {
     const out = setCardImage(ARTICLES, 'new-post')
     expect(out).toContain(
-      "    category: 'Research',\n    cardImage: '/assets/images/new-post-card.webp',\n",
+      "    category: 'Paper Review',\n    cardImage: '/assets/images/new-post-card.webp',\n",
     )
     expect(out.match(/cardImage:/g)).toHaveLength(2)
   })

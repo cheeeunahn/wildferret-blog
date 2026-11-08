@@ -9,7 +9,7 @@ export const articles: Article[] = [
     subtitle: 'AGENTS.md·CLAUDE.md 논문 여섯 편으로 본, 파일에 남길 것과 코드로 옮길 것',
     date: '2026.11.07',
     readMinutes: 16,
-    category: 'Research',
+    category: 'Paper Review',
     cardImage: '/assets/images/optimizing-claude-md-card.webp',
     loadContent: () =>
       import('./article-content/optimizing-claude-md').then(
@@ -33,7 +33,7 @@ export const articles: Article[] = [
     subtitle: '가상 유저 리서치 패널 만드는 김에 조사하고 읽어본 합성 유저 문헌들',
     date: '2026.09.01',
     readMinutes: 12,
-    category: 'Research',
+    category: 'Paper Review',
     cardImage: '/assets/images/synthetic-user-reading-card.webp',
     loadContent: () =>
       import('./article-content/synthetic-user-reading').then(
