@@ -6,7 +6,7 @@ export const articles: Article[] = [
   {
     slug: 'optimizing-claude-md',
     title: 'CLAUDE.md에는 무엇을 적어야 할까',
-    subtitle: 'AGENTS.md·CLAUDE.md에 관한 최근 논문 여섯 편을 읽고 든 생각',
+    subtitle: 'AGENTS.md·CLAUDE.md 논문 여섯 편으로 본, 파일에 남길 것과 코드로 옮길 것',
     date: '2026.11.07',
     readMinutes: 16,
     category: 'Research',
@@ -18,7 +18,8 @@ export const articles: Article[] = [
     translations: {
       en: {
         title: 'What belongs in your CLAUDE.md?',
-        subtitle: 'Thoughts from reading six recent papers on AGENTS.md and CLAUDE.md',
+        subtitle:
+          'What six recent papers suggest keeping in AGENTS.md and CLAUDE.md, and what to turn into code',
         loadContent: () =>
           import('./article-content/en/optimizing-claude-md').then(
             ({ optimizingClaudeMdContentEn }) => optimizingClaudeMdContentEn,
