@@ -1,12 +1,4 @@
-export const optimizingClaudeMdContentEn = `## Summary
-
-- When an instruction file such as \`CLAUDE.md\` or \`AGENTS.md\` disagrees with the actual code, coding agents mostly follow the file (90.1%). They did so even after noticing the mismatch. Yet these files are often written once and left alone, and when they are edited, far more is added than deleted.
-- That makes it worth asking what belongs in the file at all. When rules that a machine can check are moved into linters and tests, a rule that goes stale makes a check fail and is caught immediately.
-- The summary table in the second half of this article is an interpretation drawn from six papers. It is not a list the papers validated, and it is not the answer.
-
----
-
-There are five papers on the efficiency of agent instruction files such as \`AGENTS.md\` and \`CLAUDE.md\`. Then, on October 22, a new paper appeared. It reports that when the file and the code say different things, the agent follows the file even after reading the code. Where the earlier five papers asked "does the file help?", this one asks "what happens when the file is wrong?" This article draws on all six papers to work out **what to write in an agent instruction file**. (Artificial intelligence (AI) was used to help organize the material.)
+export const optimizingClaudeMdContentEn = `There are five papers on the efficiency of agent instruction files such as \`AGENTS.md\` and \`CLAUDE.md\`. Then, on October 22, a new paper appeared. It reports that when the file and the code say different things, the agent follows the file even after reading the code. Where the earlier five papers asked "does the file help?", this one asks "what happens when the file is wrong?" This article draws on all six papers to work out **what to write in an agent instruction file**. (Artificial intelligence (AI) was used to help organize the material.)
 
 What should stay in an agent instruction file as prose, and what can be replaced with code that checks it?
 
