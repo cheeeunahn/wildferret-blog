@@ -5,8 +5,8 @@ import type { Article } from './articleTypes'
 export const articles: Article[] = [
   {
     slug: 'optimizing-claude-md',
-    title: 'CLAUDE.md는 코드보다 힘이 세다',
-    subtitle: 'AGENTS.md·CLAUDE.md를 다룬 논문 여섯 편을 읽고 정리한 작성법',
+    title: 'CLAUDE.md에는 무엇을 적어야 할까',
+    subtitle: 'AGENTS.md·CLAUDE.md에 관한 최근 논문 여섯 편을 읽고 든 생각',
     date: '2026.11.07',
     readMinutes: 16,
     category: 'Research',
