@@ -9,7 +9,7 @@ const post: Article = {
   subtitle: '부제',
   date: '2026.01.01',
   readMinutes: 3,
-  category: 'Research',
+  category: 'Paper Review',
   loadContent: async () => '본문',
   translations: {
     en: { title: 'Title', subtitle: 'Subtitle', loadContent: async () => 'Body' },

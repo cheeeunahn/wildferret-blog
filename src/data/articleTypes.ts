@@ -1,6 +1,6 @@
 import type { Lang } from '../shared/i18n'
 
-export const CATEGORIES = ['Research', 'Personal', 'Conference'] as const
+export const CATEGORIES = ['Paper Review', 'Personal', 'Conference'] as const
 
 export type Category = (typeof CATEGORIES)[number]
 

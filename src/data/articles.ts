@@ -4,12 +4,36 @@ import type { Article } from './articleTypes'
 
 export const articles: Article[] = [
   {
+    slug: 'optimizing-claude-md',
+    title: 'CLAUDE.md에는 무엇을 적어야 할까',
+    subtitle: 'AGENTS.md·CLAUDE.md 논문 여섯 편으로 본, 파일에 남길 것과 코드로 옮길 것',
+    date: '2026.11.07',
+    readMinutes: 16,
+    category: 'Paper Review',
+    cardImage: '/assets/images/optimizing-claude-md-card.webp',
+    loadContent: () =>
+      import('./article-content/optimizing-claude-md').then(
+        ({ optimizingClaudeMdContent }) => optimizingClaudeMdContent,
+      ),
+    translations: {
+      en: {
+        title: 'What belongs in your CLAUDE.md?',
+        subtitle:
+          'What six recent papers suggest keeping in AGENTS.md and CLAUDE.md, and what to turn into code',
+        loadContent: () =>
+          import('./article-content/en/optimizing-claude-md').then(
+            ({ optimizingClaudeMdContentEn }) => optimizingClaudeMdContentEn,
+          ),
+      },
+    },
+  },
+  {
     slug: 'synthetic-user-reading',
     title: '합성 유저(synthetic user)는 실제 사람을 대상으로 하는 유저 리서치를 대체할 수 있을까',
     subtitle: '가상 유저 리서치 패널 만드는 김에 조사하고 읽어본 합성 유저 문헌들',
     date: '2026.09.01',
     readMinutes: 12,
-    category: 'Research',
+    category: 'Paper Review',
     cardImage: '/assets/images/synthetic-user-reading-card.webp',
     loadContent: () =>
       import('./article-content/synthetic-user-reading').then(
@@ -75,13 +99,4 @@ export const articles: Article[] = [
       },
     },
   },
-  /*{
-    slug: 'pm-ai-week',
-    title: '빨라진 게 아니라, 가능해진 것들',
-    subtitle: 'Claude Code와 보낸 일주일',
-    date: '2026.03.27',
-    readMinutes: 7,
-    category: 'Personal',
-    loadContent: () => import('./article-content/pm-ai-week').then(({ pmAiWeekContent }) => pmAiWeekContent),
-  },*/
 ]

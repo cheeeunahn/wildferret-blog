@@ -42,6 +42,11 @@ const delayStyle = (i: number) => ({ animationDelay: `${i * 0.05}s` })
 // Astryx components here render to static HTML at build time (no client:*), so
 // the page stays zero-JS. Anything that needs a click handler to work — the
 // CodeBlock copy button, for one — is switched off rather than shipped dead.
+// The same goes for CodeBlock's horizontal scroll: statically rendered, its
+// scroll area is `overflow: clip`, so a long line would be cut off. Code blocks
+// wrap instead (isWrapped). isWrapped also sets `word-break: break-all` on the
+// <code>, which splits words mid-letter; the className puts it back to normal,
+// leaving Astryx's `overflow-wrap: break-word` to break an overlong token.
 
 // Table cells carry inline markdown (bold, code, links). Astryx's Table takes
 // cell renderers rather than children, so the author's own formatInline output
@@ -163,8 +168,9 @@ const carouselArrowClass =
             title={langLabels[block.lang] || block.lang || undefined}
             hasLanguageLabel={false}
             hasCopyButton={false}
+            isWrapped
             width="100%"
-            className="my-6 break-normal animate-reveal"
+            className="my-6 break-normal animate-reveal [&_code]:[word-break:normal]!"
             style={delayStyle(i)}
           />
         )

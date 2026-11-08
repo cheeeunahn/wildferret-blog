@@ -19,6 +19,13 @@ pre-commit:
 
 post-commit:
   jobs:
+    # Commit a Korean article with no cardImage and its card thumbnail follows
+    # as its own commit, drawn by the Codex CLI from the shared prompt in
+    # scripts/card-image-prompt.md. Runs first, so the translation commit that
+    # follows already carries the cardImage line. Skip one commit with
+    # AUTO_CARD_IMAGE=0.
+    - name: auto-card-image
+      run: node scripts/auto-card-image.mjs
     # Commit a Korean article and its English version follows as a second
     # commit. The script checks what HEAD touched and what translation-status
     # reports, so a commit with nothing to translate returns instantly. It
