@@ -17,9 +17,8 @@ export const articles: Article[] = [
       ),
     translations: {
       en: {
-        title: 'Your CLAUDE.md outranks your code',
-        subtitle:
-          'How to write AGENTS.md and CLAUDE.md, from six papers on agent instruction files',
+        title: 'What belongs in your CLAUDE.md?',
+        subtitle: 'Thoughts from reading six recent papers on AGENTS.md and CLAUDE.md',
         loadContent: () =>
           import('./article-content/en/optimizing-claude-md').then(
             ({ optimizingClaudeMdContentEn }) => optimizingClaudeMdContentEn,
