@@ -62,7 +62,9 @@ The sentence asks the agent to follow the existing code's conventions whenever t
 
 ![A horizontal bar chart showing whether the agents' choices matched the file, the code, or neither. Without the sentence, Claude Code followed the file in 86.4% of its choices and Codex CLI in 93.9%. With the sentence, the share that followed the code became 94.4% for Claude Code and 88.3% for Codex CLI](/assets/images/optimizing-claude-md-one-sentence-fix.webp "Whether the agents' choices matched the file or the code, before and after adding the sentence. Source: [Xu & Wu](https://arxiv.org/abs/2610.30571), 2026")
 
-The advantage of this method is that no one needs to find and fix the lines that contradict the code beforehand. In the end, however, even with the sentence in place, the outdated lines remain in the file, and a person has to fix them.
+The advantage of this method is that no one needs to find and fix the lines that contradict the code beforehand. The experiment, however, used small Python projects built by the authors and covered only cases in which the file was the outdated side. Conversely, for a team that is **in the middle of moving** from \`print\` to \`logging\` and has written the new convention into the file first, this sentence could pull the agent back toward the old code.
+
+Moreover, even with the sentence in place, the outdated lines remain in the file, and a person has to fix them.
 
 ---
 
@@ -74,10 +76,10 @@ The table below sorts the lines commonly found in instruction files into those t
 | --- | --- |
 | Descriptions that can be read from the code | Delete them, or link to another document such as the README. The agent reads the code directly |
 | Content duplicated in other files | Gather it into a single \`AGENTS.md\` and have the tool-specific files point to it |
-| Notes on finished work | Delete them in the same PR that adds new lines |
-| Rules a machine can check (indentation, import paths) | Move them into linters, formatters, and hooks. When they no longer match the code, a check fails first |
+| Notes on completed work | Delete them in the same PR that adds new lines |
+| Rules a computer can check (indentation, import paths) | Move them into linters, formatters, and hooks. When they no longer match the code, a check fails first |
 | Commands written in the file | Keep them in the file, and check with a script that they match \`package.json\` |
-| Reasons for decisions, and areas not to touch | Keep them in the file. The code does not show why another approach was not taken |
+| Reasons for decisions, and areas that must not be modified | Keep them in the file. The code does not show why another approach was not taken |
 | Procedures needed only for certain tasks | Keep them in the file, together with when they apply |
 | Conventions in the middle of a migration | Keep them in the file, with their scope stated |
 
