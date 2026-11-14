@@ -110,7 +110,7 @@ docs/
 ├── adr/                      # Architecture decision records
 ├── sbom/                     # Generated SBOM — do not edit by hand
 └── trd/                      # Technical requirements (Astryx migration)
-eslint-rules/                 # Repo-local lint rules (layers, islands, links, XSS)
+eslint-rules/                 # Repo-local lint rules (layers, islands, links, XSS, Astryx colors and type)
 scripts/                      # Translation, card images and docs sync (status + hooks), SBOM
 ```
 
@@ -159,8 +159,10 @@ The site uses **Astryx's** typography and components
 indigo accent of our own ([ADR 0005](docs/adr/0005-stone-colors-and-astryx-lint.md)). The
 theme in `src/styles/astryx/wildferretTheme.ts` takes those colors from
 `stoneColors.ts`, swaps in the webfont and raises the type scale's base to 16px. Every page shares one 768px column, and the home page is a
-search box, category pills and a list of wide cards (artwork left, text right),
-after Astryx's Library template ([ADR 0003](docs/adr/0003-library-layout-and-reading-scale.md)).
+search box, category pills and a ruled list of posts (square artwork left; category, title, a
+two-line summary and the date right), after Astryx's Library template
+([ADR 0003](docs/adr/0003-library-layout-and-reading-scale.md), revised by
+[ADR 0006](docs/adr/0006-reading-layout-revisions.md)).
 
 Use Astryx components and Astryx semantic tokens only: no raw hex values and no
 stock Tailwind palette classes. The older token names (`text-ink-900`,
@@ -187,8 +189,7 @@ Write the post in Korean. Its data lives entirely in `src/data/`:
    ```
 2. Add a `loadContent` dynamic import in `src/data/articles.ts`.
 3. Prepend an entry to the `articles` array with its metadata (`slug`, `title`,
-   `subtitle`, `date`, `category`, optional
-   `coverImage` / `cardImage`) and the loader.
+   `subtitle`, `date`, `category`, optional `cardImage`) and the loader.
 
 Bodies are read at build time in `getStaticPaths`, so a broken `loadContent`
 fails `pnpm build` instead of degrading in the browser.
@@ -219,15 +220,17 @@ Blocks are separated by blank lines. Supported syntax:
 | `\| a \| b \|`                          | Table (consecutive pipe-delimited lines)                                                 |
 | `---`                                   | Horizontal divider                                                                       |
 | `~~~lang … ~~~`                         | Fenced code block — use `~~~`, not backticks, to avoid escaping inside template literals |
-| `![alt](path)`                          | Inline image                                                                             |
+| `![alt](path "caption")`                | Image, in a block of its own; the caption is optional                                    |
 | `**bold**`, `` `code` ``, `[text](url)` | Inline formatting                                                                        |
+| `## 요약` + `- ` list, opening the body | Summary card (the heading may also be TL;DR or Summary); a `---` after it is dropped     |
 
-Parsing and safe inline formatting live in `src/content/parser.ts`.
+Two image lines with no blank line between them fail the build. Parsing and safe
+inline formatting live in `src/content/parser.ts`.
 
 ### Images and links
 
 Put images in `public/assets/images/` and reference them in `articles.ts` with a
-leading slash and no base prefix (e.g. `/assets/images/my-cover.png`). Every
+leading slash and no base prefix (e.g. `/assets/images/my-image.png`). Every
 asset URL is resolved at render time by `resolveAssetUrl()` in
 `src/shared/assetUrl.ts`, which prepends the base path for relative URLs and
 passes absolute `https://` URLs through unchanged.
@@ -261,8 +264,9 @@ lint rules, and the scripts. Add parser cases when
 extending the supported article syntax.
 
 Git hooks (lefthook) run `eslint --fix` and Prettier on commit, then the
-translation and docs-sync hooks. Before a push they run the translation check,
-the docs check (`pnpm docs:status`), `pnpm build` and `pnpm test`.
+card-image, translation and docs-sync hooks. Before a push they run the
+translation check, the docs check (`pnpm docs:status`), `pnpm build` and
+`pnpm test`.
 
 The software bill of materials in [`docs/sbom/`](docs/sbom/README.md) is
 generated from the lockfile by `pnpm sbom:write`. Re-run it in any PR that changes
@@ -273,7 +277,7 @@ generated from the lockfile by `pnpm sbom:write`. Re-run it in any PR that chang
 Four GitHub Actions are wired up:
 
 - [`claude-code-review.yml`](.github/workflows/claude-code-review.yml) reviews
-  every pull request.
+  every pull request not opened by a bot (Renovate's are skipped).
 - [`claude.yml`](.github/workflows/claude.yml) responds to `@claude` mentions in
   issues, PRs, and review comments.
 - [`translate-articles.yml`](.github/workflows/translate-articles.yml) writes the

@@ -70,7 +70,6 @@
     "src/data/articles.ts",
     "src/directives/client-directives.d.ts",
     "src/directives/summarizer.ts",
-    "src/env.d.ts",
     "src/layouts/Base.astro",
     "src/pages/404.astro",
     "src/pages/[lang]/about.astro",
