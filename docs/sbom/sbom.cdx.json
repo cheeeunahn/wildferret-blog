@@ -25,7 +25,7 @@
       },
       {
         "name": "wildferret:lockfile:sha256",
-        "value": "ad85b326d8f975eeb8d2ef2bc4f95144465e8b3a8259b550de49c27e149c8faf"
+        "value": "1d3dc1bce25732fb5562118f64af15f7f42949741340cc8f93b64a659547123e"
       },
       {
         "name": "wildferret:packageManager",
@@ -9667,16 +9667,16 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/node@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/node@4.3.5",
       "group": "@tailwindcss",
       "name": "node",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "description": "A utility-first CSS framework for rapidly building custom user interfaces.",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "fd3f08284b1ff554d4ead2e3802efeb2fda638fb50c731368ccc3bbb84ede344f1f90499c69ce1f79fc7e9c30aa236bd5ee5bb88c74b258041d28f46d4268082"
+          "content": "c93e7717357891ed1caff060b83c6158ca66e4c26ed4eda6bb393eb4ac3a94a1e338302c600ac16d6c056c989a92c7f316fd6da643bd4071b399fb358494faea"
         }
       ],
       "licenses": [
@@ -9686,11 +9686,11 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40tailwindcss/node@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/node@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/node/-/node-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/node/-/node-4.3.5.tgz"
         },
         {
           "type": "website",
@@ -9714,23 +9714,23 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-android-arm64@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-android-arm64@4.3.5",
       "group": "@tailwindcss",
       "name": "oxide-android-arm64",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "63ce40da098f4a497955ee6a47ce862f81d3e74f5c16a421d5a7acf69dec4a4c933f0b743e9a5fdc693019ee093c009c4588e024812142033a7410a59ebd0d63"
+          "content": "49ed33e7132a71241a9c90f521898ed1c1a92b78afd1fa7766c213ef14496750dae4f821bcda1ce3acf3e232109fe69a9f7755f53f007ab98534df503e6b21d1"
         }
       ],
       "licenses": [],
-      "purl": "pkg:npm/%40tailwindcss/oxide-android-arm64@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/oxide-android-arm64@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-android-arm64/-/oxide-android-arm64-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-android-arm64/-/oxide-android-arm64-4.3.5.tgz"
         }
       ],
       "properties": [
@@ -9762,15 +9762,15 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-darwin-arm64@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-darwin-arm64@4.3.5",
       "group": "@tailwindcss",
       "name": "oxide-darwin-arm64",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "0626966ada4170445014394e8d10e92155ee14ae4f25ecf9480e09320e95619741614faa29f57fbea8dc22cf88626b62b5fd71610653c17bd4ffccb895f6541b"
+          "content": "50fae04c3b946ef9aa18c66e0a7988dc529e7bfb582b329da74d3f92e078a12181db5dd5620f104dd17b9558673e8057abf9887c9f882e8045a8d39ba1670cc1"
         }
       ],
       "licenses": [
@@ -9780,11 +9780,11 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40tailwindcss/oxide-darwin-arm64@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/oxide-darwin-arm64@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-darwin-arm64/-/oxide-darwin-arm64-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-darwin-arm64/-/oxide-darwin-arm64-4.3.5.tgz"
         },
         {
           "type": "vcs",
@@ -9816,23 +9816,23 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-darwin-x64@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-darwin-x64@4.3.5",
       "group": "@tailwindcss",
       "name": "oxide-darwin-x64",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "7c0794a9f5799dd8714706a2f1c5c6cdd2efba5f6eb563a679392febdba7bf86578b18e7eb567ea7d94259dc0ec00dd361ba06dc1c1d56e37f4438e10519749b"
+          "content": "13ea7b1c4b632346fc0fb91b6d6c47d3aedc1ae8ba77873bf42386928f5f00f544debc1cd44ee57761c509b686f3a00e1964b954a418a9939a7f7f326b8bb14d"
         }
       ],
       "licenses": [],
-      "purl": "pkg:npm/%40tailwindcss/oxide-darwin-x64@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/oxide-darwin-x64@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-darwin-x64/-/oxide-darwin-x64-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-darwin-x64/-/oxide-darwin-x64-4.3.5.tgz"
         }
       ],
       "properties": [
@@ -9864,23 +9864,23 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-freebsd-x64@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-freebsd-x64@4.3.5",
       "group": "@tailwindcss",
       "name": "oxide-freebsd-x64",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "8b27f96d5ebec270257e555e132ed1db976ea714cd10264de50308d2a353e9e4fe12068675970a84692be5276869688b277b292ea218f5509e486af09ad83893"
+          "content": "c96116716c801bbad639c4e92538dd850de971a158da1fb46ea4d17e05371b67f3f3b654dc029dbdd64a86c943fa4c879e305458abcd7516302180b9748d6d22"
         }
       ],
       "licenses": [],
-      "purl": "pkg:npm/%40tailwindcss/oxide-freebsd-x64@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/oxide-freebsd-x64@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-freebsd-x64/-/oxide-freebsd-x64-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-freebsd-x64/-/oxide-freebsd-x64-4.3.5.tgz"
         }
       ],
       "properties": [
@@ -9912,23 +9912,23 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-linux-arm-gnueabihf@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-linux-arm-gnueabihf@4.3.5",
       "group": "@tailwindcss",
       "name": "oxide-linux-arm-gnueabihf",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "680614a6b2402505966d1acfbed8ddae8679e8c77e24cf29322a294bac461300df2e1aa3fb6bdeaf6a789d4e0c6f7091a9c3263418e8f0a91481cc6193355019"
+          "content": "5a67958ed261665afeb26a6a71d4769109249fa6ab1c82675080714ced8425c4cb198d5e7155cda3685b4a7f31734207d9a12dcacf77ea2316286ca3d0668a9c"
         }
       ],
       "licenses": [],
-      "purl": "pkg:npm/%40tailwindcss/oxide-linux-arm-gnueabihf@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/oxide-linux-arm-gnueabihf@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-linux-arm-gnueabihf/-/oxide-linux-arm-gnueabihf-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-linux-arm-gnueabihf/-/oxide-linux-arm-gnueabihf-4.3.5.tgz"
         }
       ],
       "properties": [
@@ -9960,23 +9960,23 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-linux-arm64-gnu@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-linux-arm64-gnu@4.3.5",
       "group": "@tailwindcss",
       "name": "oxide-linux-arm64-gnu",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "9c3c6575c10434ec594730b6baef63aeeb59740010b5bfbc5960c24a758bd73bc1935f8537ec7a32d0d588f07900931fb6d5425217a1196bacdd704f81ab4cff"
+          "content": "0d3092cae71ce9284ca7540ca95e51f7867bc6580d814ce41a6145d6b2f91c7d908f2e1e4a612acbe60b1a4aaa62f59ae2c20bb60ac1b7526344a6e7790b6215"
         }
       ],
       "licenses": [],
-      "purl": "pkg:npm/%40tailwindcss/oxide-linux-arm64-gnu@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/oxide-linux-arm64-gnu@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-linux-arm64-gnu/-/oxide-linux-arm64-gnu-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-linux-arm64-gnu/-/oxide-linux-arm64-gnu-4.3.5.tgz"
         }
       ],
       "properties": [
@@ -10008,23 +10008,23 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-linux-arm64-musl@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-linux-arm64-musl@4.3.5",
       "group": "@tailwindcss",
       "name": "oxide-linux-arm64-musl",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "31de386c3eaf797fcf0b98b217c703567c381c12003597a945967b6bc0d03af91fa39594070729ea202e094cf6deefb84949212650f778bee135d5bc7b377f90"
+          "content": "1fd96cbcee31f44e271381e2f21ecd1c7c343bf91c552bbe88ec851cd19d6336b31a00e314765b13a4b7850f2431c6cd5d206531d362ebb2d5e4456ab69689b7"
         }
       ],
       "licenses": [],
-      "purl": "pkg:npm/%40tailwindcss/oxide-linux-arm64-musl@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/oxide-linux-arm64-musl@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-linux-arm64-musl/-/oxide-linux-arm64-musl-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-linux-arm64-musl/-/oxide-linux-arm64-musl-4.3.5.tgz"
         }
       ],
       "properties": [
@@ -10056,23 +10056,23 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-linux-x64-gnu@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-linux-x64-gnu@4.3.5",
       "group": "@tailwindcss",
       "name": "oxide-linux-x64-gnu",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "b71eeeb359aec0e2802966a8daffc669a7c57906e813a6a3f3cbc2eb388dd8d0867119bc816521c23ce0f987550757b86e802d76d99ae0be37a27ba723a352e3"
+          "content": "e2ec50bed06f3ee21d975dd67d4063f713191c7d783ed1d9f0e65db4b99dc83b46ebab026b5b79f7d3594fe8da82453346d5a1bae975a91650d67009b1c5cde6"
         }
       ],
       "licenses": [],
-      "purl": "pkg:npm/%40tailwindcss/oxide-linux-x64-gnu@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/oxide-linux-x64-gnu@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-linux-x64-gnu/-/oxide-linux-x64-gnu-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-linux-x64-gnu/-/oxide-linux-x64-gnu-4.3.5.tgz"
         }
       ],
       "properties": [
@@ -10104,23 +10104,23 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-linux-x64-musl@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-linux-x64-musl@4.3.5",
       "group": "@tailwindcss",
       "name": "oxide-linux-x64-musl",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "489c57eb4b26bc781ab19a01cb5d5d5fa6118d7245a2fc1606879d85b40f381ce0156047181f9354f581f41c7347b4d3c54f05419008d80ca2342333166f089a"
+          "content": "d09400cecee3c1b03b3bafb3fda754f89937017c2cbb79e9021b6be5eb1c5d2ed3a84a9671a0d5eea1ee23ed15cbf29046e5469cb41111c4895986aec95de8aa"
         }
       ],
       "licenses": [],
-      "purl": "pkg:npm/%40tailwindcss/oxide-linux-x64-musl@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/oxide-linux-x64-musl@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-linux-x64-musl/-/oxide-linux-x64-musl-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-linux-x64-musl/-/oxide-linux-x64-musl-4.3.5.tgz"
         }
       ],
       "properties": [
@@ -10152,155 +10152,15 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-wasm32-wasi@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-wasm32-wasi@4.3.5",
       "group": "@tailwindcss",
       "name": "oxide-wasm32-wasi",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "8f1d7eacf858ff9626a6492d77ae7a1c158404bc4fedd1f4ea5a2c04b8e37f9be008e0d7be2f4a86d7ed59c308c131480ea06bedc46742474b9c01be20e946bd"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/%40tailwindcss/oxide-wasm32-wasi@4.3.3",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-wasm32-wasi/-/oxide-wasm32-wasi-4.3.3.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "wasm32"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-win32-arm64-msvc@4.3.3",
-      "group": "@tailwindcss",
-      "name": "oxide-win32-arm64-msvc",
-      "version": "4.3.3",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "deb736f7609ad9c78ae9495c73f6c05674ecff79c3b683e1c842a580fbfec902508bf252fc030996acf1be50da70bd677a46eb71fe9b4eaa7f8d5e2a8273f135"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/%40tailwindcss/oxide-win32-arm64-msvc@4.3.3",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-win32-arm64-msvc/-/oxide-win32-arm64-msvc-4.3.3.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "win32"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "arm64"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-win32-x64-msvc@4.3.3",
-      "group": "@tailwindcss",
-      "name": "oxide-win32-x64-msvc",
-      "version": "4.3.3",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "c89d29c0855cfe761e1a8574d96b6c37c298c8b42fee4c88db00e791ecf22651868e477840bc03180c25e3b6293c97ae23433439b6971923e3bd60cf7933e083"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/%40tailwindcss/oxide-win32-x64-msvc@4.3.3",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-win32-x64-msvc/-/oxide-win32-x64-msvc-4.3.3.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "win32"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "x64"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide@4.3.3",
-      "group": "@tailwindcss",
-      "name": "oxide",
-      "version": "4.3.3",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "92b5e302292268548f68afc5900413e544f1dd5a2b9906a2679841165259f54150181febc20d4c648847006f6c98c4114ddc89c4fe90b7933032d772539156ac"
+          "content": "3898459a511f77332bf9abc009d8b8d113ed9e45b407a857cb12fff2bfad9c41c15998e2dfa098463117aebbe0066698b03de810e06ac181512ac62fcc57bb07"
         }
       ],
       "licenses": [
@@ -10310,11 +10170,153 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40tailwindcss/oxide@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/oxide-wasm32-wasi@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide/-/oxide-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-wasm32-wasi/-/oxide-wasm32-wasi-4.3.5.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/tailwindlabs/tailwindcss.git"
+        }
+      ],
+      "properties": [
+        {
+          "name": "wildferret:shipped",
+          "value": "no"
+        },
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "wildferret:optional",
+          "value": "true"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-win32-arm64-msvc@4.3.5",
+      "group": "@tailwindcss",
+      "name": "oxide-win32-arm64-msvc",
+      "version": "4.3.5",
+      "scope": "excluded",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "f68f2382d862f9013979a9dd9dba22253eb85507e7200adf6734937606e110ae5a69f762bb68d35bd1e89e2fe6c181f1059b87d6f002e7b205cab87ed222b91a"
+        }
+      ],
+      "licenses": [],
+      "purl": "pkg:npm/%40tailwindcss/oxide-win32-arm64-msvc@4.3.5",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-win32-arm64-msvc/-/oxide-win32-arm64-msvc-4.3.5.tgz"
+        }
+      ],
+      "properties": [
+        {
+          "name": "wildferret:shipped",
+          "value": "no"
+        },
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "wildferret:optional",
+          "value": "true"
+        },
+        {
+          "name": "wildferret:os",
+          "value": "win32"
+        },
+        {
+          "name": "wildferret:cpu",
+          "value": "arm64"
+        },
+        {
+          "name": "wildferret:manifest",
+          "value": "not-in-local-store"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-win32-x64-msvc@4.3.5",
+      "group": "@tailwindcss",
+      "name": "oxide-win32-x64-msvc",
+      "version": "4.3.5",
+      "scope": "excluded",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "5e22857c8cb54567bba8ae16a81cb1356ececf5fe790ecbca3f0568479a29f25753e6a5477c11e763e6fd80f21da4a6a795973eb1467c24f45aff65734b7197e"
+        }
+      ],
+      "licenses": [],
+      "purl": "pkg:npm/%40tailwindcss/oxide-win32-x64-msvc@4.3.5",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-win32-x64-msvc/-/oxide-win32-x64-msvc-4.3.5.tgz"
+        }
+      ],
+      "properties": [
+        {
+          "name": "wildferret:shipped",
+          "value": "no"
+        },
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "wildferret:optional",
+          "value": "true"
+        },
+        {
+          "name": "wildferret:os",
+          "value": "win32"
+        },
+        {
+          "name": "wildferret:cpu",
+          "value": "x64"
+        },
+        {
+          "name": "wildferret:manifest",
+          "value": "not-in-local-store"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide@4.3.5",
+      "group": "@tailwindcss",
+      "name": "oxide",
+      "version": "4.3.5",
+      "scope": "excluded",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "3f29ea18b66c66fc0cf6da83fc253190e21fc9de8ae5e959d8ca286aecc9af23ff52a5d8822df261bb6ddcdd177be30757f78528f1500847c8280aa5012d4206"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40tailwindcss/oxide@4.3.5",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide/-/oxide-4.3.5.tgz"
         },
         {
           "type": "vcs",
@@ -10334,16 +10336,16 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/vite@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/vite@4.3.5",
       "group": "@tailwindcss",
       "name": "vite",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "description": "A utility-first CSS framework for rapidly building custom user interfaces.",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "c9853c72880b79287f9acda387c163ee369b6bf1166bb25ae86a14a9865aada12e088e584ba9ace8e6d98238de766fa39ba5d98dd351581a4f3fa67cea83b173"
+          "content": "0423626346b566374e1d5ab0ee4c9bed4ef60707cc17775f52e37eb50b0b5a4cbf27924e23fafb69b89b8255dfca0ad98553bfdeedd5f84db992429378c91769"
         }
       ],
       "licenses": [
@@ -10353,11 +10355,11 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40tailwindcss/vite@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/vite@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/vite/-/vite-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/vite/-/vite-4.3.5.tgz"
         },
         {
           "type": "website",
@@ -20295,53 +20297,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/lightningcss-android-arm64@1.32.0",
-      "name": "lightningcss-android-arm64",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "60aeff0a54ede2400ad2fa3ac375fe3e79b40f671fdaf3c76e139776836d8b519ad1a9753f84c1661c23013be33702c40429cabe325cda34201d71f4344c2502"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/lightningcss-android-arm64@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss-android-arm64/-/lightningcss-android-arm64-1.32.0.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "android"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "arm64"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "pkg:npm/lightningcss-android-arm64@1.33.0",
       "name": "lightningcss-android-arm64",
       "version": "1.33.0",
@@ -20380,60 +20335,6 @@
         {
           "name": "wildferret:manifest",
           "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/lightningcss-darwin-arm64@1.32.0",
-      "name": "lightningcss-darwin-arm64",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "description": "A CSS parser, transformer, and minifier written in Rust",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "473786f49bb96da83606fd7f97095526f044deae93b57b247592cb0b27e0e69b7e1cbcfd06a94808eecb64ced51cd4d39ffe4f4611c50528e4e65738726b1c3d"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MPL-2.0"
-          }
-        }
-      ],
-      "purl": "pkg:npm/lightningcss-darwin-arm64@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss-darwin-arm64/-/lightningcss-darwin-arm64-1.32.0.tgz"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/parcel-bundler/lightningcss.git"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "darwin"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "arm64"
         }
       ]
     },
@@ -20489,53 +20390,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/lightningcss-darwin-x64@1.32.0",
-      "name": "lightningcss-darwin-x64",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "53e42c069da6fecdb0aa95184ffeb09e56a07596ed65d9dd4a6badfcd26a94270c2d35a9e66b82ac80fe2b9509ea3a83d8116c85e8c26179e23c36cd87bdd5f3"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/lightningcss-darwin-x64@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss-darwin-x64/-/lightningcss-darwin-x64-1.32.0.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "darwin"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "x64"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "pkg:npm/lightningcss-darwin-x64@1.33.0",
       "name": "lightningcss-darwin-x64",
       "version": "1.33.0",
@@ -20566,53 +20420,6 @@
         {
           "name": "wildferret:os",
           "value": "darwin"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "x64"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/lightningcss-freebsd-x64@1.32.0",
-      "name": "lightningcss-freebsd-x64",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "2424e281e74492c664ded1d34ed86731d55f19feb5164cbc262d84e188d44c4417d78c62cbf953cd79eed6fc2265eddb61ed2af92a6c487fc24de0d72ba5878a"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/lightningcss-freebsd-x64@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss-freebsd-x64/-/lightningcss-freebsd-x64-1.32.0.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "freebsd"
         },
         {
           "name": "wildferret:cpu",
@@ -20669,53 +20476,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/lightningcss-linux-arm-gnueabihf@1.32.0",
-      "name": "lightningcss-linux-arm-gnueabihf",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "c7aae79e945ad862f4cd03a4b7aaedb376033f376e2e95afc0017a10c8571556570f8b4fac190416acc6a30cc2b085ac3e3a922beb723443835015de7951d293"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/lightningcss-linux-arm-gnueabihf@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss-linux-arm-gnueabihf/-/lightningcss-linux-arm-gnueabihf-1.32.0.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "linux"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "arm"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "pkg:npm/lightningcss-linux-arm-gnueabihf@1.33.0",
       "name": "lightningcss-linux-arm-gnueabihf",
       "version": "1.33.0",
@@ -20759,53 +20519,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/lightningcss-linux-arm64-gnu@1.32.0",
-      "name": "lightningcss-linux-arm64-gnu",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "d279ccca8c8e2d12577db30e8a569245c2c7dc9c39cfd1c33467d3fe0c023e06838e7c748bcc3bbc1cc52c54757fa08c2ca17c8156de6e69143777dafe4409a5"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/lightningcss-linux-arm64-gnu@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss-linux-arm64-gnu/-/lightningcss-linux-arm64-gnu-1.32.0.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "linux"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "arm64"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "pkg:npm/lightningcss-linux-arm64-gnu@1.33.0",
       "name": "lightningcss-linux-arm64-gnu",
       "version": "1.33.0",
@@ -20828,53 +20541,6 @@
         {
           "name": "wildferret:shipped",
           "value": "no"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "linux"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "arm64"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/lightningcss-linux-arm64-musl@1.32.0",
-      "name": "lightningcss-linux-arm64-musl",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "529424a1e9ebe14244ce054862923cd250c5bd198f560ea8a9ba0d1dfa07e024087cd03e1cead9ecca3b2993f4d9d0ba2e38213d025e06cbd7849a1dff09c806"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/lightningcss-linux-arm64-musl@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss-linux-arm64-musl/-/lightningcss-linux-arm64-musl-1.32.0.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
         },
         {
           "name": "wildferret:optional",
@@ -20939,53 +20605,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/lightningcss-linux-x64-gnu@1.32.0",
-      "name": "lightningcss-linux-x64-gnu",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "57b42be7622166674a3d5afe56dc3ca3e58bb1025809377c96821fa4368c45619465f04e60425ec89224a862033193f03f1db8a5431fc12c7123ca61aff31b38"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/lightningcss-linux-x64-gnu@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss-linux-x64-gnu/-/lightningcss-linux-x64-gnu-1.32.0.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "linux"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "x64"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "pkg:npm/lightningcss-linux-x64-gnu@1.33.0",
       "name": "lightningcss-linux-x64-gnu",
       "version": "1.33.0",
@@ -21008,53 +20627,6 @@
         {
           "name": "wildferret:shipped",
           "value": "no"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "linux"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "x64"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/lightningcss-linux-x64-musl@1.32.0",
-      "name": "lightningcss-linux-x64-musl",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "6d870ba7e55bd1ac2c89783ff34b8245ecc2607360d7f9779add20cc79d657d5cfd56e6c29ae7f4c274659a47fcc13363de17f1dbb10bff8f651134e895bb15a"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/lightningcss-linux-x64-musl@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss-linux-x64-musl/-/lightningcss-linux-x64-musl-1.32.0.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
         },
         {
           "name": "wildferret:optional",
@@ -21119,53 +20691,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/lightningcss-win32-arm64-msvc@1.32.0",
-      "name": "lightningcss-win32-arm64-msvc",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "f126c2f01478d294ba6da08cf2c6ed6034b011541de099454ce95a0f78161877d385370006734305d6ba79365ea9ba1f6a5209845c74a8ace01c999c3d39c677"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/lightningcss-win32-arm64-msvc@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss-win32-arm64-msvc/-/lightningcss-win32-arm64-msvc-1.32.0.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "win32"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "arm64"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "pkg:npm/lightningcss-win32-arm64-msvc@1.33.0",
       "name": "lightningcss-win32-arm64-msvc",
       "version": "1.33.0",
@@ -21200,53 +20725,6 @@
         {
           "name": "wildferret:cpu",
           "value": "arm64"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/lightningcss-win32-x64-msvc@1.32.0",
-      "name": "lightningcss-win32-x64-msvc",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "026abd07f4a86587438b5905ae88e7a2a3cbc58850e16a395e22fc11526b56c07c011a02d4f596e951ad4f458a09e9a3cbc682fa5a2e2678d2ed4d7cc776f4e9"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/lightningcss-win32-x64-msvc@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss-win32-x64-msvc/-/lightningcss-win32-x64-msvc-1.32.0.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "win32"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "x64"
         },
         {
           "name": "wildferret:manifest",
@@ -21294,48 +20772,6 @@
         {
           "name": "wildferret:manifest",
           "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/lightningcss@1.32.0",
-      "name": "lightningcss",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "description": "A CSS parser, transformer, and minifier written in Rust",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "357601ce29cdadb95fada3c6cab6cfa03d7d0b587d95f23fd66ce0598bd75137b8d781b3fd7d450f65c165264ceeb453acc03c24bdceb4068689fac82a1439c9"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MPL-2.0"
-          }
-        }
-      ],
-      "purl": "pkg:npm/lightningcss@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss/-/lightningcss-1.32.0.tgz"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/parcel-bundler/lightningcss.git"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
         }
       ]
     },
@@ -21616,48 +21052,6 @@
         {
           "type": "vcs",
           "url": "git://github.com/isaacs/node-lru-cache.git"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/magic-string@0.30.21",
-      "name": "magic-string",
-      "version": "0.30.21",
-      "scope": "excluded",
-      "description": "Modify strings, generate sourcemaps",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "bddd85e1853211728670b1e8abe4c4c828f1b9e49e1e7171cb28cda7cd328345d5e2f5219c37abfe5bef96a33f6ab0796d740de4adbfde88a7c82472c7c4f609"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "purl": "pkg:npm/magic-string@0.30.21",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/magic-string/-/magic-string-0.30.21.tgz"
-        },
-        {
-          "type": "vcs",
-          "url": "git+https://github.com/Rich-Harris/magic-string.git"
         }
       ],
       "properties": [
@@ -26492,15 +25886,15 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/tailwindcss@4.3.3",
+      "bom-ref": "pkg:npm/tailwindcss@4.3.5",
       "name": "tailwindcss",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "description": "A utility-first CSS framework for rapidly building custom user interfaces.",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "80e855dcfeee7c4eb64031a0d7355a4e0091f84b4fbfdda4da722155c54a70b9b14f5b1406c406867663d7be63f8ca91b78ccb17b89cfac0988df8713318fb61"
+          "content": "15c424f41b9f7e610724fd86d17981d92a6553568b4c8ee3d3b2ae9e4f94ef8372f978963adcd7cfd6ae8c567f6af9edc357b670ebffdcf920cdf950ee05f6bd"
         }
       ],
       "licenses": [
@@ -26510,11 +25904,11 @@
           }
         }
       ],
-      "purl": "pkg:npm/tailwindcss@4.3.3",
+      "purl": "pkg:npm/tailwindcss@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/tailwindcss/-/tailwindcss-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/tailwindcss/-/tailwindcss-4.3.5.tgz"
         },
         {
           "type": "website",
@@ -30263,7 +29657,7 @@
         "pkg:npm/%40astryxdesign/core@0.7.5",
         "pkg:npm/%40eslint/js@9.39.5",
         "pkg:npm/%40stylexjs/stylex@0.19.1",
-        "pkg:npm/%40tailwindcss/vite@4.3.3",
+        "pkg:npm/%40tailwindcss/vite@4.3.5",
         "pkg:npm/%40types/dom-chromium-ai@0.0.18",
         "pkg:npm/%40types/node@26.6.6",
         "pkg:npm/%40types/react-dom@19.3.0",
@@ -30281,7 +29675,7 @@
         "pkg:npm/prettier@3.9.10",
         "pkg:npm/react-dom@19.3.1",
         "pkg:npm/react@19.3.1",
-        "pkg:npm/tailwindcss@4.3.3",
+        "pkg:npm/tailwindcss@4.3.5",
         "pkg:npm/typescript-eslint@8.72.1",
         "pkg:npm/typescript@5.9.3",
         "pkg:npm/vitest@5.0.5",
@@ -31445,88 +30839,88 @@
       ]
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/node@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/node@4.3.5",
       "dependsOn": [
         "pkg:npm/%40jridgewell/remapping@2.3.5",
         "pkg:npm/enhanced-resolve@5.26.0",
         "pkg:npm/jiti@2.7.0",
-        "pkg:npm/lightningcss@1.32.0",
-        "pkg:npm/magic-string@0.30.21",
+        "pkg:npm/lightningcss@1.33.0",
+        "pkg:npm/magic-string@1.4.5",
         "pkg:npm/source-map-js@1.2.2",
-        "pkg:npm/tailwindcss@4.3.3"
+        "pkg:npm/tailwindcss@4.3.5"
       ]
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-android-arm64@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-android-arm64@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-darwin-arm64@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-darwin-arm64@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-darwin-x64@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-darwin-x64@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-freebsd-x64@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-freebsd-x64@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-linux-arm-gnueabihf@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-linux-arm-gnueabihf@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-linux-arm64-gnu@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-linux-arm64-gnu@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-linux-arm64-musl@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-linux-arm64-musl@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-linux-x64-gnu@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-linux-x64-gnu@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-linux-x64-musl@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-linux-x64-musl@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-wasm32-wasi@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-wasm32-wasi@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-win32-arm64-msvc@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-win32-arm64-msvc@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-win32-x64-msvc@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-win32-x64-msvc@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide@4.3.5",
       "dependsOn": [
-        "pkg:npm/%40tailwindcss/oxide-android-arm64@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide-darwin-arm64@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide-darwin-x64@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide-freebsd-x64@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide-linux-arm-gnueabihf@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide-linux-arm64-gnu@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide-linux-arm64-musl@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide-linux-x64-gnu@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide-linux-x64-musl@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide-wasm32-wasi@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide-win32-arm64-msvc@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide-win32-x64-msvc@4.3.3"
+        "pkg:npm/%40tailwindcss/oxide-android-arm64@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide-darwin-arm64@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide-darwin-x64@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide-freebsd-x64@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide-linux-arm-gnueabihf@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide-linux-arm64-gnu@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide-linux-arm64-musl@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide-linux-x64-gnu@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide-linux-x64-musl@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide-wasm32-wasi@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide-win32-arm64-msvc@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide-win32-x64-msvc@4.3.5"
       ]
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/vite@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/vite@4.3.5",
       "dependsOn": [
-        "pkg:npm/%40tailwindcss/node@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide@4.3.3",
-        "pkg:npm/tailwindcss@4.3.3",
+        "pkg:npm/%40tailwindcss/node@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide@4.3.5",
+        "pkg:npm/tailwindcss@4.3.5",
         "pkg:npm/vite@8.3.5"
       ]
     },
@@ -32812,15 +32206,7 @@
       "dependsOn": ["pkg:npm/prelude-ls@1.2.1", "pkg:npm/type-check@0.4.0"]
     },
     {
-      "ref": "pkg:npm/lightningcss-android-arm64@1.32.0",
-      "dependsOn": []
-    },
-    {
       "ref": "pkg:npm/lightningcss-android-arm64@1.33.0",
-      "dependsOn": []
-    },
-    {
-      "ref": "pkg:npm/lightningcss-darwin-arm64@1.32.0",
       "dependsOn": []
     },
     {
@@ -32828,15 +32214,7 @@
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/lightningcss-darwin-x64@1.32.0",
-      "dependsOn": []
-    },
-    {
       "ref": "pkg:npm/lightningcss-darwin-x64@1.33.0",
-      "dependsOn": []
-    },
-    {
-      "ref": "pkg:npm/lightningcss-freebsd-x64@1.32.0",
       "dependsOn": []
     },
     {
@@ -32844,15 +32222,7 @@
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/lightningcss-linux-arm-gnueabihf@1.32.0",
-      "dependsOn": []
-    },
-    {
       "ref": "pkg:npm/lightningcss-linux-arm-gnueabihf@1.33.0",
-      "dependsOn": []
-    },
-    {
-      "ref": "pkg:npm/lightningcss-linux-arm64-gnu@1.32.0",
       "dependsOn": []
     },
     {
@@ -32860,15 +32230,7 @@
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/lightningcss-linux-arm64-musl@1.32.0",
-      "dependsOn": []
-    },
-    {
       "ref": "pkg:npm/lightningcss-linux-arm64-musl@1.33.0",
-      "dependsOn": []
-    },
-    {
-      "ref": "pkg:npm/lightningcss-linux-x64-gnu@1.32.0",
       "dependsOn": []
     },
     {
@@ -32876,15 +32238,7 @@
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/lightningcss-linux-x64-musl@1.32.0",
-      "dependsOn": []
-    },
-    {
       "ref": "pkg:npm/lightningcss-linux-x64-musl@1.33.0",
-      "dependsOn": []
-    },
-    {
-      "ref": "pkg:npm/lightningcss-win32-arm64-msvc@1.32.0",
       "dependsOn": []
     },
     {
@@ -32892,29 +32246,8 @@
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/lightningcss-win32-x64-msvc@1.32.0",
-      "dependsOn": []
-    },
-    {
       "ref": "pkg:npm/lightningcss-win32-x64-msvc@1.33.0",
       "dependsOn": []
-    },
-    {
-      "ref": "pkg:npm/lightningcss@1.32.0",
-      "dependsOn": [
-        "pkg:npm/detect-libc@2.1.2",
-        "pkg:npm/lightningcss-android-arm64@1.32.0",
-        "pkg:npm/lightningcss-darwin-arm64@1.32.0",
-        "pkg:npm/lightningcss-darwin-x64@1.32.0",
-        "pkg:npm/lightningcss-freebsd-x64@1.32.0",
-        "pkg:npm/lightningcss-linux-arm-gnueabihf@1.32.0",
-        "pkg:npm/lightningcss-linux-arm64-gnu@1.32.0",
-        "pkg:npm/lightningcss-linux-arm64-musl@1.32.0",
-        "pkg:npm/lightningcss-linux-x64-gnu@1.32.0",
-        "pkg:npm/lightningcss-linux-x64-musl@1.32.0",
-        "pkg:npm/lightningcss-win32-arm64-msvc@1.32.0",
-        "pkg:npm/lightningcss-win32-x64-msvc@1.32.0"
-      ]
     },
     {
       "ref": "pkg:npm/lightningcss@1.33.0",
@@ -32956,10 +32289,6 @@
     {
       "ref": "pkg:npm/lru-cache@5.1.1",
       "dependsOn": ["pkg:npm/yallist@3.1.1"]
-    },
-    {
-      "ref": "pkg:npm/magic-string@0.30.21",
-      "dependsOn": ["pkg:npm/%40jridgewell/sourcemap-codec@1.6.0"]
     },
     {
       "ref": "pkg:npm/magic-string@1.4.5",
@@ -33580,7 +32909,7 @@
       "dependsOn": ["pkg:npm/%40pkgr/core@0.3.6"]
     },
     {
-      "ref": "pkg:npm/tailwindcss@4.3.3",
+      "ref": "pkg:npm/tailwindcss@4.3.5",
       "dependsOn": []
     },
     {
