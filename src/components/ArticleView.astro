@@ -76,7 +76,7 @@ const carouselArrowClass =
 
 <div class="animate-page-enter">
   {/* Article Header */}
-  <header class="max-w-[720px] mx-auto px-6 pt-10 sm:pt-14 pb-8">
+  <header class="max-w-[768px] mx-auto px-6 pt-10 sm:pt-14 pb-8">
     <div class="animate-reveal">
       <div class="mb-5">
         <Text type="supporting">{article.date}</Text>
@@ -116,7 +116,7 @@ const carouselArrowClass =
     </div>
   </header>
 
-  <div class="max-w-[720px] mx-auto">
+  <div class="max-w-[768px] mx-auto">
     <Divider />
   </div>
 
@@ -129,7 +129,7 @@ const carouselArrowClass =
       - The first block sits flush: the body's own top padding already spaces
         it from the rule above, and an h2's margin on top reads as a hole. */}
   <article
-    class="max-w-[720px] mx-auto px-6 pt-9 pb-12 break-keep wrap-break-word [&>:first-child]:mt-0"
+    class="max-w-[768px] mx-auto px-6 pt-9 pb-12 break-keep wrap-break-word [&>:first-child]:mt-0"
     data-article-body
   >
     {summary && (
@@ -349,7 +349,7 @@ const carouselArrowClass =
   </article>
 
   {/* Back link */}
-  <div class="max-w-[720px] mx-auto px-6 pb-20">
+  <div class="max-w-[768px] mx-auto px-6 pb-20">
     <Divider className="mb-10" />
     <a
       href={localeHref(locale, '/')}

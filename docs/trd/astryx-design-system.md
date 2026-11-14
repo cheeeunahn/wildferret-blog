@@ -123,7 +123,7 @@ Where each component is used:
 
 Lists stay native `<ul>`/`<ol>` with `Text` items. The hero and carousel stay CSS radios.
 
-Every page uses one 720px column: header, footer, home, article, about and 404 share the same edges.
+Every page uses one 768px column: header, footer, home, article, about and 404 share the same edges.
 
 ### 5a. Search and category filter island
 

@@ -155,7 +155,7 @@ A lint rule rejects `client:*` anywhere else. See the Islands policy in
 The site uses **Astryx's** default colors, typography and components
 ([ADR 0002](docs/adr/0002-astryx-design-system.md)). The theme in
 `src/styles/astryx/wildferretTheme.ts` swaps in the webfont and raises the type
-scale's base to 16px. Every page shares one 720px column, and the home page is a
+scale's base to 16px. Every page shares one 768px column, and the home page is a
 search box, category pills and a list of wide cards (artwork left, text right),
 after Astryx's Library template ([ADR 0003](docs/adr/0003-library-layout-and-reading-scale.md)).
 
