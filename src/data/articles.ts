@@ -8,7 +8,6 @@ export const articles: Article[] = [
     title: 'CLAUDE.md에는 무엇을 적어야 할까',
     subtitle: 'AGENTS.md·CLAUDE.md 논문 여섯 편으로 본, 파일에 남길 것과 코드로 옮길 것',
     date: '2026.11.07',
-    readMinutes: 16,
     category: 'Paper Review',
     cardImage: '/assets/images/optimizing-claude-md-card.webp',
     loadContent: () =>
@@ -32,7 +31,6 @@ export const articles: Article[] = [
     title: '합성 유저(synthetic user)는 실제 사람을 대상으로 하는 유저 리서치를 대체할 수 있을까',
     subtitle: '가상 유저 리서치 패널 만드는 김에 조사하고 읽어본 합성 유저 문헌들',
     date: '2026.09.01',
-    readMinutes: 12,
     category: 'Paper Review',
     cardImage: '/assets/images/synthetic-user-reading-card.webp',
     loadContent: () =>
@@ -57,7 +55,6 @@ export const articles: Article[] = [
     subtitle:
       '구독 결제, AI가 인용하는 브랜드, 게임 마케팅, 가상자산 광고, 그리고 AI로 일하는 방식',
     date: '2026.08.18',
-    readMinutes: 12,
     category: 'Conference',
     cardImage: '/assets/images/mgs-2026-play-hall-card.webp',
     loadContent: () =>
@@ -82,7 +79,6 @@ export const articles: Article[] = [
     subtitle: '프로덕트 디자이너 대상으로 AI 101 세션을 준비하며 정리한 내용 요약',
     cardImage: '/assets/images/ai-git-101-for-designers-card.webp',
     date: '2026.04.23',
-    readMinutes: 7,
     category: 'Personal',
     loadContent: () =>
       import('./article-content/ai-git-101-for-designers').then(

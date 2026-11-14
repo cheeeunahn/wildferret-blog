@@ -3,6 +3,8 @@ import tsParser from '@typescript-eslint/parser'
 import * as astroParser from 'astro-eslint-parser'
 import { describe, it } from 'vitest'
 
+import astryxColorsOnly from './astryx-colors-only.js'
+import astryxTypeOnly from './astryx-type-only.js'
 import noBareInternalHref from './no-bare-internal-href.js'
 import noCrossLayerImport from './no-cross-layer-import.js'
 import { layerZones } from './layer-zones.js'
@@ -13,7 +15,7 @@ import noUnlistedIsland from './no-unlisted-island.js'
 RuleTester.describe = describe
 RuleTester.it = it
 
-/** Rules run against .tsx (ThemeToggle.tsx, Comments.tsx). */
+/** Rules run against .tsx (ThemeToggle.tsx, AiSummary.tsx). */
 const tsx = new RuleTester({
   languageOptions: {
     parser: tsParser,
@@ -62,7 +64,10 @@ tsx.run('no-bare-internal-href (tsx)', noBareInternalHref, {
 })
 
 astro.run('no-bare-internal-href (astro)', noBareInternalHref, {
-  valid: [astroCase('<a href={href("/about")}>x</a>'), astroCase('<a href="https://x.com">x</a>')],
+  valid: [
+    astroCase('<a href={localeHref(locale, "/about")}>x</a>'),
+    astroCase('<a href="https://x.com">x</a>'),
+  ],
   invalid: [astroCase('<a href="/about">x</a>', [{ messageId: 'bareHref' }])],
 })
 
@@ -78,32 +83,33 @@ astro.run('no-unlisted-island', noUnlistedIsland, {
   ],
 })
 
-astro.run('no-unlisted-island (with the Comments island allowed)', noUnlistedIsland, {
+astro.run('no-unlisted-island (with the AiSummary island allowed)', noUnlistedIsland, {
   valid: [
     {
-      ...astroCase('<Comments client:visible articleSlug={s} />'),
-      options: [{ allow: ['ThemeToggle', 'Comments'] }],
+      ...astroCase('<AiSummary client:summarizer slug={s} />'),
+      options: [{ allow: ['ThemeToggle', 'AiSummary'] }],
     },
   ],
   invalid: [
-    // The allowlist is per-component, so opening it for Comments must not open
+    // The allowlist is per-component, so opening it for AiSummary must not open
     // it for anything else.
     {
       ...astroCase('<ArticleCard client:visible />', [{ messageId: 'unlisted' }]),
-      options: [{ allow: ['ThemeToggle', 'Comments'] }],
+      options: [{ allow: ['ThemeToggle', 'AiSummary'] }],
     },
-    // ...and Comments is only an island because the config says so.
-    astroCase('<Comments client:visible />', [{ messageId: 'unlisted' }]),
+    // ...and AiSummary is only an island because the config says so.
+    astroCase('<AiSummary client:summarizer />', [{ messageId: 'unlisted' }]),
   ],
 })
 
 tsx.run('no-unescaped-user-html', noUnescapedUserHtml, {
   valid: [
-    // React escapes JSX children — this is the actual defense against stored XSS.
-    { code: 'const C = ({ c }) => <p>{c.body}</p>', filename: 'src/components/Comments.tsx' },
+    // React escapes JSX children — this is the actual defense against markup
+    // in model output.
+    { code: 'const C = ({ s }) => <p>{s.text}</p>', filename: 'src/components/AiSummary.tsx' },
     {
-      code: 'const C = ({ c }) => <span title={c.nickname}>{c.nickname}</span>',
-      filename: 'src/components/Comments.tsx',
+      code: 'const C = ({ s }) => <span title={s.text}>{s.text}</span>',
+      filename: 'src/components/AiSummary.tsx',
     },
     // The parser's own module and tests import it legitimately; only
     // components are barred.
@@ -113,20 +119,20 @@ tsx.run('no-unescaped-user-html', noUnescapedUserHtml, {
     },
     {
       code: "import { splitContentIntoBlocks } from '../content/parser'",
-      filename: 'src/components/Comments.tsx',
+      filename: 'src/components/AiSummary.tsx',
     },
   ],
   invalid: [
     {
-      code: 'const C = ({ c }) => <p dangerouslySetInnerHTML={{ __html: c.body }} />',
-      filename: 'src/components/Comments.tsx',
+      code: 'const C = ({ s }) => <p dangerouslySetInnerHTML={{ __html: s.text }} />',
+      filename: 'src/components/AiSummary.tsx',
       errors: [{ messageId: 'dangerous' }],
     },
     {
       // The tempting shortcut: reuse the article parser, which emits raw HTML
       // because it trusts its input.
       code: "import { formatInline } from '../content/parser'",
-      filename: 'src/components/Comments.tsx',
+      filename: 'src/components/AiSummary.tsx',
       errors: [{ messageId: 'formatInline' }],
     },
   ],
@@ -146,12 +152,12 @@ const crossLayer = [{ messageId: 'crossLayer' }]
 tsx.run('no-cross-layer-import (ts/tsx)', noCrossLayerImport, {
   valid: [
     // Every layer may use the shared helpers.
-    layerCase('src/components/Comments.tsx', "import { checkComment } from '../shared/moderation'"),
+    layerCase('src/components/AiSummary.tsx', "import type { Lang } from '../shared/i18n'"),
     layerCase('src/content/service.ts', "import { articles } from '../data/articles'"),
     layerCase('src/data/about.ts', "import type { Lang } from '../shared/i18n'"),
     // Same-layer imports, including data's own dynamic article imports.
     layerCase('src/data/articles.ts', "const c = () => import('./article-content/x')"),
-    layerCase('src/components/Comments.tsx', "import { A } from './Other'"),
+    layerCase('src/components/AiSummary.tsx', "import { A } from './Other'"),
     // Packages are not layers.
     layerCase('src/shared/i18n.ts', "import { describe } from 'vitest'"),
     // Absolute filenames, as ESLint passes them for real.
@@ -160,13 +166,18 @@ tsx.run('no-cross-layer-import (ts/tsx)', noCrossLayerImport, {
   invalid: [
     // An island bundling build-time content would ship it to the browser.
     layerCase(
-      'src/components/Comments.tsx',
+      'src/components/AiSummary.tsx',
       "import { articlesIn } from '../content/service'",
       crossLayer,
     ),
     layerCase(
-      'src/client/supabaseComments.ts',
+      'src/client/summarizer.ts',
       "import { articles } from '../data/articles'",
+      crossLayer,
+    ),
+    layerCase(
+      'src/directives/summarizer.ts',
+      "import { articlesIn } from '../content/service'",
       crossLayer,
     ),
     // Type-only imports still couple the layers.
@@ -182,7 +193,7 @@ tsx.run('no-cross-layer-import (ts/tsx)', noCrossLayerImport, {
     layerCase('src/copy/strings.ts', "export { articles } from '../data/articles'", crossLayer),
     layerCase('src/copy/strings.ts', "export * from '../data/articles'", crossLayer),
     layerCase(
-      'src/components/Comments.tsx',
+      'src/components/AiSummary.tsx',
       "const m = () => import('../content/service')",
       crossLayer,
     ),
@@ -207,5 +218,98 @@ astro.run('no-cross-layer-import (astro)', noCrossLayerImport, {
       "---\nimport { articles } from '../data/articles'\n---\n<p />",
       crossLayer,
     ),
+  ],
+})
+
+astro.run('astryx-colors-only (astro)', astryxColorsOnly, {
+  valid: [
+    // Astryx token aliases and Astryx tokens by name.
+    astroCase('<p class="text-ink-900 bg-paper border-ink-100 hover:bg-ink-50">x</p>'),
+    astroCase('<ul class="bg-(--color-background-popover) shadow-med">x</ul>'),
+    astroCase('<p class="text-accent data-stuck:shadow-med dark:data-stuck:shadow-high">x</p>'),
+    // Not colors: an in-page anchor whose id happens to be hex-like, and a
+    // utility that merely contains a palette word.
+    astroCase('<a href="#add">x</a>'),
+    astroCase('<p class="text-pretty break-keep">x</p>'),
+  ],
+  invalid: [
+    astroCase('<p class="text-gray-500">x</p>', [{ messageId: 'palette' }]),
+    astroCase('<p class="hover:bg-white/80 p-2">x</p>', [{ messageId: 'palette' }]),
+    astroCase('<div class="border-t-red-200">x</div>', [{ messageId: 'palette' }]),
+    astroCase('<p class="bg-[#fafafa]">x</p>', [{ messageId: 'arbitrary' }]),
+    astroCase('<p class="text-[rgb(0_0_0)]">x</p>', [{ messageId: 'arbitrary' }]),
+  ],
+})
+
+tsx.run('astryx-colors-only (tsx)', astryxColorsOnly, {
+  valid: [
+    { code: 'const c = <p className="text-ink-700">x</p>', filename: 'src/components/X.tsx' },
+    { code: "const s = { color: 'var(--color-text-primary)' }", filename: 'src/components/X.tsx' },
+    // Article bodies and tests are out of scope.
+    {
+      code: 'export const c = \'<p class="text-gray-500">\'',
+      filename: 'src/data/article-content/x.ts',
+    },
+    { code: "const c = '#ffffff'", filename: 'src/shared/x.test.ts' },
+    // stoneColors.ts is where tokens get their raw values.
+    {
+      code: "const t = { '--color-accent': ['#25252a', '#f3f3f5'] }",
+      filename: 'src/styles/astryx/stoneColors.ts',
+    },
+  ],
+  invalid: [
+    {
+      code: 'const c = <p className={`p-2 ${on ? "bg-black" : ""}`}>x</p>',
+      filename: 'src/components/X.tsx',
+      errors: [{ messageId: 'palette' }],
+    },
+    {
+      code: "const s = { color: '#ffffff' }",
+      filename: 'src/components/X.tsx',
+      errors: [{ messageId: 'value' }],
+    },
+    {
+      code: "const s = { background: 'rgb(255 255 255 / 0.5)' }",
+      filename: 'src/components/X.tsx',
+      errors: [{ messageId: 'value' }],
+    },
+    // Only stoneColors.ts is exempt, not the rest of the theme folder.
+    {
+      code: "const t = { button: { base: { color: '#ffffff' } } }",
+      filename: 'src/styles/astryx/wildferretTheme.ts',
+      errors: [{ messageId: 'value' }],
+    },
+  ],
+})
+
+astro.run('astryx-type-only (astro)', astryxTypeOnly, {
+  valid: [
+    // Color, alignment and wrapping utilities are not typography.
+    astroCase('<p class="text-ink-900 text-center text-pretty break-keep">x</p>'),
+    // The font family alias on <html>.
+    astroCase('<html class="font-body text-ink-900">x</html>'),
+    astroCase('<p class="max-sm:hidden whitespace-nowrap">x</p>'),
+  ],
+  invalid: [
+    astroCase('<p class="text-sm text-ink-600">x</p>', [{ messageId: 'utility' }]),
+    astroCase('<p class="sm:text-lg">x</p>', [{ messageId: 'utility' }]),
+    astroCase('<li class="flex text-[15px]">x</li>', [{ messageId: 'utility' }]),
+    astroCase('<h1 class="font-semibold">x</h1>', [{ messageId: 'utility' }]),
+    astroCase('<p class="leading-[1.75] mb-6">x</p>', [{ messageId: 'utility' }]),
+    astroCase('<a class="tracking-tight">x</a>', [{ messageId: 'utility' }]),
+  ],
+})
+
+tsx.run('astryx-type-only (tsx)', astryxTypeOnly, {
+  valid: [
+    { code: 'const c = <p className="text-copper mt-3">x</p>', filename: 'src/components/X.tsx' },
+    { code: "const c = 'text-sm'", filename: 'src/components/X.test.ts' },
+  ],
+  invalid: [
+    {
+      code: 'const c = <p className={`m-0 ${a ? "text-xs" : ""}`}>x</p>',
+      filename: 'src/components/X.tsx',
+      errors: [{ messageId: 'utility' }],
+    },
   ],
 })

@@ -3,6 +3,10 @@
 - Status: Draft (spike implemented on `feat/astryx-design-system`)
 - Date: 2026-10-05
 - Decision records: [ADR 0002](../adr/0002-astryx-design-system.md); [ADR 0003](../adr/0003-library-layout-and-reading-scale.md) for the Library-style list, page width and type scale
+- Update 2026-11-14: the colors are now Astryx's shipped "stone" theme with a muted indigo accent (`src/styles/astryx/stoneColors.ts`, [ADR 0005](../adr/0005-stone-colors-and-astryx-lint.md)), not its defaults, and `local/astryx-colors-only` enforces them instead of review. The Goals' first line, F3, §2's literal decorative colors (only the fireflies and the card plate are raw values now), §3's "no color tokens", §9's review-only check and the color rows under Verification describe the earlier palette.
+- Update 2026-11-14: the comment section and its Supabase backend have since been removed from the site ([ADR 0004](../adr/0004-remove-comments.md)). Everything below that mentions comments (the comment-form goal, F1, F6 and its `/en/` built-in strings row, whose only `InternationalizationProvider` wrapped the Comments tree, N1's island list, N3, §6, §7 and the comment rows in Measurements and Verification) is kept as a record of the migration and no longer describes the site. The islands today are ThemeToggle, CategoryFilter and AiSummary.
+- Update 2026-11-14: the home page is now a ruled list of posts with square artwork and no read time, and article prose takes the theme's `prose` Text type instead of `leading-[1.75]` ([ADR 0006](../adr/0006-reading-layout-revisions.md)). §5's ArticleCard, AboutView (its interest badges are gone) and HomeView lines, its note on native lists (article lists now render through Astryx's `Markdown`), and §5a's `.cat-scope [hidden]` rule and `leading-[1.75]` describe the earlier pages.
+- Update 2026-11-14: the article cover image and the image carousel have been removed, since no post used them, so F7's and §5's mentions of the carousel are kept only as a record.
 
 ## Background
 
@@ -122,7 +126,7 @@ Where each component is used:
 
 Lists stay native `<ul>`/`<ol>` with `Text` items. The hero and carousel stay CSS radios.
 
-Every page uses one 720px column: header, footer, home, article, about and 404 share the same edges.
+Every page uses one 768px column: header, footer, home, article, about and 404 share the same edges.
 
 ### 5a. Search and category filter island
 
@@ -182,13 +186,13 @@ The same three article pages are built before and after.
 
 ## Risks and mitigations
 
-| Risk                                                             | Mitigation                                                                                          |
-| ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| An Astryx upgrade renames the `text-input` `size:lg` variant     | Re-check the home search box's height after upgrades                                                |
-| `astryx.css` (~30 KB gzipped) loads on every page                | Measured above; swizzle the few components used and drop the global sheet if it becomes the blocker |
-| Beta API churn between 0.x releases                              | Exact pins; upgrade deliberately with `astryx upgrade --apply`, then `pnpm theme:build`             |
-| A static component quietly gains a click-only feature on upgrade | Review the rendered page after upgrades; only display components are used outside islands           |
-| Color discipline drifts with `no-raw-colors` retired             | "Astryx only" is written into CLAUDE.md (Design Tokens) and checked in review                       |
+| Risk                                                             | Mitigation                                                                                                         |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| An Astryx upgrade renames the `text-input` `size:lg` variant     | Re-check the home search box's height after upgrades                                                               |
+| `astryx.css` (~30 KB gzipped) loads on every page                | Measured above; swizzle the few components used and drop the global sheet if it becomes the blocker                |
+| Beta API churn between 0.x releases                              | Exact pins; upgrade deliberately with `astryx upgrade --apply`, then `pnpm theme:build`                            |
+| A static component quietly gains a click-only feature on upgrade | Review the rendered page after upgrades; only display components are used outside islands                          |
+| Color discipline drifts with `no-raw-colors` retired             | "Astryx only" is in CLAUDE.md (Design Tokens); since 2026-11-14 `local/astryx-colors-only` enforces its color half |
 
 ## Open questions
 

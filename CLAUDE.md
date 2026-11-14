@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+It holds what the code cannot tell you: the reasons behind decisions, the traps, and the steps a particular kind of task needs. What the code shows (the stack, the routes, what each script does) is in the code and in [README.md](README.md). Rules a check can enforce live in that check, and this file only points at it. When this file and the code disagree, say so rather than silently following either.
+
 ## Commands
 
 <!-- docs:commands:start -->
@@ -19,7 +21,6 @@ pnpm translation:status       # which articles have no English version yet
 pnpm translate                # write the missing English versions (opens Claude Code)
 pnpm card:status              # which articles have no card thumbnail yet
 pnpm card:generate            # draw the missing card thumbnails with the Codex CLI — see Card Images
-pnpm mint:api-jwt             # mint the Worker's blog_api JWT — see Comments → Environment
 pnpm sbom:write               # regenerate docs/sbom/ (CycloneDX SBOM + summary) after a dependency change
 pnpm docs:status              # are README.md / CLAUDE.md in step with the repo? — see Docs Sync
 pnpm docs:write               # rebuild the generated blocks in both docs
@@ -31,316 +32,157 @@ pnpm theme:build              # rebuild src/styles/astryx/wildferret.theme.css a
 
 <!-- docs:commands:end -->
 
-Vitest (`vitest.config.ts`) runs `src/**/*.test.ts`, `eslint-rules/*.test.js`, and `scripts/*.test.js`. No single-file build commands.
+The list is generated from `package.json`, and the pre-push hook fails if it goes stale.
 
-Astro 7.4 requires **Node 22.23.4+**; pnpm 12 is pinned via `packageManager`. pnpm settings live in `pnpm-workspace.yaml` (pnpm 11+ ignores the `"pnpm"` field in `package.json`). Its `allowBuilds` must name every dependency with an install script: pnpm 12 fails the install on one it has not been told about, so a new dependency with a build script needs an entry (`true` only if it really needs the script).
+pnpm settings live in `pnpm-workspace.yaml`, because pnpm 11+ ignores the `"pnpm"` field in `package.json`. Its `allowBuilds` must name every dependency with an install script: pnpm 12 fails the install on one it has not been told about. Set `true` only if the package really needs its script.
+
+## What to check, by kind of change
+
+Run what the change needs, not everything:
+
+- **Article body or about copy only** (`src/data/`): `pnpm build`, since bodies are parsed at build time. Look at the page under `/`, and under `/en/` if the post is translated.
+- **A component, layout or style:** `pnpm lint` and `pnpm build`, then the page at a phone width (390px and 320px) and a desktop width, in light and dark. Check that nothing scrolls sideways.
+- **Logic** (`src/content`, `src/shared`, `src/client`, `src/directives`, `scripts/`, `eslint-rules/`): `pnpm test` and `pnpm lint`.
+- **`pnpm-lock.yaml` changed:** `pnpm sbom:write`, and commit its output (see SBOM).
+- **A file, script, island or external host added, removed or renamed:** `pnpm docs:status` (see Docs Sync).
+- **Docs only:** nothing beyond the pre-commit formatting.
+
+If you could not run a check the change needed, say which one and why when you report back.
 
 ## Architecture
 
-**Stack:** Astro 7 (static output + one on-demand route, `@astrojs/cloudflare` adapter), React 19 islands, TypeScript 5 (strict), Tailwind CSS 4 (`@tailwindcss/vite`), Astryx design system (`@astryxdesign/core`, pinned — see Design Tokens)
+Every page is prerendered to a real HTML file; no route runs as Worker code. The site is one root-path Cloudflare Worker serving those files. `@astrojs/cloudflare` is pinned to an exact version: check its `astro` peer range and bump the two together.
 
-Every page is prerendered to a real HTML file at build time. The one exception is `src/pages/api/comments.ts` (`prerender = false`), which runs as Worker code — see Comments. There is no client-side router.
-
-**Deployment:** one root-path Cloudflare Worker. `astro.config.mjs` uses `base: '/'`, overridable via the `BASE_PATH` env var for a path-prefixed host. The build writes prerendered pages to `dist/client/` (served as static assets, with `not_found_handling: "404-page"` → `dist/client/404.html`) and the Worker to `dist/server/`; the adapter generates the deployable `dist/server/wrangler.json` from `wrangler.jsonc`. The adapter is pinned to an exact `@astrojs/cloudflare` version in `package.json`; check its `astro` peer range and bump the two together. Sessions are off (`session: false`) so no KV namespace is required, and the adapter is skipped under Vitest (see the comment in `astro.config.mjs`).
-
-**Routing** (file-based, `src/pages/`). Every page exists in three prerendered trees — see Languages below:
-
-- `index.astro` → `/` · `about.astro` → `/about` · `article/[slug].astro` → `/article/:slug` (Korean, canonical)
-- `[lang]/index.astro`, `[lang]/about.astro`, `[lang]/article/[slug].astro` → the same pages under `/kr/…` and `/en/…`
-- `404.astro` → `dist/client/404.html` — one file serves every miss, `/en/` included, so it answers in **both** languages
-
-The page files are thin: each resolves a `Locale`, then renders a view component (`HomeView`, `AboutView`, `ArticleView` in `src/components/`) that holds the actual markup. The markup lives in exactly one place — edit the view, not one of the two routes that mount it.
-
-`src/layouts/Base.astro` is the shared shell: `<head>` (title, favicon, fonts, canonical + `hreflang` alternates, the pre-paint theme script), header, footer, and a `<slot />`. It takes a required `locale` prop.
+- **Edit the view, not the route.** Each page exists in three trees (see Languages), and the route files are thin wrappers that mount `HomeView`, `AboutView` or `ArticleView` from `src/components/`. The markup lives only in the view.
+- **`404.astro` answers in both languages.** One `dist/client/404.html` serves every miss, `/en/` included.
 
 ## Layers
 
-`src/` is split into presentation, logic, and data layers, plus pure shared helpers. The reasoning is in `docs/adr/0001-layered-architecture.md`.
+`src/` is split into presentation, logic and data, plus pure shared helpers. `local/no-cross-layer-import` enforces the import rules; the zones and their reasons are in `eslint-rules/layer-zones.js`, the decision in `docs/adr/0001-layered-architecture.md`.
 
-| Layer              | Folder                                                                 | Holds                                                                                                                                                    |
-| ------------------ | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Presentation       | `src/pages`, `src/layouts`, `src/components`, `src/copy`, `src/styles` | Templates, islands, UI copy (`copy/strings.ts`), Tailwind                                                                                                |
-| Browser client     | `src/client`                                                           | Code an island uses to reach anything outside the page (today: `commentsApi.ts` → `/api/comments`)                                                       |
-| Logic (runtime)    | `src/server`                                                           | Code that runs per request in the Worker (today: `comments/`)                                                                                            |
-| Logic (build time) | `src/content`                                                          | `service.ts` — every read of article/about data (`articlesIn`, `langsForSlug`, `localizeArticle`, `aboutCopy`); `parser.ts` — the article-content parser |
-| Data               | `src/data`                                                             | Article metadata, bodies, about copy, and their types. No functions beyond `loadContent`                                                                 |
-| Shared             | `src/shared`                                                           | Pure helpers any layer may use: `i18n`, `siteUrl`, `assetUrl`, `moderation`                                                                              |
-
-The import rules, enforced by `local/no-cross-layer-import` (zones in `eslint-rules/layer-zones.js`):
-
-- Presentation never imports `src/data`, **type imports included**. It goes through `src/content/service.ts`, which re-exports the types it needs (`LocalizedArticle`, `AboutCopy`, …).
-- `.tsx` components and `src/client` can ship to the browser, so they never import `src/content`, `src/server` or `src/data`.
-- `src/content` never imports presentation; `src/data` imports nothing but `src/shared`; `src/shared` imports nothing from the app.
-
-`src/content` runs at build time (inside `getStaticPaths` and page frontmatter), not on a request server — that is why it is not called `server/`. `src/server/` holds the code that does run per request.
+- Presentation never imports `src/data`, type imports included. When a page needs a data type, re-export it from `src/content/service.ts`, the one place that reads article and about data.
+- `src/content` runs at build time (in `getStaticPaths` and page frontmatter), not per request, which is why it is not called `server/`. `src/server/` is where per-request Worker code would go. It does not exist today, but its lint zones stay so it starts out isolated.
 
 ## Islands policy
 
-This is the rule that is easiest to break by accident.
+This is the rule that is easiest to break by accident. `local/no-unlisted-island` allows `client:*` only on the islands listed in `eslint.config.js`.
 
-- Pages, the layout, and `ArticleCard.astro` are `.astro` and ship **zero** JavaScript.
-- Astryx components (`Heading`, `Text`, `Card`, `Table`, …) are React, but used in `.astro` **without** `client:*` they render to static HTML and ship nothing. Only use display components that way; anything needing a click handler would render dead (switch such features off — `CodeBlock hasCopyButton={false}`, `Text hasTruncateTooltip={false}`). Interactive Astryx controls belong inside a listed island only (see below). Importing one into `ThemeToggle` would put Astryx's ~31 KB button chunk on every page, which is why that toggle stays a native `<button>`.
-- **A static `ClickableCard` does not link on its own.** Its `<a href>` is visually hidden (1px, clipped) and a click on the card navigates through a React `onClick`, which never ships when the card is rendered from `.astro`. `ArticleCard.astro` therefore stretches that anchor over the card with `[&>a]:inset-0! [&>a]:size-auto! [&>a]:m-0! [&>a]:[clip:auto]! [&>a]:z-1!`; the `!` is needed to beat StyleX's high-specificity selectors. Any other static `ClickableCard` needs the same, and after an Astryx upgrade check that its `<a>` is still a direct child. Without an `href` it renders a hidden `<button>` instead, which is just as dead.
-- Not every `.tsx` in `src/components` is an island. `HeroSoundButton.tsx` wraps Astryx's `IconButton` and is rendered **statically** from `FerretHero.astro`. `IconButton` passes `className`, `aria-pressed` and `data-*` through to its `<button>`, and the hero's `is:inline` script drives the button through those attributes.
-- There are exactly **four** hydrated islands, and they hydrate differently on purpose:
-  - `src/components/ThemeToggle.tsx` — `client:only="react"`, because it reads `document.documentElement` in a `useState` initializer, which has no server equivalent. Its fixed-size wrapper in `Base.astro` reserves layout space so the header does not shift on mount. Its accessible name and tooltip arrive as `toLight` / `toDark` props from `strings.theme`.
-  - `src/components/Comments.tsx` — `client:visible` in `ArticleView.astro` (so all three language trees get it from one place). It has no server-hostile code, so the shell prerenders and the React runtime downloads only once a reader scrolls to the bottom of an article. Article pages keep a zero-JS first paint. Do not "simplify" this to `client:load`, which would ship React to every article on load.
-  - `src/components/CategoryFilter.tsx` — `client:load` in `HomeView.astro`. The home page's toolbar, laid out after Astryx's Library template: a `TextInput` search and a `ToggleButtonGroup` of category pills. It does not render the cards (they are static HTML outside it); it sets `hidden` on each card that fails the query or category, matching the query against the card's `data-search` text only — reader input is never written into a selector or markup. With no JS, every post stays visible. It also owns a polite `role="status"` region that announces the result count to screen readers. The region is rendered from the start and only its text changes (the effect writes it through a ref, as it writes `hidden`), and nothing is announced until the reader filters. The count labels come from `strings.home.resultsCount`, precomputed per count in `HomeView` as `resultLabels`. React itself was already on the page for ThemeToggle.
-  - `src/components/AiSummary.tsx` — `client:summarizer`, a custom directive (`src/directives/summarizer.ts`, registered in `astro.config.mjs`). The button sits in the article header, which is in view on load, so `client:visible` would ship React to every article view — mostly to readers whose browser cannot run it. The directive hydrates only where Chrome's built-in Prompt API (`LanguageModel`) exists; everyone else downloads neither the island nor React. See AI Summary below.
-- The allowlist for the above lives in `eslint.config.js` (the `allow` option on `local/no-unlisted-island`), not in the rule file.
+- **Astryx components render to static HTML from `.astro`.** They are React, but without `client:*` they ship no JavaScript, so anything needing a click handler renders dead. Use display components that way and switch interactive features off (`CodeBlock hasCopyButton={false}`, `Text hasTruncateTooltip={false}`). Interactive Astryx controls belong inside an island.
+- **A static `ClickableCard` does not link on its own.** Its `<a href>` is visually hidden, and a click on the card navigates through a React `onClick` that never ships from `.astro`. `ArticleCard.astro` stretches the anchor over the card with `[&>a]:inset-0! [&>a]:size-auto! [&>a]:m-0! [&>a]:[clip:auto]! [&>a]:z-1!` (the `!` beats StyleX's specificity). Any other static `ClickableCard` needs the same; after an Astryx upgrade, check that the `<a>` is still a direct child.
+- **Not every `.tsx` is an island.** `HeroSoundButton.tsx` wraps `IconButton` and renders statically from `FerretHero.astro`; the hero's `is:inline` script drives it through `aria-pressed` and `data-*`. `ArticleMarkdown.tsx` renders article lists statically (see below).
+- **Compose Astryx components inside one `.tsx`, not in `.astro`.** Astro renders each React component on its own, so `<List><ListItem/></List>` written in `.astro` loses the React context that draws the markers, and a component that takes a string child (`Markdown`) receives pre-rendered HTML instead and throws. Put such a tree in a small static `.tsx` that takes plain props, as `ArticleMarkdown.tsx` does.
+- **Why each island hydrates as it does:**
+  - `ThemeToggle` is `client:only`: it reads `document.documentElement` in a `useState` initializer. Its fixed-size wrapper in `Base.astro` keeps the header from shifting on mount. It stays a native `<button>`, because `IconButton` would put Astryx's ~31 KB button chunk on every page.
+  - `CategoryFilter` is `client:load`: the toolbar is on screen at once. It only sets `hidden` on the static cards, matching the query against each card's `data-search`. Reader input is never written into a selector or markup. With no JS, every post stays visible.
+  - `AiSummary` uses the custom `client:summarizer` directive (`src/directives/summarizer.ts`). The button is in view on load, so `client:visible` would ship React to every article view, mostly to browsers that cannot run it. The directive hydrates only where Chrome's Prompt API exists.
+- **Do not animate the layout chrome.** Astro does real page navigations, so a header entrance would replay on every click.
 
 ## Linking
 
-Astro does **not** prefix `<a href>` with the configured `base`, and there is no router `<Link>` to do it.
+Astro does not prefix `<a href>` with the configured `base`, and there is no router `<Link>`. `local/no-bare-internal-href` rejects a bare `href="/about"` and a hardcoded base prefix; what it cannot tell you is which helper fits each case:
 
-- Internal route hrefs in a template → **`localeHref(locale, '/about')`** from `src/shared/i18n.ts`. It applies the language prefix _and_ the base prefix, so a reader who arrived under `/en` stays under `/en`. A bare `href()` here would silently drop them back into the Korean tree.
-- Nav active state → `isActiveInLocale(Astro.url.pathname, '/about')` from the same module; it strips both the base and the language segment
-- Language-free page identity (`/en/about` → `/about`) → `toLangFreePath()`, the normalizer `isActiveInLocale` is built on
-- `href()` / `toAppPath()` from `src/shared/siteUrl.ts` are the base-prefix-only layer underneath `localeHref`. Use them directly only when a link must ignore language (the canonical URL, the switcher's own targets).
-- Images and in-content links → `resolveAssetUrl()` from `src/shared/assetUrl.ts`
-
-`href()` passes protocol-relative, `https:`, `mailto:`, and `tel:` URLs through untouched; `resolveAssetUrl()` passes `http(s)://` through.
-
-Never write a bare `href="/about"`, and never hardcode a base path prefix.
+- An internal link in a template: `localeHref(locale, '/about')` from `src/shared/i18n.ts`. It adds the language prefix and the base, so a reader who arrived under `/en` stays there. A plain `href()` would drop them back into the Korean tree.
+- Nav active state: `isActiveInLocale(Astro.url.pathname, '/about')`.
+- The canonical URL and the switcher's own targets: `canonicalPath()` and `switchLangHref()` from `src/shared/i18n.ts`. They pick the language prefix themselves rather than keeping the reader's. Underneath, every helper adds the base through `href()` / `toAppPath()` in `src/shared/siteUrl.ts`; templates do not call those directly.
+- Images and links inside article content: `resolveAssetUrl()` from `src/shared/assetUrl.ts`.
 
 ## Languages
 
-Three prerendered trees, all built from the same view components:
+| URL                             | Language | Role                                            |
+| ------------------------------- | -------- | ----------------------------------------------- |
+| `/`, `/about`, `/article/:slug` | Korean   | canonical; `<link rel="canonical">` points here |
+| `/kr/…`                         | Korean   | explicit-prefix alias, canonicalised onto `/`   |
+| `/en/…`                         | English  | canonical for itself                            |
 
-| URL                             | Language | Role                                             |
-| ------------------------------- | -------- | ------------------------------------------------ |
-| `/`, `/about`, `/article/:slug` | Korean   | canonical — `<link rel="canonical">` points here |
-| `/kr/…`                         | Korean   | explicit-prefix alias, canonicalised onto `/`    |
-| `/en/…`                         | English  | canonical for itself                             |
-
-Language lives in the **URL**, never in client state — every page is a static file, so there is nothing to read a preference from at request time. A `Locale` is therefore a `{ lang, prefix }` pair, not just a language: `''` and `'/kr'` are the same language at different URLs, and links have to stay in the prefix the reader arrived through.
-
-`src/shared/i18n.ts` owns the URL side (`localeHref`, `toLangFreePath`, `switchLangHref`, `canonicalPath`) and is covered by `src/shared/i18n.test.ts`. Note the two spellings of Korean: `LANG_SEGMENTS` maps it to the reader-facing `kr` used in URLs, `HTML_LANGS` to the standards-facing `ko` used in `<html lang>` and `hreflang`.
-
-**All chrome text lives in `src/copy/strings.ts`**, keyed by language behind the `Strings` interface, and about-page copy in `src/data/about.ts` (read through `aboutCopy()` in `src/content/service.ts`). Never put a user-visible literal in a template — a missing key is a type error, but a hardcoded Korean string is a silent leak into `/en/`. The one `is:inline` script that needs translated text (the hero's sound toggle) reads it off `data-*` attributes rather than being templated, so the script stays static. Islands never import `t`: each gets only the strings it renders, as props (`Comments` and `AiSummary` take a `strings` object, `ThemeToggle` and `CategoryFilter` take individual labels). Island props are serialized into the HTML, so a function such as `resultsCount(n)` cannot be passed. Precompute its outputs in the `.astro` parent instead.
-
-The header switcher (`src/components/LangSwitcher.astro`) is a native `<details>` menu of plain links, no island. A small `is:inline` script adds light-dismiss (click outside, Escape); without it the menu still works. It always targets an explicit prefix, so `/en/about ↔ /kr/about` round-trips.
-
-**Adding a language:** add it to `LANGS` + `LANG_SEGMENTS` + `HTML_LANGS` in `i18n.ts`, then add its column to `strings.ts` and `about.ts`. TypeScript will point at every remaining hole; the routes and the switcher pick it up with no further edits.
+- **Language lives in the URL, never in client state.** Every page is a static file, so there is nothing to read a preference from at request time. That is why a `Locale` is `{ lang, prefix }`: `''` and `'/kr'` are the same language at different URLs, and links must stay in the prefix the reader came through.
+- **Korean has two spellings.** `kr` in URLs (`LANG_SEGMENTS`), `ko` in `<html lang>` and `hreflang` (`HTML_LANGS`).
+- **No user-visible literal in a template.** UI text lives in `src/copy/strings.ts`, about copy in `src/data/about.ts`. A missing key is a type error, but a hardcoded Korean string leaks silently into `/en/`. The hero's `is:inline` script reads its text from `data-*` attributes, so the script stays static.
+- **Islands get their strings as props and never import `t`,** so each ships only the strings it renders. Props are serialized into the HTML, so a function such as `resultsCount(n)` cannot be passed: precompute its outputs in the `.astro` parent.
+- **The language switcher is a native `<details>` menu of plain links**, not Astryx's `DropdownMenu`, which would need an island on every page. Its targets always carry an explicit prefix, so `/en/about ↔ /kr/about` round-trips.
+- **A post with no English version is left out** of the English index and gets no `/en/` route; the switcher on it falls back to the `/en` home. Untranslated Korean is never served at an English URL.
+- **Adding a language:** add it to `LANGS`, `LANG_SEGMENTS` and `HTML_LANGS` in `i18n.ts`, then its column in `strings.ts` and `about.ts`. TypeScript points at every remaining hole.
 
 ## Article System
 
-Article data lives in `src/data/`; everything that reads it lives in `src/content/service.ts`:
+How to add a post, its metadata and the content format are in the README's "Writing articles". For an agent changing the code:
 
-- `articleTypes.ts` — `Article` (`slug`, `title`, `subtitle`, `date`, `readMinutes`, `category`, `coverImage?`, `cardImage?`, `loadContent`, `translations?`) — types only, plus the `CATEGORIES` list
-- `article-content/*.ts` — each article exports its Korean content as a template literal string; `article-content/en/*.ts` holds the English versions
-- `articles.ts` — declares metadata and the `loadContent` dynamic imports (newest first). Pure data
-- `src/content/service.ts` — `localizeArticle()`, `articlesIn(lang)`, `langsForSlug(slug)`; covered by `service.test.ts`
-
-`readMinutes` is a **number**, formatted per language (`12분 읽기` / `12 min read`). Never store a unit string like `'12분'` in the data.
-
-**Adding an article:** create a new file in `src/data/article-content/`, export the content string, add a dynamic `loadContent` import in `articles.ts`, and prepend a new entry to the array.
-
-**Translating an article:** add `src/data/article-content/en/<slug>.ts` exporting `<name>ContentEn`, then add a `translations.en` block (`title`, `subtitle`, `loadContent`) to that article's entry. The base fields stay Korean. A post with no `translations.en` is simply **left out** of the English index and gets no `/en/article/:slug` route — untranslated Korean is never served at an English URL, and the switcher on such a post falls back to the `/en` home rather than a 404.
-
-You do not normally do this by hand — see Automatic Translation below.
-
-Bodies are read at **build time** in `getStaticPaths`, so a broken `loadContent` fails `pnpm build` rather than degrading at runtime. There is no loading or error state to render.
-
-**Content format** (parsed by `src/content/parser.ts`, rendered by `src/components/ArticleView.astro`):
-
-- Blocks are separated by blank lines (`\n\n`)
-- `## Heading`, `### Heading` — section headings
-- `> text` — blockquote
-- `- item` — unordered list (consecutive `- ` lines in one block)
-- `1. item` — ordered list
-- `| a | b |` — table (consecutive pipe-delimited lines)
-- `---` — horizontal divider
-- `~~~lang … ~~~` — fenced code block (use `~~~` not backticks to avoid escaping issues in template literals)
-- `![alt](path)` — inline image (path is resolved via `resolveAssetUrl`)
-- Inline: `**bold**`, `` `code` ``, `[text](url)`
-
-`parseArticleBody()` classifies every block into a typed `ArticleBlock` (plus the leading summary card, if any); `ArticleView.astro` only switches on `block.type` and renders. A new block type therefore starts in the parser: add it to the `ArticleBlock` union and `classifyBlock()`, then give it a branch in the view. `classifyBlock()` is order-dependent — table detection must stay after list detection, and the single-image check after the carousel check.
-
-**Cover images** go in `public/assets/images/`. Reference them in `articles.ts` with a leading slash and no base prefix — `resolveAssetUrl` handles it at render time.
+- **Bodies are read at build time** in `getStaticPaths`, so a broken `loadContent` fails `pnpm build` instead of degrading at runtime. There is no loading or error state to render.
+- **A new block type starts in the parser.** Add it to the `ArticleBlock` union and `classifyBlock()` in `src/content/parser.ts`, then give it a branch in `ArticleView.astro`. `classifyBlock()` is order-dependent: table detection stays after list detection.
+- **Use `~~~` for code fences in article bodies**, not backticks, because bodies are template literals.
 
 ## Automatic Translation
 
-Publishing is a one-language job: write the Korean post, push, and the English
-version is written for you. Three pieces, in the order they run:
+Write the Korean post, and the English version is written for you: by the `auto-translate` post-commit hook locally, or by `.github/workflows/translate-articles.yml` on push. Both run `scripts/translation-status.mjs` to decide and `/translate-articles` (`.claude/commands/translate-articles.md`) to write.
 
-| Piece                                      | Role                                                                                                                                                                                                                                |
-| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `scripts/translation-status.mjs`           | **Decides what needs translating.** Scans `articles.ts` for entries with no `translations.en` block and checks the ones that have it against the files on disk. Plain text, or `--json` for `{ pending, translated, problems }`     |
-| `.claude/commands/translate-articles.md`   | **Does the translating.** The procedure — register, what must survive a translation untouched, how to wire up `articles.ts`, how to verify. Run locally as `/translate-articles [slugs]` or `pnpm translate`                        |
-| `.github/workflows/translate-articles.yml` | **Runs it automatically.** On any push touching `src/data/article-content/**` or `articles.ts`                                                                                                                                      |
-| `scripts/auto-translate.mjs`               | **Runs it locally, earlier.** A lefthook `post-commit` job: commit a Korean article and the English version follows as a second commit, so by push time the workflow finds nothing pending. Skip one commit with `AUTO_TRANSLATE=0` |
-
-The split matters: **the decision to translate is deterministic, only the writing is a model.** The workflow runs the scanner first and invokes Claude only when `pending` or `problems` is non-empty, so what gets translated is reproducible and reviewable rather than a judgement made inside a prompt. It is also what keeps the workflow from looping — after a successful run nothing is pending, so a re-run exits at the first step (pushes made with `GITHUB_TOKEN` do not trigger workflows either way).
-
-**A push never calls Claude directly.** `anthropics/claude-code-action` rejects `push` events ("Unsupported event type: push"), so this workflow and `sync-docs.yml` both run twice. The push run does only the scan; if there is work, it starts a `workflow_dispatch` run of the same workflow on the same branch (`gh workflow run`, allowed with `GITHUB_TOKEN`, hence `actions: write`), and that run calls Claude and commits. Their concurrency groups include the event name so the dispatched run does not cancel the push run that started it. Keep any Claude step gated on `github.event_name == 'workflow_dispatch'`.
-
-Where the translation lands depends on the branch it was pushed to: on a feature branch it is committed straight back, so it shows up in the same PR as the Korean post; on `main`, which is protected, it arrives as its own PR. Either way a human reviews it — the workflow commits, it does not deploy.
-
-**An untranslated post is a valid state, not an error.** It is left out of the `/en` index and gets no English route, so the scanner exits 0 on `pending` and the pre-push hook does not block you. It exits 1 only on a `problems` entry — a `translations.en` block pointing at a file or export that does not exist, which fails `pnpm build`.
-
-Two things the pipeline deliberately does not do, both of which need a human:
-
-- **Text inside images is not translated.** Alt text and captions are, but an image with Korean baked into it still shows Korean on `/en/`. The workflow's summary calls this out per article.
-- **It does not track drift.** An English version is written once. Edit the Korean afterwards and the two fall out of sync with nothing to detect it — re-run `/translate-articles <slug>` against the updated Korean when that happens.
+- **The decision is a script; only the writing is a model.** Claude is invoked only when the scanner reports `pending` or `problems`, so what gets translated is reproducible. That is also what stops the workflow from looping.
+- **A push never calls Claude directly.** `anthropics/claude-code-action` rejects `push` events, so this workflow and `sync-docs.yml` run twice: the push run only scans and, if there is work, starts a `workflow_dispatch` run of itself (`gh workflow run`, hence `actions: write`). Their concurrency groups include the event name, so the dispatched run does not cancel its parent. Keep every Claude step gated on `github.event_name == 'workflow_dispatch'`.
+- **Where it lands:** on a feature branch the translation is committed back to the branch; on protected `main` it arrives as its own PR. Either way a human reviews it.
+- **An untranslated post is a valid state.** The scanner exits 0 on `pending` and 1 only on `problems` (a `translations.en` block pointing at a missing file or export).
+- **Not done automatically, so a human must:** text baked into images stays Korean on `/en/`, and an edit to the Korean after translation is not detected. Re-run `/translate-articles <slug>` after such an edit.
 
 ## Card Images
 
-Every post's home-page card shows a square line drawing (`cardImage`, `public/assets/images/<slug>-card.webp`, 640×640). They are drawn by the Codex CLI's image generation, and like the translation, the decision is a script and only the drawing is a model:
+A post with no `cardImage` gets one from the `auto-card-image` post-commit hook or `pnpm card:generate`: `scripts/card-image.mjs` decides, and the Codex CLI draws from the shared prompt in `scripts/card-image-prompt.md`. Change the house style in the prompt, not the script.
 
-| Piece                          | Role                                                                                                                                                                                                                                                                              |
-| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `scripts/card-image-prompt.md` | **The shared prompt.** The house style (black marker line art on white, no text, one centered subject) and the `{{title}}` / `{{subtitle}}` / `{{excerpt}}` slots. Change the style here, not in the script                                                                       |
-| `scripts/card-image.mjs`       | **Decides and draws.** `scanCards()` lists entries with no `cardImage`; `--generate [slugs]` runs `codex exec` in a temp folder with the filled prompt and up to three existing cards attached as style references, converts the result with sharp, and adds the `cardImage` line |
-| `scripts/auto-card-image.mjs`  | **Runs it locally.** The first lefthook `post-commit` job: commit a post with no card and the image follows as its own commit, before `auto-translate` runs. Skip one commit with `AUTO_CARD_IMAGE=0`                                                                             |
-
-- **Codex never sees the repo.** It runs in a scratch folder with everything it needs in the prompt, so it has nothing to edit. The excerpt is the post's leading `## 요약` block (or its opening), which is why a post's summary also steers its picture.
-- **sharp is borrowed from Astro** (`createRequire` from `astro/package.json`), not a dependency of ours. If an Astro upgrade drops it, the generator fails with a resolve error rather than writing a bad file.
-- **There is no CI twin.** The workflow runners have no Codex login, so a post pushed without a card just has a card without a picture until someone runs `pnpm card:generate`. The hook needs `codex` on `PATH` and logged in; without it, it logs and moves on.
-- **A model drew it, so look at it.** It can come back with stray text or a subject that misreads the post. Redraw with `pnpm card:generate <slug>`, which overwrites the file and leaves the `cardImage` line as it is.
-- The post-commit jobs guard each other: each one's own commit sets `AUTO_CARD_IMAGE=0` (and the others' switches) so a hook commit does not start Codex again from inside its own post-commit.
+- **Codex never sees the repo.** It runs in a scratch folder with everything in the prompt, so it has nothing to edit. The excerpt comes from the post's leading `## 요약` block or its opening, so a post's summary also steers its picture.
+- **sharp is borrowed from Astro** (`createRequire` from `astro/package.json`), not our dependency. If an Astro upgrade drops it, the generator fails with a resolve error rather than writing a bad file.
+- **There is no CI twin.** Runners have no Codex login, so a post pushed without a card waits for someone to run `pnpm card:generate`. Without a logged-in `codex` on `PATH`, the hook logs and moves on.
+- **A model drew it, so look at it.** It can come back with stray text or a misread subject. `pnpm card:generate <slug>` redraws it.
+- **The post-commit jobs guard each other:** each hook's own commit sets `AUTO_CARD_IMAGE=0` and the others' switches, so a hook commit never restarts a hook.
 
 ## Docs Sync
 
-README.md and CLAUDE.md describe the repo's structure, and they are kept in step with it automatically. Same split as Automatic Translation: **a script decides what is out of date, and a model only writes the prose.**
+README.md and this file are kept in step with the repo's shape. `scripts/docs-sync.mjs` decides what is out of date, `/sync-docs` (`.claude/commands/sync-docs.md`) writes the prose, and the `auto-sync-docs` hook and `.github/workflows/sync-docs.yml` run it.
 
-| Piece                             | Role                                                                                                                                                                                                                                                                    |
-| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `scripts/docs-sync.mjs`           | **Decides.** Rebuilds the generated blocks (`--write`) and compares the repo's shape with `docs/docs-sync.snapshot.json`. Reports `{ stale, changes, unnoted, problems }` (`--json`). `--accept` records the current shape as reviewed                                  |
-| `.claude/commands/sync-docs.md`   | **Writes.** The procedure: what to check for each change, which doc a fact belongs in, what never to touch. Run locally as `/sync-docs` or `pnpm docs:sync`                                                                                                             |
-| `scripts/auto-sync-docs.mjs`      | **Runs it locally.** A lefthook `post-commit` job, after `auto-translate`. A commit that changes the repo's shape gets the doc update as a second commit; a commit that only leaves a block stale gets `--write` with no model. Skip one commit with `AUTO_SYNC_DOCS=0` |
-| `.github/workflows/sync-docs.yml` | **Runs it on push.** For anything the hook missed. On a feature branch it commits back to the branch; on `main` it opens a PR. It stages only the two docs and the snapshot                                                                                             |
-
-Two kinds of content, handled differently:
-
-- **Generated blocks** sit between `<!-- docs:<name>:start -->` / `<!-- docs:<name>:end -->` markers: the README's `scripts` table, `layout` tree and `islands` table, and this file's `commands` list. Their rows come from the code (`package.json`, `git ls-files`, the `no-unlisted-island` allowlist and the `client:*` directives in `.astro` files), so **never add or remove a row by hand**. Their prose cells (a tree entry's note, a script's description, an island's "why") are read back out of the doc and kept by key, so edit those freely. A new entry comes out empty and is listed as `unnoted`. What the tree shows (roots, collapsed folders, exclusions) is `TREE_ROOTS` in the script.
-- **Prose everywhere else** can only be reviewed. The snapshot fingerprints the repo's shape: tracked files (minus article bodies, assets, the lockfile, the SBOM and the docs themselves), script names, dependency names, islands with their directive, and the external hosts in `Base.astro`, `global.css` and `public/_headers`. A difference is a `change` for `/sync-docs` to review. It ends with `--accept`, which is also what stops the hook and the workflow from running again.
-
-The pre-push hook fails only on a stale block (`pnpm docs:write` fixes it) or a missing marker. Unreviewed drift exits 0, like an untranslated post. Keep the snapshot in the same commit as the doc edits it vouches for, and only run `--accept` by hand once you have checked the docs yourself.
-
-What it does not do, which still needs a human:
-
-- **It sees shape, not behaviour.** Change what a component does without adding, removing or renaming anything, and nothing here notices. When that change alters a rule this file states, edit the rule in the same PR, or run `/sync-docs <area>` by hand.
-- **It only scans tracked files.** Stage a new file before running `pnpm docs:status`, or it does not exist yet as far as the scan is concerned.
-- **It never edits the ADRs.** They are records. If a change contradicts one, `/sync-docs` says so in its summary instead.
+- **Never add or remove a row of a generated block by hand.** The blocks between `<!-- docs:<name>:start/end -->` markers (the README's scripts table, layout tree and islands table, and the command list above) are rebuilt from the code by `pnpm docs:write`. Their prose cells are kept by key, so edit those freely.
+- **Run `--accept` only after you have checked the docs yourself,** and commit the snapshot (`docs/docs-sync.snapshot.json`) with the doc edits it vouches for. The pre-push hook fails only on a stale block or a missing marker.
+- **It sees shape, not behaviour.** A change to what a component does, with nothing added, removed or renamed, goes unnoticed. If it changes a rule stated here, edit the rule in the same PR.
+- **It only scans tracked files,** so stage a new file before `pnpm docs:status`.
+- **Never rewrite an ADR; supersede it.** ADRs are records of decisions as made. A change that reverses one gets a new ADR saying what changed and why, and the old one gets only a "Partly superseded by" line in its header, pointing at the new one. Writing that ADR is a decision for a person, so if a change contradicts one, say so rather than writing it unasked.
 
 ## AI Summary
 
-The "AI로 요약하기 / Summarize with AI" button in the article header summarizes the post on the reader's device with Chrome's built-in AI (Gemini Nano). No server, no key, no network call — the CSP needs nothing new.
+The "AI로 요약하기 / Summarize with AI" button summarizes the post on the reader's device with Chrome's built-in AI. No server, no key, no network call. `src/client/summarizer.ts` holds every call to the browser APIs; `AiSummary.tsx` only renders state.
 
-- `src/client/summarizer.ts` holds every call to the browser APIs; `AiSummary.tsx` only renders state. Covered by `summarizer.test.ts` against stubbed globals.
-- **Prompt API, not the Summarizer API.** On Chrome 154 the Summarizer ignores `type`/`length`/`format` and returns pages of markdown critiquing the post. `LanguageModel` with a system prompt (3–5 plain sentences, no preamble) works. `toPlainText()` still strips any markdown the model slips in, and the island renders the sentences as a list.
-- **Korean goes through English.** Chrome's model refuses Korean as input and output, so `pickRoute()` picks `via-en`: Translator `ko→en`, summarize, Translator `en→ko` (streamed). When Chrome takes Korean directly, `pickRoute()` returns `direct` with no code change.
-- **One download per click.** Chrome refuses a second `create()` that needs a download in the same click (`NotAllowedError`). Models are created one at a time and kept across clicks; `NeedsAnotherClick` puts the button into "이어서 불러오기".
-- Summaries are cached in `sessionStorage` under `ai-summary:v2:<lang>:<slug>`. Bump the version when the prompt or format changes, or readers keep seeing the old output for the session.
-- Model output is untrusted text: render it as JSX children only, same as comments.
+- **Prompt API, not the Summarizer API.** On Chrome 154 the Summarizer ignores `type`/`length`/`format` and returns pages of markdown critiquing the post. `LanguageModel` with a system prompt (3–5 plain sentences, no preamble) works; `toPlainText()` still strips any markdown that slips in.
+- **Korean goes through English.** Chrome's model refuses Korean in and out, so `pickRoute()` translates `ko→en`, summarizes, and streams `en→ko`. When Chrome takes Korean directly, `pickRoute()` returns `direct` with no code change.
+- **The button appears only when every model it needs is already on the device** (`availability()` is `'available'`). Some browsers expose the API but never finish a download, and a click there spun forever, so `downloadable` and `downloading` hide it. A whole run is also capped at `SUMMARY_TIMEOUT_MS` (2 minutes), after which it shows the retry message.
+- **One download per click.** Chrome refuses a second `create()` that needs a download in the same click (`NotAllowedError`). Models are created one at a time and kept; `NeedsAnotherClick` puts the button into "이어서 불러오기".
+- **Bump the cache version when the prompt or format changes.** Summaries are cached in `sessionStorage` under `ai-summary:v2:<lang>:<slug>`; without a bump, readers keep the old output for the session.
+- **Model output is untrusted text.** Render it as JSX children and let React escape it; `local/no-unescaped-user-html` blocks `dangerouslySetInnerHTML` and importing `formatInline` into components. `ArticleView.astro` renders prose with `set:html={formatInline(...)}`, which is safe only because the input is your own content, so never run other text through it.
+- **The CSP is not a backstop.** `script-src` must allow `'unsafe-inline'` because Astro emits its island runtime inline. It still buys `connect-src 'self'`, `object-src`, `base-uri` and `frame-ancestors`.
 
 ## Design Tokens
 
-The site uses **Astryx's default color system** and Astryx typography (ADR 0002; ADR 0003 for the Library-style list, the single 720px page width and the 16px type scale; TRD in `docs/trd/astryx-design-system.md`). `<html data-astryx-theme="wildferret">` in `Base.astro` applies the theme page-wide; the theme (`src/styles/astryx/wildferretTheme.ts`, built with `pnpm theme:build`, output committed) swaps in NanumSquare Neo and raises the type scale's base from Astryx's 14px to 16px (ratio unchanged), so every Heading/Text size grows together — change sizes there, not per component. It sets no colors. Article paragraphs, list items and quotes additionally get a 1.75 line height (`leading-[1.75]` in `ArticleView.astro`).
+**Astryx only:** an Astryx component where one exists (`pnpm astryx component <Name>` lists them and their props), and an Astryx token for every color, spacing, radius, duration and type size. The decisions are ADR 0002, ADR 0003, ADR 0005 and ADR 0006. Two lint rules enforce what a check can see: `local/astryx-colors-only` (no raw hex/`rgb()`, no stock Tailwind palette class) and `local/astryx-type-only` (no `text-sm`, `text-[15px]`, `font-semibold`, `leading-*` or `tracking-*`). Component choice is checked in review.
 
-`src/styles/global.css` holds the layered imports (Tailwind theme/preflight/utilities around Astryx `reset.css` + `astryx.css` + the built theme — the `@layer` order is deliberate, see its comment), the NanumSquare Neo `@font-face` declarations, and an `@theme` block in which the old token names (`text-ink-900`, `bg-paper-warm`, …) are **aliases of Astryx semantic tokens** (`--color-text-primary`, `--color-background-muted`, …). Astryx defines those with `light-dark()`, driven by `color-scheme` (set by the pre-paint script along with `data-theme`), so there is no dark palette to maintain and almost nothing needs a `dark:` variant. `--color-accent` is Astryx's own name: it lives in `@theme reference inline`, never in `@theme` (that would be a self-reference cycle). To change a color, change which Astryx role it maps to — don't add hex values. Astryx's `tailwind-theme.css` bridge is not imported; its names clash with ours.
-
-**Astryx only.** Use only Astryx's colors, tokens and components: an Astryx component where one exists, an Astryx semantic token (or one of the aliases above) for any color, never a raw hex/`rgb()`, a stock Tailwind palette class, or a new token of our own. The old `local/no-raw-colors` rule enforced the ink/paper palette and was retired with it (ADR 0002), so this is a review rule, not a lint error. The same goes for styling in general: prefer an Astryx component (nav links are `TopNavItem`, article cards are `ClickableCard`, the hero's sound button is `IconButton`; the language switcher is a native `<details>` menu, because Astryx's `DropdownMenu` would need an island on every page), then Tailwind utilities on the token aliases, written in the template. `global.css` keeps only what neither can express — the webfont, the aliases, a few page-wide base rules, the CSS-only state machines (carousel, hero greeting) and the fireflies — and every rule in it sits in a layer, so a utility can always override it. **A new Astryx component import also goes into `vite.ssr.optimizeDeps.include` in `astro.config.mjs`.** Left to be discovered mid-session, it re-runs the SSR optimizer, and every `Text`/`Heading` then fails in `pnpm dev` with "Invalid hook call" until a restart (two React copies). The build is unaffected, so this shows up only in dev. Astryx components rendered from `.astro` without `client:*` are static HTML, so a stateful look comes from attributes the inline scripts set (`aria-pressed:`, `data-stuck:` variants), not from Astryx's own React state. Two deliberate exceptions in `global.css` keep raw colors: the hero fireflies' glow (`.hero-firefly`), because a warm light source has no Astryx role, and `--color-thumb-plate: #ffffff`, the white behind card illustrations, which must stay white in dark mode too and Astryx has no theme-fixed white.
-
-Entrance motion: `animate-page-enter` on each page's wrapper plus `animate-reveal` (or `animate-reveal-media`) on its children, staggered with `reveal-delay-<n>` (n × 0.1s) or an inline `animation-delay`. They are Tailwind animation tokens (`--animate-*` in `@theme`), not hand-written classes; Tailwind's own `delay-*` is transition-delay, hence the separate name. Do not animate the layout chrome: Astro does real page navigations, so a header entrance would replay on every click.
-
-## Comments
-
-Anonymous, nickname-only comments on article pages, stored in Supabase. Schema and moderation live in `supabase/migrations/`; apply each file in order in the Supabase SQL editor (but see Cutover below for when).
-
-The browser never talks to Supabase. Three layers, one direction:
-
-| Layer    | File                                                        | Role                                                                                                                                             |
-| -------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Browser  | `src/client/commentsApi.ts`                                 | Same-origin `fetch` to `/api/comments`. Holds no URL or key                                                                                      |
-| HTTP     | `src/pages/api/comments.ts` → `src/server/comments/http.ts` | The only non-prerendered route. Status codes, same-origin JSON only, streamed body-size limit (16 KB), `{ reason }` error bodies                 |
-| Logic    | `src/server/comments/service.ts`                            | Validates input (slug must be a published article), re-runs `checkComment()` (the browser cannot be trusted), maps trigger hints to reason codes |
-| Data     | `src/server/comments/repository.ts`                         | The only code that calls PostgREST — plain `fetch`, deliberately **not** `@supabase/supabase-js`                                                 |
-| Database | `supabase/migrations/`                                      | RLS, column grants, and the `moderate_comment()` trigger — the final authority                                                                   |
-
-The wire shape (`Comment`) lives in `src/shared/comments.ts`, because the client and server may not import each other.
-
-- **The Worker connects as `blog_api`, never `service_role`.** `blog_api` (0002) has exactly the privileges anon used to have: `select` on visible rows only, `insert` on the three user columns only. A bug in the Worker therefore still cannot return a hidden comment or set `is_hidden`/`created_at` — the database refuses. Using `service_role` would bypass RLS and make `repository.ts` the only line of defense; do not.
-- **Moderation runs in three places, on purpose.** The browser runs `checkComment()` for instant feedback; the service runs it again because a request can skip the browser; the trigger enforces everything, including the profanity list that neither copy ever sees.
-- **Rejections travel as reason codes, never messages.** The trigger raises with a `hint` (`pii_phone`, `profanity`, `too_fast`, …); the repository keeps only that hint, the service keeps it only if it is a known code, and the API answers `{ "reason": <code> }`. The copy lives in `REJECTION_MESSAGES` (Korean) and `REJECTION_MESSAGES_EN` in `src/shared/moderation.ts`, picked by `messageFor(reason, lang)`. Never forward or render a PostgREST `message`/`details` string — that would make the error path an injection channel.
-- **Statuses:** 200/201 success · 400 malformed request or unknown slug · 403 POST from another origin · 413 body too large · 415 POST not `application/json` · 422 moderation rejection · 429 `too_fast` · 502 database failure · 503 Worker missing its secrets (the island then renders nothing).
-- **The body limit is enforced while reading.** `readBounded()` cancels the stream as soon as it passes 16 KB, so a body with no (or a false) `Content-Length` is never buffered past it. Do not swap it back for `request.text()`.
-- **Only published slugs are accepted.** The route builds the set from `articlesIn('ko')` (metadata only, no bodies) and passes it down. A made-up slug never reaches the database, so it cannot create orphan threads or occupy an article's cooldown.
-- **The trigger's limits are serialized.** The duplicate, cooldown and table-wide checks are look-then-insert; `0004` takes a table-wide advisory lock in a trigger that fires before `moderate_comment` (triggers fire in name order), so concurrent inserts cannot all pass. Apply it in the SQL editor like the others.
-
-### Languages
-
-A post's thread is keyed by `article_slug` **alone**, so one discussion is shared across `/`, `/kr/` and `/en/` rather than split per language. Changing that means re-keying the table, not just the prop.
-
-The island's UI text arrives as a `strings` prop (`Strings['comments']`) and its rejection copy is chosen by a `lang` prop, both passed down from `ArticleView.astro`. It is done this way so the island ships only the strings it renders instead of bundling every language's dictionary — do not `import { t }` inside `Comments.tsx`.
-
-### Stored XSS — the trap in this repo
-
-Comment text is attacker-controlled and stored verbatim. **The moderation trigger is not an XSS filter**: `<script>` passes through it and is stored as text, which is correct, because storage was never the vulnerability. Rendering is.
-
-`ArticleView.astro` renders prose with `set:html={formatInline(...)}`, which emits raw HTML _on purpose_ — that is how `**bold**` works, and it is safe only because its input is your own content. Reusing that parser for comments is the obvious-looking move and would be a textbook stored-XSS hole.
-
-- Render comment `body` and `nickname` as JSX children (`{c.body}`) and let React escape them. **This is the actual defense.** Nickname counts too — it looks like metadata, which is why it gets rendered carelessly.
-- `local/no-unescaped-user-html` enforces the mechanical half (no `dangerouslySetInnerHTML`, no `formatInline` import in `src/components/`).
-- If you ever add markdown to comments, that needs a real sanitizer on the output — not the article parser. If you ever autolink URLs, allowlist `http:`/`https:`; React does not escape a `javascript:` href.
-
-`public/_headers` carries a CSP, but note what it is not: `script-src` must allow `'unsafe-inline'` because Astro emits its island runtime as inline scripts, so the CSP is **not** a backstop against script injection. It still buys `connect-src 'self'` (no exfiltration to any other host — the comment API is same-origin), `object-src`, `base-uri`, and `frame-ancestors`.
-
-### Environment
-
-Three **runtime** Worker secrets, read through `env` from `cloudflare:workers` (typed in `src/env.d.ts`). Nothing is inlined at build time, so the build no longer needs any Supabase variable.
-
-| Secret                     | Value                                                                                                                                                                        |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SUPABASE_URL`             | `https://<project>.supabase.co`                                                                                                                                              |
-| `SUPABASE_PUBLISHABLE_KEY` | The publishable key. The Supabase gateway requires it as `apikey`; after 0003 it grants nothing on its own                                                                   |
-| `SUPABASE_API_JWT`         | A JWT with `role: blog_api`, from `SUPABASE_JWT_SECRET=… pnpm mint:api-jwt` (signed with the project's legacy HS256 JWT secret, which must still be an accepted signing key) |
-
-Production: `npx wrangler secret put <NAME>` for each. Local `pnpm dev`: copy `.dev.vars.example` to `.dev.vars` (gitignored). Never use a `service_role` / secret key for any of these.
-
-The JWT is valid for 365 days by default (`--days` to change). Rotate by minting a new one and putting it again before it expires; rotating the project's JWT secret revokes it immediately.
-
-### Cutover
-
-Order matters, because the old bundle calls PostgREST as anon until the new Worker is live:
-
-1. Apply `0002_blog_api_role.sql` (adds `blog_api`; anon is untouched).
-2. Set the three Worker secrets, and remove the old `PUBLIC_SUPABASE_*` build variables from the Cloudflare build settings.
-3. Deploy, and confirm comments load and post on `/`, `/kr/` and `/en/`.
-4. Apply `0003_revoke_anon.sql`. Confirm that a direct PostgREST call with only the publishable key is now refused.
-
-Rollback: re-grant anon (see the comment at the top of 0003), then revert the deploy.
+- **The colors are Astryx's shipped "stone" theme,** light and dark, copied into `src/styles/astryx/stoneColors.ts` and spread into the theme; only its colors, shadows and code palette, not its fonts, scale, radii or button shapes. On top of it sits one change of our own, `indigoAccentTokens` in the same file: stone's accent is its ink, which made the site read as monochrome, so the accent and the neutral selected/hover fills are a muted indigo (hue between stone's blue and purple, low chroma, above WCAG AA). Change the hue there, not per component. That file is the one place raw color values belong, and the only source file `local/astryx-colors-only` skips (article bodies and tests aside); the rest of the theme folder is checked. The decision is ADR 0005, which supersedes ADR 0002's default colors.
+- **Colors go through the aliases in `global.css`.** `text-ink-900`, `bg-paper`, `border-ink-100` and the rest are aliases of Astryx semantic tokens, which Astryx defines with `light-dark()`. That is why there is no dark palette and almost nothing needs a `dark:` variant. To change a color, change which Astryx role the alias maps to; for a token with no alias, use `bg-(--color-…)`. Astryx's `tailwind-theme.css` bridge is not imported, because its names clash with ours.
+- **`--color-accent` stays in `@theme reference inline`,** never in `@theme`, where it would reference itself.
+- **Deliberately not Astryx components:** `ThemeToggle`'s native `<button>` and hand-drawn sun/moon (an island on every page, so it avoids Astryx's button chunk), the `<details>` language menu, and the CSS-only hero (Astryx's version needs JavaScript).
+- **Two raw colors are deliberate,** both in `global.css`: the fireflies' glow, because a warm light source has no Astryx role, and `--color-thumb-plate: #ffffff`, which must stay white in dark mode, and Astryx has no theme-fixed white.
+- **Type sizes change in the theme, not per component.** `src/styles/astryx/wildferretTheme.ts` raises Astryx's base from 14px to 16px (ratio unchanged), so every `Text`/`Heading` grows together; rebuild with `pnpm theme:build` and commit the output.
+- **A size or line height the scale lacks becomes a custom Text type in the theme** (`components.text`): `prose` (body size, 1.75 line height, because Astryx's 1.5 is tight for long Korean text) and `compact` (15px, the about rows). `theme:build` writes their CSS but not their typing, so add each new type to `src/styles/astryx/textTypes.d.ts` too. Article lists get the same line height through the theme's `markdown-list` override.
+- **Motion uses Astryx's tokens.** A bare `transition-*` takes `--duration-fast` and `--ease-standard` (the defaults are set in `global.css`), and the entrance animations use the slow and medium durations. Use `duration-(--duration-…)` for anything else, never a raw `duration-150`; `global.css` uses `var(--duration-…)` the same way. The fireflies' ambient loops are the one exception: they run for seconds, and the slowest token is 1.3s. Radii are `rounded-(--radius-inner|element|container)`.
+- **Every page shares one 768px column** (ADR 0003, widened from 720px by ADR 0006), so edges do not shift between pages. Change it everywhere or nowhere.
+- **`global.css` keeps only what neither a component nor a utility can express:** the webfont, the aliases, a few base rules, the hero greeting's CSS-only state machine and the fireflies. Every rule sits in a layer, so a utility can always override it.
+- **A static component's state comes from attributes the inline scripts set** (`aria-pressed:`, `data-stuck:` variants), not from Astryx's React state, which never runs.
+- **A new Astryx import also goes into `vite.ssr.optimizeDeps.include`** in `astro.config.mjs`. Otherwise the SSR optimizer re-runs mid-session and every `Text`/`Heading` fails in `pnpm dev` with "Invalid hook call" (two React copies) until a restart. The build is unaffected.
+- **Entrance motion uses the animation tokens:** `animate-page-enter` on a page's wrapper, `animate-reveal` or `animate-reveal-media` on its children, staggered with `reveal-delay-<n>`. Tailwind's own `delay-*` is transition-delay, hence the separate name.
 
 ## SBOM
 
-`docs/sbom/sbom.cdx.json` (CycloneDX 1.6) is generated by `pnpm sbom:write` (`scripts/sbom.mjs`, tested in `scripts/sbom.test.js`); `docs/sbom/README.md` explains it and carries a generated summary between its `sbom:summary` markers. Re-run it in any PR that changes `pnpm-lock.yaml`, and commit both files. Hand edits to either are overwritten.
+Re-run `pnpm sbom:write` in any PR that changes `pnpm-lock.yaml`, and commit `docs/sbom/sbom.cdx.json` and `docs/sbom/README.md` together. Hand edits to either are overwritten.
 
-- **The lockfile is the source** of what is listed, not `node_modules`. Licences come from each package's own `package.json` in pnpm's virtual store (`node_modules/.pnpm`) at the locked version, so the script needs no network access but does need a `pnpm install` first. That store only holds this OS's platform binaries, so for a package it lacks, the script reuses what the committed `sbom.cdx.json` recorded for the same name@version, provided the SHA-512 still matches the lockfile. Do not hand-edit or delete `sbom.cdx.json` before a re-run: that is where licences of other platforms' binaries survive.
-- **`scope: required` means "served to readers".** The script measures that with a throwaway sourcemap build, because `dependencies` vs `devDependencies` does not say what ships. If a copyleft package (the LGPL libvips under `sharp`, MPL `lightningcss`) ever shows up as shipped, look at it before merging.
-- **CDN fonts and external services are listed by hand** in `EXTERNAL_COMPONENTS` / `EXTERNAL_SERVICES` in the script. Add an entry when `Base.astro` or `global.css` loads something new from another host, or the Worker starts calling a new service. The CSP in `public/_headers` allowlists the same hosts (`style-src`, `font-src`): add a host there when you add one, and remove it when the last load from it goes. Today that is jsDelivr (Pretendard) and pstatic (NanumSquare Neo).
-- The output is deterministic and already Prettier-formatted, so an unchanged dependency tree gives an empty diff.
-
-## Formatting
-
-Prettier (`.prettierrc.json`, with `prettier-plugin-astro`) owns layout: no semicolons, single quotes, trailing commas, 100 columns. ESLint owns correctness and the repo conventions below, and carries no stylistic rules, so the two never disagree. The pre-commit hook runs `eslint --fix` and then `prettier --write` on staged files. `public/` is ignored because the worker serves it verbatim.
-
-Article bodies are template literals, which Prettier leaves alone, so formatting never touches post content.
+- **Do not hand-edit or delete `sbom.cdx.json` before a re-run.** pnpm's store holds only this OS's platform binaries, so for a package it lacks, the script reuses the licence the committed file recorded for the same name@version (if the SHA-512 still matches). That is where other platforms' licences survive.
+- **`scope: required` means "served to readers"**, measured with a throwaway sourcemap build. If a copyleft package (the LGPL libvips under `sharp`, MPL `lightningcss`) ever shows up as shipped, look at it before merging.
+- **New external hosts are listed by hand** in `EXTERNAL_COMPONENTS` / `EXTERNAL_SERVICES` in `scripts/sbom.mjs`, and allowlisted in the CSP in `public/_headers` (`style-src`, `font-src`). Remove both when the last load from a host goes.
 
 ## Lint Rules
 
-`pnpm lint` runs ESLint over `src/**/*.{ts,tsx}` **and** `src/**/*.astro`. Alongside the published rule sets, `eslint-rules/` is a repo-local plugin (registered as `local` in `eslint.config.js`) that turns the conventions above into errors:
+ESLint owns correctness and the repo's conventions and carries no stylistic rules; Prettier owns layout. The repo-local rules in `eslint-rules/` (the `local` plugin) each point back to the section above that explains them.
 
-| Rule                           | Scope          | Enforces                                                                                                                                                                    |
-| ------------------------------ | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `local/no-bare-internal-href`  | ts, tsx, astro | Linking — no bare `href="/about"` / `src="/assets/…"`, no hardcoded base prefix in any string (this half also reaches markdown links inside `article-content/*.ts`)         |
-| `local/no-unlisted-island`     | astro          | Islands policy — `client:*` only on `<ThemeToggle>`, `<Comments>`, `<CategoryFilter>` and `<AiSummary>` (allowlist is the rule's `allow` option, set in `eslint.config.js`) |
-| `local/no-unescaped-user-html` | ts, tsx        | Comments — no `dangerouslySetInnerHTML`; no importing `formatInline` (from `content/parser`) into `src/components/`                                                         |
-| `local/no-cross-layer-import`  | ts, tsx, astro | Layers — the import rules above (zones in `eslint-rules/layer-zones.js`)                                                                                                    |
+**Adding a rule:** write `eslint-rules/<name>.js` exporting `{ meta, create }` (plain ESM, no build step), register it in `eslint-rules/index.js`, enable it in `eslint.config.js`, and add `RuleTester` cases to `eslint-rules/rules.test.js`.
 
-**Adding a rule:** write `eslint-rules/<name>.js` exporting the standard `{ meta, create }` object (plain ESM, no build step), register it in `eslint-rules/index.js`, enable it in the right block of `eslint.config.js`, and add `RuleTester` cases to `eslint-rules/rules.test.js` — `pnpm test` runs those alongside the unit tests.
-
-Two config details worth knowing before editing `eslint.config.js`:
-
-- The `.astro` block extends `astro.configs['flat/base']`, not `recommended`. `flat/base` supplies the parser and the `<script>` processor without the opinionated rules, which would otherwise fight the deliberately untranspiled pre-paint theme script in `Base.astro`.
-- The ts/tsx block carries `ignores: ['**/*.astro/*']`. The Astro processor emits each `<script>` block as a virtual `Base.astro/0_0.ts`, and `src/**/*.ts` matches that path — without the ignore, the React and typescript-eslint rule sets land on that same inline script.
+- **The `.astro` block extends `astro.configs['flat/base']`, not `recommended`.** The opinionated rules would fight the deliberately untranspiled pre-paint theme script in `Base.astro`.
+- **The ts/tsx block ignores `**/*.astro/*`.** The Astro processor emits each `<script>` as a virtual `Base.astro/0_0.ts`, which `src/**/*.ts` would otherwise match.

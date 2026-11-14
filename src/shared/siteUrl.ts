@@ -1,8 +1,11 @@
-// Astro does not prefix <a href> with the configured `base`, and react-router's
-// <Link to> (which did) is gone. These helpers own internal route hrefs; images
-// and in-content links go through resolveAssetUrl in ./assetUrl.ts instead.
+// Astro does not prefix <a href> with the configured `base`. href() adds it and
+// toAppPath() strips it. Templates do not call them directly: they go through
+// localeHref(), canonicalPath() and switchLangHref() in ./i18n.ts, which add
+// the language prefix too. Images and in-content links go through
+// resolveAssetUrl in ./assetUrl.ts instead.
 //
-// import.meta.env.BASE_URL always ends with '/' — Astro normalizes it.
+// import.meta.env.BASE_URL always ends with '/': astro.config.mjs adds it to
+// BASE_PATH, since Astro does not under trailingSlash: 'ignore'.
 const base = import.meta.env.BASE_URL
 
 /** Internal path → base-prefixed href. External/absolute URLs pass through. */
@@ -18,9 +21,4 @@ export function toAppPath(pathname: string): string {
     : pathname.replace(/^\//, '')
   const clean = stripped.replace(/\/+$/, '')
   return clean ? `/${clean}` : '/'
-}
-
-/** Nav active state. Compare Astro.url.pathname against an app path. */
-export function isActive(pathname: string, path: string): boolean {
-  return toAppPath(pathname) === toAppPath(path)
 }

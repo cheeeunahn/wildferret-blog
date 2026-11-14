@@ -1,7 +1,7 @@
 ---
 import type { LocalizedArticle } from '../content/service'
 import AiSummary from './AiSummary'
-import Comments from './Comments'
+import ArticleMarkdown from './ArticleMarkdown'
 import { formatInline, parseArticleBody } from '../content/parser'
 import { resolveAssetUrl } from '../shared/assetUrl'
 import { localeHref, type Locale } from '../shared/i18n'
@@ -13,6 +13,7 @@ import { CodeBlock } from '@astryxdesign/core/CodeBlock'
 import { Divider } from '@astryxdesign/core/Divider'
 import { Heading } from '@astryxdesign/core/Heading'
 import { Icon } from '@astryxdesign/core/Icon'
+import { Link } from '@astryxdesign/core/Link'
 import { Table } from '@astryxdesign/core/Table'
 import { Text } from '@astryxdesign/core/Text'
 
@@ -40,7 +41,7 @@ const delay = (i: number) => `animation-delay: ${i * 0.05}s`
 const delayStyle = (i: number) => ({ animationDelay: `${i * 0.05}s` })
 
 // Astryx components here render to static HTML at build time (no client:*), so
-// the page stays zero-JS. Anything that needs a click handler to work — the
+// they ship no JavaScript. Anything that needs a click handler to work — the
 // CodeBlock copy button, for one — is switched off rather than shipped dead.
 // The same goes for CodeBlock's horizontal scroll: statically rendered, its
 // scroll area is `overflow: clip`, so a long line would be cut off. Code blocks
@@ -66,29 +67,38 @@ const tableProps = (block: TableBlock) => ({
   })),
   data: block.rows.map((cells): Row => Object.fromEntries(cells.map((cell, c) => [`c${c}`, cell]))),
 })
-const MAX_CAROUSEL_SLIDES = 6
 
-// The carousel's prev/next controls are <label>s for its radio group, not
-// buttons, so they cannot be an Astryx IconButton; this is the same floating
-// chip in Astryx tokens. The slide/dot state machine lives in global.css.
-const carouselArrowClass =
-  'absolute top-1/2 -translate-y-1/2 grid place-items-center size-8 rounded-full border border-ink-100 bg-paper text-ink-600 opacity-85 cursor-pointer transition-[opacity,color] duration-150 hover:opacity-100 hover:text-ink-900'
+// Article lists go through Astryx's Markdown (ArticleMarkdown.tsx), which takes
+// Markdown source: turn the parsed items back into a list. Link targets are
+// resolved first, as formatInline does for prose, so a site-relative link keeps
+// working under a BASE_PATH deploy.
+const toMarkdownList = (items: string[], ordered = false) =>
+  items
+    .map((item) => item.replace(/\]\(([^)\s]+)\)/g, (_, url) => `](${resolveAssetUrl(url)})`))
+    .map((item, n) => `${ordered ? `${n + 1}.` : '-'} ${item}`)
+    .join('\n')
 ---
 
 <div class="animate-page-enter">
   {/* Article Header */}
-  <header class="max-w-[720px] mx-auto px-6 pt-10 sm:pt-14 pb-8">
+  <header class="max-w-[768px] mx-auto px-6 pt-10 sm:pt-14 pb-8">
     <div class="animate-reveal">
-      <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-5">
+      <div class="mb-5">
         <Text type="supporting">{article.date}</Text>
-        <Divider orientation="vertical" className="h-3" />
-        <Text type="supporting">{strings.article.readTime(article.readMinutes)}</Text>
       </div>
 
-      <Heading level={1} className="mb-3">
+      {/* break-keep: Korean wraps between words, not inside one. text-pretty
+          keeps a single word from being stranded on the last line. */}
+      <Heading level={1} className="mb-3 break-keep text-pretty">
         {article.title}
       </Heading>
-      <Text as="p" display="block" type="large" color="secondary">
+      <Text
+        as="p"
+        display="block"
+        type="large"
+        color="secondary"
+        className="break-keep text-pretty"
+      >
         {article.subtitle}
       </Text>
       {/* AI summary button. client:summarizer (src/directives/summarizer.ts)
@@ -101,25 +111,10 @@ const carouselArrowClass =
         lang={locale.lang}
         strings={strings.summarizer}
       />
-      {article.coverImage && (
-        <div class="mt-8">
-          <div class="overflow-hidden rounded-2xl border border-ink-100">
-            <img
-              src={resolveAssetUrl(article.coverImage)}
-              alt={article.title}
-              class="w-full h-auto object-cover"
-              loading="eager"
-            />
-          </div>
-          <Text as="p" display="block" type="supporting" className="mt-3">
-            {strings.article.coverImageNote}
-          </Text>
-        </div>
-      )}
     </div>
   </header>
 
-  <div class="max-w-[720px] mx-auto">
+  <div class="max-w-[768px] mx-auto">
     <Divider />
   </div>
 
@@ -127,12 +122,12 @@ const carouselArrowClass =
       Text, Blockquote); the utilities on each block only space it, plus two
       things set once here:
       - Korean wraps on word boundaries, not mid-word (break-keep). It is
-        inherited, so code blocks reset it with break-normal: their ASCII
-        diagrams rely on literal line breaks.
+        inherited, so code blocks reset it with break-normal: a long line of
+        code wraps where it has to, not only between words.
       - The first block sits flush: the body's own top padding already spaces
         it from the rule above, and an h2's margin on top reads as a hole. */}
   <article
-    class="max-w-[720px] mx-auto px-6 pt-9 pb-12 break-keep wrap-break-word [&>:first-child]:mt-0"
+    class="max-w-[768px] mx-auto px-6 pt-9 pb-12 break-keep wrap-break-word [&>:first-child]:mt-0"
     data-article-body
   >
     {summary && (
@@ -141,15 +136,7 @@ const carouselArrowClass =
           <Text as="div" display="block" type="label" color="secondary" className="mb-2">
             {summary.label}
           </Text>
-          <ul class="list-disc pl-5 space-y-2.5 leading-[1.75] marker:text-ink-300">
-            {summary.items.map((item) => (
-              <li>
-                <Text>
-                  <Fragment set:html={formatInline(item)} />
-                </Text>
-              </li>
-            ))}
-          </ul>
+          <ArticleMarkdown source={toMarkdownList(summary.items)} />
         </Card>
       </aside>
     )}
@@ -194,40 +181,27 @@ const carouselArrowClass =
 
       if (block.type === 'quote') {
         return (
-          <Blockquote className="my-8 leading-[1.75] animate-reveal" style={delayStyle(i)}>
-            <Fragment set:html={formatInline(block.text)} />
+          <Blockquote className="my-8 animate-reveal" style={delayStyle(i)}>
+            <Text type="prose" color="inherit">
+              <Fragment set:html={formatInline(block.text)} />
+            </Text>
           </Blockquote>
         )
       }
 
       if (block.type === 'list' && !block.ordered) {
         return (
-          <ul class="list-disc pl-5 mb-6 space-y-2 leading-[1.75] animate-reveal" style={delay(i)}>
-            {block.items.map((item) => (
-              <li>
-                <Text>
-                  <Fragment set:html={formatInline(item)} />
-                </Text>
-              </li>
-            ))}
-          </ul>
+          <div class="mb-6 animate-reveal" style={delay(i)}>
+            <ArticleMarkdown source={toMarkdownList(block.items)} />
+          </div>
         )
       }
 
       if (block.type === 'list') {
         return (
-          <ol
-            class="list-decimal pl-5 mb-6 space-y-2 leading-[1.75] animate-reveal"
-            style={delay(i)}
-          >
-            {block.items.map((item) => (
-              <li>
-                <Text>
-                  <Fragment set:html={formatInline(item)} />
-                </Text>
-              </li>
-            ))}
-          </ol>
+          <div class="mb-6 animate-reveal" style={delay(i)}>
+            <ArticleMarkdown source={toMarkdownList(block.items, true)} />
+          </div>
         )
       }
 
@@ -240,87 +214,11 @@ const carouselArrowClass =
         )
       }
 
-      if (block.type === 'carousel') {
-        const { slides, caption } = block
-        // The slide limit is the CSS's: global.css positions the track for at
-        // most this many radio inputs.
-        if (slides.length > MAX_CAROUSEL_SLIDES) {
-          throw new Error(
-            `Carousel in ${article.slug} has ${slides.length} images; only up to ${MAX_CAROUSEL_SLIDES} are supported`,
-          )
-        }
-        const cid = `carousel-${i}`
-        return (
-          <figure class="carousel group/carousel my-8 animate-reveal" style={delay(i)}>
-            {slides.map((_, n) => (
-              <input
-                type="radio"
-                name={cid}
-                id={`${cid}-${n}`}
-                class="carousel-input sr-only"
-                checked={n === 0}
-                aria-label={strings.article.carouselSlide(n + 1)}
-              />
-            ))}
-            <div class="overflow-hidden rounded-2xl border border-ink-100 bg-ink-50/40">
-              <div class="carousel-track flex">
-                {slides.map((slide, n) => (
-                  <div class="relative w-full shrink-0">
-                    <img
-                      src={resolveAssetUrl(slide.src)}
-                      alt={slide.alt || article.title}
-                      class="h-[240px] sm:h-[320px] w-full object-contain"
-                      loading={n === 0 ? 'eager' : 'lazy'}
-                    />
-                    {n > 0 && (
-                      <label
-                        for={`${cid}-${n - 1}`}
-                        class={`${carouselArrowClass} left-3`}
-                        aria-hidden="true"
-                      >
-                        <Icon icon="chevronLeft" size="sm" />
-                      </label>
-                    )}
-                    {n < slides.length - 1 && (
-                      <label
-                        for={`${cid}-${n + 1}`}
-                        class={`${carouselArrowClass} right-3`}
-                        aria-hidden="true"
-                      >
-                        <Icon icon="chevronRight" size="sm" />
-                      </label>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-            {/* The radios are visually hidden, so their keyboard focus is
-                surfaced on the dots row — the arrow keys move through the
-                group from there. */}
-            <div class="mt-3 flex items-center justify-center gap-2 rounded-full group-has-[.carousel-input:focus-visible]/carousel:outline-2 group-has-[.carousel-input:focus-visible]/carousel:outline-ink-300 group-has-[.carousel-input:focus-visible]/carousel:outline-offset-6">
-              {slides.map((_, n) => (
-                <label
-                  for={`${cid}-${n}`}
-                  class="carousel-dot block size-1.5 rounded-full cursor-pointer transition-colors duration-150"
-                  aria-hidden="true"
-                />
-              ))}
-            </div>
-            {caption && (
-              <figcaption
-                class="mt-2 text-center text-sm text-ink-600 leading-relaxed"
-                set:html={formatInline(caption)}
-              />
-            )}
-          </figure>
-        )
-      }
-
       if (block.type === 'image') {
         const { image } = block
         return (
           <figure class="my-8 animate-reveal" style={delay(i)}>
-            <div class="overflow-hidden rounded-2xl border border-ink-100">
+            <div class="overflow-hidden rounded-(--radius-container) border border-ink-100">
               <img
                 src={resolveAssetUrl(image.src)}
                 alt={image.alt || article.title}
@@ -329,10 +227,11 @@ const carouselArrowClass =
               />
             </div>
             {image.caption && (
-              <figcaption
-                class="mt-3 text-sm text-ink-600 leading-relaxed"
-                set:html={formatInline(image.caption)}
-              />
+              <figcaption class="mt-3">
+                <Text type="supporting" display="block">
+                  <Fragment set:html={formatInline(image.caption)} />
+                </Text>
+              </figcaption>
             )}
           </figure>
         )
@@ -342,7 +241,8 @@ const carouselArrowClass =
         <Text
           as="p"
           display="block"
-          className="mb-6 leading-[1.75] animate-reveal"
+          type="prose"
+          className="mb-6 animate-reveal"
           style={delayStyle(i)}
         >
           <Fragment set:html={formatInline(block.text)} />
@@ -351,42 +251,16 @@ const carouselArrowClass =
     })}
   </article>
 
-  {/* Comments. client:visible, not client:only — the island has no
-        server-hostile code, so the shell prerenders and the React runtime only
-        downloads once a reader actually scrolls this far.
-        Keyed by slug alone, so a post's thread is shared across all three
-        language trees rather than split per language. */}
-  <div class="max-w-[720px] mx-auto px-6 pb-4">
-    <Divider className="mb-10" />
-    <Comments
-      client:visible
-      articleSlug={article.slug}
-      strings={strings.comments}
-      lang={locale.lang}
-    />
-  </div>
-
   {/* Back link */}
-  <div class="max-w-[720px] mx-auto px-6 pb-20">
+  <div class="max-w-[768px] mx-auto px-6 pb-20">
     <Divider className="mb-10" />
-    <a
+    <Link
       href={localeHref(locale, '/')}
-      class="inline-flex items-center gap-2 text-sm text-ink-600 no-underline hover:text-ink-700 transition-colors"
+      color="secondary"
+      className="inline-flex items-center gap-1"
     >
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <line x1="19" y1="12" x2="5" y2="12"></line>
-        <polyline points="12 19 5 12 12 5"></polyline>
-      </svg>
+      <Icon icon="chevronLeft" size="sm" />
       {strings.article.back}
-    </a>
+    </Link>
   </div>
 </div>

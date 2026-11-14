@@ -203,7 +203,7 @@
       "group": "@astrojs",
       "name": "cloudflare",
       "version": "14.4.6",
-      "scope": "required",
+      "scope": "excluded",
       "description": "Deploy your site to Cloudflare Workers",
       "hashes": [
         {
@@ -236,7 +236,7 @@
       "properties": [
         {
           "name": "wildferret:shipped",
-          "value": "worker"
+          "value": "no"
         }
       ]
     },
@@ -824,7 +824,7 @@
       "group": "@astrojs",
       "name": "internal-helpers",
       "version": "0.13.1",
-      "scope": "required",
+      "scope": "excluded",
       "description": "Internal helpers used by core Astro packages.",
       "hashes": [
         {
@@ -853,7 +853,7 @@
       "properties": [
         {
           "name": "wildferret:shipped",
-          "value": "worker"
+          "value": "no"
         }
       ]
     },
@@ -8324,7 +8324,7 @@
       "group": "@oslojs",
       "name": "encoding",
       "version": "1.1.0",
-      "scope": "required",
+      "scope": "excluded",
       "description": "Runtime-agnostic library for encoding and decoding data",
       "hashes": [
         {
@@ -8353,7 +8353,7 @@
       "properties": [
         {
           "name": "wildferret:shipped",
-          "value": "worker"
+          "value": "no"
         }
       ]
     },
@@ -12821,7 +12821,7 @@
       "properties": [
         {
           "name": "wildferret:shipped",
-          "value": "browser,worker"
+          "value": "browser"
         }
       ]
     },
@@ -13711,7 +13711,7 @@
       "bom-ref": "pkg:npm/clsx@2.1.1",
       "name": "clsx",
       "version": "2.1.1",
-      "scope": "required",
+      "scope": "excluded",
       "description": "A tiny (239B) utility for constructing className strings conditionally.",
       "hashes": [
         {
@@ -13740,7 +13740,7 @@
       "properties": [
         {
           "name": "wildferret:shipped",
-          "value": "worker"
+          "value": "no"
         }
       ]
     },
@@ -14068,7 +14068,7 @@
       "bom-ref": "pkg:npm/cookie@2.0.1",
       "name": "cookie",
       "version": "2.0.1",
-      "scope": "required",
+      "scope": "excluded",
       "description": "HTTP server cookie parsing and serialization",
       "hashes": [
         {
@@ -14097,7 +14097,7 @@
       "properties": [
         {
           "name": "wildferret:shipped",
-          "value": "worker"
+          "value": "no"
         }
       ]
     },
@@ -14704,7 +14704,7 @@
       "bom-ref": "pkg:npm/devalue@6.0.3",
       "name": "devalue",
       "version": "6.0.3",
-      "scope": "required",
+      "scope": "excluded",
       "description": "Gets the job done when JSON.stringify can't",
       "hashes": [
         {
@@ -14733,7 +14733,7 @@
       "properties": [
         {
           "name": "wildferret:shipped",
-          "value": "worker"
+          "value": "no"
         }
       ]
     },
@@ -18206,7 +18206,7 @@
       "bom-ref": "pkg:npm/html-escaper@3.0.3",
       "name": "html-escaper",
       "version": "3.0.3",
-      "scope": "required",
+      "scope": "excluded",
       "description": "fast and safe way to escape and unescape &<>'\" chars",
       "hashes": [
         {
@@ -18239,7 +18239,7 @@
       "properties": [
         {
           "name": "wildferret:shipped",
-          "value": "worker"
+          "value": "no"
         }
       ]
     },
@@ -22746,7 +22746,7 @@
       "bom-ref": "pkg:npm/piccolore@0.1.3",
       "name": "piccolore",
       "version": "0.1.3",
-      "scope": "required",
+      "scope": "excluded",
       "description": "A tiny, zero-dependency library for styling terminal text",
       "hashes": [
         {
@@ -22775,7 +22775,7 @@
       "properties": [
         {
           "name": "wildferret:shipped",
-          "value": "worker"
+          "value": "no"
         }
       ]
     },
@@ -29055,7 +29055,7 @@
       "bom-ref": "pkg:npm/zod@4.6.7",
       "name": "zod",
       "version": "4.6.7",
-      "scope": "required",
+      "scope": "excluded",
       "description": "TypeScript-first schema declaration and validation library with static type inference",
       "hashes": [
         {
@@ -29088,7 +29088,7 @@
       "properties": [
         {
           "name": "wildferret:shipped",
-          "value": "worker"
+          "value": "no"
         }
       ]
     },
@@ -29133,29 +29133,12 @@
   ],
   "services": [
     {
-      "bom-ref": "service:supabase-postgrest",
-      "provider": {
-        "name": "Supabase"
-      },
-      "name": "Supabase PostgREST",
-      "description": "Comment storage. Called only by the Worker (src/server/comments/repository.ts) as the blog_api role; the browser never reaches it.",
-      "endpoints": ["https://<project>.supabase.co/rest/v1/blog_user_comments"],
-      "authenticated": true,
-      "x-trust-boundary": true,
-      "data": [
-        {
-          "flow": "bi-directional",
-          "classification": "public: nickname and comment text"
-        }
-      ]
-    },
-    {
       "bom-ref": "service:cloudflare-workers",
       "provider": {
         "name": "Cloudflare"
       },
       "name": "Cloudflare Workers",
-      "description": "Hosts the prerendered pages as static assets and runs the one on-demand route, /api/comments.",
+      "description": "Hosts the prerendered pages as static assets.",
       "authenticated": false,
       "x-trust-boundary": true
     }

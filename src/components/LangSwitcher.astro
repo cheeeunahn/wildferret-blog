@@ -1,6 +1,7 @@
 ---
 import { LANGS, LANG_SEGMENTS, switchLangHref, type Lang, type Locale } from '../shared/i18n'
 import { t } from '../copy/strings'
+import { Icon } from '@astryxdesign/core/Icon'
 import { Text } from '@astryxdesign/core/Text'
 
 interface Props {
@@ -41,28 +42,21 @@ const targets = LANGS.map((lang) => ({
     lists each language in its own name. The current one is stated, not
     offered: aria-current, a check mark, and full-strength ink. */}
 <details class="lang-menu group relative">
-  <summary class="flex items-center gap-0.5 sm:gap-1 h-9 px-2 sm:px-3 rounded-lg cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden text-ink-700 hover:bg-ink-50 hover:text-ink-900 group-open:bg-ink-50 group-open:text-ink-900 focus-visible:outline-2 focus-visible:outline-accent transition-colors">
+  <summary class="flex items-center gap-0.5 sm:gap-1 h-9 px-2 sm:px-3 rounded-(--radius-element) cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden text-ink-700 hover:bg-ink-50 hover:text-ink-900 group-open:bg-ink-50 group-open:text-ink-900 focus-visible:outline-2 focus-visible:outline-accent transition-colors">
     <Text weight="medium" color="inherit">
       <span aria-hidden="true">{LANG_SEGMENTS[locale.lang].toUpperCase()}</span>
       <span class="sr-only">{`${strings.langSwitchLabel}: ${strings.langNames[locale.lang]}`}</span>
     </Text>
-    <svg
-      class="size-3 transition-transform group-open:rotate-180 motion-reduce:transition-none"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      aria-hidden="true"
-    >
-      <path d="m6 9 6 6 6-6"></path>
-    </svg>
+    <Icon
+      icon="chevronDown"
+      size="xsm"
+      className="transition-transform group-open:rotate-180 motion-reduce:transition-none"
+    />
   </summary>
 
   {/* Right-aligned under the trigger, so it never runs off a phone's edge. */}
   <ul
-    class="absolute right-0 top-full mt-2 min-w-36 p-1 m-0 list-none rounded-lg border border-ink-100 bg-(--color-background-popover) shadow-med z-50"
+    class="absolute right-0 top-full mt-2 min-w-36 p-1 m-0 list-none rounded-(--radius-element) border border-ink-100 bg-(--color-background-popover) shadow-med z-50"
     aria-label={strings.langSwitchLabel}
   >
     {targets.map(({ lang, name, href: target, current }) => (
@@ -72,25 +66,12 @@ const targets = LANGS.map((lang) => ({
           hreflang={lang}
           lang={lang}
           aria-current={current ? 'true' : undefined}
-          class={`flex items-center justify-between gap-4 px-3 py-2 rounded-md no-underline hover:bg-ink-50 focus-visible:outline-2 focus-visible:outline-accent ${current ? 'text-ink-900' : 'text-ink-700 hover:text-ink-900'}`}
+          class={`flex items-center justify-between gap-4 px-3 py-2 rounded-(--radius-inner) no-underline hover:bg-ink-50 focus-visible:outline-2 focus-visible:outline-accent ${current ? 'text-ink-900' : 'text-ink-700 hover:text-ink-900'}`}
         >
           <Text weight={current ? 'semibold' : undefined} color="inherit">
             {name}
           </Text>
-          {current && (
-            <svg
-              class="size-4 text-accent"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M20 6 9 17l-5-5"></path>
-            </svg>
-          )}
+          {current && <Icon icon="check" size="sm" color="accent" />}
         </a>
       </li>
     ))}

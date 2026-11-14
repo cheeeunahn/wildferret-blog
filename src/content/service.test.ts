@@ -8,7 +8,6 @@ const post: Article = {
   title: '제목',
   subtitle: '부제',
   date: '2026.01.01',
-  readMinutes: 3,
   category: 'Paper Review',
   loadContent: async () => '본문',
   translations: {
@@ -27,7 +26,7 @@ describe('localizeArticle', () => {
   it('overlays the translated text and keeps the shared metadata', async () => {
     const en = localizeArticle(post, 'en')!
     expect(en.title).toBe('Title')
-    expect(en.readMinutes).toBe(3)
+    expect(en.date).toBe(post.date)
     expect(await en.loadContent()).toBe('Body')
   })
 

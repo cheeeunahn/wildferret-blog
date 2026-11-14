@@ -29,24 +29,24 @@ const resultLabels = articles.map((_, i) => strings.home.resultsCount(i + 1))
 <div class="animate-page-enter">
   {/* Category filter + article list, laid out like Astryx's Library
       template minus its titled header (the nav tab already says 글 / Posts):
-      a full-width search, category pills, then a list of wide cards.
+      a full-width search, category pills, then a ruled list, one post per row.
       The island hides cards by setting `hidden` inside this element, so they
       must all stay within it. */}
-  <div class="cat-scope pt-2 sm:pt-4">
+  <div class="cat-scope">
     {/* The toolbar sticks below the header so it stays reachable while you
-        scroll the list — top-16 is the header's own h-16, and z-40 keeps it
-        under the header rather than sliding over it. The band is full-bleed
+        scroll the list. It starts at its stuck position, directly under the
+        header (65px: the nav's h-16 plus the header's 1px border), with no gap
+        above it, so it never moves while the page scrolls: a gap there would
+        shrink as you scrolled, and the bar would visibly slide up to meet the
+        header. z-40 keeps it under the header rather than sliding over it. The band is full-bleed
         and only the inner section is width-capped, so the cards pass behind an
-        opaque strip. The sentinel sits one pixel above it in normal flow (it
-        needs a real box to be observable, hence h-px) and tells the script
-        below when the bar has stuck: observing the bar itself would never
-        fire, since a stuck element never leaves view.
+        opaque strip. The script below marks it data-stuck once it has
+        stuck under the header.
         No shadow at rest — the bar is the same ground as the page until it
         actually lifts off it. In dark a soft shadow on a near-black page is
         invisible, so it takes Astryx's heaviest one instead. */}
-    <div class="cat-sentinel h-px" aria-hidden="true"></div>
-    <div class="cat-bar sticky top-16 z-40 bg-paper py-5 transition-shadow duration-200 motion-reduce:transition-none data-stuck:shadow-med dark:data-stuck:shadow-high">
-      <section class="max-w-[720px] mx-auto px-6 animate-reveal reveal-delay-3">
+    <div class="cat-bar sticky top-[65px] z-40 bg-paper py-4 transition-shadow motion-reduce:transition-none data-stuck:shadow-med dark:data-stuck:shadow-high">
+      <section class="max-w-[768px] mx-auto px-6 animate-reveal reveal-delay-3">
         {/* client:load, not :visible — the toolbar is near the top of the page
             and sticky, so it is on screen almost at once. */}
         <CategoryFilter
@@ -70,26 +70,37 @@ const resultLabels = articles.map((_, i) => strings.home.resultsCount(i + 1))
     <script is:inline>
       ;(() => {
         const bar = document.querySelector('.cat-bar')
-        const sentinel = document.querySelector('.cat-sentinel')
-        if (!bar || !sentinel || !('IntersectionObserver' in window)) return
-        new IntersectionObserver(
-          ([entry]) => bar.toggleAttribute('data-stuck', !entry.isIntersecting),
-          // The header is 64px of fixed chrome over the viewport; shrink the
-          // root by that much so the sentinel counts as gone when it slides
-          // under the header, not when it leaves the screen entirely.
-          { rootMargin: '-64px 0px 0px 0px', threshold: 0 },
-        ).observe(sentinel)
+        if (!bar) return
+        // Stuck means the page has scrolled and the bar sits at its sticky
+        // offset (the header's height). It starts at that offset, so the
+        // scrollY check is what keeps it shadowless at the very top.
+        const stickyTop = parseFloat(getComputedStyle(bar).top) || 0
+        let queued = false
+        const update = () => {
+          queued = false
+          const stuck = window.scrollY > 0 && bar.getBoundingClientRect().top <= stickyTop + 0.5
+          bar.toggleAttribute('data-stuck', stuck)
+        }
+        // One measurement per frame, however fast the scroll events arrive.
+        const onScroll = () => {
+          if (queued) return
+          queued = true
+          requestAnimationFrame(update)
+        }
+        window.addEventListener('scroll', onScroll, { passive: true })
+        // The browser may restore a scrolled position on reload or back.
+        update()
       })()
     </script>
-    <div class="max-w-[720px] mx-auto px-6 pb-20">
+    <div class="max-w-[768px] mx-auto px-6 pb-6">
       {articles.length > 0 ? (
         <>
           {/* One list rather than the template's per-category sections: with a
               handful of posts spread over the categories, sections would each
               hold a single card. The pills narrow this list instead. One card
-              per row, artwork on the left, so each post gets the full 720px
+              per row, artwork on the left, so each post gets the full 768px
               column for its title and summary. */}
-          <div class="border-t border-ink-100 pt-6 flex flex-col gap-4">
+          <div class="border-t border-ink-100 flex flex-col">
             {articles.map((article, i) => (
               <ArticleCard article={article} index={i} locale={locale} />
             ))}

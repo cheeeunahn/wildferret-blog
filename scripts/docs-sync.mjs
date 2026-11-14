@@ -19,7 +19,7 @@
 //    against a different repo, and the differences are listed as `changes`.
 //    /sync-docs (Claude) reviews the prose against them, then runs --accept.
 //
-//   node scripts/docs-sync.mjs            report; exit 1 only if a block is stale
+//   node scripts/docs-sync.mjs            report; exit 1 if a block is stale or its markers are missing
 //   node scripts/docs-sync.mjs --json     { stale, changes, unnoted, problems }
 //   node scripts/docs-sync.mjs --write    rebuild the generated blocks
 //   node scripts/docs-sync.mjs --accept   record the current shape as reviewed
@@ -60,7 +60,7 @@ const HOST_SOURCES = ['src/layouts/Base.astro', 'src/styles/global.css', 'public
  * What the README's project tree shows. Each root is listed from the tracked
  * files under it; a `collapse`d directory is one line (its contents are not
  * structure worth listing), `exclude` drops files, and a directory with a
- * single child is folded into one line (`api/comments.ts`).
+ * single child is folded into one line (`astryx/wildferret.theme.css`).
  */
 export const TREE_ROOTS = [
   { root: 'public', collapse: ['public/assets/images', 'public/assets/audio'] },
@@ -76,7 +76,6 @@ export const TREE_ROOTS = [
   },
   { root: 'eslint-rules', collapse: ['eslint-rules'] },
   { root: 'scripts', collapse: ['scripts'] },
-  { root: 'supabase/migrations', collapse: ['supabase/migrations'] },
 ]
 
 // ---------------------------------------------------------------- blocks ----

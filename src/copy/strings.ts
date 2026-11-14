@@ -10,6 +10,9 @@ import type { Lang } from '../shared/i18n'
 export interface Strings {
   /** <title> for the index, and the suffix on every other page's title. */
   siteTitle: string
+  /** The footer's one line about the author. */
+  footerTagline: string
+  /** The home page's meta description. */
   siteDescription: string
   nav: { posts: string; about: string }
   /** Accessible name for the language switcher group. */
@@ -43,40 +46,23 @@ export interface Strings {
      * given how many posts are still shown (at least 1; 0 reads `noMatches`).
      */
     resultsCount: (count: number) => string
-    /** Shown on the English index while a post has no English version yet. */
+    /** Shown on an index when no post has been written in its language yet. */
     emptyList: string
   }
   article: {
-    /** Reading time, given whole minutes. */
-    readTime: (minutes: number) => string
-    coverImageNote: string
-    /** Accessible name of the nth carousel slide, 1-based. */
-    carouselSlide: (n: number) => string
     back: string
   }
   notFound: { title: string; back: string }
   /** Accessible name and tooltip of the header's theme toggle, by what it switches to. */
   theme: { toLight: string; toDark: string }
   /**
-   * Passed to the Comments island as a prop rather than looked up inside it.
+   * Passed to the AiSummary island as a prop rather than looked up inside it.
    * The island would otherwise have to bundle every language's dictionary to
    * pick one at runtime; this way it ships only the strings it renders.
    */
-  comments: {
-    heading: string
-    loading: string
-    empty: string
-    namePlaceholder: string
-    nameLabel: string
-    bodyPlaceholder: string
-    bodyLabel: string
-    submit: string
-    submitting: string
-  }
-  /** Passed to the AiSummary island as a prop, for the same reason as `comments`. */
   summarizer: {
     button: string
-    /** Shown with a percentage while Chrome downloads the on-device model. */
+    /** Shown while Chrome downloads a model the summary needs. */
     downloading: string
     /** When one model has downloaded and the next needs another click. */
     continue: string
@@ -91,6 +77,7 @@ export interface Strings {
 
 const ko: Strings = {
   siteTitle: 'wildferret의 블로그',
+  footerTagline: 'Just another product IT startup person out there, in the wild!',
   siteDescription: '사람을 깊이 이해하고, 조용하지만 분명한 차이를 만드는 제품을 만듭니다.',
   nav: { posts: '글', about: '소개' },
   langSwitchLabel: '언어 선택',
@@ -119,24 +106,10 @@ const ko: Strings = {
     emptyList: '아직 이 언어로 옮긴 글이 없어요.',
   },
   article: {
-    readTime: (minutes) => `${minutes}분 읽기`,
-    coverImageNote: '해당 이미지는 AI로 제작한, 이해를 돕기 위한 예시 이미지입니다.',
-    carouselSlide: (n) => `${n}번째 이미지`,
     back: '목록으로 돌아가기',
   },
   notFound: { title: '페이지를 찾을 수 없습니다', back: '목록으로 돌아가기' },
   theme: { toLight: '밝은 테마로 전환', toDark: '어두운 테마로 전환' },
-  comments: {
-    heading: '댓글',
-    loading: '댓글을 불러오는 중…',
-    empty: '첫 댓글을 남겨보세요.',
-    namePlaceholder: '이름',
-    nameLabel: '이름',
-    bodyPlaceholder: '댓글을 남겨주세요',
-    bodyLabel: '댓글',
-    submit: '댓글 남기기',
-    submitting: '등록 중…',
-  },
   summarizer: {
     button: 'AI로 요약하기',
     downloading: 'AI 모델을 불러오고 있어요',
@@ -151,6 +124,7 @@ const ko: Strings = {
 
 const en: Strings = {
   siteTitle: "wildferret's blog",
+  footerTagline: 'Just another product IT startup person out there, in the wild!',
   siteDescription:
     'Understanding people deeply, and building products that make a quiet but unmistakable difference.',
   nav: { posts: 'Posts', about: 'About' },
@@ -180,24 +154,10 @@ const en: Strings = {
     emptyList: 'Nothing has been translated into this language yet.',
   },
   article: {
-    readTime: (minutes) => `${minutes} min read`,
-    coverImageNote: 'This image was generated with AI, as an illustrative example.',
-    carouselSlide: (n) => `Image ${n}`,
     back: 'Back to all posts',
   },
   notFound: { title: 'Page not found', back: 'Back to all posts' },
   theme: { toLight: 'Switch to light theme', toDark: 'Switch to dark theme' },
-  comments: {
-    heading: 'Comments',
-    loading: 'Loading comments…',
-    empty: 'Be the first to comment.',
-    namePlaceholder: 'Name',
-    nameLabel: 'Name',
-    bodyPlaceholder: 'Leave a comment',
-    bodyLabel: 'Comment',
-    submit: 'Post comment',
-    submitting: 'Posting…',
-  },
   summarizer: {
     button: 'Summarize with AI',
     downloading: 'Loading the AI model',

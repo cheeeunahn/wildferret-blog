@@ -15,11 +15,11 @@ export const LANGS = ['ko', 'en'] as const
 export type Lang = (typeof LANGS)[number]
 
 /** The language served at the unprefixed site root. */
-export const DEFAULT_LANG: Lang = 'ko'
+const DEFAULT_LANG: Lang = 'ko'
 
 /**
  * URL segment per language. Korean is 'kr', not its 'ko' language code — the
- * segment is a reader-facing country-style label, and `htmlLang` below keeps
+ * segment is a reader-facing country-style label, and `HTML_LANGS` below keeps
  * the standards-facing code separate.
  */
 export const LANG_SEGMENTS = { ko: 'kr', en: 'en' } as const satisfies Record<Lang, string>
@@ -71,7 +71,7 @@ export function isActiveInLocale(pathname: string, path: string): boolean {
 }
 
 /**
- * Where the switcher's `lang` button points from `appPath`. Always an explicit
+ * Where the switcher's link for `lang` points from `appPath`. Always an explicit
  * prefix, so /en/about ↔ /kr/about round-trips; the unprefixed root tree is a
  * canonical alias readers land on, not a switcher destination.
  */

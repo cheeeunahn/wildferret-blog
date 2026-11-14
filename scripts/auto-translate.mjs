@@ -103,7 +103,10 @@ function main() {
       EN_DIR,
       ARTICLES,
     ],
-    { stdio: 'inherit', env: { ...process.env, AUTO_TRANSLATE: '0', AUTO_CARD_IMAGE: '0' } },
+    {
+      stdio: 'inherit',
+      env: { ...process.env, AUTO_TRANSLATE: '0', AUTO_CARD_IMAGE: '0', AUTO_SYNC_DOCS: '0' },
+    },
   )
   log('Committed. Review it before you push.')
 }

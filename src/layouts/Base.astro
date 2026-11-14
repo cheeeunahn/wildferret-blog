@@ -14,6 +14,7 @@ import {
 } from '../shared/i18n'
 import { t } from '../copy/strings'
 import { resolveAssetUrl } from '../shared/assetUrl'
+import { Link } from '@astryxdesign/core/Link'
 import { Text } from '@astryxdesign/core/Text'
 import { TopNavItem } from '@astryxdesign/core/TopNav'
 
@@ -44,11 +45,15 @@ const canonical = canonicalPath(locale.lang, appPath)
      theme sets, applies everywhere. See docs/adr/0002-astryx-design-system.md. -->
 <!-- The page-wide base styles are utilities on <html> and <body>: Astryx's
      reset already handles margins and font smoothing, so what is left is the
-     family, the ground and ink colours, smooth scrolling and selection colour. -->
+     family, the ground and ink colours, smooth scrolling and selection colour.
+     overscroll-y-none stops the trackpad's rubber-band bounce, which shook the
+     whole page (sticky header included) even when it had nothing to scroll.
+     Only for a fine pointer: on touch screens the same property would also
+     switch off pull-to-refresh. -->
 <html
   lang={HTML_LANGS[locale.lang]}
   data-astryx-theme="wildferret"
-  class="font-body text-ink-900 bg-paper scroll-smooth motion-reduce:scroll-auto"
+  class="font-body text-ink-900 bg-paper scroll-smooth motion-reduce:scroll-auto pointer-fine:overscroll-y-none"
 >
   <head>
     <meta charset="UTF-8" />
@@ -92,36 +97,45 @@ const canonical = canonicalPath(locale.lang, appPath)
   <body class="selection:bg-accent-soft selection:text-ink-950">
     <div class="min-h-screen flex flex-col">
       <header class="sticky top-0 z-50 bg-paper/80 backdrop-blur-md border-b border-ink-100">
-        <nav class="max-w-[720px] mx-auto px-6 h-16 flex items-center justify-between gap-3">
+        <nav class="max-w-[768px] mx-auto px-6 h-16 flex items-center justify-between gap-3 max-[359px]:gap-1">
           {/* Every internal link goes through localeHref, so a reader who
               arrived under /en stays under /en for the rest of the visit. */}
-          <a
-            href={localeHref(locale, '/')}
-            class="text-ink-900 text-base sm:text-lg font-semibold tracking-tight whitespace-nowrap no-underline hover:opacity-70 transition-opacity"
-          >
-            {/* Under 360px (a 320px phone) the English nav ("Posts", "About")
-                leaves no room for the full name, so the logo drops "'s blog"
-                rather than pushing the theme toggle off-screen. */}
-            wildferret<span class="max-[359px]:hidden">'s blog</span>
-          </a>
+          <Link href={localeHref(locale, '/')} color="primary" className="shrink-0">
+            {/* On phones (below sm) the English nav ("Posts", "About") leaves
+                no room for the full name at Astryx's large size — it pushed the
+                theme toggle past the screen edge — so phones get "wildferret" at
+                body size instead, in every language so the logo does not change
+                with the switcher. Text sizes cannot change per breakpoint, hence
+                two Texts; only one is ever displayed, so it is read once. */}
+            <Text type="large" weight="semibold" className="whitespace-nowrap max-sm:hidden">
+              wildferret's blog
+            </Text>
+            <Text weight="semibold" className="whitespace-nowrap sm:hidden">
+              wildferret
+            </Text>
+          </Link>
           {/* Every item on the right is the same 36px, 8px-radius box with its
               own side padding (TopNavItem, the language trigger, the theme
               toggle), so the gap between boxes stays small: the padding
               already spaces the labels.
               whitespace-nowrap: on a 320px phone the row is tight, and without
               it "소개" breaks onto two lines instead of the gaps giving way.
-              Below sm the gaps go to zero (and the logo shortens under 360px,
-              see above), or the theme toggle is pushed off a 320px screen. */}
+              Below sm the gaps go to zero (and the logo shortens, see above),
+              and under 360px the nav items' padding and the gap after the logo
+              shrink too: on a 320px screen the English row ("Posts", "About")
+              is otherwise 24px too wide and pushes the theme toggle off. */}
           <div class="flex items-center sm:gap-1 whitespace-nowrap">
             <TopNavItem
               href={localeHref(locale, '/')}
               label={strings.nav.posts}
               isSelected={isActiveInLocale(pathname, '/')}
+              className="max-[359px]:px-1.5!"
             />
             <TopNavItem
               href={localeHref(locale, '/about')}
               label={strings.nav.about}
               isSelected={isActiveInLocale(pathname, '/about')}
+              className="max-[359px]:px-1.5!"
             />
             <LangSwitcher locale={locale} appPath={appPath} availableLangs={availableLangs} />
             <!-- client:only — ThemeToggle reads document.documentElement in a
@@ -145,17 +159,16 @@ const canonical = canonicalPath(locale.lang, appPath)
         <slot />
       </main>
 
+      {/* One quiet row: the tagline and the copyright, 24px of padding, in
+          Astryx's xsm size (11px), one step below the supporting type. The
+          name is not repeated above the tagline, since the copyright already
+          carries it. On phones the two lines stack, with a small gap. */}
       <footer class="border-t border-ink-100 bg-paper-warm">
-        <div class="max-w-[720px] mx-auto px-6 py-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div class="flex flex-col gap-1">
-            <Text as="p" display="block" type="label" weight="bold">
-              wildferret
-            </Text>
-            <Text as="p" display="block" type="supporting">
-              Just another product IT startup person out there, in the wild!
-            </Text>
-          </div>
-          <Text as="p" display="block" type="supporting">
+        <div class="max-w-[768px] mx-auto px-6 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4">
+          <Text as="p" display="block" type="supporting" size="xsm">
+            {strings.footerTagline}
+          </Text>
+          <Text as="p" display="block" type="supporting" size="xsm" className="shrink-0">
             &copy; {year} wildferret
           </Text>
         </div>

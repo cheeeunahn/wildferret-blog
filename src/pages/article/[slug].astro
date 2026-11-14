@@ -11,8 +11,7 @@ export const getStaticPaths = (async () => {
     // Every post has a Korean base copy, so the Korean index is every post.
     articlesIn(ROOT_LOCALE.lang).map(async (article) => ({
       params: { slug: article.slug },
-      // Read the body at build time. loadContent() keeps its interface; it
-      // just runs in Node during the build instead of in the browser.
+      // Read the body at build time, so a broken loader fails the build.
       props: { article, content: await article.loadContent() },
     })),
   )

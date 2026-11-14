@@ -244,7 +244,7 @@ describe('packageOfSource / matchShipped', () => {
         '../node_modules/.pnpm/@astrojs+react@6.0.2_x/node_modules/@astrojs/react/client.js',
       ),
     ).toEqual({ name: '@astrojs/react', version: '6.0.2' })
-    expect(packageOfSource('../../src/components/Comments.tsx')).toBeUndefined()
+    expect(packageOfSource('../../src/components/AiSummary.tsx')).toBeUndefined()
   })
 
   it('marks the exact locked version, or every locked version on drift', () => {

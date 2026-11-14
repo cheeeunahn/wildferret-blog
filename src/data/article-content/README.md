@@ -20,8 +20,10 @@ Store each article body in its own file and export a `...Content` string.
      import('./article-content/my-new-article').then(({ myNewArticleContent }) => myNewArticleContent),
    ```
 
-The body is read at build time by `src/pages/article/[slug].astro`, so a broken
-`loadContent` fails `pnpm build` rather than degrading in the browser.
+The body is read at build time by the article routes' `getStaticPaths`
+(`src/pages/article/[slug].astro`, and `src/pages/[lang]/article/[slug].astro`
+for the `/kr` and `/en` trees), so a broken `loadContent` fails `pnpm build` rather than
+degrading in the browser.
 
 ## English versions
 
@@ -30,10 +32,12 @@ name with an `En` suffix (`myNewArticleContent` → `myNewArticleContentEn`), an
 the article's entry in `articles.ts` points at it through a `translations.en`
 block.
 
-You do not usually write these by hand. Pushing a new article triggers
-`.github/workflows/translate-articles.yml`, which writes the English version and
-commits it back to your branch. To do it locally instead, run `pnpm translate`
-(or `/translate-articles <slug>` inside Claude Code), and `pnpm translation:status`
+You do not usually write these by hand. Committing a new article runs the
+`auto-translate` post-commit hook, which adds the English version as a commit of
+its own. On push, `.github/workflows/translate-articles.yml` catches anything
+the hook missed: it commits the translation back to a feature branch, or opens a
+PR when the push was to `main`. To translate by hand, run `pnpm translate` (or
+`/translate-articles <slug>` inside Claude Code), and `pnpm translation:status`
 to see what is still missing. See "Automatic Translation" in CLAUDE.md.
 
 A post with no English version is left out of the `/en` index rather than served

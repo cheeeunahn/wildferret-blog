@@ -43,7 +43,7 @@ describe('project tree', () => {
     { root: 'scripts', collapse: ['scripts'] },
   ]
   const files = [
-    'src/pages/api/comments.ts',
+    'src/pages/[lang]/about.astro',
     'src/pages/index.astro',
     'src/pages/about.astro',
     'src/layouts/Base.astro',
@@ -66,7 +66,7 @@ describe('project tree', () => {
         '│   └── articles.ts',
         '├── layouts/Base.astro',
         '├── pages/',
-        '│   ├── api/comments.ts',
+        '│   ├── [lang]/about.astro',
         '│   ├── about.astro',
         '│   └── index.astro',
         '└── shared/i18n.ts',
@@ -84,12 +84,12 @@ describe('project tree', () => {
     ])
     const first = renderTree(files, notes, roots)
     // Notes align one column past the longest line.
-    expect(first.body).toContain('├── layouts/Base.astro    # The shell')
-    expect(first.body).toContain('│   ├── article-content/  # Bodies')
+    expect(first.body).toContain('├── layouts/Base.astro      # The shell')
+    expect(first.body).toContain('│   ├── article-content/    # Bodies')
     // Directories that only group children (src/, pages/) need no note.
     expect(first.unnoted).toEqual([
       'src/data/articles.ts',
-      'src/pages/api/comments.ts',
+      'src/pages/[lang]/about.astro',
       'src/pages/about.astro',
       'src/pages/index.astro',
       'src/shared/i18n.ts',
@@ -158,36 +158,36 @@ describe('scripts', () => {
 })
 
 describe('islands', () => {
-  const eslint = `rules: { 'local/no-unlisted-island': ['error', { allow: ['ThemeToggle', 'Comments'] }] }`
+  const eslint = `rules: { 'local/no-unlisted-island': ['error', { allow: ['ThemeToggle', 'AiSummary'] }] }`
 
   it('reads the allowlist from eslint.config.js', () => {
-    expect(islandAllowlist(eslint)).toEqual(['ThemeToggle', 'Comments'])
+    expect(islandAllowlist(eslint)).toEqual(['ThemeToggle', 'AiSummary'])
     expect(islandAllowlist('nothing here')).toBeNull()
   })
 
   it('finds each island’s directive, across lines and files', () => {
     const astro = [
       '<ThemeToggle\n  client:only="react"\n  toLight={a}\n/>',
-      '<Comments client:visible slug={s} />',
+      '<AiSummary client:summarizer slug={s} />',
     ]
-    const found = islandDirectives(['ThemeToggle', 'Comments', 'Unused'], astro)
+    const found = islandDirectives(['ThemeToggle', 'AiSummary', 'Unused'], astro)
     expect(Object.fromEntries(found)).toEqual({
       ThemeToggle: ['client:only'],
-      Comments: ['client:visible'],
+      AiSummary: ['client:summarizer'],
       Unused: [],
     })
   })
 
   it('keeps the why per island and flags a new one', () => {
     const whys = parseIslandRows(
-      '| Island | Hydration | Why |\n| --- | --- | --- |\n| `Comments` | `client:load` | Loads late |',
+      '| Island | Hydration | Why |\n| --- | --- | --- |\n| `AiSummary` | `client:load` | Loads late |',
     )
     const directives = new Map([
-      ['Comments', ['client:visible']],
+      ['AiSummary', ['client:summarizer']],
       ['Fresh', []],
     ])
     const { body, unnoted } = renderIslandsTable(directives, whys)
-    expect(body).toContain('| `Comments` | `client:visible` | Loads late |')
+    expect(body).toContain('| `AiSummary` | `client:summarizer` | Loads late |')
     expect(body).toContain('| `Fresh` | (not mounted) |  |')
     expect(unnoted).toEqual(['Fresh'])
   })
@@ -206,7 +206,7 @@ describe('fingerprint', () => {
       dependencies: { react: '1' },
       devDependencies: { vitest: '1' },
     },
-    islands: new Map([['Comments', ['client:visible']]]),
+    islands: new Map([['AiSummary', ['client:summarizer']]]),
     hostSources: ['<link href="https://cdn.jsdelivr.net/x">', 'font-src https://CDN.jsdelivr.net'],
   }
 
@@ -215,7 +215,7 @@ describe('fingerprint', () => {
       files: ['src/a.ts'], // article bodies, assets and the docs themselves are ignored
       scripts: ['build', 'dev'],
       dependencies: ['react', 'vitest'],
-      islands: ['Comments client:visible'],
+      islands: ['AiSummary client:summarizer'],
       hosts: ['cdn.jsdelivr.net'],
     })
   })

@@ -79,15 +79,8 @@ describe('classifyBlock', () => {
     expect(classifyBlock('그냥 **문단**')).toEqual({ type: 'paragraph', text: '그냥 **문단**' })
   })
 
-  it('groups consecutive image lines into one carousel with the first caption', () => {
-    expect(classifyBlock('![a](/a.png)\n![b](/b.png "캡션")')).toEqual({
-      type: 'carousel',
-      slides: [
-        { alt: 'a', src: '/a.png' },
-        { alt: 'b', src: '/b.png', caption: '캡션' },
-      ],
-      caption: '캡션',
-    })
+  it('fails on consecutive image lines with no blank line between them', () => {
+    expect(() => classifyBlock('![a](/a.png)\n![b](/b.png "캡션")')).toThrow(/blank line/)
   })
 
   it('treats a single-line pipe row and a mixed image block as paragraphs', () => {
@@ -124,11 +117,11 @@ describe('formatInline', () => {
     )
 
     expect(result).toContain('<strong>강조</strong>')
-    // Asserted as wrapper + color token rather than the exact class list: the
+    // Asserted as wrapper + font token rather than the exact class list: the
     // rest is presentational churn, and pinning it is what let this test drift
-    // when the redesign moved inline code from text-ink-600 to text-copper.
+    // when inline code moved to Astryx's code font.
     expect(result).toMatch(/<code class="[^"]*">code<\/code>/)
-    expect(result).toContain('text-copper')
+    expect(result).toContain('--font-family-code')
     expect(result).toContain('assets/image.png"')
     expect(result).toContain('<a href="#"')
     expect(result).toContain('&lt;script&gt;alert(1)&lt;/script&gt;')

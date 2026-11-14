@@ -34,16 +34,17 @@ const GREET_FRAMES = [
 ]
 ---
 
-{/* At sm+ the box is 376px tall in the page's 720px column (672px inside
+{/* At sm+ the box is 400px tall in the page's 768px column (720px inside
       its padding), close to the source's 1024×571 (16:9), so little is
       cropped; on phones it is taller than 16:9 and
       object-cover crops the sides. The focal point is right of centre and
       high, hence object-[62%_38%] rather than the default.
-      The <label> makes the whole illustration the click target for the
-      greeting; the checkbox inside it is the state. The radios are visually
-      hidden, so their keyboard focus is surfaced on the frame (has-[…]). */}
+      A radio group (.hero-state) holds the state, and three stacked <label>s
+      cover the illustration, so the whole image is the click target for the
+      greeting. The radios are visually hidden, so their keyboard focus is
+      surfaced on the frame (has-[…]). */}
 <figure class="m-0 animate-reveal-media reveal-delay-1">
-  <div class="hero-greet relative block overflow-hidden rounded-2xl bg-paper-warm/30 has-[.hero-state:focus-visible]:outline-2 has-[.hero-state:focus-visible]:outline-accent has-[.hero-state:focus-visible]:outline-offset-3">
+  <div class="hero-greet relative block overflow-hidden rounded-(--radius-container) bg-paper-warm/30 has-[.hero-state:focus-visible]:outline-2 has-[.hero-state:focus-visible]:outline-accent has-[.hero-state:focus-visible]:outline-offset-3">
     <input
       type="radio"
       name="hero-state"
@@ -76,7 +77,7 @@ const GREET_FRAMES = [
     <img
       src={resolveAssetUrl('/assets/images/wildferret-hero-coding.webp')}
       alt={strings.hero.codingAlt}
-      class="w-full h-[260px] sm:h-[376px] object-cover object-[62%_38%]"
+      class="w-full h-[260px] sm:h-[400px] object-cover object-[62%_38%]"
       loading="lazy"
       decoding="async"
     />

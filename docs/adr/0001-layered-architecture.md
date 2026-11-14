@@ -3,6 +3,7 @@
 - Status: Accepted (PR 1: #33; PR 2: comments server API)
 - Date: 2026-10-04
 - Tracking: https://github.com/cheeeunahn/wildferret-blog/issues/32
+- Partly superseded by [ADR 0004](0004-remove-comments.md): comments and the Supabase integration are removed (decisions 3 and 5, and the comments parts of decision 1). The layer split and its lint rules stand.
 
 ## Context
 

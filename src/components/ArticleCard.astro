@@ -1,7 +1,6 @@
 ---
 import type { LocalizedArticle } from '../content/service'
 import { localeHref, type Locale } from '../shared/i18n'
-import { t } from '../copy/strings'
 import { resolveAssetUrl } from '../shared/assetUrl'
 import { ClickableCard } from '@astryxdesign/core/ClickableCard'
 import { Heading } from '@astryxdesign/core/Heading'
@@ -14,7 +13,6 @@ interface Props {
 }
 
 const { article, index, locale } = Astro.props
-const strings = t(locale.lang)
 ---
 
 {/* A list row: a square artwork plate on the left, text on the right, one
@@ -29,7 +27,7 @@ const strings = t(locale.lang)
     our own content, never reader input. Once the reader has filtered, a card
     coming back replays its entrance with no stagger (in-data-filtered). */}
 <div
-  class="group animate-reveal in-data-filtered:[animation-delay:0s]!"
+  class="group border-b border-ink-100 animate-reveal in-data-filtered:[animation-delay:0s]!"
   data-cat={article.category}
   data-search={`${article.title} ${article.subtitle}`}
   style={`animation-delay: ${0.4 + index * 0.06}s`}
@@ -39,7 +37,8 @@ const strings = t(locale.lang)
       href={localeHref(locale, `/article/${article.slug}`)}
       label={article.title}
       padding={0}
-      className="flex gap-4 p-4 sm:gap-5 sm:p-5 [&>a]:inset-0! [&>a]:size-auto! [&>a]:m-0! [&>a]:[clip:auto]! [&>a]:z-1!"
+      variant="transparent"
+      className="-mx-3 flex gap-4 px-3 py-4 [&>a]:inset-0! [&>a]:size-auto! [&>a]:m-0! [&>a]:[clip:auto]! [&>a]:z-1!"
     >
       {/* Every card gets the same square plate, so a post without artwork keeps
           the list's rhythm. The covers are square line art, so they are
@@ -49,7 +48,7 @@ const strings = t(locale.lang)
           quiet muted plate instead, which would otherwise read as a missing
           image. Smaller below sm, so a 320px screen keeps room for the text. */}
       <div
-        class={`size-24 sm:size-36 shrink-0 overflow-hidden rounded-lg ${article.cardImage ? 'bg-thumb-plate' : 'bg-ink-50'}`}
+        class={`size-24 sm:size-28 shrink-0 overflow-hidden rounded-(--radius-element) ${article.cardImage ? 'bg-thumb-plate' : 'bg-ink-50'}`}
       >
         {article.cardImage ? (
           <img
@@ -58,7 +57,7 @@ const strings = t(locale.lang)
             aria-hidden="true"
             loading="lazy"
             decoding="async"
-            class="w-full h-full object-contain p-1.5 transition-transform duration-[350ms] group-hover:scale-[1.04] dark:filter-none"
+            class="w-full h-full object-contain p-1.5 transition-transform duration-(--duration-medium-min) group-hover:scale-[1.04] dark:filter-none"
           />
         ) : (
           <div class="w-full h-full flex items-center justify-center" aria-hidden="true">
@@ -69,8 +68,11 @@ const strings = t(locale.lang)
 
       {/* min-w-0 lets the column shrink below its content's width, so a long
           title wraps instead of pushing the row wider than the card. */}
-      <div class="flex min-w-0 flex-1 flex-col gap-1.5">
-        <Text type="supporting">{article.category}</Text>
+      <div class="flex min-w-0 flex-1 flex-col gap-1">
+        {/* The category takes the accent: the list's one touch of color. */}
+        <Text type="supporting" color="accent">
+          {article.category}
+        </Text>
         {/* break-keep: Korean wraps between words, as it does in articles,
             instead of splitting one ("요 / 약해보기"). text-pretty keeps a
             single word from being stranded on the title's last line. */}
@@ -93,9 +95,7 @@ const strings = t(locale.lang)
         {/* mt-auto pins the meta to the foot of the row, level with the bottom
             of the artwork when the text is shorter than it. */}
         <div class="mt-auto pt-2">
-          <Text type="supporting">
-            {article.date} · {strings.article.readTime(article.readMinutes)}
-          </Text>
+          <Text type="supporting">{article.date}</Text>
         </div>
       </div>
     </ClickableCard>

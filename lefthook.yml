@@ -55,9 +55,10 @@ pre-push:
     # valid state, and the translate-articles workflow fills it in after the push.
     - name: translation-status
       run: node scripts/translation-status.mjs
-    # Fails only when a generated block in README.md / CLAUDE.md is stale —
-    # a mechanical fix (pnpm docs:write). Unreviewed drift exits 0, like an
-    # untranslated post: the sync-docs workflow reviews it after the push.
+    # Fails only when a generated block in README.md / CLAUDE.md is stale or
+    # its markers are missing — a mechanical fix (pnpm docs:write). Unreviewed
+    # drift exits 0, like an untranslated post: the sync-docs workflow reviews
+    # it after the push.
     - name: docs-status
       run: node scripts/docs-sync.mjs
     # astro check covers the TypeScript pass, so this is typecheck + build in one.

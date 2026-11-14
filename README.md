@@ -9,12 +9,11 @@ Thanks for stopping by 👋🏻
 
 | Layer         | Choice                                                                  |
 | ------------- | ----------------------------------------------------------------------- |
-| Framework     | Astro 7 (static output + one Worker API route, `@astrojs/cloudflare`)   |
+| Framework     | Astro 7 (static output, deployed with `@astrojs/cloudflare`)            |
 | UI            | React 19 islands, TypeScript 5 (strict)                                 |
 | Design system | [Astryx](https://github.com/facebook/astryx) (`@astryxdesign/core`)     |
 | Styling       | Tailwind CSS 4 (`@tailwindcss/vite`) on Astryx's semantic color tokens  |
 | Routing       | File-based (`src/pages/`), one prerendered tree per language, no router |
-| Comments      | Supabase, reached only through the Worker's `/api/comments`             |
 
 ## Prerequisites
 
@@ -28,10 +27,6 @@ Thanks for stopping by 👋🏻
 ```bash
 pnpm install   # also installs the lefthook git hooks
 ```
-
-For comments in `pnpm dev`, copy `.dev.vars.example` to `.dev.vars` and fill in
-the three Supabase secrets (see the Comments section of [CLAUDE.md](CLAUDE.md)).
-Without them the site still runs; the comment section just renders nothing.
 
 ## Scripts
 
@@ -51,7 +46,6 @@ Without them the site still runs; the comment section just renders nothing.
 | `pnpm translate`          | Write the missing English versions (opens Claude Code)                    |
 | `pnpm card:status`        | List the articles that have no card thumbnail yet                         |
 | `pnpm card:generate`      | Draw the missing card thumbnails with the Codex CLI                       |
-| `pnpm mint:api-jwt`       | Mint the Worker's `blog_api` JWT (needs `SUPABASE_JWT_SECRET`)            |
 | `pnpm sbom:write`         | Regenerate `docs/sbom/` (CycloneDX SBOM + summary) after a dep change     |
 | `pnpm docs:status`        | Is README.md / CLAUDE.md in step with the repo? (`--json` for detail)     |
 | `pnpm docs:write`         | Rebuild the generated blocks in README.md and CLAUDE.md                   |
@@ -75,16 +69,14 @@ public/
 ├── _headers                  # Security headers, incl. the CSP
 └── favicon.svg               # Site icon (must stay at root)
 src/
-├── client/                   # Browser code that reaches outside the page
-│   ├── commentsApi.ts        # Browser → /api/comments
-│   └── summarizer.ts         # Chrome built-in AI calls
+├── client/summarizer.ts      # Chrome built-in AI calls
 ├── components/
 │   ├── AboutView.astro       # About page markup, mounted by /about and /[lang]/about
 │   ├── AiSummary.tsx         # Island: on-device "Summarize with AI"
 │   ├── ArticleCard.astro     # A post row on the home list
-│   ├── ArticleView.astro     # Article page markup (header, body, comments)
+│   ├── ArticleMarkdown.tsx   # Article lists through Astryx Markdown — static, not an island
+│   ├── ArticleView.astro     # Article page markup (header, body, AI summary)
 │   ├── CategoryFilter.tsx    # Island: home search + category pills
-│   ├── Comments.tsx          # Island: an article's comment thread
 │   ├── FerretHero.astro      # The about page's interactive ferret illustration
 │   ├── HeroSoundButton.tsx   # The hero's sound IconButton — static, not an island
 │   ├── HomeView.astro        # Home page markup, mounted by / and /[lang]/
@@ -103,20 +95,13 @@ src/
 ├── layouts/Base.astro        # <head>, header, footer, <slot /> — the shared shell
 ├── pages/                    # File-based routes; each page is a thin wrapper
 │   ├── [lang]/               # The same pages under /kr/… and /en/…
-│   ├── api/comments.ts       # The one on-demand route (Worker code)
 │   ├── article/[slug].astro  # /article/:slug
 │   ├── 404.astro             # One page for every miss, in both languages
 │   ├── about.astro           # /about
 │   └── index.astro           # /                (Korean, canonical)
-├── server/comments/          # Logic, run per request in the Worker
-│   ├── http.ts               # /api/comments transport (statuses, size limit)
-│   ├── repository.ts         # The only Supabase caller (as role blog_api)
-│   └── service.ts            # Validation + moderation pre-check
 ├── shared/                   # Pure helpers, importable from any layer
 │   ├── assetUrl.ts           # Deployment-safe asset URL resolver
-│   ├── comments.ts           # /api/comments wire type
 │   ├── i18n.ts               # Locales and language-aware hrefs
-│   ├── moderation.ts         # Comment pre-check + rejection copy
 │   └── siteUrl.ts            # href / toAppPath — base-aware routes
 └── styles/
     ├── astryx/               # The Astryx theme (source + built CSS)
@@ -125,9 +110,8 @@ docs/
 ├── adr/                      # Architecture decision records
 ├── sbom/                     # Generated SBOM — do not edit by hand
 └── trd/                      # Technical requirements (Astryx migration)
-eslint-rules/                 # Repo-local lint rules (layers, islands, links, XSS)
-scripts/                      # Translation and docs sync (status + hooks), SBOM, JWT minting
-supabase/migrations/          # Comments schema, roles and moderation trigger
+eslint-rules/                 # Repo-local lint rules (layers, islands, links, XSS, Astryx colors and type)
+scripts/                      # Translation, card images and docs sync (status + hooks), SBOM
 ```
 
 <!-- docs:layout:end -->
@@ -151,7 +135,7 @@ JavaScript unless something explicitly asks for it. Astryx display components
 (`Heading`, `Text`, `ClickableCard`, …) used in `.astro` files render to static
 HTML and ship nothing.
 
-There are exactly four hydrated islands, each loaded as late as it can be:
+There are exactly three hydrated islands, each loaded as late as it can be:
 
 <!-- docs:islands:start -->
 <!-- Generated by `pnpm docs:write` from the code; only the prose cells are kept. Edit those, not the rows. -->
@@ -159,7 +143,6 @@ There are exactly four hydrated islands, each loaded as late as it can be:
 | Island           | Hydration           | Why                                                                   |
 | ---------------- | ------------------- | --------------------------------------------------------------------- |
 | `ThemeToggle`    | `client:only`       | Reads `document` on first render; its wrapper reserves header space   |
-| `Comments`       | `client:visible`    | Loads React only when a reader scrolls to the end of an article       |
 | `CategoryFilter` | `client:load`       | The home toolbar is on screen at once; it only sets `hidden` on cards |
 | `AiSummary`      | `client:summarizer` | Loads only in browsers that have Chrome's built-in AI                 |
 
@@ -170,12 +153,16 @@ A lint rule rejects `client:*` anywhere else. See the Islands policy in
 
 ## Design, fonts and theme
 
-The site uses **Astryx's** default colors, typography and components
-([ADR 0002](docs/adr/0002-astryx-design-system.md)). The theme in
-`src/styles/astryx/wildferretTheme.ts` swaps in the webfont and raises the type
-scale's base to 16px. Every page shares one 720px column, and the home page is a
-search box, category pills and a list of wide cards (artwork left, text right),
-after Astryx's Library template ([ADR 0003](docs/adr/0003-library-layout-and-reading-scale.md)).
+The site uses **Astryx's** typography and components
+([ADR 0002](docs/adr/0002-astryx-design-system.md)) and the colors of Astryx's
+[stone](https://astryx.atmeta.com/themes?theme=stone) theme, light and dark, with a muted
+indigo accent of our own ([ADR 0005](docs/adr/0005-stone-colors-and-astryx-lint.md)). The
+theme in `src/styles/astryx/wildferretTheme.ts` takes those colors from
+`stoneColors.ts`, swaps in the webfont and raises the type scale's base to 16px. Every page shares one 768px column, and the home page is a
+search box, category pills and a ruled list of posts (square artwork left; category, title, a
+two-line summary and the date right), after Astryx's Library template
+([ADR 0003](docs/adr/0003-library-layout-and-reading-scale.md), revised by
+[ADR 0006](docs/adr/0006-reading-layout-revisions.md)).
 
 Use Astryx components and Astryx semantic tokens only: no raw hex values and no
 stock Tailwind palette classes. The older token names (`text-ink-900`,
@@ -202,8 +189,7 @@ Write the post in Korean. Its data lives entirely in `src/data/`:
    ```
 2. Add a `loadContent` dynamic import in `src/data/articles.ts`.
 3. Prepend an entry to the `articles` array with its metadata (`slug`, `title`,
-   `subtitle`, `date`, `readMinutes` as a number, `category`, optional
-   `coverImage` / `cardImage`) and the loader.
+   `subtitle`, `date`, `category`, optional `cardImage`) and the loader.
 
 Bodies are read at build time in `getStaticPaths`, so a broken `loadContent`
 fails `pnpm build` instead of degrading in the browser.
@@ -234,15 +220,17 @@ Blocks are separated by blank lines. Supported syntax:
 | `\| a \| b \|`                          | Table (consecutive pipe-delimited lines)                                                 |
 | `---`                                   | Horizontal divider                                                                       |
 | `~~~lang … ~~~`                         | Fenced code block — use `~~~`, not backticks, to avoid escaping inside template literals |
-| `![alt](path)`                          | Inline image                                                                             |
+| `![alt](path "caption")`                | Image, in a block of its own; the caption is optional                                    |
 | `**bold**`, `` `code` ``, `[text](url)` | Inline formatting                                                                        |
+| `## 요약` + `- ` list, opening the body | Summary card (the heading may also be TL;DR or Summary); a `---` after it is dropped     |
 
-Parsing and safe inline formatting live in `src/content/parser.ts`.
+Two image lines with no blank line between them fail the build. Parsing and safe
+inline formatting live in `src/content/parser.ts`.
 
 ### Images and links
 
 Put images in `public/assets/images/` and reference them in `articles.ts` with a
-leading slash and no base prefix (e.g. `/assets/images/my-cover.png`). Every
+leading slash and no base prefix (e.g. `/assets/images/my-image.png`). Every
 asset URL is resolved at render time by `resolveAssetUrl()` in
 `src/shared/assetUrl.ts`, which prepends the base path for relative URLs and
 passes absolute `https://` URLs through unchanged.
@@ -265,23 +253,20 @@ Astro prerenders one HTML file per page (`dist/client/about/index.html`,
 `dist/client/en/article/<slug>/index.html`, …), served as static assets, so deep
 links resolve directly and there is no SPA redirect shim to maintain. Unknown
 paths get the prerendered `dist/client/404.html`.
-
-The one exception is `/api/comments`, which runs as Worker code
-(`dist/server/`, via the `@astrojs/cloudflare` adapter) and talks to Supabase
-with runtime secrets. See the Comments section of [CLAUDE.md](CLAUDE.md) for
-the secrets and the database cutover order.
+No route runs as Worker code; the `@astrojs/cloudflare` adapter only packages
+the static files for the Worker.
 
 ## Tests and checks
 
 `pnpm test` covers the article parser (block splitting, fenced code, the safe
-inline formatter), the content service, i18n, comment moderation, the comments
-API (transport, service, and repository against a mocked PostgREST), the
-on-device summarizer, the lint rules, and the scripts. Add parser cases when
+inline formatter), the content service, i18n, the on-device summarizer, the
+lint rules, and the scripts. Add parser cases when
 extending the supported article syntax.
 
 Git hooks (lefthook) run `eslint --fix` and Prettier on commit, then the
-translation and docs-sync hooks. Before a push they run the translation check,
-the docs check (`pnpm docs:status`), `pnpm build` and `pnpm test`.
+card-image, translation and docs-sync hooks. Before a push they run the
+translation check, the docs check (`pnpm docs:status`), `pnpm build` and
+`pnpm test`.
 
 The software bill of materials in [`docs/sbom/`](docs/sbom/README.md) is
 generated from the lockfile by `pnpm sbom:write`. Re-run it in any PR that changes
@@ -292,7 +277,7 @@ generated from the lockfile by `pnpm sbom:write`. Re-run it in any PR that chang
 Four GitHub Actions are wired up:
 
 - [`claude-code-review.yml`](.github/workflows/claude-code-review.yml) reviews
-  every pull request.
+  every pull request not opened by a bot (Renovate's are skipped).
 - [`claude.yml`](.github/workflows/claude.yml) responds to `@claude` mentions in
   issues, PRs, and review comments.
 - [`translate-articles.yml`](.github/workflows/translate-articles.yml) writes the

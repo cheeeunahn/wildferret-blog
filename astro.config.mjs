@@ -7,7 +7,10 @@ import tailwindcss from '@tailwindcss/vite'
 
 // Served at the root of the Cloudflare static worker, so the default base is '/'.
 // BASE_PATH overrides it for a build that has to live under a path prefix.
-const base = process.env.BASE_PATH ?? '/'
+// The trailing slash is added here because Astro does not add one under
+// trailingSlash: 'ignore', and href()/resolveAssetUrl() append paths straight
+// onto BASE_URL: '/blog' would otherwise turn '/about' into '/blogabout'.
+const base = (process.env.BASE_PATH ?? '/').replace(/\/*$/, '/')
 
 // `client:summarizer`: hydrate only where Chrome's built-in Prompt API
 // exists. Used by the AiSummary island; see src/directives/summarizer.ts.
@@ -27,12 +30,13 @@ const summarizerDirective = {
 export default defineConfig({
   base,
   outDir: './dist',
-  // One directory per route: dist/about/index.html, dist/article/<slug>/index.html.
+  // One directory per route: dist/client/about/index.html,
+  // dist/client/article/<slug>/index.html.
   // The worker resolves extensionless paths to the directory index.
   build: { format: 'directory' },
   trailingSlash: 'ignore',
-  // Every page is still prerendered. The adapter exists for the one route that
-  // opts out with `prerender = false`: /api/comments (src/pages/api/comments.ts).
+  // Every page is prerendered; no route opts out with `prerender = false`. The
+  // adapter is what deploys the site as a Cloudflare Worker serving those files.
   // No sessions: the blog has no logged-in state, and leaving them on makes the
   // adapter require a SESSION KV namespace that nothing would ever read.
   // No image service: images are plain files in public/, never astro:assets.
@@ -61,7 +65,6 @@ export default defineConfig({
           'react',
           'react/jsx-runtime',
           'react-dom/server',
-          '@astryxdesign/core/Badge',
           '@astryxdesign/core/Blockquote',
           '@astryxdesign/core/Button',
           '@astryxdesign/core/Card',
@@ -69,13 +72,13 @@ export default defineConfig({
           '@astryxdesign/core/CodeBlock',
           '@astryxdesign/core/Divider',
           '@astryxdesign/core/Heading',
-          '@astryxdesign/core/HStack',
           '@astryxdesign/core/Icon',
           '@astryxdesign/core/IconButton',
           '@astryxdesign/core/Link',
+          '@astryxdesign/core/List',
+          '@astryxdesign/core/Markdown',
           '@astryxdesign/core/Table',
           '@astryxdesign/core/Text',
-          '@astryxdesign/core/TextArea',
           '@astryxdesign/core/TextInput',
           '@astryxdesign/core/ToggleButton',
           '@astryxdesign/core/TopNav',

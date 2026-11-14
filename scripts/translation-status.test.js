@@ -19,7 +19,6 @@ const entry = (slug, translations = '') => `
     title: '제목',
     subtitle: '부제',
     date: '2026.01.01',
-    readMinutes: 5,
     category: 'Personal',
     loadContent: () => import('./article-content/${slug}').then(({ x }) => x),${translations}
   },`
