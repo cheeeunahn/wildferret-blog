@@ -242,6 +242,11 @@ tsx.run('astryx-colors-only (tsx)', astryxColorsOnly, {
       filename: 'src/data/article-content/x.ts',
     },
     { code: "const c = '#ffffff'", filename: 'src/shared/x.test.ts' },
+    // stoneColors.ts is where tokens get their raw values.
+    {
+      code: "const t = { '--color-accent': ['#25252a', '#f3f3f5'] }",
+      filename: 'src/styles/astryx/stoneColors.ts',
+    },
   ],
   invalid: [
     {
@@ -257,6 +262,12 @@ tsx.run('astryx-colors-only (tsx)', astryxColorsOnly, {
     {
       code: "const s = { background: 'rgb(255 255 255 / 0.5)' }",
       filename: 'src/components/X.tsx',
+      errors: [{ messageId: 'value' }],
+    },
+    // Only stoneColors.ts is exempt, not the rest of the theme folder.
+    {
+      code: "const t = { button: { base: { color: '#ffffff' } } }",
+      filename: 'src/styles/astryx/wildferretTheme.ts',
       errors: [{ messageId: 'value' }],
     },
   ],

@@ -78,7 +78,8 @@
     system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR',
     'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
 
-  /* Colors are Astryx's default palette (docs/adr/0002-astryx-design-system.md).
+  /* Colors are Astryx semantic tokens, valued by Astryx's stone theme
+     (src/styles/astryx/stoneColors.ts; docs/adr/0002-astryx-design-system.md).
      The names below are the site's old token names, kept as aliases so the
      templates did not have to change: each one points at the Astryx semantic
      token that plays the same role. Astryx defines those with light-dark(),

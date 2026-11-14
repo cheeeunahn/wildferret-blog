@@ -13,7 +13,8 @@
  * is how a raw color reaches a `style` object.
  *
  * CSS is not linted by ESLint: the two deliberate raw colors in global.css
- * (the fireflies' glow and --color-thumb-plate) are documented there. Article
+ * (the fireflies' glow and --color-thumb-plate) are documented there.
+ * src/styles/astryx/stoneColors.ts (where the tokens get their values), article
  * bodies and tests are skipped. See Design Tokens in CLAUDE.md.
  */
 
@@ -40,8 +41,12 @@ const holdsIdOrUrl = (node) => {
   return attr?.type === 'JSXAttribute' && ID_OR_URL_ATTR.test(String(attr.name?.name ?? ''))
 }
 
+// stoneColors.ts is where the tokens get their raw values, so raw colors belong
+// there, and only there: the rest of the theme folder is checked like any file.
 const skipped = (filename) =>
-  filename.includes('/article-content/') || /\.test\.[jt]sx?$/.test(filename)
+  filename.includes('/article-content/') ||
+  filename.endsWith('/styles/astryx/stoneColors.ts') ||
+  /\.test\.[jt]sx?$/.test(filename)
 
 export default {
   meta: {

@@ -1,9 +1,12 @@
 import { defineTheme } from '@astryxdesign/core/theme'
+import { stoneColorTokens, stoneSyntax } from './stoneColors'
 
-// The site's Astryx theme. Colors are Astryx's defaults, so the theme sets none;
-// it puts NanumSquareNeo in place of Astryx's own font family, raises the
-// type scale's base to a reading size, and is the one place later overrides go. Rebuild the CSS with `pnpm theme:build`
-// after editing. See docs/trd/astryx-design-system.md §3.
+// The site's Astryx theme. Its colors, light and dark, are Astryx's shipped
+// "stone" theme (stoneColors.ts); its fonts, type scale and everything else are
+// our own. It puts NanumSquareNeo in place of Astryx's own font family, raises
+// the type scale's base to a reading size, and is the one place later
+// overrides go. Rebuild the CSS with `pnpm theme:build` after editing. See
+// docs/trd/astryx-design-system.md §3.
 
 // global.css's --font-body stack minus its first entry, which is the family itself.
 // The @font-face declarations stay in global.css; the theme only names the family.
@@ -14,6 +17,8 @@ const FONT_FALLBACKS =
 
 export const wildferretTheme = defineTheme({
   name: 'wildferret',
+  tokens: stoneColorTokens,
+  syntax: stoneSyntax,
   typography: {
     // Astryx's default ramp starts at 14px, sized for dense app UI. This is a
     // reading site, so the base is 16px; the 1.2 ratio is Astryx's own, so
