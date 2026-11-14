@@ -60,10 +60,10 @@ If a change moves one of these into the `required` scope, the generated table be
 
 |                                                      | Packages |
 | ---------------------------------------------------- | -------: |
-| Total resolved by the lockfile                       |      675 |
+| Total resolved by the lockfile                       |      672 |
 | Shipped to readers (browser or Worker)               |       20 |
-| Reachable only from devDependencies                  |      331 |
-| Toolchain reachable from `dependencies`, not shipped |      324 |
+| Reachable only from devDependencies                  |      332 |
+| Toolchain reachable from `dependencies`, not shipped |      320 |
 
 ### Shipped npm packages
 
@@ -77,7 +77,7 @@ If a change moves one of these into the `required` scope, the generated table be
 | `@formatjs/icu-messageformat-parser` | 3.5.18  | MIT          | browser        |
 | `@formatjs/icu-skeleton-parser`      | 2.1.11  | MIT          | browser        |
 | `@oslojs/encoding`                   | 1.1.0   | MIT          | worker         |
-| `@stylexjs/stylex`                   | 0.19.1  | MIT          | browser        |
+| `@stylexjs/stylex`                   | 0.19.2  | MIT          | browser        |
 | `astro`                              | 7.4.7   | MIT          | browser,worker |
 | `clsx`                               | 2.1.1   | MIT          | worker         |
 | `cookie`                             | 2.0.1   | MIT          | worker         |
@@ -108,7 +108,7 @@ If a change moves one of these into the `required` scope, the generated table be
 
 | License                                  | All packages | Shipped |
 | ---------------------------------------- | -----------: | ------: |
-| MIT                                      |          467 |      18 |
+| MIT                                      |          465 |      18 |
 | unknown — not in local store¹            |          115 |       0 |
 | ISC                                      |           28 |       1 |
 | Apache-2.0                               |           23 |       0 |
@@ -120,7 +120,6 @@ If a change moves one of these into the `required` scope, the generated table be
 | MPL-2.0                                  |            2 |       0 |
 | 0BSD                                     |            1 |       0 |
 | Apache-2.0 AND LGPL-3.0-or-later AND MIT |            1 |       0 |
-| BSD                                      |            1 |       0 |
 | CC-BY-4.0                                |            1 |       0 |
 | LGPL-3.0-or-later                        |            1 |       0 |
 
