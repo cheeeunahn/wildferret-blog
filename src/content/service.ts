@@ -12,11 +12,11 @@ import { about } from '../data/about'
 import type { AboutCopy } from '../data/about'
 import { articles } from '../data/articles'
 import { CATEGORIES } from '../data/articleTypes'
-import type { Article, Category, LocalizedArticle, TranslatedLang } from '../data/articleTypes'
+import type { Article, LocalizedArticle, TranslatedLang } from '../data/articleTypes'
 import type { Lang } from '../shared/i18n'
 
 export { CATEGORIES }
-export type { AboutCopy, Article, Category, LocalizedArticle }
+export type { LocalizedArticle }
 
 /**
  * Resolve an article into `lang`, or null when it has not been written in that

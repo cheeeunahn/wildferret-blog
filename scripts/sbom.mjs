@@ -36,8 +36,9 @@ const OUT_README = 'docs/sbom/README.md'
 const SUMMARY_START = '<!-- sbom:summary:start -->'
 const SUMMARY_END = '<!-- sbom:summary:end -->'
 
-// SPDX ids that appear in this tree. Anything else goes out as a license
-// `name` rather than an `id`, since CycloneDX requires `id` to be valid SPDX.
+// Valid SPDX ids, covering every licence this tree has used. Anything else goes
+// out as a license `name` rather than an `id`, since CycloneDX requires `id` to
+// be valid SPDX.
 const SPDX_IDS = new Set([
   '0BSD',
   'Apache-2.0',

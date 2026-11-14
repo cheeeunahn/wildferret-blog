@@ -1,6 +1,6 @@
 import { resolveAssetUrl } from '../shared/assetUrl'
 
-export interface ArticleImage {
+interface ArticleImage {
   alt: string
   src: string
   caption?: string
@@ -58,8 +58,10 @@ export function splitContentIntoBlocks(content: string): string[] {
 
 /**
  * One block of an article body, already classified. Text fields hold raw inline
- * markup (`**bold**`, `` `code` ``, links); the renderer passes them through
- * formatInline. Heading and code text is plain and rendered escaped.
+ * markup (`**bold**`, `` `code` ``, links). The renderer passes prose, quotes,
+ * table cells and captions through formatInline, and hands list items to
+ * Astryx's Markdown (ArticleMarkdown.tsx). Heading and code text is plain and
+ * rendered escaped.
  */
 export type ArticleBlock =
   | { type: 'divider' }
@@ -68,17 +70,16 @@ export type ArticleBlock =
   | { type: 'quote'; text: string }
   | { type: 'list'; ordered: boolean; items: string[] }
   | { type: 'table'; header: string[]; rows: string[][] }
-  | { type: 'carousel'; slides: ArticleImage[]; caption?: string }
   | { type: 'image'; image: ArticleImage }
   | { type: 'paragraph'; text: string }
 
-export interface ArticleSummary {
+interface ArticleSummary {
   /** The heading text, used as the card label (TL;DR, 핵심 요약, Key takeaways…). */
   label: string
   items: string[]
 }
 
-export interface ArticleBody {
+interface ArticleBody {
   summary: ArticleSummary | null
   blocks: ArticleBlock[]
 }
@@ -120,8 +121,7 @@ export function parseArticleBody(content: string): ArticleBody {
 
 /**
  * Decide what one trimmed block is. The checks are order-dependent: table
- * detection must stay after list detection, and the single-image check after
- * the carousel check.
+ * detection must stay after list detection.
  */
 export function classifyBlock(block: string): ArticleBlock {
   if (block === '---') return { type: 'divider' }
@@ -162,12 +162,11 @@ export function classifyBlock(block: string): ArticleBlock {
     return { type: 'table', header: cells(dataRows[0]), rows: dataRows.slice(1).map(cells) }
   }
 
-  // Consecutive image lines in one block (no blank line between them) are one
-  // carousel sharing a single caption, taken from the first line that has one.
-  const images = lines.map(parseImageLine)
-  if (lines.length > 1 && images.every((img) => img !== null)) {
-    const slides = images as ArticleImage[]
-    return { type: 'carousel', slides, caption: slides.find((s) => s.caption)?.caption }
+  // An image is a block of its own. Several image lines with no blank line
+  // between them would otherwise fall through to a paragraph and print the raw
+  // markup, so fail the build instead.
+  if (lines.length > 1 && lines.every((l) => parseImageLine(l) !== null)) {
+    throw new Error(`Images must be separated by a blank line, each in its own block:\n${block}`)
   }
 
   const image = parseImageLine(block)

@@ -3,6 +3,8 @@
 // than a copy of it. See the Layers section of CLAUDE.md and
 // docs/adr/0001-layered-architecture.md.
 const PRESENTATION = ['src/pages', 'src/layouts', 'src/components', 'src/copy']
+// Code that ships to the reader's browser on its own, outside an island.
+const BROWSER = ['src/client', 'src/directives']
 export const layerZones = [
   {
     target: PRESENTATION,
@@ -10,30 +12,30 @@ export const layerZones = [
     reason: 'presentation reads content through src/content/service.ts, not the raw data.',
   },
   {
-    // Islands and the browser client ship to the reader. Build-time content
-    // and server code must never be bundled into them.
-    target: ['src/components/*.tsx', 'src/client'],
+    // Islands, the browser client and client directives ship to the reader.
+    // Build-time content and server code must never be bundled into them.
+    target: ['src/components/*.tsx', ...BROWSER],
     from: ['src/content', 'src/server', 'src/data'],
-    reason: 'browser code reaches the server only over HTTP.',
+    reason: 'browser code must not bundle build-time content or server code.',
   },
   {
     target: ['src/content'],
-    from: [...PRESENTATION, 'src/client', 'src/server'],
+    from: [...PRESENTATION, ...BROWSER, 'src/server'],
     reason: 'the content layer sits below presentation and knows nothing about it.',
   },
   {
     target: ['src/server'],
-    from: [...PRESENTATION, 'src/client'],
+    from: [...PRESENTATION, ...BROWSER],
     reason: 'server code sits below presentation and knows nothing about it.',
   },
   {
     target: ['src/data'],
-    from: [...PRESENTATION, 'src/client', 'src/content', 'src/server'],
+    from: [...PRESENTATION, ...BROWSER, 'src/content', 'src/server'],
     reason: 'src/data is pure data and depends on no other layer.',
   },
   {
     target: ['src/shared'],
-    from: [...PRESENTATION, 'src/client', 'src/content', 'src/server', 'src/data'],
+    from: [...PRESENTATION, ...BROWSER, 'src/content', 'src/server', 'src/data'],
     reason: 'shared helpers are pure and importable from every layer, so they import none.',
   },
 ]

@@ -28,8 +28,9 @@ import { Text } from '@astryxdesign/core/Text'
  * directive (src/directives/summarizer.ts), so it only hydrates where the API
  * exists. Here it still asks `availability()` for this language, and renders
  * nothing unless every model it needs is already on the device (see
- * canSummarize): no download is ever started from a page view. Korean goes through English with the
- * Translator API until Chrome's summarizer takes it (see `Route`).
+ * canSummarize): no download is ever started from a page view. Korean goes
+ * through English with the Translator API until Chrome's model takes Korean
+ * directly (see `Route`).
  *
  * XSS: the summary is model output, so it is untrusted text. It is rendered as
  * a JSX child and React escapes it — never set:html, formatInline or

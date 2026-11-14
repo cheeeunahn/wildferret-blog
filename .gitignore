@@ -7,7 +7,6 @@ package-lock.json
 # Build output
 .astro/
 dist/
-dist-ssr/
 *.local
 
 # Logs
@@ -35,5 +34,3 @@ pnpm-debug.log*
 .dev.vars
 # Wrangler's local state and the deploy-config redirect the adapter writes
 .wrangler/
-.env.local
-.env.*.local

@@ -29,7 +29,7 @@ const resultLabels = articles.map((_, i) => strings.home.resultsCount(i + 1))
 <div class="animate-page-enter">
   {/* Category filter + article list, laid out like Astryx's Library
       template minus its titled header (the nav tab already says 글 / Posts):
-      a full-width search, category pills, then a list of wide cards.
+      a full-width search, category pills, then a ruled list, one post per row.
       The island hides cards by setting `hidden` inside this element, so they
       must all stay within it. */}
   <div class="cat-scope">

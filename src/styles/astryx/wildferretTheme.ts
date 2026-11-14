@@ -5,8 +5,8 @@ import { indigoAccentTokens, stoneColorTokens, stoneSyntax } from './stoneColors
 // "stone" theme (stoneColors.ts); its fonts, type scale and everything else are
 // our own. It puts NanumSquareNeo in place of Astryx's own font family, raises
 // the type scale's base to a reading size, and is the one place later
-// overrides go. Rebuild the CSS with `pnpm theme:build` after editing. See
-// docs/trd/astryx-design-system.md §3.
+// overrides go. Rebuild the CSS with `pnpm theme:build` after editing. The
+// decisions behind it are ADRs 0002, 0003, 0005 and 0006 in docs/adr/.
 
 // global.css's --font-body stack minus its first entry, which is the family itself.
 // The @font-face declarations stay in global.css; the theme only names the family.

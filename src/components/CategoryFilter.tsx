@@ -9,7 +9,7 @@ const normalize = (s: string) => s.normalize('NFC').toLowerCase().trim()
 
 /**
  * The home page's search box and category pills, mounted client:load in
- * HomeView.astro (the third island; see CLAUDE.md).
+ * HomeView.astro (the second island; see CLAUDE.md).
  *
  * The cards are static HTML outside this island, so it does not render them.
  * It only sets `hidden` on the cards that fail the query or the category, and
@@ -20,7 +20,7 @@ const normalize = (s: string) => s.normalize('NFC').toLowerCase().trim()
  * compared against each card's `data-search` text — so reader input has no
  * path into CSS or HTML.
  *
- * A sighted reader sees the grid change; a screen-reader user, whose focus
+ * A sighted reader sees the list change; a screen-reader user, whose focus
  * stays in the search box or on a pill, would hear nothing. So the island
  * also owns a polite live region with the result count. It is rendered from
  * the start (a region that is itself un-hidden is announced unreliably) and
@@ -57,8 +57,8 @@ export default function CategoryFilter({
     if (!scope) return
     const q = normalize(query)
     // Once the reader has filtered, a card coming back replays its entrance
-    // animation; global.css drops the load-time stagger under this flag so it
-    // does not sit blank for half a second first.
+    // animation; ArticleCard's `in-data-filtered:` variant drops the load-time
+    // stagger under this flag so it does not sit blank for half a second first.
     if (category !== ALL || q !== '') scope.dataset.filtered = ''
     let visible = 0
 
@@ -81,7 +81,7 @@ export default function CategoryFilter({
   }, [category, query, noMatches, resultLabels])
 
   return (
-    // gap-3, tighter than the 20px around the toolbar: the search and the
+    // gap-3, tighter than the 16px around the toolbar: the search and the
     // pills read as one control rather than two stacked rows.
     <div className="flex flex-col gap-3">
       <TextInput

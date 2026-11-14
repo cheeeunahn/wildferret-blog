@@ -30,7 +30,8 @@ const summarizerDirective = {
 export default defineConfig({
   base,
   outDir: './dist',
-  // One directory per route: dist/about/index.html, dist/article/<slug>/index.html.
+  // One directory per route: dist/client/about/index.html,
+  // dist/client/article/<slug>/index.html.
   // The worker resolves extensionless paths to the directory index.
   build: { format: 'directory' },
   trailingSlash: 'ignore',
@@ -64,7 +65,6 @@ export default defineConfig({
           'react',
           'react/jsx-runtime',
           'react-dom/server',
-          '@astryxdesign/core/Badge',
           '@astryxdesign/core/Blockquote',
           '@astryxdesign/core/Button',
           '@astryxdesign/core/Card',
@@ -72,7 +72,6 @@ export default defineConfig({
           '@astryxdesign/core/CodeBlock',
           '@astryxdesign/core/Divider',
           '@astryxdesign/core/Heading',
-          '@astryxdesign/core/HStack',
           '@astryxdesign/core/Icon',
           '@astryxdesign/core/IconButton',
           '@astryxdesign/core/Link',

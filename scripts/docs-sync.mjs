@@ -19,7 +19,7 @@
 //    against a different repo, and the differences are listed as `changes`.
 //    /sync-docs (Claude) reviews the prose against them, then runs --accept.
 //
-//   node scripts/docs-sync.mjs            report; exit 1 only if a block is stale
+//   node scripts/docs-sync.mjs            report; exit 1 if a block is stale or its markers are missing
 //   node scripts/docs-sync.mjs --json     { stale, changes, unnoted, problems }
 //   node scripts/docs-sync.mjs --write    rebuild the generated blocks
 //   node scripts/docs-sync.mjs --accept   record the current shape as reviewed

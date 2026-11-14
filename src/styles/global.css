@@ -7,9 +7,9 @@
    Styling is Astryx first: an Astryx component where one exists, otherwise
    Tailwind utilities on the Astryx token aliases below, written in the
    template. What is left in this file is what neither can express — the
-   webfont, the token aliases, a few page-wide base rules, the CSS-only state
-   machines (carousel, hero greeting) and the fireflies. Every rule here sits in
-   a layer, so a utility in a template can always override it. */
+   webfont, the token aliases, a few page-wide base rules, the hero greeting's
+   CSS-only state machine and the fireflies. Every rule here sits in a layer,
+   so a utility in a template can always override it. */
 @layer reset, base, astryx-base, theme, astryx-theme, components, utilities;
 
 @import 'tailwindcss/theme.css' layer(theme);
@@ -39,9 +39,8 @@
    Only Regular and Bold are mapped, because the design uses 400–700 and no
    other weight. NanumSquare Neo also ships Light, ExtraBold and Heavy, so add a
    face here if the design ever reaches outside that range. The ranges below
-   say how the four weights in use land: `font-medium` (500) renders Regular
-   and `font-semibold` (600) renders Bold, so the four-step scale renders as
-   two steps. */
+   say how Astryx's four weights land: medium (500) renders Regular and
+   semibold (600) renders Bold, so the four-step scale renders as two steps. */
 @font-face {
   font-family: 'NanumSquareNeo';
   font-style: normal;
@@ -79,21 +78,20 @@
     'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
 
   /* Colors are Astryx semantic tokens, valued by Astryx's stone theme
-     (src/styles/astryx/stoneColors.ts; docs/adr/0002-astryx-design-system.md).
+     (src/styles/astryx/stoneColors.ts; docs/adr/0005-stone-colors-and-astryx-lint.md).
      The names below are the site's old token names, kept as aliases so the
      templates did not have to change: each one points at the Astryx semantic
      token that plays the same role. Astryx defines those with light-dark(),
      driven by the color-scheme the pre-paint script sets, so dark mode needs no
      override block here — the old html.dark palette is gone.
 
-     The ink scale had eleven steps; Astryx has four text/border roles, so
-     several steps now share one. To change a color, change the role, not this. */
+     The ink steps map onto six Astryx roles (three text, two border, one
+     background), so several steps share one. To change a color, change the
+     role, not this. */
   --color-ink-950: var(--color-text-primary);
   --color-ink-900: var(--color-text-primary);
-  --color-ink-800: var(--color-text-primary);
   --color-ink-700: var(--color-text-secondary);
   --color-ink-600: var(--color-text-secondary);
-  --color-ink-500: var(--color-text-secondary);
   --color-ink-400: var(--color-text-disabled);
   --color-ink-300: var(--color-border-emphasized);
   --color-ink-200: var(--color-border-emphasized);
@@ -102,13 +100,11 @@
 
   --color-paper: var(--color-background-body);
   --color-paper-warm: var(--color-background-muted);
-  --color-surface: var(--color-background-surface);
-  --color-surface-hover: var(--color-background-popover);
 
   --color-accent-strong: var(--color-text-accent);
   --color-accent-soft: var(--color-accent-muted);
 
-  /* Inline code and list markers keep a warm accent, now Astryx's orange text. */
+  /* The AI summary's error line: a warm accent, Astryx's orange text. */
   --color-copper: var(--color-text-orange);
 
   /* The plate behind a card thumbnail. The illustrations are black line work
@@ -171,7 +167,6 @@
    variable, so every use resolves straight to Astryx's value. */
 @theme reference inline {
   --color-accent: var(--color-accent);
-  --shadow-low: var(--shadow-low);
   --shadow-med: var(--shadow-med);
   --shadow-high: var(--shadow-high);
 }
@@ -183,8 +178,7 @@
 }
 
 @layer base {
-  /* Theme swap should glide, not snap. Deliberately excludes .group/article
-     hovers so their snappier transition-colors timing is not overridden. */
+  /* Theme swap should glide, not snap. */
   html,
   body,
   header,
@@ -192,10 +186,10 @@
   img,
   pre {
     transition:
-      background-color 0.35s ease,
-      border-color 0.35s ease,
-      color 0.35s ease,
-      filter 0.35s ease;
+      background-color var(--duration-medium-min) var(--ease-standard),
+      border-color var(--duration-medium-min) var(--ease-standard),
+      color var(--duration-medium-min) var(--ease-standard),
+      filter var(--duration-medium-min) var(--ease-standard);
   }
 
   /* Illustrations run bright; take the glare off in dark. A card thumbnail
@@ -233,66 +227,15 @@
 }
 
 @layer components {
-  /* Image carousel — the dots and arrows are <label>s for a hidden radio group,
-     and the checked radio slides the track. No fragment navigation, so the page
-     never jumps, and no client JS, so article pages stay at zero JavaScript —
-     which is why this is not Astryx's Carousel, a React island. Supports up to
-     six slides. Only the state machine is here; the look is utilities in
-     ArticleView.astro. */
-  .carousel-track {
-    transition: translate 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .carousel:has(.carousel-input:nth-of-type(2):checked) .carousel-track {
-    translate: -100% 0;
-  }
-  .carousel:has(.carousel-input:nth-of-type(3):checked) .carousel-track {
-    translate: -200% 0;
-  }
-  .carousel:has(.carousel-input:nth-of-type(4):checked) .carousel-track {
-    translate: -300% 0;
-  }
-  .carousel:has(.carousel-input:nth-of-type(5):checked) .carousel-track {
-    translate: -400% 0;
-  }
-  .carousel:has(.carousel-input:nth-of-type(6):checked) .carousel-track {
-    translate: -500% 0;
-  }
-
-  /* The dot colors live here rather than in utilities because the checked
-     state changes them, and a utility would beat this layer. */
-  .carousel-dot {
-    background-color: var(--color-ink-200);
-  }
-
-  .carousel-dot:hover {
-    background-color: var(--color-ink-400);
-  }
-
-  .carousel:has(.carousel-input:nth-of-type(1):checked) .carousel-dot:nth-child(1),
-  .carousel:has(.carousel-input:nth-of-type(2):checked) .carousel-dot:nth-child(2),
-  .carousel:has(.carousel-input:nth-of-type(3):checked) .carousel-dot:nth-child(3),
-  .carousel:has(.carousel-input:nth-of-type(4):checked) .carousel-dot:nth-child(4),
-  .carousel:has(.carousel-input:nth-of-type(5):checked) .carousel-dot:nth-child(5),
-  .carousel:has(.carousel-input:nth-of-type(6):checked) .carousel-dot:nth-child(6) {
-    background-color: var(--color-ink-600);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .carousel-track {
-      transition: none;
-    }
-  }
-
   /* Hero greeting — clicking the illustration steps the ferret through three
      frames: at the desk → waving → waving with a big open-mouth hello → back.
      A radio group holds the state and three stacked <label>s cover the image;
      only the label for the NEXT state is displayed, so repeated clicks in the
-     same spot advance the cycle. No JavaScript, same idiom as the carousel.
-     As there, only the properties the state flips are here. */
+     same spot advance the cycle. No JavaScript. Only the properties the state
+     flips are here; the look is utilities in FerretHero.astro. */
   .hero-frame {
     opacity: 0;
-    transition: opacity 0.45s ease;
+    transition: opacity var(--duration-medium) var(--ease-standard);
   }
 
   /* A frame stays opaque once reached, rather than fading out as the next one

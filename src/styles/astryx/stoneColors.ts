@@ -7,8 +7,9 @@
  *
  * Each token is a [light, dark] pair; Astryx compiles it to light-dark(), so the
  * site's theme toggle switches between them. These are the one place raw color
- * values belong (local/astryx-colors-only skips this file alone). To change a
- * color, change it here, then `pnpm theme:build`.
+ * values belong: local/astryx-colors-only skips this file, and otherwise only
+ * article bodies and tests. To change a color, change it here, then
+ * `pnpm theme:build`.
  */
 import { defineSyntaxTheme } from '@astryxdesign/core/theme'
 import type { TokenName, TokenValue } from '@astryxdesign/core/theme'

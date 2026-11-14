@@ -1,4 +1,4 @@
-# Served by Cloudflare's static-asset runtime. Copied to dist/ at build.
+# Served by Cloudflare's static-asset runtime. Copied to dist/client/ at build.
 #
 # script-src allows 'unsafe-inline' because Astro emits its island hydration
 # runtime as inline <script> blocks whose content changes per page and per

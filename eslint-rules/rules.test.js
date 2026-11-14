@@ -15,7 +15,7 @@ import noUnlistedIsland from './no-unlisted-island.js'
 RuleTester.describe = describe
 RuleTester.it = it
 
-/** Rules run against .tsx (ThemeToggle.tsx, Comments.tsx). */
+/** Rules run against .tsx (ThemeToggle.tsx, AiSummary.tsx). */
 const tsx = new RuleTester({
   languageOptions: {
     parser: tsParser,
@@ -64,7 +64,10 @@ tsx.run('no-bare-internal-href (tsx)', noBareInternalHref, {
 })
 
 astro.run('no-bare-internal-href (astro)', noBareInternalHref, {
-  valid: [astroCase('<a href={href("/about")}>x</a>'), astroCase('<a href="https://x.com">x</a>')],
+  valid: [
+    astroCase('<a href={localeHref(locale, "/about")}>x</a>'),
+    astroCase('<a href="https://x.com">x</a>'),
+  ],
   invalid: [astroCase('<a href="/about">x</a>', [{ messageId: 'bareHref' }])],
 })
 
@@ -80,32 +83,33 @@ astro.run('no-unlisted-island', noUnlistedIsland, {
   ],
 })
 
-astro.run('no-unlisted-island (with the Comments island allowed)', noUnlistedIsland, {
+astro.run('no-unlisted-island (with the AiSummary island allowed)', noUnlistedIsland, {
   valid: [
     {
-      ...astroCase('<Comments client:visible articleSlug={s} />'),
-      options: [{ allow: ['ThemeToggle', 'Comments'] }],
+      ...astroCase('<AiSummary client:summarizer slug={s} />'),
+      options: [{ allow: ['ThemeToggle', 'AiSummary'] }],
     },
   ],
   invalid: [
-    // The allowlist is per-component, so opening it for Comments must not open
+    // The allowlist is per-component, so opening it for AiSummary must not open
     // it for anything else.
     {
       ...astroCase('<ArticleCard client:visible />', [{ messageId: 'unlisted' }]),
-      options: [{ allow: ['ThemeToggle', 'Comments'] }],
+      options: [{ allow: ['ThemeToggle', 'AiSummary'] }],
     },
-    // ...and Comments is only an island because the config says so.
-    astroCase('<Comments client:visible />', [{ messageId: 'unlisted' }]),
+    // ...and AiSummary is only an island because the config says so.
+    astroCase('<AiSummary client:summarizer />', [{ messageId: 'unlisted' }]),
   ],
 })
 
 tsx.run('no-unescaped-user-html', noUnescapedUserHtml, {
   valid: [
-    // React escapes JSX children — this is the actual defense against stored XSS.
-    { code: 'const C = ({ c }) => <p>{c.body}</p>', filename: 'src/components/Comments.tsx' },
+    // React escapes JSX children — this is the actual defense against markup
+    // in model output.
+    { code: 'const C = ({ s }) => <p>{s.text}</p>', filename: 'src/components/AiSummary.tsx' },
     {
-      code: 'const C = ({ c }) => <span title={c.nickname}>{c.nickname}</span>',
-      filename: 'src/components/Comments.tsx',
+      code: 'const C = ({ s }) => <span title={s.text}>{s.text}</span>',
+      filename: 'src/components/AiSummary.tsx',
     },
     // The parser's own module and tests import it legitimately; only
     // components are barred.
@@ -115,20 +119,20 @@ tsx.run('no-unescaped-user-html', noUnescapedUserHtml, {
     },
     {
       code: "import { splitContentIntoBlocks } from '../content/parser'",
-      filename: 'src/components/Comments.tsx',
+      filename: 'src/components/AiSummary.tsx',
     },
   ],
   invalid: [
     {
-      code: 'const C = ({ c }) => <p dangerouslySetInnerHTML={{ __html: c.body }} />',
-      filename: 'src/components/Comments.tsx',
+      code: 'const C = ({ s }) => <p dangerouslySetInnerHTML={{ __html: s.text }} />',
+      filename: 'src/components/AiSummary.tsx',
       errors: [{ messageId: 'dangerous' }],
     },
     {
       // The tempting shortcut: reuse the article parser, which emits raw HTML
       // because it trusts its input.
       code: "import { formatInline } from '../content/parser'",
-      filename: 'src/components/Comments.tsx',
+      filename: 'src/components/AiSummary.tsx',
       errors: [{ messageId: 'formatInline' }],
     },
   ],
@@ -148,12 +152,12 @@ const crossLayer = [{ messageId: 'crossLayer' }]
 tsx.run('no-cross-layer-import (ts/tsx)', noCrossLayerImport, {
   valid: [
     // Every layer may use the shared helpers.
-    layerCase('src/components/Comments.tsx', "import { checkComment } from '../shared/moderation'"),
+    layerCase('src/components/AiSummary.tsx', "import type { Lang } from '../shared/i18n'"),
     layerCase('src/content/service.ts', "import { articles } from '../data/articles'"),
     layerCase('src/data/about.ts', "import type { Lang } from '../shared/i18n'"),
     // Same-layer imports, including data's own dynamic article imports.
     layerCase('src/data/articles.ts', "const c = () => import('./article-content/x')"),
-    layerCase('src/components/Comments.tsx', "import { A } from './Other'"),
+    layerCase('src/components/AiSummary.tsx', "import { A } from './Other'"),
     // Packages are not layers.
     layerCase('src/shared/i18n.ts', "import { describe } from 'vitest'"),
     // Absolute filenames, as ESLint passes them for real.
@@ -162,13 +166,18 @@ tsx.run('no-cross-layer-import (ts/tsx)', noCrossLayerImport, {
   invalid: [
     // An island bundling build-time content would ship it to the browser.
     layerCase(
-      'src/components/Comments.tsx',
+      'src/components/AiSummary.tsx',
       "import { articlesIn } from '../content/service'",
       crossLayer,
     ),
     layerCase(
-      'src/client/supabaseComments.ts',
+      'src/client/summarizer.ts',
       "import { articles } from '../data/articles'",
+      crossLayer,
+    ),
+    layerCase(
+      'src/directives/summarizer.ts',
+      "import { articlesIn } from '../content/service'",
       crossLayer,
     ),
     // Type-only imports still couple the layers.
@@ -184,7 +193,7 @@ tsx.run('no-cross-layer-import (ts/tsx)', noCrossLayerImport, {
     layerCase('src/copy/strings.ts', "export { articles } from '../data/articles'", crossLayer),
     layerCase('src/copy/strings.ts', "export * from '../data/articles'", crossLayer),
     layerCase(
-      'src/components/Comments.tsx',
+      'src/components/AiSummary.tsx',
       "const m = () => import('../content/service')",
       crossLayer,
     ),

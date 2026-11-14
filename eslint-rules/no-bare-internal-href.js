@@ -18,7 +18,7 @@ const URL_ATTRS = new Set(['href', 'src', 'srcset', 'poster', 'action'])
 // path prefix may be baked into a URL string. Listed here are the prefixes that
 // have actually been deployed, since those are the ones that get pasted back in
 // from a stale link or an old article draft.
-const DEFAULT_BASE_PATHS = ['/wildferret-blog/']
+const BASE_PATHS = ['/wildferret-blog/']
 
 function attrName(node) {
   const name = node.name
@@ -40,23 +40,13 @@ export default {
       hardcodedBase:
         'Hardcoded base path "{{base}}". The base is configurable (astro.config.mjs / BASE_PATH) — let localeHref() or resolveAssetUrl() apply it.',
     },
-    schema: [
-      {
-        type: 'object',
-        properties: {
-          basePaths: { type: 'array', items: { type: 'string' }, uniqueItems: true },
-        },
-        additionalProperties: false,
-      },
-    ],
+    schema: [],
   },
 
   create(context) {
-    const basePaths = context.options[0]?.basePaths ?? DEFAULT_BASE_PATHS
-
     function checkBase(node, raw) {
       if (typeof raw !== 'string') return
-      const hit = basePaths.find((base) => raw.includes(base))
+      const hit = BASE_PATHS.find((base) => raw.includes(base))
       if (hit) context.report({ node, messageId: 'hardcodedBase', data: { base: hit } })
     }
 

@@ -12,9 +12,9 @@ describe('touchesKoreanArticles', () => {
   })
 
   it('ignores everything else', () => {
-    expect(touchesKoreanArticles(['src/data/article-content/README.md', 'src/lib/i18n.ts'])).toBe(
-      false,
-    )
+    expect(
+      touchesKoreanArticles(['src/data/article-content/README.md', 'src/shared/i18n.ts']),
+    ).toBe(false)
     expect(touchesKoreanArticles([''])).toBe(false)
   })
 })

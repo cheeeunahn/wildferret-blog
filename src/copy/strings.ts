@@ -46,13 +46,10 @@ export interface Strings {
      * given how many posts are still shown (at least 1; 0 reads `noMatches`).
      */
     resultsCount: (count: number) => string
-    /** Shown on the English index while a post has no English version yet. */
+    /** Shown on an index when no post has been written in its language yet. */
     emptyList: string
   }
   article: {
-    coverImageNote: string
-    /** Accessible name of the nth carousel slide, 1-based. */
-    carouselSlide: (n: number) => string
     back: string
   }
   notFound: { title: string; back: string }
@@ -65,7 +62,7 @@ export interface Strings {
    */
   summarizer: {
     button: string
-    /** Shown with a percentage while Chrome downloads the on-device model. */
+    /** Shown while Chrome downloads a model the summary needs. */
     downloading: string
     /** When one model has downloaded and the next needs another click. */
     continue: string
@@ -109,8 +106,6 @@ const ko: Strings = {
     emptyList: '아직 이 언어로 옮긴 글이 없어요.',
   },
   article: {
-    coverImageNote: '해당 이미지는 AI로 제작한, 이해를 돕기 위한 예시 이미지입니다.',
-    carouselSlide: (n) => `${n}번째 이미지`,
     back: '목록으로 돌아가기',
   },
   notFound: { title: '페이지를 찾을 수 없습니다', back: '목록으로 돌아가기' },
@@ -159,8 +154,6 @@ const en: Strings = {
     emptyList: 'Nothing has been translated into this language yet.',
   },
   article: {
-    coverImageNote: 'This image was generated with AI, as an illustrative example.',
-    carouselSlide: (n) => `Image ${n}`,
     back: 'Back to all posts',
   },
   notFound: { title: 'Page not found', back: 'Back to all posts' },

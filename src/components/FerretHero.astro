@@ -39,9 +39,10 @@ const GREET_FRAMES = [
       cropped; on phones it is taller than 16:9 and
       object-cover crops the sides. The focal point is right of centre and
       high, hence object-[62%_38%] rather than the default.
-      The <label> makes the whole illustration the click target for the
-      greeting; the checkbox inside it is the state. The radios are visually
-      hidden, so their keyboard focus is surfaced on the frame (has-[…]). */}
+      A radio group (.hero-state) holds the state, and three stacked <label>s
+      cover the illustration, so the whole image is the click target for the
+      greeting. The radios are visually hidden, so their keyboard focus is
+      surfaced on the frame (has-[…]). */}
 <figure class="m-0 animate-reveal-media reveal-delay-1">
   <div class="hero-greet relative block overflow-hidden rounded-(--radius-container) bg-paper-warm/30 has-[.hero-state:focus-visible]:outline-2 has-[.hero-state:focus-visible]:outline-accent has-[.hero-state:focus-visible]:outline-offset-3">
     <input

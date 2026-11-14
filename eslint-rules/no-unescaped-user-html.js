@@ -16,7 +16,7 @@ export default {
   meta: {
     type: 'problem',
     docs: {
-      description: 'Forbid dangerouslySetInnerHTML on user-supplied content',
+      description: 'Keep untrusted text, such as model output, behind React escaping',
     },
     messages: {
       dangerous:
@@ -36,7 +36,7 @@ export default {
       },
 
       // The second half of the trap: importing the article parser into a
-      // component that renders user data. Scoped to components — the parser's
+      // component that renders untrusted text. Scoped to components — the parser's
       // own module and tests import formatInline legitimately, and so does
       // ArticleView.astro (not linted by this rule), which is what it exists for.
       ImportDeclaration(node) {

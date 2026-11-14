@@ -67,12 +67,12 @@ const copy = aboutCopy(locale.lang)
                   a link off the site. It opens in the same tab: a new tab would
                   need a translated "(opens in new tab)" label per language.
                   The interviews list below renders its titles the same way.
-                  The rows use the theme's compact type (15px); Link has no
-                  type prop, so its label is a compact Text of its own. */}
+                  The rows use the theme's compact type (15px), which the link
+                  takes from the row's Text (type="inherit"). */}
               <Text as="p" display="block" type="compact">
                 {project.link ? (
-                  <Link href={project.link} color="primary">
-                    <Text type="compact">{project.name}</Text>
+                  <Link href={project.link} color="primary" type="inherit">
+                    {project.name}
                     <Icon icon="externalLink" size="xsm" color="secondary" className="ml-1" />
                   </Link>
                 ) : (
@@ -101,10 +101,8 @@ const copy = aboutCopy(locale.lang)
             </Text>
             <div>
               <Text as="p" display="block" type="compact">
-                <Link href={interview.link} color="primary">
-                  <Text type="compact">
-                    <span lang={interview.lang}>{interview.name}</span>
-                  </Text>
+                <Link href={interview.link} color="primary" type="inherit">
+                  <span lang={interview.lang}>{interview.name}</span>
                   <Icon icon="externalLink" size="xsm" color="secondary" className="ml-1" />
                 </Link>
               </Text>

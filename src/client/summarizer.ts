@@ -7,7 +7,7 @@
  * Why not the Summarizer API: on Chrome 154 it ignores `type`, `length` and
  * `format` — a `tldr`/`short`/`plain-text` request returned 3,000–5,000
  * characters of markdown critiquing the post. The Prompt API, given the
- * instruction below, returns a 2–3 sentence TL;DR in a few seconds.
+ * instruction below, returns 3–5 plain sentences in a few seconds.
  *
  * Every call can throw — the APIs are young and their shapes still move
  * between Chrome releases — so the island treats any failure as "show the
@@ -102,7 +102,7 @@ export async function pickRoute(lang: Lang): Promise<Route | null> {
   return toEn && fromEn && modelEn ? 'via-en' : null
 }
 
-export interface SummaryPipeline {
+interface SummaryPipeline {
   /** Calls `onText` with the summary so far; resolves with the whole of it. */
   run(text: string, title: string, onText: (soFar: string) => void): Promise<string>
 }
@@ -140,9 +140,11 @@ export class NeedsAnotherClick extends Error {
  * is refused with `NotAllowedError` — even within the same click. Created one
  * after another, the later models are usually already there by the time their
  * turn comes: the Korean language pack covers both ko→en and en→ko, so the
- * second translator never downloads anything. When two real downloads are
- * needed (the model and a language pack, on a fresh machine), this throws
- * `NeedsAnotherClick` after the first, and the next click picks up from there.
+ * second translator never downloads anything. Since the button only appears
+ * once every model is already on the device (see `canSummarize`), a download
+ * here means a model has gone from the device since that check. If two are
+ * needed, this throws `NeedsAnotherClick` after the first, and the next click
+ * picks up from there.
  *
  * `onDownload` is called while a model is downloading. The fraction Chrome
  * reports is not passed on: it reaches 1 well before the model is ready.
@@ -205,7 +207,7 @@ export async function createPipeline(
  * Translates paragraph by paragraph: each call stays well inside the
  * translator's input quota, and paragraph breaks survive.
  */
-export async function translateParagraphs(translator: Translator, text: string): Promise<string> {
+async function translateParagraphs(translator: Translator, text: string): Promise<string> {
   const out: string[] = []
   for (const para of text.split(/\n{2,}/)) out.push(await translator.translate(para))
   return out.join('\n\n')
