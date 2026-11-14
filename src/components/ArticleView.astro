@@ -82,10 +82,18 @@ const carouselArrowClass =
         <Text type="supporting">{article.date}</Text>
       </div>
 
-      <Heading level={1} className="mb-3">
+      {/* break-keep: Korean wraps between words, not inside one. text-pretty
+          keeps a single word from being stranded on the last line. */}
+      <Heading level={1} className="mb-3 break-keep text-pretty">
         {article.title}
       </Heading>
-      <Text as="p" display="block" type="large" color="secondary">
+      <Text
+        as="p"
+        display="block"
+        type="large"
+        color="secondary"
+        className="break-keep text-pretty"
+      >
         {article.subtitle}
       </Text>
       {/* AI summary button. client:summarizer (src/directives/summarizer.ts)

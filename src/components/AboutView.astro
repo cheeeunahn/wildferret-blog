@@ -16,31 +16,32 @@ const copy = aboutCopy(locale.lang)
 ---
 
 <div class="animate-page-enter">
-  <section class="max-w-[768px] mx-auto px-6 pt-10 sm:pt-14 pb-20">
+  <section class="max-w-[768px] mx-auto px-6 pt-10 sm:pt-14 pb-20 break-keep">
     {/* Profile. Same 768px column as the header and footer, so the page shares
-        their left edge. */}
+        their left edge. break-keep on the whole section: Korean wraps between
+        words, so a phone never splits a name ("안 / 치은") or a word in two. */}
     <div class="animate-reveal mb-12">
-      <Heading level={1} className="mb-2">
+      <Heading level={1} className="mb-2 text-pretty">
         {copy.heading}
       </Heading>
       {/* whitespace-pre-line turns the intro's \n into a line break. */}
-      <Text as="p" display="block" type="large" color="secondary" className="whitespace-pre-line">
+      <Text as="p" display="block" color="secondary" className="whitespace-pre-line">
         {copy.intro}
       </Text>
     </div>
 
     {/* Career */}
     <div class="animate-reveal reveal-delay-2">
-      <Heading level={2} className="mb-6">
+      <Heading level={3} accessibilityLevel={2} className="mb-5">
         {copy.careerHeading}
       </Heading>
       <ul class="space-y-3">
         {copy.career.map((item) => (
           <li class="flex flex-col sm:flex-row sm:gap-4 text-[15px]">
-            <Text type="supporting" hasTabularNumbers className="sm:w-32 sm:shrink-0 sm:pt-1">
+            <Text type="supporting" hasTabularNumbers className="sm:w-32 sm:shrink-0 sm:pt-0.5">
               {item.period}
             </Text>
-            <Text>
+            <Text type="inherit">
               {item.role}
               <Text type="inherit" color="secondary">{` · ${item.org}`}</Text>
             </Text>
@@ -51,7 +52,7 @@ const copy = aboutCopy(locale.lang)
 
     {/* Selected projects */}
     <div class="mt-16 animate-reveal reveal-delay-3">
-      <Heading level={2} className="mb-6">
+      <Heading level={3} accessibilityLevel={2} className="mb-5">
         {copy.projectsHeading}
       </Heading>
       <ul class="space-y-4">
@@ -65,10 +66,17 @@ const copy = aboutCopy(locale.lang)
                   external-link glyph (decorative, aria-hidden) marking it as
                   a link off the site. It opens in the same tab: a new tab would
                   need a translated "(opens in new tab)" label per language.
-                  The interviews list below renders its titles the same way. */}
-              <Text as="p" display="block">
+                  The interviews list below renders its titles the same way.
+                  Link has no type="inherit" and its sizes jump from 13px to
+                  16px, so the overrides on its inner Text let it take the row's 15px like
+                  the Text around it. */}
+              <Text as="p" display="block" type="inherit">
                 {project.link ? (
-                  <Link href={project.link} color="primary">
+                  <Link
+                    href={project.link}
+                    color="primary"
+                    className="[&>.astryx-text]:[font-size:inherit]! [&>.astryx-text]:[line-height:inherit]!"
+                  >
                     {project.name}
                     <Icon icon="externalLink" size="xsm" color="secondary" className="ml-1" />
                   </Link>
@@ -76,7 +84,7 @@ const copy = aboutCopy(locale.lang)
                   project.name
                 )}
               </Text>
-              <Text as="p" display="block" color="secondary">
+              <Text as="p" display="block" type="inherit" color="secondary">
                 {project.summary}
               </Text>
             </div>
@@ -87,7 +95,7 @@ const copy = aboutCopy(locale.lang)
 
     {/* Interviews, newest first (the order in about.ts). */}
     <div class="mt-16 animate-reveal reveal-delay-4">
-      <Heading level={2} className="mb-6">
+      <Heading level={3} accessibilityLevel={2} className="mb-5">
         {copy.interviewsHeading}
       </Heading>
       <ul class="space-y-4">
@@ -97,13 +105,17 @@ const copy = aboutCopy(locale.lang)
               {interview.year}
             </Text>
             <div>
-              <Text as="p" display="block">
-                <Link href={interview.link} color="primary">
+              <Text as="p" display="block" type="inherit">
+                <Link
+                  href={interview.link}
+                  color="primary"
+                  className="[&>.astryx-text]:[font-size:inherit]! [&>.astryx-text]:[line-height:inherit]!"
+                >
                   <span lang={interview.lang}>{interview.name}</span>
                   <Icon icon="externalLink" size="xsm" color="secondary" className="ml-1" />
                 </Link>
               </Text>
-              <Text as="p" display="block" color="secondary">
+              <Text as="p" display="block" type="inherit" color="secondary">
                 {interview.outlet}
               </Text>
             </div>
@@ -114,16 +126,16 @@ const copy = aboutCopy(locale.lang)
 
     {/* Certifications. Name and issuer only — no credential numbers. */}
     <div class="mt-16 animate-reveal reveal-delay-5">
-      <Heading level={2} className="mb-6">
+      <Heading level={3} accessibilityLevel={2} className="mb-5">
         {copy.certificationsHeading}
       </Heading>
       <ul class="space-y-3">
         {copy.certifications.map((cert) => (
           <li class="flex flex-col sm:flex-row sm:gap-4 text-[15px]">
-            <Text type="supporting" hasTabularNumbers className="sm:w-32 sm:shrink-0 sm:pt-1">
+            <Text type="supporting" hasTabularNumbers className="sm:w-32 sm:shrink-0 sm:pt-0.5">
               {cert.year}
             </Text>
-            <Text>
+            <Text type="inherit">
               {cert.name}
               <Text type="inherit" color="secondary">{` · ${cert.issuer}`}</Text>
             </Text>

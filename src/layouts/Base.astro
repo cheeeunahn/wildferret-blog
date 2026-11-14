@@ -96,17 +96,18 @@ const canonical = canonicalPath(locale.lang, appPath)
   <body class="selection:bg-accent-soft selection:text-ink-950">
     <div class="min-h-screen flex flex-col">
       <header class="sticky top-0 z-50 bg-paper/80 backdrop-blur-md border-b border-ink-100">
-        <nav class="max-w-[768px] mx-auto px-6 h-16 flex items-center justify-between gap-3">
+        <nav class="max-w-[768px] mx-auto px-6 h-16 flex items-center justify-between gap-3 max-[359px]:gap-1">
           {/* Every internal link goes through localeHref, so a reader who
               arrived under /en stays under /en for the rest of the visit. */}
           <a
             href={localeHref(locale, '/')}
             class="text-ink-900 text-base sm:text-lg font-semibold tracking-tight whitespace-nowrap no-underline hover:opacity-70 transition-opacity"
           >
-            {/* Under 360px (a 320px phone) the English nav ("Posts", "About")
-                leaves no room for the full name, so the logo drops "'s blog"
-                rather than pushing the theme toggle off-screen. */}
-            wildferret<span class="max-[359px]:hidden">'s blog</span>
+            {/* On phones (below sm) the English nav ("Posts", "About") leaves
+                no room for the full name — it pushed the theme toggle past the
+                screen edge at 390px — so the logo drops "'s blog" there, in
+                every language so the logo does not change with the switcher. */}
+            wildferret<span class="max-sm:hidden">'s blog</span>
           </a>
           {/* Every item on the right is the same 36px, 8px-radius box with its
               own side padding (TopNavItem, the language trigger, the theme
@@ -114,18 +115,22 @@ const canonical = canonicalPath(locale.lang, appPath)
               already spaces the labels.
               whitespace-nowrap: on a 320px phone the row is tight, and without
               it "소개" breaks onto two lines instead of the gaps giving way.
-              Below sm the gaps go to zero (and the logo shortens under 360px,
-              see above), or the theme toggle is pushed off a 320px screen. */}
+              Below sm the gaps go to zero (and the logo shortens, see above),
+              and under 360px the nav items' padding and the gap after the logo
+              shrink too: on a 320px screen the English row ("Posts", "About")
+              is otherwise 24px too wide and pushes the theme toggle off. */}
           <div class="flex items-center sm:gap-1 whitespace-nowrap">
             <TopNavItem
               href={localeHref(locale, '/')}
               label={strings.nav.posts}
               isSelected={isActiveInLocale(pathname, '/')}
+              className="max-[359px]:px-1.5!"
             />
             <TopNavItem
               href={localeHref(locale, '/about')}
               label={strings.nav.about}
               isSelected={isActiveInLocale(pathname, '/about')}
+              className="max-[359px]:px-1.5!"
             />
             <LangSwitcher locale={locale} appPath={appPath} availableLangs={availableLangs} />
             <!-- client:only — ThemeToggle reads document.documentElement in a
