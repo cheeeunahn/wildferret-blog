@@ -44,11 +44,15 @@ const canonical = canonicalPath(locale.lang, appPath)
      theme sets, applies everywhere. See docs/adr/0002-astryx-design-system.md. -->
 <!-- The page-wide base styles are utilities on <html> and <body>: Astryx's
      reset already handles margins and font smoothing, so what is left is the
-     family, the ground and ink colours, smooth scrolling and selection colour. -->
+     family, the ground and ink colours, smooth scrolling and selection colour.
+     overscroll-y-none stops the trackpad's rubber-band bounce, which shook the
+     whole page (sticky header included) even when it had nothing to scroll.
+     Only for a fine pointer: on touch screens the same property would also
+     switch off pull-to-refresh. -->
 <html
   lang={HTML_LANGS[locale.lang]}
   data-astryx-theme="wildferret"
-  class="font-body text-ink-900 bg-paper scroll-smooth motion-reduce:scroll-auto"
+  class="font-body text-ink-900 bg-paper scroll-smooth motion-reduce:scroll-auto pointer-fine:overscroll-y-none"
 >
   <head>
     <meta charset="UTF-8" />
