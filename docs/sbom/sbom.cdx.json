@@ -25,7 +25,7 @@
       },
       {
         "name": "wildferret:lockfile:sha256",
-        "value": "de44e230bbde07e9d7773faafa017732e3503fb4db5a91b4930ab21b39290d60"
+        "value": "74ebe0d2403aad37cea3b53a3ee74d49b544e9dae3e2174c0f318f954714bf49"
       },
       {
         "name": "wildferret:packageManager",
@@ -9761,16 +9761,16 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40stylexjs/stylex@0.19.1",
+      "bom-ref": "pkg:npm/%40stylexjs/stylex@0.19.2",
       "group": "@stylexjs",
       "name": "stylex",
-      "version": "0.19.1",
+      "version": "0.19.2",
       "scope": "required",
       "description": "A library for defining styles for optimized user interfaces.",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "2703459b430e60faa2f8ce00c79527e19c5f669e071005f6b0059eb59f3c2802c572fd5e1221cd26cef9a0edd5dd4ed15569f37e488cf22f5e068c02de1aa053"
+          "content": "9747d184e059e2b1626741a7b584a5a789583b974f4f5d45de62dbecee1284ae9e13558e8c7b6ff461c6419bb31c96d09237046918cf4a9067ea2b48ef25dcdd"
         }
       ],
       "licenses": [
@@ -9780,11 +9780,11 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40stylexjs/stylex@0.19.1",
+      "purl": "pkg:npm/%40stylexjs/stylex@0.19.2",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@stylexjs/stylex/-/stylex-0.19.1.tgz"
+          "url": "https://registry.npmjs.org/@stylexjs/stylex/-/stylex-0.19.2.tgz"
         },
         {
           "type": "vcs",
@@ -14191,48 +14191,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/css-mediaquery@0.1.2",
-      "name": "css-mediaquery",
-      "version": "0.1.2",
-      "scope": "excluded",
-      "description": "Parses and determines if a given CSS Media Query matches a set of values.",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "08eb67e0444e5b97411a513fe0f88a9e1eab66900fc437852da104c2de22d748e90cc16dd84850192efd4269ab3be88a087bf43d4fc7ace5848628c5775c7df5"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "name": "BSD"
-          }
-        }
-      ],
-      "purl": "pkg:npm/css-mediaquery@0.1.2",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/css-mediaquery/-/css-mediaquery-0.1.2.tgz"
-        },
-        {
-          "type": "website",
-          "url": "https://github.com/ericf/css-mediaquery"
-        },
-        {
-          "type": "vcs",
-          "url": "git://github.com/ericf/css-mediaquery.git"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "pkg:npm/css-select@6.0.0",
       "name": "css-select",
       "version": "6.0.0",
@@ -18535,44 +18493,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/invariant@2.2.4",
-      "name": "invariant",
-      "version": "2.2.4",
-      "scope": "excluded",
-      "description": "invariant",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "a6125f41506e689339ada3a926349f9220fa0696c213836cfff2da5e5eb0198b54058f379d64ba45ff6d5e6d9ef1568aeb42448d895d6cf89ffc0d81d42da034"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "purl": "pkg:npm/invariant@2.2.4",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/invariant/-/invariant-2.2.4.tgz"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/zertosh/invariant"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "pkg:npm/iron-webcrypto@1.2.1",
       "name": "iron-webcrypto",
       "version": "1.2.1",
@@ -19034,6 +18954,10 @@
         {
           "name": "wildferret:shipped",
           "value": "no"
+        },
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
         }
       ]
     },
@@ -20738,48 +20662,6 @@
         {
           "name": "cdx:npm:package:development",
           "value": "true"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/loose-envify@1.4.0",
-      "name": "loose-envify",
-      "version": "1.4.0",
-      "scope": "excluded",
-      "description": "Fast (and loose) selective `process.env` replacer using js-tokens instead of an AST",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "972bb13c6aff59f86b95e9b608bfd472751cd7372a280226043cee918ed8e45ff242235d928ebe7d12debe5c351e03324b0edfeb5d54218e34f04b71452a0add"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "purl": "pkg:npm/loose-envify@1.4.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/loose-envify/-/loose-envify-1.4.0.tgz"
-        },
-        {
-          "type": "website",
-          "url": "https://github.com/zertosh/loose-envify"
-        },
-        {
-          "type": "vcs",
-          "url": "git://github.com/zertosh/loose-envify.git"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
         }
       ]
     },
@@ -29290,7 +29172,7 @@
         "pkg:npm/%40astryxdesign/cli@0.6.5",
         "pkg:npm/%40astryxdesign/core@0.7.5",
         "pkg:npm/%40eslint/js@10.0.1",
-        "pkg:npm/%40stylexjs/stylex@0.19.1",
+        "pkg:npm/%40stylexjs/stylex@0.19.2",
         "pkg:npm/%40tailwindcss/vite@4.3.5",
         "pkg:npm/%40types/dom-chromium-ai@0.0.18",
         "pkg:npm/%40types/node@26.6.6",
@@ -29514,7 +29396,7 @@
     {
       "ref": "pkg:npm/%40astryxdesign/core@0.7.5",
       "dependsOn": [
-        "pkg:npm/%40stylexjs/stylex@0.19.1",
+        "pkg:npm/%40stylexjs/stylex@0.19.2",
         "pkg:npm/intl-messageformat@11.2.15",
         "pkg:npm/react-dom@19.3.1",
         "pkg:npm/react@19.3.1"
@@ -30472,12 +30354,8 @@
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40stylexjs/stylex@0.19.1",
-      "dependsOn": [
-        "pkg:npm/css-mediaquery@0.1.2",
-        "pkg:npm/invariant@2.2.4",
-        "pkg:npm/styleq@0.2.1"
-      ]
+      "ref": "pkg:npm/%40stylexjs/stylex@0.19.2",
+      "dependsOn": ["pkg:npm/styleq@0.2.1"]
     },
     {
       "ref": "pkg:npm/%40tailwindcss/node@4.3.5",
@@ -31106,10 +30984,6 @@
       "dependsOn": ["pkg:npm/uncrypto@0.1.3"]
     },
     {
-      "ref": "pkg:npm/css-mediaquery@0.1.2",
-      "dependsOn": []
-    },
-    {
       "ref": "pkg:npm/css-select@6.0.0",
       "dependsOn": [
         "pkg:npm/boolbase@1.0.0",
@@ -31655,10 +31529,6 @@
       ]
     },
     {
-      "ref": "pkg:npm/invariant@2.2.4",
-      "dependsOn": ["pkg:npm/loose-envify@1.4.0"]
-    },
-    {
       "ref": "pkg:npm/iron-webcrypto@1.2.1",
       "dependsOn": []
     },
@@ -31897,10 +31767,6 @@
     {
       "ref": "pkg:npm/locate-path@6.0.0",
       "dependsOn": ["pkg:npm/p-locate@5.0.0"]
-    },
-    {
-      "ref": "pkg:npm/loose-envify@1.4.0",
-      "dependsOn": ["pkg:npm/js-tokens@4.0.0"]
     },
     {
       "ref": "pkg:npm/lru-cache@11.5.3",
