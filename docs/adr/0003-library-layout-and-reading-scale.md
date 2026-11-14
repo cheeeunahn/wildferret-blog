@@ -4,6 +4,7 @@
 - Date: 2026-11-01
 - Builds on: [ADR 0002](0002-astryx-design-system.md) (partly supersedes decisions 2 and 5, and resolves its open reading-size question)
 - Requirements: [`docs/trd/astryx-design-system.md`](../trd/astryx-design-system.md)
+- Partly superseded by [ADR 0006](0006-reading-layout-revisions.md): the list is ruled rows without read time (decision 3), the column is 768px (decision 5), and prose line height is a theme `Text` type rather than `leading-[1.75]` (decision 6).
 
 ## Context
 

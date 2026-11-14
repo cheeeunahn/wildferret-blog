@@ -3,8 +3,8 @@
 - Status: Draft (spike implemented on `feat/astryx-design-system`)
 - Date: 2026-10-05
 - Decision records: [ADR 0002](../adr/0002-astryx-design-system.md); [ADR 0003](../adr/0003-library-layout-and-reading-scale.md) for the Library-style list, page width and type scale
-- Update 2026-11-14: the colors are now Astryx's shipped "stone" theme (`src/styles/astryx/stoneColors.ts`), not its defaults, so F3 and the color rows under Verification describe the earlier palette.
-- Update 2026-11-14: the comment section and its Supabase backend have since been removed from the site. Everything below that mentions comments (the comment-form goal, F1, N1's island list, N3, §6, §7 and the comment rows in Measurements and Verification) is kept as a record of the migration and no longer describes the site. The islands today are ThemeToggle, CategoryFilter and AiSummary.
+- Update 2026-11-14: the colors are now Astryx's shipped "stone" theme with a muted indigo accent (`src/styles/astryx/stoneColors.ts`, [ADR 0005](../adr/0005-stone-colors-and-astryx-lint.md)), not its defaults, so F3 and the color rows under Verification describe the earlier palette.
+- Update 2026-11-14: the comment section and its Supabase backend have since been removed from the site ([ADR 0004](../adr/0004-remove-comments.md)). Everything below that mentions comments (the comment-form goal, F1, N1's island list, N3, §6, §7 and the comment rows in Measurements and Verification) is kept as a record of the migration and no longer describes the site. The islands today are ThemeToggle, CategoryFilter and AiSummary.
 
 ## Background
 

@@ -4,6 +4,7 @@
 - Date: 2026-10-05
 - Requirements: [`docs/trd/astryx-design-system.md`](../trd/astryx-design-system.md)
 - Partly superseded by [ADR 0003](0003-library-layout-and-reading-scale.md): the theme now also sets the type scale (decision 2), the filter is a search `TextInput` plus a `ToggleButtonGroup` that hides cards with `hidden` (decision 5), and the 14px reading size below is raised to 16px.
+- Partly superseded by [ADR 0005](0005-stone-colors-and-astryx-lint.md): the colors are Astryx's stone theme with a muted indigo accent, not the defaults (decision 1), and "Astryx only" is enforced by lint rather than review (decision 7).
 
 ## Context
 

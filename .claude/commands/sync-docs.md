@@ -65,8 +65,10 @@ Rules for both:
   identifiers in backticks; no marketing.
 - Do not document what the code says better (signatures, every prop). Document
   rules, reasons, and where things live.
-- Never edit the ADRs in `docs/adr/` — they are records of decisions as made.
-  If a change contradicts an accepted ADR, say so in your summary instead.
+- Never rewrite the ADRs in `docs/adr/` — they are records of decisions as
+  made. A reversed decision gets a new ADR, and the old one only a "Partly
+  superseded by" line in its header; that is a person's call, so if a change
+  contradicts an ADR, say so in your summary instead of writing one.
 - Never write a secret, token, or personal data into either doc.
 
 **Generated blocks** (between `<!-- docs:<name>:start -->` and
