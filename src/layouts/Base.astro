@@ -154,17 +154,16 @@ const canonical = canonicalPath(locale.lang, appPath)
         <slot />
       </main>
 
+      {/* One quiet row: the tagline and the copyright, 24px of padding, in
+          Astryx's xsm size (11px), one step below the supporting type. The
+          name is not repeated above the tagline, since the copyright already
+          carries it. On phones the two lines stack, with a small gap. */}
       <footer class="border-t border-ink-100 bg-paper-warm">
-        <div class="max-w-[768px] mx-auto px-6 py-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div class="flex flex-col gap-1">
-            <Text as="p" display="block" type="label" weight="bold">
-              wildferret
-            </Text>
-            <Text as="p" display="block" type="supporting">
-              Just another product IT startup person out there, in the wild!
-            </Text>
-          </div>
-          <Text as="p" display="block" type="supporting">
+        <div class="max-w-[768px] mx-auto px-6 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4">
+          <Text as="p" display="block" type="supporting" size="xsm">
+            Just another product IT startup person out there, in the wild!
+          </Text>
+          <Text as="p" display="block" type="supporting" size="xsm" className="shrink-0">
             &copy; {year} wildferret
           </Text>
         </div>
