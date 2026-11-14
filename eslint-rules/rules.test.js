@@ -4,6 +4,7 @@ import * as astroParser from 'astro-eslint-parser'
 import { describe, it } from 'vitest'
 
 import astryxColorsOnly from './astryx-colors-only.js'
+import astryxTypeOnly from './astryx-type-only.js'
 import noBareInternalHref from './no-bare-internal-href.js'
 import noCrossLayerImport from './no-cross-layer-import.js'
 import { layerZones } from './layer-zones.js'
@@ -257,6 +258,38 @@ tsx.run('astryx-colors-only (tsx)', astryxColorsOnly, {
       code: "const s = { background: 'rgb(255 255 255 / 0.5)' }",
       filename: 'src/components/X.tsx',
       errors: [{ messageId: 'value' }],
+    },
+  ],
+})
+
+astro.run('astryx-type-only (astro)', astryxTypeOnly, {
+  valid: [
+    // Color, alignment and wrapping utilities are not typography.
+    astroCase('<p class="text-ink-900 text-center text-pretty break-keep">x</p>'),
+    // The font family alias on <html>.
+    astroCase('<html class="font-body text-ink-900">x</html>'),
+    astroCase('<p class="max-sm:hidden whitespace-nowrap">x</p>'),
+  ],
+  invalid: [
+    astroCase('<p class="text-sm text-ink-600">x</p>', [{ messageId: 'utility' }]),
+    astroCase('<p class="sm:text-lg">x</p>', [{ messageId: 'utility' }]),
+    astroCase('<li class="flex text-[15px]">x</li>', [{ messageId: 'utility' }]),
+    astroCase('<h1 class="font-semibold">x</h1>', [{ messageId: 'utility' }]),
+    astroCase('<p class="leading-[1.75] mb-6">x</p>', [{ messageId: 'utility' }]),
+    astroCase('<a class="tracking-tight">x</a>', [{ messageId: 'utility' }]),
+  ],
+})
+
+tsx.run('astryx-type-only (tsx)', astryxTypeOnly, {
+  valid: [
+    { code: 'const c = <p className="text-copper mt-3">x</p>', filename: 'src/components/X.tsx' },
+    { code: "const c = 'text-sm'", filename: 'src/components/X.test.ts' },
+  ],
+  invalid: [
+    {
+      code: 'const c = <p className={`m-0 ${a ? "text-xs" : ""}`}>x</p>',
+      filename: 'src/components/X.tsx',
+      errors: [{ messageId: 'utility' }],
     },
   ],
 })

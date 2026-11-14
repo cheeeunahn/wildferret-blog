@@ -1,6 +1,7 @@
 ---
 import type { LocalizedArticle } from '../content/service'
 import AiSummary from './AiSummary'
+import ArticleMarkdown from './ArticleMarkdown'
 import { formatInline, parseArticleBody } from '../content/parser'
 import { resolveAssetUrl } from '../shared/assetUrl'
 import { localeHref, type Locale } from '../shared/i18n'
@@ -12,6 +13,7 @@ import { CodeBlock } from '@astryxdesign/core/CodeBlock'
 import { Divider } from '@astryxdesign/core/Divider'
 import { Heading } from '@astryxdesign/core/Heading'
 import { Icon } from '@astryxdesign/core/Icon'
+import { Link } from '@astryxdesign/core/Link'
 import { Table } from '@astryxdesign/core/Table'
 import { Text } from '@astryxdesign/core/Text'
 
@@ -67,11 +69,21 @@ const tableProps = (block: TableBlock) => ({
 })
 const MAX_CAROUSEL_SLIDES = 6
 
+// Article lists go through Astryx's Markdown (ArticleMarkdown.tsx), which takes
+// Markdown source: turn the parsed items back into a list. Link targets are
+// resolved first, as formatInline does for prose, so a site-relative link keeps
+// working under a BASE_PATH deploy.
+const toMarkdownList = (items: string[], ordered = false) =>
+  items
+    .map((item) => item.replace(/\]\(([^)\s]+)\)/g, (_, url) => `](${resolveAssetUrl(url)})`))
+    .map((item, n) => `${ordered ? `${n + 1}.` : '-'} ${item}`)
+    .join('\n')
+
 // The carousel's prev/next controls are <label>s for its radio group, not
 // buttons, so they cannot be an Astryx IconButton; this is the same floating
 // chip in Astryx tokens. The slide/dot state machine lives in global.css.
 const carouselArrowClass =
-  'absolute top-1/2 -translate-y-1/2 grid place-items-center size-8 rounded-full border border-ink-100 bg-paper text-ink-600 opacity-85 cursor-pointer transition-[opacity,color] duration-150 hover:opacity-100 hover:text-ink-900'
+  'absolute top-1/2 -translate-y-1/2 grid place-items-center size-8 rounded-full border border-ink-100 bg-paper text-ink-600 opacity-85 cursor-pointer transition-[opacity,color] hover:opacity-100 hover:text-ink-900'
 ---
 
 <div class="animate-page-enter">
@@ -108,7 +120,7 @@ const carouselArrowClass =
       />
       {article.coverImage && (
         <div class="mt-8">
-          <div class="overflow-hidden rounded-2xl border border-ink-100">
+          <div class="overflow-hidden rounded-(--radius-container) border border-ink-100">
             <img
               src={resolveAssetUrl(article.coverImage)}
               alt={article.title}
@@ -146,15 +158,7 @@ const carouselArrowClass =
           <Text as="div" display="block" type="label" color="secondary" className="mb-2">
             {summary.label}
           </Text>
-          <ul class="list-disc pl-5 space-y-2.5 leading-[1.75] marker:text-ink-300">
-            {summary.items.map((item) => (
-              <li>
-                <Text>
-                  <Fragment set:html={formatInline(item)} />
-                </Text>
-              </li>
-            ))}
-          </ul>
+          <ArticleMarkdown source={toMarkdownList(summary.items)} />
         </Card>
       </aside>
     )}
@@ -199,40 +203,27 @@ const carouselArrowClass =
 
       if (block.type === 'quote') {
         return (
-          <Blockquote className="my-8 leading-[1.75] animate-reveal" style={delayStyle(i)}>
-            <Fragment set:html={formatInline(block.text)} />
+          <Blockquote className="my-8 animate-reveal" style={delayStyle(i)}>
+            <Text type="prose" color="inherit">
+              <Fragment set:html={formatInline(block.text)} />
+            </Text>
           </Blockquote>
         )
       }
 
       if (block.type === 'list' && !block.ordered) {
         return (
-          <ul class="list-disc pl-5 mb-6 space-y-2 leading-[1.75] animate-reveal" style={delay(i)}>
-            {block.items.map((item) => (
-              <li>
-                <Text>
-                  <Fragment set:html={formatInline(item)} />
-                </Text>
-              </li>
-            ))}
-          </ul>
+          <div class="mb-6 animate-reveal" style={delay(i)}>
+            <ArticleMarkdown source={toMarkdownList(block.items)} />
+          </div>
         )
       }
 
       if (block.type === 'list') {
         return (
-          <ol
-            class="list-decimal pl-5 mb-6 space-y-2 leading-[1.75] animate-reveal"
-            style={delay(i)}
-          >
-            {block.items.map((item) => (
-              <li>
-                <Text>
-                  <Fragment set:html={formatInline(item)} />
-                </Text>
-              </li>
-            ))}
-          </ol>
+          <div class="mb-6 animate-reveal" style={delay(i)}>
+            <ArticleMarkdown source={toMarkdownList(block.items, true)} />
+          </div>
         )
       }
 
@@ -267,7 +258,7 @@ const carouselArrowClass =
                 aria-label={strings.article.carouselSlide(n + 1)}
               />
             ))}
-            <div class="overflow-hidden rounded-2xl border border-ink-100 bg-ink-50/40">
+            <div class="overflow-hidden rounded-(--radius-container) border border-ink-100 bg-ink-50/40">
               <div class="carousel-track flex">
                 {slides.map((slide, n) => (
                   <div class="relative w-full shrink-0">
@@ -306,16 +297,17 @@ const carouselArrowClass =
               {slides.map((_, n) => (
                 <label
                   for={`${cid}-${n}`}
-                  class="carousel-dot block size-1.5 rounded-full cursor-pointer transition-colors duration-150"
+                  class="carousel-dot block size-1.5 rounded-full cursor-pointer transition-colors"
                   aria-hidden="true"
                 />
               ))}
             </div>
             {caption && (
-              <figcaption
-                class="mt-2 text-center text-sm text-ink-600 leading-relaxed"
-                set:html={formatInline(caption)}
-              />
+              <figcaption class="mt-2 text-center">
+                <Text type="supporting" display="block">
+                  <Fragment set:html={formatInline(caption)} />
+                </Text>
+              </figcaption>
             )}
           </figure>
         )
@@ -325,7 +317,7 @@ const carouselArrowClass =
         const { image } = block
         return (
           <figure class="my-8 animate-reveal" style={delay(i)}>
-            <div class="overflow-hidden rounded-2xl border border-ink-100">
+            <div class="overflow-hidden rounded-(--radius-container) border border-ink-100">
               <img
                 src={resolveAssetUrl(image.src)}
                 alt={image.alt || article.title}
@@ -334,10 +326,11 @@ const carouselArrowClass =
               />
             </div>
             {image.caption && (
-              <figcaption
-                class="mt-3 text-sm text-ink-600 leading-relaxed"
-                set:html={formatInline(image.caption)}
-              />
+              <figcaption class="mt-3">
+                <Text type="supporting" display="block">
+                  <Fragment set:html={formatInline(image.caption)} />
+                </Text>
+              </figcaption>
             )}
           </figure>
         )
@@ -347,7 +340,8 @@ const carouselArrowClass =
         <Text
           as="p"
           display="block"
-          className="mb-6 leading-[1.75] animate-reveal"
+          type="prose"
+          className="mb-6 animate-reveal"
           style={delayStyle(i)}
         >
           <Fragment set:html={formatInline(block.text)} />
@@ -359,24 +353,13 @@ const carouselArrowClass =
   {/* Back link */}
   <div class="max-w-[768px] mx-auto px-6 pb-20">
     <Divider className="mb-10" />
-    <a
+    <Link
       href={localeHref(locale, '/')}
-      class="inline-flex items-center gap-2 text-sm text-ink-600 no-underline hover:text-ink-700 transition-colors"
+      color="secondary"
+      className="inline-flex items-center gap-1"
     >
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <line x1="19" y1="12" x2="5" y2="12"></line>
-        <polyline points="12 19 5 12 12 5"></polyline>
-      </svg>
+      <Icon icon="chevronLeft" size="sm" />
       {strings.article.back}
-    </a>
+    </Link>
   </div>
 </div>

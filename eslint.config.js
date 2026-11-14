@@ -9,9 +9,10 @@ import local from './eslint-rules/index.js'
 import { layerZones } from './eslint-rules/layer-zones.js'
 
 // The `local` plugin turns the conventions written up in CLAUDE.md — Linking,
-// the Islands policy, Layers, Astryx colors — into lint errors. See eslint-rules/.
+// the Islands policy, Layers, Astryx colors and type — into lint errors. See eslint-rules/.
 const localRules = {
   'local/astryx-colors-only': 'error',
+  'local/astryx-type-only': 'error',
   'local/no-bare-internal-href': 'error',
   'local/no-cross-layer-import': ['error', { zones: layerZones }],
 }

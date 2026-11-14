@@ -23,6 +23,21 @@ export const wildferretTheme = defineTheme({
     heading: { family: 'NanumSquareNeo', fallbacks: FONT_FALLBACKS },
   },
   components: {
+    // Two text types the site needs and Astryx's ramp does not have. Defining
+    // them here keeps components on <Text type="…"> instead of per-component
+    // size and line-height overrides.
+    text: {
+      // Long Korean prose: body size, but Astryx's 1.5 line height is tight for
+      // it. Article paragraphs, list items and quotes.
+      'type:prose': { lineHeight: '1.75' },
+      // Between supporting (13px) and body (16px): the about page's rows.
+      'type:compact': { fontSize: '0.9375rem', lineHeight: '1.5' },
+    },
+    // Article lists render through Astryx's Markdown (ArticleMarkdown.tsx);
+    // they take the same prose line height as the paragraphs around them.
+    'markdown-list': {
+      base: { lineHeight: '1.75' },
+    },
     // The large text input is the home page's search box (the only lg one).
     // Astryx's lg is 36px with 4px of vertical padding, which crowds 16px text;
     // 44px gives it room and matches a comfortable touch target.

@@ -74,6 +74,7 @@ src/
 │   ├── AboutView.astro       # About page markup, mounted by /about and /[lang]/about
 │   ├── AiSummary.tsx         # Island: on-device "Summarize with AI"
 │   ├── ArticleCard.astro     # A post row on the home list
+│   ├── ArticleMarkdown.tsx   # Article lists through Astryx Markdown — static, not an island
 │   ├── ArticleView.astro     # Article page markup (header, body, AI summary)
 │   ├── CategoryFilter.tsx    # Island: home search + category pills
 │   ├── FerretHero.astro      # The about page's interactive ferret illustration

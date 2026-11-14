@@ -168,6 +168,18 @@ export const wildferretTheme = {
         "fontFamily": "var(--font-family-heading)",
         "fontSize": "var(--text-display-3-size)",
         "lineHeight": "var(--text-display-3-leading)"
+      },
+      "type:prose": {
+        "lineHeight": "1.75"
+      },
+      "type:compact": {
+        "fontSize": "0.9375rem",
+        "lineHeight": "1.5"
+      }
+    },
+    "markdown-list": {
+      "base": {
+        "lineHeight": "1.75"
       }
     },
     "text-input": {

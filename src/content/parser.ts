@@ -176,17 +176,22 @@ export function classifyBlock(block: string): ArticleBlock {
   return { type: 'paragraph', text: block }
 }
 
+// Inline links and code match what Astryx's Markdown renders for the article's
+// lists (ArticleMarkdown.tsx), in Astryx tokens: an accent underline for links;
+// the code font at the surrounding size, on the muted background, with Astryx's
+// inner radius. No type utilities: size and line height come from the Text
+// around the markup.
+const LINK_CLASS = 'text-accent underline hover:text-accent-strong transition-colors'
+const CODE_CLASS =
+  'font-(family-name:--font-family-code) px-1 bg-ink-50 rounded-(--radius-inner) text-ink-900'
+
 export function formatInline(text: string): string {
   return escapeHtml(text)
     .replace(/\[(.+?)\]\((.+?)\)/g, (_, label: string, href: string) => {
       const safeHref = toSafeHref(href)
-      return `<a href="${safeHref}" class="text-accent underline underline-offset-4 decoration-accent/35 hover:text-accent-strong hover:decoration-accent/70 transition-colors">${label}</a>`
+      return `<a href="${safeHref}" class="${LINK_CLASS}">${label}</a>`
     })
-    .replace(
-      /`(.+?)`/g,
-      (_, code: string) =>
-        `<code class="px-1.5 py-0.5 bg-ink-50 rounded text-[14px] font-mono text-copper">${code}</code>`,
-    )
+    .replace(/`(.+?)`/g, (_, code: string) => `<code class="${CODE_CLASS}">${code}</code>`)
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
 }
 

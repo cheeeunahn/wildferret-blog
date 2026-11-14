@@ -37,11 +37,11 @@ const copy = aboutCopy(locale.lang)
       </Heading>
       <ul class="space-y-3">
         {copy.career.map((item) => (
-          <li class="flex flex-col sm:flex-row sm:gap-4 text-[15px]">
+          <li class="flex flex-col sm:flex-row sm:gap-4">
             <Text type="supporting" hasTabularNumbers className="sm:w-32 sm:shrink-0 sm:pt-0.5">
               {item.period}
             </Text>
-            <Text type="inherit">
+            <Text type="compact">
               {item.role}
               <Text type="inherit" color="secondary">{` · ${item.org}`}</Text>
             </Text>
@@ -57,7 +57,7 @@ const copy = aboutCopy(locale.lang)
       </Heading>
       <ul class="space-y-4">
         {copy.projects.map((project) => (
-          <li class="flex flex-col sm:flex-row sm:gap-4 text-[15px]">
+          <li class="flex flex-col sm:flex-row sm:gap-4">
             <Text type="supporting" hasTabularNumbers className="sm:w-32 sm:shrink-0 sm:pt-1">
               {project.year}
             </Text>
@@ -67,24 +67,19 @@ const copy = aboutCopy(locale.lang)
                   a link off the site. It opens in the same tab: a new tab would
                   need a translated "(opens in new tab)" label per language.
                   The interviews list below renders its titles the same way.
-                  Link has no type="inherit" and its sizes jump from 13px to
-                  16px, so the overrides on its inner Text let it take the row's 15px like
-                  the Text around it. */}
-              <Text as="p" display="block" type="inherit">
+                  The rows use the theme's compact type (15px); Link has no
+                  type prop, so its label is a compact Text of its own. */}
+              <Text as="p" display="block" type="compact">
                 {project.link ? (
-                  <Link
-                    href={project.link}
-                    color="primary"
-                    className="[&>.astryx-text]:[font-size:inherit]! [&>.astryx-text]:[line-height:inherit]!"
-                  >
-                    {project.name}
+                  <Link href={project.link} color="primary">
+                    <Text type="compact">{project.name}</Text>
                     <Icon icon="externalLink" size="xsm" color="secondary" className="ml-1" />
                   </Link>
                 ) : (
                   project.name
                 )}
               </Text>
-              <Text as="p" display="block" type="inherit" color="secondary">
+              <Text as="p" display="block" type="compact" color="secondary">
                 {project.summary}
               </Text>
             </div>
@@ -100,22 +95,20 @@ const copy = aboutCopy(locale.lang)
       </Heading>
       <ul class="space-y-4">
         {copy.interviews.map((interview) => (
-          <li class="flex flex-col sm:flex-row sm:gap-4 text-[15px]">
+          <li class="flex flex-col sm:flex-row sm:gap-4">
             <Text type="supporting" hasTabularNumbers className="sm:w-32 sm:shrink-0 sm:pt-1">
               {interview.year}
             </Text>
             <div>
-              <Text as="p" display="block" type="inherit">
-                <Link
-                  href={interview.link}
-                  color="primary"
-                  className="[&>.astryx-text]:[font-size:inherit]! [&>.astryx-text]:[line-height:inherit]!"
-                >
-                  <span lang={interview.lang}>{interview.name}</span>
+              <Text as="p" display="block" type="compact">
+                <Link href={interview.link} color="primary">
+                  <Text type="compact">
+                    <span lang={interview.lang}>{interview.name}</span>
+                  </Text>
                   <Icon icon="externalLink" size="xsm" color="secondary" className="ml-1" />
                 </Link>
               </Text>
-              <Text as="p" display="block" type="inherit" color="secondary">
+              <Text as="p" display="block" type="compact" color="secondary">
                 {interview.outlet}
               </Text>
             </div>
@@ -131,11 +124,11 @@ const copy = aboutCopy(locale.lang)
       </Heading>
       <ul class="space-y-3">
         {copy.certifications.map((cert) => (
-          <li class="flex flex-col sm:flex-row sm:gap-4 text-[15px]">
+          <li class="flex flex-col sm:flex-row sm:gap-4">
             <Text type="supporting" hasTabularNumbers className="sm:w-32 sm:shrink-0 sm:pt-0.5">
               {cert.year}
             </Text>
-            <Text type="inherit">
+            <Text type="compact">
               {cert.name}
               <Text type="inherit" color="secondary">{` · ${cert.issuer}`}</Text>
             </Text>

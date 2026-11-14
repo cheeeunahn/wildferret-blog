@@ -48,7 +48,7 @@ const { article, index, locale } = Astro.props
           quiet muted plate instead, which would otherwise read as a missing
           image. Smaller below sm, so a 320px screen keeps room for the text. */}
       <div
-        class={`size-24 sm:size-28 shrink-0 overflow-hidden rounded-lg ${article.cardImage ? 'bg-thumb-plate' : 'bg-ink-50'}`}
+        class={`size-24 sm:size-28 shrink-0 overflow-hidden rounded-(--radius-element) ${article.cardImage ? 'bg-thumb-plate' : 'bg-ink-50'}`}
       >
         {article.cardImage ? (
           <img
@@ -57,7 +57,7 @@ const { article, index, locale } = Astro.props
             aria-hidden="true"
             loading="lazy"
             decoding="async"
-            class="w-full h-full object-contain p-1.5 transition-transform duration-[350ms] group-hover:scale-[1.04] dark:filter-none"
+            class="w-full h-full object-contain p-1.5 transition-transform duration-(--duration-medium-min) group-hover:scale-[1.04] dark:filter-none"
           />
         ) : (
           <div class="w-full h-full flex items-center justify-center" aria-hidden="true">

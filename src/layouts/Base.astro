@@ -14,6 +14,7 @@ import {
 } from '../shared/i18n'
 import { t } from '../copy/strings'
 import { resolveAssetUrl } from '../shared/assetUrl'
+import { Link } from '@astryxdesign/core/Link'
 import { Text } from '@astryxdesign/core/Text'
 import { TopNavItem } from '@astryxdesign/core/TopNav'
 
@@ -99,16 +100,20 @@ const canonical = canonicalPath(locale.lang, appPath)
         <nav class="max-w-[768px] mx-auto px-6 h-16 flex items-center justify-between gap-3 max-[359px]:gap-1">
           {/* Every internal link goes through localeHref, so a reader who
               arrived under /en stays under /en for the rest of the visit. */}
-          <a
-            href={localeHref(locale, '/')}
-            class="text-ink-900 text-base sm:text-lg font-semibold tracking-tight whitespace-nowrap no-underline hover:opacity-70 transition-opacity"
-          >
+          <Link href={localeHref(locale, '/')} color="primary" className="shrink-0">
             {/* On phones (below sm) the English nav ("Posts", "About") leaves
-                no room for the full name — it pushed the theme toggle past the
-                screen edge at 390px — so the logo drops "'s blog" there, in
-                every language so the logo does not change with the switcher. */}
-            wildferret<span class="max-sm:hidden">'s blog</span>
-          </a>
+                no room for the full name at Astryx's large size — it pushed the
+                theme toggle past the screen edge — so phones get "wildferret" at
+                body size instead, in every language so the logo does not change
+                with the switcher. Text sizes cannot change per breakpoint, hence
+                two Texts; only one is ever displayed, so it is read once. */}
+            <Text type="large" weight="semibold" className="whitespace-nowrap max-sm:hidden">
+              wildferret's blog
+            </Text>
+            <Text weight="semibold" className="whitespace-nowrap sm:hidden">
+              wildferret
+            </Text>
+          </Link>
           {/* Every item on the right is the same 36px, 8px-radius box with its
               own side padding (TopNavItem, the language trigger, the theme
               toggle), so the gap between boxes stays small: the padding
@@ -161,7 +166,7 @@ const canonical = canonicalPath(locale.lang, appPath)
       <footer class="border-t border-ink-100 bg-paper-warm">
         <div class="max-w-[768px] mx-auto px-6 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4">
           <Text as="p" display="block" type="supporting" size="xsm">
-            Just another product IT startup person out there, in the wild!
+            {strings.footerTagline}
           </Text>
           <Text as="p" display="block" type="supporting" size="xsm" className="shrink-0">
             &copy; {year} wildferret

@@ -10,6 +10,8 @@ import type { Lang } from '../shared/i18n'
 export interface Strings {
   /** <title> for the index, and the suffix on every other page's title. */
   siteTitle: string
+  /** The footer's one line about the author. */
+  footerTagline: string
   siteDescription: string
   nav: { posts: string; about: string }
   /** Accessible name for the language switcher group. */
@@ -77,6 +79,7 @@ export interface Strings {
 
 const ko: Strings = {
   siteTitle: 'wildferret의 블로그',
+  footerTagline: 'Just another product IT startup person out there, in the wild!',
   siteDescription: '사람을 깊이 이해하고, 조용하지만 분명한 차이를 만드는 제품을 만듭니다.',
   nav: { posts: '글', about: '소개' },
   langSwitchLabel: '언어 선택',
@@ -125,6 +128,7 @@ const ko: Strings = {
 
 const en: Strings = {
   siteTitle: "wildferret's blog",
+  footerTagline: 'Just another product IT startup person out there, in the wild!',
   siteDescription:
     'Understanding people deeply, and building products that make a quiet but unmistakable difference.',
   nav: { posts: 'Posts', about: 'About' },

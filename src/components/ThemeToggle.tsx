@@ -59,7 +59,7 @@ export default function ThemeToggle({ toLight, toDark }: { toLight: string; toDa
       onClick={toggle}
       aria-label={label}
       title={label}
-      className="inline-flex size-9 items-center justify-center rounded-lg text-ink-600 hover:text-ink-900 hover:bg-ink-50 transition-colors cursor-pointer"
+      className="inline-flex size-9 items-center justify-center rounded-(--radius-element) text-ink-600 hover:text-ink-900 hover:bg-ink-50 transition-colors cursor-pointer"
     >
       <svg
         width="18"

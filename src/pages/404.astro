@@ -6,6 +6,8 @@
 import Base from '../layouts/Base.astro'
 import { LANGS, ROOT_LOCALE, switchLangHref } from '../shared/i18n'
 import { t } from '../copy/strings'
+import { Heading } from '@astryxdesign/core/Heading'
+import { Link } from '@astryxdesign/core/Link'
 
 const options = LANGS.map((lang) => ({
   lang,
@@ -22,10 +24,12 @@ const options = LANGS.map((lang) => ({
   <div class="max-w-[768px] mx-auto px-6 py-32 text-center animate-page-enter">
     {options.map(({ lang, strings, home }, i) => (
       <div class={i > 0 ? 'mt-10' : ''} lang={lang}>
-        <h1 class="text-2xl font-semibold text-ink-900 mb-4">{strings.notFound.title}</h1>
-        <a href={home} class="text-ink-600 hover:text-ink-700 text-sm underline underline-offset-4">
+        <Heading level={1} className="mb-4">
+          {strings.notFound.title}
+        </Heading>
+        <Link href={home} color="secondary">
           {strings.notFound.back}
-        </a>
+        </Link>
       </div>
     ))}
   </div>

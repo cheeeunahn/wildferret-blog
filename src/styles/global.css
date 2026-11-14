@@ -117,12 +117,19 @@
      Tokens): Astryx has no white that holds in both themes. */
   --color-thumb-plate: #ffffff;
 
+  /* Motion comes from Astryx's duration and easing tokens. A bare
+     `transition-*` utility takes Astryx's fast duration and standard curve, so
+     hover and state changes match Astryx's own components. */
+  --default-transition-duration: var(--duration-fast);
+  --default-transition-timing-function: var(--ease-standard);
+
   /* Entrance motion, as Tailwind animation tokens: each --animate-<name>
      becomes an `animate-<name>` utility. Stagger them with `reveal-delay-<n>`
-     (below) or an inline animation-delay. */
-  --animate-reveal: reveal-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-  --animate-reveal-media: reveal-media 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
-  --animate-page-enter: fade-in 0.4s ease-out both;
+     (below) or an inline animation-delay. Same Astryx tokens: slow-min (730ms)
+     and slow (975ms) for content settling in, medium for the page fade. */
+  --animate-reveal: reveal-up var(--duration-slow-min) var(--ease-standard) both;
+  --animate-reveal-media: reveal-media var(--duration-slow) var(--ease-standard) both;
+  --animate-page-enter: fade-in var(--duration-medium) var(--ease-standard) both;
 
   @keyframes reveal-up {
     from {

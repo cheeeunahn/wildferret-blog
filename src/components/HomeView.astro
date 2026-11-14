@@ -45,7 +45,7 @@ const resultLabels = articles.map((_, i) => strings.home.resultsCount(i + 1))
         No shadow at rest — the bar is the same ground as the page until it
         actually lifts off it. In dark a soft shadow on a near-black page is
         invisible, so it takes Astryx's heaviest one instead. */}
-    <div class="cat-bar sticky top-[65px] z-40 bg-paper py-4 transition-shadow duration-200 motion-reduce:transition-none data-stuck:shadow-med dark:data-stuck:shadow-high">
+    <div class="cat-bar sticky top-[65px] z-40 bg-paper py-4 transition-shadow motion-reduce:transition-none data-stuck:shadow-med dark:data-stuck:shadow-high">
       <section class="max-w-[768px] mx-auto px-6 animate-reveal reveal-delay-3">
         {/* client:load, not :visible — the toolbar is near the top of the page
             and sticky, so it is on screen almost at once. */}

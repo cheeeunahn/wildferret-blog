@@ -311,6 +311,19 @@
     line-height: var(--text-display-3-leading);
   }
 
+  .astryx-text[data-type="prose"] {
+    line-height: 1.75;
+  }
+
+  .astryx-text[data-type="compact"] {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  .astryx-markdown-list {
+    line-height: 1.75;
+  }
+
   .astryx-text-input[data-size="lg"] {
     height: 44px;
     padding-inline: 12px;

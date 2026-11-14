@@ -15,6 +15,10 @@ import {
   type Models,
   type Route,
 } from '../client/summarizer'
+import { Button } from '@astryxdesign/core/Button'
+import { Card } from '@astryxdesign/core/Card'
+import { List, ListItem } from '@astryxdesign/core/List'
+import { Text } from '@astryxdesign/core/Text'
 
 /**
  * "Summarize with AI" button in the article header, backed by Chrome's
@@ -108,65 +112,54 @@ export default function AiSummary({
 
   const busy = status === 'downloading' || status === 'summarizing'
 
+  const label =
+    status === 'downloading'
+      ? strings.downloading
+      : status === 'summarizing'
+        ? strings.summarizing
+        : status === 'continue'
+          ? strings.continue
+          : strings.button
+
   return (
     <div className="mt-6">
       {(status === 'idle' || status === 'continue' || busy) && (
-        <button
-          type="button"
-          onClick={() => void run()}
-          disabled={busy}
-          aria-busy={busy}
-          className="inline-flex items-center gap-2 rounded-lg border border-ink-100 bg-surface px-3.5 py-2 text-sm text-ink-800 transition-colors hover:bg-surface-hover hover:border-ink-200 disabled:text-ink-600 disabled:hover:bg-surface disabled:hover:border-ink-100 cursor-pointer disabled:cursor-default"
-        >
-          {busy && (
-            <span
-              aria-hidden="true"
-              className="size-3.5 shrink-0 rounded-full border-2 border-ink-200 border-t-ink-700 motion-safe:animate-spin"
-            />
-          )}
-          {status === 'downloading'
-            ? strings.downloading
-            : status === 'summarizing'
-              ? strings.summarizing
-              : status === 'continue'
-                ? strings.continue
-                : strings.button}
-        </button>
+        // isLoading shows Astryx's spinner, sets aria-busy and blocks a second
+        // click while staying focusable.
+        <Button label={label} isLoading={busy} onClick={() => void run()} />
       )}
 
       {status === 'error' && (
-        <p role="alert" className="text-sm text-copper m-0">
-          {strings.error}{' '}
-          <button
-            type="button"
-            onClick={() => void run()}
-            className="underline underline-offset-2 cursor-pointer"
-          >
-            {strings.retry}
-          </button>
-        </p>
+        <div role="alert" className="flex flex-wrap items-center gap-2">
+          <Text type="supporting" className="text-copper">
+            {strings.error}
+          </Text>
+          <Button label={strings.retry} variant="ghost" size="sm" onClick={() => void run()} />
+        </div>
       )}
 
       {summary && (
-        <section
-          aria-label={strings.heading}
-          aria-live="polite"
-          className="mt-4 rounded-xl border border-ink-100 overflow-hidden"
-        >
-          <div className="px-4 py-2 border-b border-ink-100 bg-ink-50/60 text-[13px] text-ink-600">
-            {strings.heading}
-          </div>
-          <div className="px-5 py-4">
-            {/* Same look as the author-written summary card in ArticleView. */}
-            <ul className="list-disc pl-5 m-0 space-y-2.5 marker:text-ink-300 text-ink-700 text-[15px] leading-relaxed break-words">
-              {toSentences(summary)
-                .slice(0, MAX_SENTENCES)
-                .map((sentence, i) => (
-                  <li key={i}>{sentence}</li>
-                ))}
-            </ul>
-            <p className="mt-3 mb-0 text-xs text-ink-500">{strings.disclaimer}</p>
-          </div>
+        <section aria-label={strings.heading} aria-live="polite" className="mt-4">
+          <Card padding={0} className="overflow-hidden">
+            <div className="px-4 py-2 border-b border-ink-100 bg-ink-50/60">
+              <Text type="supporting">{strings.heading}</Text>
+            </div>
+            <div className="px-5 py-4">
+              {/* Each sentence is a JSX child, so React escapes it. A ReactNode
+                  label, not a string, so a long sentence wraps instead of
+                  being truncated to one line. */}
+              <List listStyle="disc" density="compact" edge="flush">
+                {toSentences(summary)
+                  .slice(0, MAX_SENTENCES)
+                  .map((sentence, i) => (
+                    <ListItem key={i} label={<Text type="prose">{sentence}</Text>} />
+                  ))}
+              </List>
+              <Text as="p" display="block" type="supporting" size="xsm" className="mt-3">
+                {strings.disclaimer}
+              </Text>
+            </div>
+          </Card>
         </section>
       )}
     </div>
