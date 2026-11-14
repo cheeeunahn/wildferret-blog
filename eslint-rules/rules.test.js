@@ -3,6 +3,7 @@ import tsParser from '@typescript-eslint/parser'
 import * as astroParser from 'astro-eslint-parser'
 import { describe, it } from 'vitest'
 
+import astryxColorsOnly from './astryx-colors-only.js'
 import noBareInternalHref from './no-bare-internal-href.js'
 import noCrossLayerImport from './no-cross-layer-import.js'
 import { layerZones } from './layer-zones.js'
@@ -207,5 +208,55 @@ astro.run('no-cross-layer-import (astro)', noCrossLayerImport, {
       "---\nimport { articles } from '../data/articles'\n---\n<p />",
       crossLayer,
     ),
+  ],
+})
+
+astro.run('astryx-colors-only (astro)', astryxColorsOnly, {
+  valid: [
+    // Astryx token aliases and Astryx tokens by name.
+    astroCase('<p class="text-ink-900 bg-paper border-ink-100 hover:bg-ink-50">x</p>'),
+    astroCase('<ul class="bg-(--color-background-popover) shadow-med">x</ul>'),
+    astroCase('<p class="text-accent data-stuck:shadow-med dark:data-stuck:shadow-high">x</p>'),
+    // Not colors: an in-page anchor whose id happens to be hex-like, and a
+    // utility that merely contains a palette word.
+    astroCase('<a href="#add">x</a>'),
+    astroCase('<p class="text-pretty break-keep">x</p>'),
+  ],
+  invalid: [
+    astroCase('<p class="text-gray-500">x</p>', [{ messageId: 'palette' }]),
+    astroCase('<p class="hover:bg-white/80 p-2">x</p>', [{ messageId: 'palette' }]),
+    astroCase('<div class="border-t-red-200">x</div>', [{ messageId: 'palette' }]),
+    astroCase('<p class="bg-[#fafafa]">x</p>', [{ messageId: 'arbitrary' }]),
+    astroCase('<p class="text-[rgb(0_0_0)]">x</p>', [{ messageId: 'arbitrary' }]),
+  ],
+})
+
+tsx.run('astryx-colors-only (tsx)', astryxColorsOnly, {
+  valid: [
+    { code: 'const c = <p className="text-ink-700">x</p>', filename: 'src/components/X.tsx' },
+    { code: "const s = { color: 'var(--color-text-primary)' }", filename: 'src/components/X.tsx' },
+    // Article bodies and tests are out of scope.
+    {
+      code: 'export const c = \'<p class="text-gray-500">\'',
+      filename: 'src/data/article-content/x.ts',
+    },
+    { code: "const c = '#ffffff'", filename: 'src/shared/x.test.ts' },
+  ],
+  invalid: [
+    {
+      code: 'const c = <p className={`p-2 ${on ? "bg-black" : ""}`}>x</p>',
+      filename: 'src/components/X.tsx',
+      errors: [{ messageId: 'palette' }],
+    },
+    {
+      code: "const s = { color: '#ffffff' }",
+      filename: 'src/components/X.tsx',
+      errors: [{ messageId: 'value' }],
+    },
+    {
+      code: "const s = { background: 'rgb(255 255 255 / 0.5)' }",
+      filename: 'src/components/X.tsx',
+      errors: [{ messageId: 'value' }],
+    },
   ],
 })

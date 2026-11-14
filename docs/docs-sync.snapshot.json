@@ -16,6 +16,7 @@
     "docs/adr/0002-astryx-design-system.md",
     "docs/adr/0003-library-layout-and-reading-scale.md",
     "docs/trd/astryx-design-system.md",
+    "eslint-rules/astryx-colors-only.js",
     "eslint-rules/index.js",
     "eslint-rules/layer-zones.js",
     "eslint-rules/no-bare-internal-href.js",

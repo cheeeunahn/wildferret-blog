@@ -183,13 +183,13 @@ The same three article pages are built before and after.
 
 ## Risks and mitigations
 
-| Risk                                                             | Mitigation                                                                                          |
-| ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| An Astryx upgrade renames the `text-input` `size:lg` variant     | Re-check the home search box's height after upgrades                                                |
-| `astryx.css` (~30 KB gzipped) loads on every page                | Measured above; swizzle the few components used and drop the global sheet if it becomes the blocker |
-| Beta API churn between 0.x releases                              | Exact pins; upgrade deliberately with `astryx upgrade --apply`, then `pnpm theme:build`             |
-| A static component quietly gains a click-only feature on upgrade | Review the rendered page after upgrades; only display components are used outside islands           |
-| Color discipline drifts with `no-raw-colors` retired             | "Astryx only" is written into CLAUDE.md (Design Tokens) and checked in review                       |
+| Risk                                                             | Mitigation                                                                                                         |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| An Astryx upgrade renames the `text-input` `size:lg` variant     | Re-check the home search box's height after upgrades                                                               |
+| `astryx.css` (~30 KB gzipped) loads on every page                | Measured above; swizzle the few components used and drop the global sheet if it becomes the blocker                |
+| Beta API churn between 0.x releases                              | Exact pins; upgrade deliberately with `astryx upgrade --apply`, then `pnpm theme:build`                            |
+| A static component quietly gains a click-only feature on upgrade | Review the rendered page after upgrades; only display components are used outside islands                          |
+| Color discipline drifts with `no-raw-colors` retired             | "Astryx only" is in CLAUDE.md (Design Tokens); since 2026-11-14 `local/astryx-colors-only` enforces its color half |
 
 ## Open questions
 
