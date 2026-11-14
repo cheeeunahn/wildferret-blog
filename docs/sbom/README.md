@@ -60,9 +60,9 @@ If a change moves one of these into the `required` scope, the generated table be
 
 |                                                      | Packages |
 | ---------------------------------------------------- | -------: |
-| Total resolved by the lockfile                       |      697 |
+| Total resolved by the lockfile                       |      684 |
 | Shipped to readers (browser or Worker)               |       20 |
-| Reachable only from devDependencies                  |      353 |
+| Reachable only from devDependencies                  |      340 |
 | Toolchain reachable from `dependencies`, not shipped |      324 |
 
 ### Shipped npm packages
@@ -109,15 +109,15 @@ If a change moves one of these into the `required` scope, the generated table be
 | License                                  | All packages | Shipped |
 | ---------------------------------------- | -----------: | ------: |
 | MIT                                      |          476 |      18 |
-| unknown — not in local store¹            |          126 |       0 |
+| unknown — not in local store¹            |          115 |       0 |
 | ISC                                      |           29 |       1 |
 | Apache-2.0                               |           23 |       0 |
 | BSD-2-Clause                             |           16 |       0 |
 | BSD-3-Clause                             |            7 |       1 |
 | BlueOak-1.0.0                            |            4 |       0 |
-| MPL-2.0                                  |            4 |       0 |
 | CC0-1.0                                  |            3 |       0 |
 | MIT OR Apache-2.0                        |            3 |       0 |
+| MPL-2.0                                  |            2 |       0 |
 | 0BSD                                     |            1 |       0 |
 | Apache-2.0 AND LGPL-3.0-or-later AND MIT |            1 |       0 |
 | BSD                                      |            1 |       0 |
