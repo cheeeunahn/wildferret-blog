@@ -13,14 +13,38 @@ import {
   toSentences,
   writeCachedSummary,
   type Models,
+  SummaryTimeout,
+  withTimeout,
 } from './summarizer'
 
 describe('canSummarize', () => {
-  it('shows the button unless the model cannot run at all', () => {
+  it('shows the button only when the model is already on the device', () => {
     expect(canSummarize('available')).toBe(true)
-    expect(canSummarize('downloadable')).toBe(true)
-    expect(canSummarize('downloading')).toBe(true)
+    // A download can stall forever on some browsers, so these hide it.
+    expect(canSummarize('downloadable')).toBe(false)
+    expect(canSummarize('downloading')).toBe(false)
     expect(canSummarize('unavailable')).toBe(false)
+  })
+})
+
+describe('withTimeout', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('passes the result through when the work finishes in time', async () => {
+    await expect(withTimeout(Promise.resolve('summary'), 1000)).resolves.toBe('summary')
+  })
+
+  it('gives up with SummaryTimeout when the work never settles', async () => {
+    vi.useFakeTimers()
+    const result = withTimeout(new Promise(() => {}), 1000)
+    vi.advanceTimersByTime(1000)
+    await expect(result).rejects.toBeInstanceOf(SummaryTimeout)
+  })
+
+  it('passes a failure through unchanged', async () => {
+    await expect(withTimeout(Promise.reject(new Error('boom')), 1000)).rejects.toThrow('boom')
   })
 })
 
@@ -251,13 +275,23 @@ describe('pickRoute', () => {
   it('goes through English when only the translators take the language', async () => {
     stubApis({
       model: { en: 'available' },
-      translator: { 'ko>en': 'downloadable', 'en>ko': 'downloadable' },
+      translator: { 'ko>en': 'available', 'en>ko': 'available' },
     })
     expect(await pickRoute('ko')).toBe('via-en')
   })
 
+  it('hides the button while any model still has to be downloaded', async () => {
+    stubApis({ model: { ko: 'downloadable', en: 'downloadable' } })
+    expect(await pickRoute('ko')).toBeNull()
+    stubApis({
+      model: { en: 'available' },
+      translator: { 'ko>en': 'available', 'en>ko': 'downloading' },
+    })
+    expect(await pickRoute('ko')).toBeNull()
+  })
+
   it('hides the button when any step of the detour is unavailable', async () => {
-    stubApis({ model: { en: 'available' }, translator: { 'ko>en': 'downloadable' } })
+    stubApis({ model: { en: 'available' }, translator: { 'ko>en': 'available' } })
     expect(await pickRoute('ko')).toBeNull()
   })
 

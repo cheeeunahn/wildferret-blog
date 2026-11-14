@@ -10,7 +10,9 @@ import {
   readArticleText,
   MAX_SENTENCES,
   readCachedSummary,
+  SUMMARY_TIMEOUT_MS,
   toSentences,
+  withTimeout,
   writeCachedSummary,
   type Models,
   type Route,
@@ -25,7 +27,8 @@ import { Text } from '@astryxdesign/core/Text'
  * on-device Prompt API. Mounted with the custom `client:summarizer`
  * directive (src/directives/summarizer.ts), so it only hydrates where the API
  * exists. Here it still asks `availability()` for this language, and renders
- * nothing unless the models can run. Korean goes through English with the
+ * nothing unless every model it needs is already on the device (see
+ * canSummarize): no download is ever started from a page view. Korean goes through English with the
  * Translator API until Chrome's summarizer takes it (see `Route`).
  *
  * XSS: the summary is model output, so it is untrusted text. It is rendered as
@@ -91,20 +94,35 @@ export default function AiSummary({
     // download progress, and the button must not look clickable meanwhile.
     setStatus('summarizing')
     try {
-      // A cached summary skips the availability check, so a retry after a
-      // reload may still have to pick the route.
-      const route = routeRef.current ?? (routeRef.current = await pickRoute(lang))
-      if (!route) throw new Error('unavailable')
-      // Only called when a model is not on the device yet.
-      const pipeline = await createPipeline(lang, route, modelsRef.current, () =>
-        setStatus('downloading'),
+      // The whole run is capped, so a stalled model or browser bug ends in the
+      // retry message instead of a button that spins forever.
+      const result = await withTimeout(
+        (async () => {
+          // A cached summary skips the availability check, so a retry after a
+          // reload may still have to pick the route.
+          const route = routeRef.current ?? (routeRef.current = await pickRoute(lang))
+          if (!route) throw new Error('unavailable')
+          // Only called when a model is not on the device yet, which the
+          // availability check makes rare (see canSummarize).
+          const pipeline = await createPipeline(lang, route, modelsRef.current, () =>
+            setStatus('downloading'),
+          )
+          setStatus('summarizing')
+          return pipeline.run(readArticleText(), title, setSummary)
+        })(),
+        SUMMARY_TIMEOUT_MS,
       )
-      setStatus('summarizing')
-      const result = await pipeline.run(readArticleText(), title, setSummary)
       writeCachedSummary(key, result)
       setStatus('done')
     } catch (err) {
-      setStatus(err instanceof NeedsAnotherClick ? 'continue' : 'error')
+      if (err instanceof NeedsAnotherClick) {
+        setStatus('continue')
+      } else {
+        // Drop any half-streamed text, so a timeout does not leave a partial
+        // summary above the retry message.
+        setSummary('')
+        setStatus('error')
+      }
     }
   }
 

@@ -16,9 +16,38 @@
 
 import type { Lang } from '../shared/i18n'
 
-/** Statuses that mean a model can work, after a download if need be. */
+/**
+ * Only a model that is already on this device counts. `downloadable` and
+ * `downloading` hide the button: a browser can expose the API yet never finish
+ * the download (unsupported hardware, too little disk, a managed policy), and
+ * a click there used to start a download that spun forever. The button is for
+ * readers whose Chrome already has its built-in AI, and for no one else.
+ */
 export function canSummarize(availability: Availability): boolean {
-  return availability !== 'unavailable'
+  return availability === 'available'
+}
+
+/** How long one summary may take before the button gives up and offers a retry. */
+export const SUMMARY_TIMEOUT_MS = 120_000
+
+/** A summary that did not finish within SUMMARY_TIMEOUT_MS. */
+export class SummaryTimeout extends Error {
+  constructor() {
+    super('The summary did not finish in time.')
+    this.name = 'SummaryTimeout'
+  }
+}
+
+/**
+ * `work`, or a SummaryTimeout once `ms` pass without it settling: a backstop so
+ * that no browser bug or stalled model leaves the button spinning forever.
+ */
+export function withTimeout<T>(work: Promise<T>, ms: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined
+  const expired = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new SummaryTimeout()), ms)
+  })
+  return Promise.race([work, expired]).finally(() => clearTimeout(timer))
 }
 
 /**
