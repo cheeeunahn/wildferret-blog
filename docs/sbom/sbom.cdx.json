@@ -25,7 +25,7 @@
       },
       {
         "name": "wildferret:lockfile:sha256",
-        "value": "ad85b326d8f975eeb8d2ef2bc4f95144465e8b3a8259b550de49c27e149c8faf"
+        "value": "74ebe0d2403aad37cea3b53a3ee74d49b544e9dae3e2174c0f318f954714bf49"
       },
       {
         "name": "wildferret:packageManager",
@@ -3472,6 +3472,92 @@
     },
     {
       "type": "library",
+      "bom-ref": "pkg:npm/%40cacheable/memory@2.2.0",
+      "group": "@cacheable",
+      "name": "memory",
+      "version": "2.2.0",
+      "scope": "excluded",
+      "description": "High Performance In-Memory Cache for Node.js",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "0932caa8b22d442122c4401ec03dff8fd0c1dffa3dea0a533c3e1e275bfe0c63a5c594599dc45090662aaa70060ac71877a44d7977c67a2b82a61b0fb6ac887d"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40cacheable/memory@2.2.0",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@cacheable/memory/-/memory-2.2.0.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/jaredwray/cacheable.git"
+        }
+      ],
+      "properties": [
+        {
+          "name": "wildferret:shipped",
+          "value": "no"
+        },
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40cacheable/utils@2.5.0",
+      "group": "@cacheable",
+      "name": "utils",
+      "version": "2.5.0",
+      "scope": "excluded",
+      "description": "Cacheable Utilities for Caching Libraries",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "6ee8a980e5439243d7351e7ec41a43c3b664da7d44bd4eea04908d51c2fbae143ffe47e93973c0bd0e75d4eb34be92d8275a599efb9d372b6442dda1b2ddf0a8"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40cacheable/utils@2.5.0",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@cacheable/utils/-/utils-2.5.0.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/jaredwray/cacheable.git"
+        }
+      ],
+      "properties": [
+        {
+          "name": "wildferret:shipped",
+          "value": "no"
+        },
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "bom-ref": "pkg:npm/%40capsizecss/unpack@4.0.1",
       "group": "@capsizecss",
       "name": "unpack",
@@ -5829,16 +5915,16 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40eslint/config-array@0.21.2",
+      "bom-ref": "pkg:npm/%40eslint/config-array@0.23.5",
       "group": "@eslint",
       "name": "config-array",
-      "version": "0.21.2",
+      "version": "0.23.5",
       "scope": "excluded",
       "description": "General purpose glob-based configuration matching.",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "9c99762864e5adff468cb8a6808aeef95fe6ce048ad000420d046fc70e418d444bed67c7e6ea169a2cdb1fb401e8c9a730177c7080bdb9c7969deccbd556565b"
+          "content": "63790a2ef0b576f4ce4fea0696a350d572ea2ba0f51d4d985cf739d8d98094965b30c583cc66173223d127c4d80f7f66b83fce4e395998d27889beddbd2acc04"
         }
       ],
       "licenses": [
@@ -5848,11 +5934,11 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40eslint/config-array@0.21.2",
+      "purl": "pkg:npm/%40eslint/config-array@0.23.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@eslint/config-array/-/config-array-0.21.2.tgz"
+          "url": "https://registry.npmjs.org/@eslint/config-array/-/config-array-0.23.5.tgz"
         },
         {
           "type": "website",
@@ -5876,16 +5962,16 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40eslint/config-helpers@0.4.2",
+      "bom-ref": "pkg:npm/%40eslint/config-helpers@0.7.0",
       "group": "@eslint",
       "name": "config-helpers",
-      "version": "0.4.2",
+      "version": "0.7.0",
       "scope": "excluded",
       "description": "Helper utilities for creating ESLint configuration",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "801af137cf203887f747b8dae4af6c97035ac9571980ae923943919b6b81cd378811f79568884ea42b53a31dcfe91ee8da32c5c0b1532e70bb914fd119c60483"
+          "content": "0ce6ddfca294b14f85685bf83cbc5245e9e95df41698f5d73f7a4f67afcad4f0ab32edaf42930332e41efc1a987a82dccfcae8d1b54317547138981f54476153"
         }
       ],
       "licenses": [
@@ -5895,11 +5981,11 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40eslint/config-helpers@0.4.2",
+      "purl": "pkg:npm/%40eslint/config-helpers@0.7.0",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@eslint/config-helpers/-/config-helpers-0.4.2.tgz"
+          "url": "https://registry.npmjs.org/@eslint/config-helpers/-/config-helpers-0.7.0.tgz"
         },
         {
           "type": "website",
@@ -5923,16 +6009,16 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40eslint/core@0.17.0",
+      "bom-ref": "pkg:npm/%40eslint/core@1.2.1",
       "group": "@eslint",
       "name": "core",
-      "version": "0.17.0",
+      "version": "1.2.1",
       "scope": "excluded",
       "description": "Runtime-agnostic core of ESLint",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "c8bfec2eba66b43685122523d68b113f84c8d8c0f3d4075d24bfa367b292aaf06e962378c6a618e7821f74df2a0fc4e86ba8358a5a298757f140d9233b1aeba5"
+          "content": "330704d4ff806780ba0d69698a7fce98e039e2698867ffb166e26241de12c81dbda00263377d145bdc2428da6d5b672da78704b2f8652d8fc2b10d6ea070e5a1"
         }
       ],
       "licenses": [
@@ -5942,11 +6028,11 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40eslint/core@0.17.0",
+      "purl": "pkg:npm/%40eslint/core@1.2.1",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@eslint/core/-/core-0.17.0.tgz"
+          "url": "https://registry.npmjs.org/@eslint/core/-/core-1.2.1.tgz"
         },
         {
           "type": "website",
@@ -5970,63 +6056,16 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40eslint/eslintrc@3.3.7",
-      "group": "@eslint",
-      "name": "eslintrc",
-      "version": "3.3.7",
-      "scope": "excluded",
-      "description": "The legacy ESLintRC config file format for ESLint",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "178da0f3d41de68016b69d24d279d2ae3ce200acdaef0f12553e264ad735f0b64c6916f82751d00072c26a512d0c2c6b4ee92cc7b354f6ab2678bc2939f3ea5b"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "purl": "pkg:npm/%40eslint/eslintrc@3.3.7",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/@eslint/eslintrc/-/eslintrc-3.3.7.tgz"
-        },
-        {
-          "type": "website",
-          "url": "https://github.com/eslint/eslintrc#readme"
-        },
-        {
-          "type": "vcs",
-          "url": "eslint/eslintrc"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/%40eslint/js@9.39.5",
+      "bom-ref": "pkg:npm/%40eslint/js@10.0.1",
       "group": "@eslint",
       "name": "js",
-      "version": "9.39.5",
+      "version": "10.0.1",
       "scope": "excluded",
       "description": "ESLint JavaScript language implementation",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "432c10baccd087bee92170acabdf7c73c85b8524c8fdacd3b72d59e8de7776602e74a1e1cb9ef78f7caf44bb17d814a9f18a4bb680841bc13d0c97bef33521e0"
+          "content": "cde47d939a5de20c6367469b46821ac5d73b2379c392da17664daa3aff6008d5b1de6570127df65518722da46c0e22634ecd31abf4fc99f3edcae5eeec658170"
         }
       ],
       "licenses": [
@@ -6036,11 +6075,11 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40eslint/js@9.39.5",
+      "purl": "pkg:npm/%40eslint/js@10.0.1",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@eslint/js/-/js-9.39.5.tgz"
+          "url": "https://registry.npmjs.org/@eslint/js/-/js-10.0.1.tgz"
         },
         {
           "type": "website",
@@ -6064,16 +6103,16 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40eslint/object-schema@2.1.7",
+      "bom-ref": "pkg:npm/%40eslint/object-schema@3.0.5",
       "group": "@eslint",
       "name": "object-schema",
-      "version": "2.1.7",
+      "version": "3.0.5",
       "scope": "excluded",
       "description": "An object schema merger/validator",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "56d00e6b299655f65c9996e9e84da6ca6a43207bf28d7b3fd762ea5988d5c3aaa3adf17e54af9fc86df7902873de79caf92539fcd7873aaad31074bcb173b738"
+          "content": "bea4da504831ce6f980d274495a77a3e24685f8b7c5460e30adb74e739f89d4f35d14231fee34457bfe5649e8ac054e12993b33b1cd7cb8f1d6be368ec765a33"
         }
       ],
       "licenses": [
@@ -6083,11 +6122,11 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40eslint/object-schema@2.1.7",
+      "purl": "pkg:npm/%40eslint/object-schema@3.0.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@eslint/object-schema/-/object-schema-2.1.7.tgz"
+          "url": "https://registry.npmjs.org/@eslint/object-schema/-/object-schema-3.0.5.tgz"
         },
         {
           "type": "website",
@@ -6111,16 +6150,16 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40eslint/plugin-kit@0.4.1",
+      "bom-ref": "pkg:npm/%40eslint/plugin-kit@0.7.3",
       "group": "@eslint",
       "name": "plugin-kit",
-      "version": "0.4.1",
+      "version": "0.7.3",
       "scope": "excluded",
       "description": "Utilities for building ESLint plugins.",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "e37feab6b0d4a24afb2c9aa8176737f91227bbfb78cdfae961da120df632860e76af02d5e939cebdd1b87d79bb224481df012b91c9894bd88486356d3921238c"
+          "content": "2243befca114bf06d5a62511660f8fef317be33e49c5ed14809c559e2f91b681d0e8866279768ed3692669da266a9feafa5e9b73f8dd3c61aa4e386e667bb3d5"
         }
       ],
       "licenses": [
@@ -6130,11 +6169,11 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40eslint/plugin-kit@0.4.1",
+      "purl": "pkg:npm/%40eslint/plugin-kit@0.7.3",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@eslint/plugin-kit/-/plugin-kit-0.4.1.tgz"
+          "url": "https://registry.npmjs.org/@eslint/plugin-kit/-/plugin-kit-0.7.3.tgz"
         },
         {
           "type": "website",
@@ -7964,6 +8003,100 @@
     },
     {
       "type": "library",
+      "bom-ref": "pkg:npm/%40keyv/bigmap@1.3.1",
+      "group": "@keyv",
+      "name": "bigmap",
+      "version": "1.3.1",
+      "scope": "excluded",
+      "description": "Bigmap for Keyv",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "59bcc4f6c76642d2b2f2facd3daf41467c19879505e2cd4a4e648ad0a5152e8dde7dfe4195034d5839c53a8b8da4a7cf2839e6b3dc729c98ec3188cc693fda15"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40keyv/bigmap@1.3.1",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@keyv/bigmap/-/bigmap-1.3.1.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/jaredwray/keyv"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/jaredwray/keyv.git"
+        }
+      ],
+      "properties": [
+        {
+          "name": "wildferret:shipped",
+          "value": "no"
+        },
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40keyv/serialize@1.1.1",
+      "group": "@keyv",
+      "name": "serialize",
+      "version": "1.1.1",
+      "scope": "excluded",
+      "description": "Serialization for Keyv",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "7579f715984fbf4512fbb76d26c222d91f9ceea5988917a8121e73527b5609fe284a930d89bf050e14a879dea6dd0c99771e612bb88b164624deb371c2df2f4c"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40keyv/serialize@1.1.1",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@keyv/serialize/-/serialize-1.1.1.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/jaredwray/keyv"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/jaredwray/keyv.git"
+        }
+      ],
+      "properties": [
+        {
+          "name": "wildferret:shipped",
+          "value": "no"
+        },
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "bom-ref": "pkg:npm/%40napi-rs/wasm-runtime@1.2.4",
       "group": "@napi-rs",
       "name": "wasm-runtime",
@@ -9628,16 +9761,16 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40stylexjs/stylex@0.19.1",
+      "bom-ref": "pkg:npm/%40stylexjs/stylex@0.19.2",
       "group": "@stylexjs",
       "name": "stylex",
-      "version": "0.19.1",
+      "version": "0.19.2",
       "scope": "required",
       "description": "A library for defining styles for optimized user interfaces.",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "2703459b430e60faa2f8ce00c79527e19c5f669e071005f6b0059eb59f3c2802c572fd5e1221cd26cef9a0edd5dd4ed15569f37e488cf22f5e068c02de1aa053"
+          "content": "9747d184e059e2b1626741a7b584a5a789583b974f4f5d45de62dbecee1284ae9e13558e8c7b6ff461c6419bb31c96d09237046918cf4a9067ea2b48ef25dcdd"
         }
       ],
       "licenses": [
@@ -9647,11 +9780,11 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40stylexjs/stylex@0.19.1",
+      "purl": "pkg:npm/%40stylexjs/stylex@0.19.2",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@stylexjs/stylex/-/stylex-0.19.1.tgz"
+          "url": "https://registry.npmjs.org/@stylexjs/stylex/-/stylex-0.19.2.tgz"
         },
         {
           "type": "vcs",
@@ -9667,16 +9800,16 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/node@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/node@4.3.5",
       "group": "@tailwindcss",
       "name": "node",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "description": "A utility-first CSS framework for rapidly building custom user interfaces.",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "fd3f08284b1ff554d4ead2e3802efeb2fda638fb50c731368ccc3bbb84ede344f1f90499c69ce1f79fc7e9c30aa236bd5ee5bb88c74b258041d28f46d4268082"
+          "content": "c93e7717357891ed1caff060b83c6158ca66e4c26ed4eda6bb393eb4ac3a94a1e338302c600ac16d6c056c989a92c7f316fd6da643bd4071b399fb358494faea"
         }
       ],
       "licenses": [
@@ -9686,11 +9819,11 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40tailwindcss/node@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/node@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/node/-/node-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/node/-/node-4.3.5.tgz"
         },
         {
           "type": "website",
@@ -9714,23 +9847,23 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-android-arm64@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-android-arm64@4.3.5",
       "group": "@tailwindcss",
       "name": "oxide-android-arm64",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "63ce40da098f4a497955ee6a47ce862f81d3e74f5c16a421d5a7acf69dec4a4c933f0b743e9a5fdc693019ee093c009c4588e024812142033a7410a59ebd0d63"
+          "content": "49ed33e7132a71241a9c90f521898ed1c1a92b78afd1fa7766c213ef14496750dae4f821bcda1ce3acf3e232109fe69a9f7755f53f007ab98534df503e6b21d1"
         }
       ],
       "licenses": [],
-      "purl": "pkg:npm/%40tailwindcss/oxide-android-arm64@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/oxide-android-arm64@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-android-arm64/-/oxide-android-arm64-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-android-arm64/-/oxide-android-arm64-4.3.5.tgz"
         }
       ],
       "properties": [
@@ -9762,15 +9895,15 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-darwin-arm64@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-darwin-arm64@4.3.5",
       "group": "@tailwindcss",
       "name": "oxide-darwin-arm64",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "0626966ada4170445014394e8d10e92155ee14ae4f25ecf9480e09320e95619741614faa29f57fbea8dc22cf88626b62b5fd71610653c17bd4ffccb895f6541b"
+          "content": "50fae04c3b946ef9aa18c66e0a7988dc529e7bfb582b329da74d3f92e078a12181db5dd5620f104dd17b9558673e8057abf9887c9f882e8045a8d39ba1670cc1"
         }
       ],
       "licenses": [
@@ -9780,11 +9913,11 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40tailwindcss/oxide-darwin-arm64@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/oxide-darwin-arm64@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-darwin-arm64/-/oxide-darwin-arm64-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-darwin-arm64/-/oxide-darwin-arm64-4.3.5.tgz"
         },
         {
           "type": "vcs",
@@ -9816,23 +9949,23 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-darwin-x64@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-darwin-x64@4.3.5",
       "group": "@tailwindcss",
       "name": "oxide-darwin-x64",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "7c0794a9f5799dd8714706a2f1c5c6cdd2efba5f6eb563a679392febdba7bf86578b18e7eb567ea7d94259dc0ec00dd361ba06dc1c1d56e37f4438e10519749b"
+          "content": "13ea7b1c4b632346fc0fb91b6d6c47d3aedc1ae8ba77873bf42386928f5f00f544debc1cd44ee57761c509b686f3a00e1964b954a418a9939a7f7f326b8bb14d"
         }
       ],
       "licenses": [],
-      "purl": "pkg:npm/%40tailwindcss/oxide-darwin-x64@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/oxide-darwin-x64@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-darwin-x64/-/oxide-darwin-x64-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-darwin-x64/-/oxide-darwin-x64-4.3.5.tgz"
         }
       ],
       "properties": [
@@ -9864,23 +9997,23 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-freebsd-x64@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-freebsd-x64@4.3.5",
       "group": "@tailwindcss",
       "name": "oxide-freebsd-x64",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "8b27f96d5ebec270257e555e132ed1db976ea714cd10264de50308d2a353e9e4fe12068675970a84692be5276869688b277b292ea218f5509e486af09ad83893"
+          "content": "c96116716c801bbad639c4e92538dd850de971a158da1fb46ea4d17e05371b67f3f3b654dc029dbdd64a86c943fa4c879e305458abcd7516302180b9748d6d22"
         }
       ],
       "licenses": [],
-      "purl": "pkg:npm/%40tailwindcss/oxide-freebsd-x64@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/oxide-freebsd-x64@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-freebsd-x64/-/oxide-freebsd-x64-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-freebsd-x64/-/oxide-freebsd-x64-4.3.5.tgz"
         }
       ],
       "properties": [
@@ -9912,23 +10045,23 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-linux-arm-gnueabihf@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-linux-arm-gnueabihf@4.3.5",
       "group": "@tailwindcss",
       "name": "oxide-linux-arm-gnueabihf",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "680614a6b2402505966d1acfbed8ddae8679e8c77e24cf29322a294bac461300df2e1aa3fb6bdeaf6a789d4e0c6f7091a9c3263418e8f0a91481cc6193355019"
+          "content": "5a67958ed261665afeb26a6a71d4769109249fa6ab1c82675080714ced8425c4cb198d5e7155cda3685b4a7f31734207d9a12dcacf77ea2316286ca3d0668a9c"
         }
       ],
       "licenses": [],
-      "purl": "pkg:npm/%40tailwindcss/oxide-linux-arm-gnueabihf@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/oxide-linux-arm-gnueabihf@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-linux-arm-gnueabihf/-/oxide-linux-arm-gnueabihf-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-linux-arm-gnueabihf/-/oxide-linux-arm-gnueabihf-4.3.5.tgz"
         }
       ],
       "properties": [
@@ -9960,23 +10093,23 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-linux-arm64-gnu@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-linux-arm64-gnu@4.3.5",
       "group": "@tailwindcss",
       "name": "oxide-linux-arm64-gnu",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "9c3c6575c10434ec594730b6baef63aeeb59740010b5bfbc5960c24a758bd73bc1935f8537ec7a32d0d588f07900931fb6d5425217a1196bacdd704f81ab4cff"
+          "content": "0d3092cae71ce9284ca7540ca95e51f7867bc6580d814ce41a6145d6b2f91c7d908f2e1e4a612acbe60b1a4aaa62f59ae2c20bb60ac1b7526344a6e7790b6215"
         }
       ],
       "licenses": [],
-      "purl": "pkg:npm/%40tailwindcss/oxide-linux-arm64-gnu@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/oxide-linux-arm64-gnu@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-linux-arm64-gnu/-/oxide-linux-arm64-gnu-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-linux-arm64-gnu/-/oxide-linux-arm64-gnu-4.3.5.tgz"
         }
       ],
       "properties": [
@@ -10008,23 +10141,23 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-linux-arm64-musl@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-linux-arm64-musl@4.3.5",
       "group": "@tailwindcss",
       "name": "oxide-linux-arm64-musl",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "31de386c3eaf797fcf0b98b217c703567c381c12003597a945967b6bc0d03af91fa39594070729ea202e094cf6deefb84949212650f778bee135d5bc7b377f90"
+          "content": "1fd96cbcee31f44e271381e2f21ecd1c7c343bf91c552bbe88ec851cd19d6336b31a00e314765b13a4b7850f2431c6cd5d206531d362ebb2d5e4456ab69689b7"
         }
       ],
       "licenses": [],
-      "purl": "pkg:npm/%40tailwindcss/oxide-linux-arm64-musl@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/oxide-linux-arm64-musl@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-linux-arm64-musl/-/oxide-linux-arm64-musl-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-linux-arm64-musl/-/oxide-linux-arm64-musl-4.3.5.tgz"
         }
       ],
       "properties": [
@@ -10056,23 +10189,23 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-linux-x64-gnu@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-linux-x64-gnu@4.3.5",
       "group": "@tailwindcss",
       "name": "oxide-linux-x64-gnu",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "b71eeeb359aec0e2802966a8daffc669a7c57906e813a6a3f3cbc2eb388dd8d0867119bc816521c23ce0f987550757b86e802d76d99ae0be37a27ba723a352e3"
+          "content": "e2ec50bed06f3ee21d975dd67d4063f713191c7d783ed1d9f0e65db4b99dc83b46ebab026b5b79f7d3594fe8da82453346d5a1bae975a91650d67009b1c5cde6"
         }
       ],
       "licenses": [],
-      "purl": "pkg:npm/%40tailwindcss/oxide-linux-x64-gnu@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/oxide-linux-x64-gnu@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-linux-x64-gnu/-/oxide-linux-x64-gnu-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-linux-x64-gnu/-/oxide-linux-x64-gnu-4.3.5.tgz"
         }
       ],
       "properties": [
@@ -10104,23 +10237,23 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-linux-x64-musl@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-linux-x64-musl@4.3.5",
       "group": "@tailwindcss",
       "name": "oxide-linux-x64-musl",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "489c57eb4b26bc781ab19a01cb5d5d5fa6118d7245a2fc1606879d85b40f381ce0156047181f9354f581f41c7347b4d3c54f05419008d80ca2342333166f089a"
+          "content": "d09400cecee3c1b03b3bafb3fda754f89937017c2cbb79e9021b6be5eb1c5d2ed3a84a9671a0d5eea1ee23ed15cbf29046e5469cb41111c4895986aec95de8aa"
         }
       ],
       "licenses": [],
-      "purl": "pkg:npm/%40tailwindcss/oxide-linux-x64-musl@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/oxide-linux-x64-musl@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-linux-x64-musl/-/oxide-linux-x64-musl-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-linux-x64-musl/-/oxide-linux-x64-musl-4.3.5.tgz"
         }
       ],
       "properties": [
@@ -10152,155 +10285,15 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-wasm32-wasi@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-wasm32-wasi@4.3.5",
       "group": "@tailwindcss",
       "name": "oxide-wasm32-wasi",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "8f1d7eacf858ff9626a6492d77ae7a1c158404bc4fedd1f4ea5a2c04b8e37f9be008e0d7be2f4a86d7ed59c308c131480ea06bedc46742474b9c01be20e946bd"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/%40tailwindcss/oxide-wasm32-wasi@4.3.3",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-wasm32-wasi/-/oxide-wasm32-wasi-4.3.3.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "wasm32"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-win32-arm64-msvc@4.3.3",
-      "group": "@tailwindcss",
-      "name": "oxide-win32-arm64-msvc",
-      "version": "4.3.3",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "deb736f7609ad9c78ae9495c73f6c05674ecff79c3b683e1c842a580fbfec902508bf252fc030996acf1be50da70bd677a46eb71fe9b4eaa7f8d5e2a8273f135"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/%40tailwindcss/oxide-win32-arm64-msvc@4.3.3",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-win32-arm64-msvc/-/oxide-win32-arm64-msvc-4.3.3.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "win32"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "arm64"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide-win32-x64-msvc@4.3.3",
-      "group": "@tailwindcss",
-      "name": "oxide-win32-x64-msvc",
-      "version": "4.3.3",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "c89d29c0855cfe761e1a8574d96b6c37c298c8b42fee4c88db00e791ecf22651868e477840bc03180c25e3b6293c97ae23433439b6971923e3bd60cf7933e083"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/%40tailwindcss/oxide-win32-x64-msvc@4.3.3",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide-win32-x64-msvc/-/oxide-win32-x64-msvc-4.3.3.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "win32"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "x64"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/oxide@4.3.3",
-      "group": "@tailwindcss",
-      "name": "oxide",
-      "version": "4.3.3",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "92b5e302292268548f68afc5900413e544f1dd5a2b9906a2679841165259f54150181febc20d4c648847006f6c98c4114ddc89c4fe90b7933032d772539156ac"
+          "content": "3898459a511f77332bf9abc009d8b8d113ed9e45b407a857cb12fff2bfad9c41c15998e2dfa098463117aebbe0066698b03de810e06ac181512ac62fcc57bb07"
         }
       ],
       "licenses": [
@@ -10310,11 +10303,153 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40tailwindcss/oxide@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/oxide-wasm32-wasi@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/oxide/-/oxide-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-wasm32-wasi/-/oxide-wasm32-wasi-4.3.5.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/tailwindlabs/tailwindcss.git"
+        }
+      ],
+      "properties": [
+        {
+          "name": "wildferret:shipped",
+          "value": "no"
+        },
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "wildferret:optional",
+          "value": "true"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-win32-arm64-msvc@4.3.5",
+      "group": "@tailwindcss",
+      "name": "oxide-win32-arm64-msvc",
+      "version": "4.3.5",
+      "scope": "excluded",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "f68f2382d862f9013979a9dd9dba22253eb85507e7200adf6734937606e110ae5a69f762bb68d35bd1e89e2fe6c181f1059b87d6f002e7b205cab87ed222b91a"
+        }
+      ],
+      "licenses": [],
+      "purl": "pkg:npm/%40tailwindcss/oxide-win32-arm64-msvc@4.3.5",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-win32-arm64-msvc/-/oxide-win32-arm64-msvc-4.3.5.tgz"
+        }
+      ],
+      "properties": [
+        {
+          "name": "wildferret:shipped",
+          "value": "no"
+        },
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "wildferret:optional",
+          "value": "true"
+        },
+        {
+          "name": "wildferret:os",
+          "value": "win32"
+        },
+        {
+          "name": "wildferret:cpu",
+          "value": "arm64"
+        },
+        {
+          "name": "wildferret:manifest",
+          "value": "not-in-local-store"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide-win32-x64-msvc@4.3.5",
+      "group": "@tailwindcss",
+      "name": "oxide-win32-x64-msvc",
+      "version": "4.3.5",
+      "scope": "excluded",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "5e22857c8cb54567bba8ae16a81cb1356ececf5fe790ecbca3f0568479a29f25753e6a5477c11e763e6fd80f21da4a6a795973eb1467c24f45aff65734b7197e"
+        }
+      ],
+      "licenses": [],
+      "purl": "pkg:npm/%40tailwindcss/oxide-win32-x64-msvc@4.3.5",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide-win32-x64-msvc/-/oxide-win32-x64-msvc-4.3.5.tgz"
+        }
+      ],
+      "properties": [
+        {
+          "name": "wildferret:shipped",
+          "value": "no"
+        },
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "wildferret:optional",
+          "value": "true"
+        },
+        {
+          "name": "wildferret:os",
+          "value": "win32"
+        },
+        {
+          "name": "wildferret:cpu",
+          "value": "x64"
+        },
+        {
+          "name": "wildferret:manifest",
+          "value": "not-in-local-store"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40tailwindcss/oxide@4.3.5",
+      "group": "@tailwindcss",
+      "name": "oxide",
+      "version": "4.3.5",
+      "scope": "excluded",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "3f29ea18b66c66fc0cf6da83fc253190e21fc9de8ae5e959d8ca286aecc9af23ff52a5d8822df261bb6ddcdd177be30757f78528f1500847c8280aa5012d4206"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40tailwindcss/oxide@4.3.5",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@tailwindcss/oxide/-/oxide-4.3.5.tgz"
         },
         {
           "type": "vcs",
@@ -10334,16 +10469,16 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40tailwindcss/vite@4.3.3",
+      "bom-ref": "pkg:npm/%40tailwindcss/vite@4.3.5",
       "group": "@tailwindcss",
       "name": "vite",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "description": "A utility-first CSS framework for rapidly building custom user interfaces.",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "c9853c72880b79287f9acda387c163ee369b6bf1166bb25ae86a14a9865aada12e088e584ba9ace8e6d98238de766fa39ba5d98dd351581a4f3fa67cea83b173"
+          "content": "0423626346b566374e1d5ab0ee4c9bed4ef60707cc17775f52e37eb50b0b5a4cbf27924e23fafb69b89b8255dfca0ad98553bfdeedd5f84db992429378c91769"
         }
       ],
       "licenses": [
@@ -10353,11 +10488,11 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40tailwindcss/vite@4.3.3",
+      "purl": "pkg:npm/%40tailwindcss/vite@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@tailwindcss/vite/-/vite-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/@tailwindcss/vite/-/vite-4.3.5.tgz"
         },
         {
           "type": "website",
@@ -10542,6 +10677,53 @@
         {
           "type": "website",
           "url": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/dom-chromium-ai"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
+        }
+      ],
+      "properties": [
+        {
+          "name": "wildferret:shipped",
+          "value": "no"
+        },
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40types/esrecurse@4.3.1",
+      "group": "@types",
+      "name": "esrecurse",
+      "version": "4.3.1",
+      "scope": "excluded",
+      "description": "TypeScript definitions for esrecurse",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "c490406c389fa398697df0c1b8797463ccb0b306e2029fd68bb63f1ad0204a5672200069a72babc55b9e38f13c2d440ec5d9608ba66a71eeeea04a6a3537a253"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40types/esrecurse@4.3.1",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@types/esrecurse/-/esrecurse-4.3.1.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/esrecurse"
         },
         {
           "type": "vcs",
@@ -12343,48 +12525,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/ansi-styles@4.3.0",
-      "name": "ansi-styles",
-      "version": "4.3.0",
-      "scope": "excluded",
-      "description": "ANSI escape codes for styling strings in the terminal",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "cdb07dac22404f5adb8e25436f686a2851cd60bc60b64f0d511c59dc86700f717a36dc5b5d94029e74a2d4b931f880e885d3e5169db6db05402c885e64941212"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "purl": "pkg:npm/ansi-styles@4.3.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/ansi-styles/-/ansi-styles-4.3.0.tgz"
-        },
-        {
-          "type": "vcs",
-          "url": "chalk/ansi-styles"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "pkg:npm/ansi-styles@6.2.3",
       "name": "ansi-styles",
       "version": "6.2.3",
@@ -12464,48 +12604,6 @@
         {
           "name": "wildferret:shipped",
           "value": "no"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/argparse@2.0.1",
-      "name": "argparse",
-      "version": "2.0.1",
-      "scope": "excluded",
-      "description": "CLI arguments parser. Native port of python's argparse.",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "f3ef56a9e6db173a57f4e47e59ae8edbd6ac22881e44ccdc1ad00835da4c1c7c80835d1fd3969215505b704a867ff3d7c35123019faadbf6c4060dc3beeacadd"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "Python-2.0"
-          }
-        }
-      ],
-      "purl": "pkg:npm/argparse@2.0.1",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/argparse/-/argparse-2.0.1.tgz"
-        },
-        {
-          "type": "vcs",
-          "url": "nodeca/argparse"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
         }
       ]
     },
@@ -12855,52 +12953,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/balanced-match@1.0.2",
-      "name": "balanced-match",
-      "version": "1.0.2",
-      "scope": "excluded",
-      "description": "Match balanced character pairs, like \"{\" and \"}\"",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "de849e50ed13315ebb84dd4099b5ec2b8c9aa94eed8e21e56f144364ea47d0a5bdf82797e1b440697d009f1b74b71d8cae94695b041a3f02252121098585393f"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "purl": "pkg:npm/balanced-match@1.0.2",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/balanced-match/-/balanced-match-1.0.2.tgz"
-        },
-        {
-          "type": "website",
-          "url": "https://github.com/juliangruber/balanced-match"
-        },
-        {
-          "type": "vcs",
-          "url": "git://github.com/juliangruber/balanced-match.git"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "pkg:npm/balanced-match@4.0.4",
       "name": "balanced-match",
       "version": "4.0.4",
@@ -13064,52 +13116,6 @@
         {
           "name": "wildferret:shipped",
           "value": "no"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/brace-expansion@1.1.21",
-      "name": "brace-expansion",
-      "version": "1.1.21",
-      "scope": "excluded",
-      "description": "Brace expansion as known from sh/bash",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "f73780f8a2d934dce0945d933ca450103cb1e986f2edd68092ecbc3223f3a573ec6035a2fc344cf239b0503c689108d8a81a6fe4380f8b00f88786594b2d548f"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "purl": "pkg:npm/brace-expansion@1.1.21",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.21.tgz"
-        },
-        {
-          "type": "website",
-          "url": "https://github.com/juliangruber/brace-expansion"
-        },
-        {
-          "type": "vcs",
-          "url": "git://github.com/juliangruber/brace-expansion.git"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
         }
       ]
     },
@@ -13286,15 +13292,15 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/callsites@3.1.0",
-      "name": "callsites",
-      "version": "3.1.0",
+      "bom-ref": "pkg:npm/cacheable@2.5.0",
+      "name": "cacheable",
+      "version": "2.5.0",
       "scope": "excluded",
-      "description": "Get callsites from the V8 stack trace API",
+      "description": "High Performance Layer 1 / Layer 2 Caching with Keyv Storage",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "3fc06302c5ef652f95203508d7584709012fef8613ebb6148b924914d588a8bdb7e6c0668d7e3eab1f4cbaf96ce62bf234435cb71e3ac502d0dda4ee13bb2c69"
+          "content": "eb473200ecad89bfcecc1c3524d4a8495fdba0ad40b47af20c88ef54193b5db378ba07e4337f92af2edf1233603cc1a03a3b9a64f029f2bb99d02c5a7f0caaf6"
         }
       ],
       "licenses": [
@@ -13304,15 +13310,15 @@
           }
         }
       ],
-      "purl": "pkg:npm/callsites@3.1.0",
+      "purl": "pkg:npm/cacheable@2.5.0",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/callsites/-/callsites-3.1.0.tgz"
+          "url": "https://registry.npmjs.org/cacheable/-/cacheable-2.5.0.tgz"
         },
         {
           "type": "vcs",
-          "url": "sindresorhus/callsites"
+          "url": "git+https://github.com/jaredwray/cacheable.git"
         }
       ],
       "properties": [
@@ -13439,48 +13445,6 @@
         {
           "type": "vcs",
           "url": "https://github.com/chaijs/chai"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/chalk@4.1.2",
-      "name": "chalk",
-      "version": "4.1.2",
-      "scope": "excluded",
-      "description": "Terminal string styling done right",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "a0a9db845c91217a54b9ecfc881326c846b89db8f820e432ba173fc32f6463bfd654f73020ef5503aebc3eef1190eefed06efa48b44e7b2c3d0a9434eb58b898"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "purl": "pkg:npm/chalk@4.1.2",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/chalk/-/chalk-4.1.2.tgz"
-        },
-        {
-          "type": "vcs",
-          "url": "chalk/chalk"
         }
       ],
       "properties": [
@@ -13782,94 +13746,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/color-convert@2.0.1",
-      "name": "color-convert",
-      "version": "2.0.1",
-      "scope": "excluded",
-      "description": "Plain color conversion functions",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "4511023ec8fb8aeff16f9a0a61cb051d2a6914d9ec8ffe763954d129be333f9a275f0545df3566993a0d70e7c60be0910e97cafd4e7ce1f320dfc64709a12529"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "purl": "pkg:npm/color-convert@2.0.1",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/color-convert/-/color-convert-2.0.1.tgz"
-        },
-        {
-          "type": "vcs",
-          "url": "Qix-/color-convert"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/color-name@1.1.4",
-      "name": "color-name",
-      "version": "1.1.4",
-      "scope": "excluded",
-      "description": "A list of color names and its values",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "74ecbedc0b96ddadb035b64722e319a537208c6b8b53fb812ffb9b71917d3976c3a3c7dfe0ef32569e417f479f4bcb84a18a39ab8171edd63d3a04065e002c40"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "purl": "pkg:npm/color-name@1.1.4",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/color-name/-/color-name-1.1.4.tgz"
-        },
-        {
-          "type": "website",
-          "url": "https://github.com/colorjs/color-name"
-        },
-        {
-          "type": "vcs",
-          "url": "git@github.com:colorjs/color-name.git"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "pkg:npm/comma-separated-tokens@2.0.3",
       "name": "comma-separated-tokens",
       "version": "2.0.3",
@@ -14053,48 +13929,6 @@
         {
           "type": "vcs",
           "url": "http://github.com/substack/node-commondir.git"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/concat-map@0.0.1",
-      "name": "concat-map",
-      "version": "0.0.1",
-      "scope": "excluded",
-      "description": "concatenative mapdashery",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "fd2aefe1db30c903417e8846a73f68e986f71b3dd2ad40ea047e6b4ee84647b6a1b656d82a7571c366c214c4658da03b1171da5d9f30b07768745bdb9212a6aa"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "purl": "pkg:npm/concat-map@0.0.1",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz"
-        },
-        {
-          "type": "vcs",
-          "url": "git://github.com/substack/node-concat-map.git"
         }
       ],
       "properties": [
@@ -14346,48 +14180,6 @@
         {
           "type": "vcs",
           "url": "h3js/crossws"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/css-mediaquery@0.1.2",
-      "name": "css-mediaquery",
-      "version": "0.1.2",
-      "scope": "excluded",
-      "description": "Parses and determines if a given CSS Media Query matches a set of values.",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "08eb67e0444e5b97411a513fe0f88a9e1eab66900fc437852da104c2de22d748e90cc16dd84850192efd4269ab3be88a087bf43d4fc7ace5848628c5775c7df5"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "name": "BSD"
-          }
-        }
-      ],
-      "purl": "pkg:npm/css-mediaquery@0.1.2",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/css-mediaquery/-/css-mediaquery-0.1.2.tgz"
-        },
-        {
-          "type": "website",
-          "url": "https://github.com/ericf/css-mediaquery"
-        },
-        {
-          "type": "vcs",
-          "url": "git://github.com/ericf/css-mediaquery.git"
         }
       ],
       "properties": [
@@ -15951,6 +15743,52 @@
     },
     {
       "type": "library",
+      "bom-ref": "pkg:npm/eslint-scope@9.1.2",
+      "name": "eslint-scope",
+      "version": "9.1.2",
+      "scope": "excluded",
+      "description": "ECMAScript scope analyzer for ESLint",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "c52f741f9d5c2b0d2396dc66be61f2d886a2d4b22aadf6f0e7b6fbf70fc9ecc7ef0df90890567e923eb30b7063b54c21d79d07b1249dc5765cb2ebfbda688315"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-2-Clause"
+          }
+        }
+      ],
+      "purl": "pkg:npm/eslint-scope@9.1.2",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/eslint-scope/-/eslint-scope-9.1.2.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/eslint/js/blob/main/packages/eslint-scope/README.md"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/eslint/js.git"
+        }
+      ],
+      "properties": [
+        {
+          "name": "wildferret:shipped",
+          "value": "no"
+        },
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "bom-ref": "pkg:npm/eslint-visitor-keys@3.4.3",
       "name": "eslint-visitor-keys",
       "version": "3.4.3",
@@ -16089,15 +15927,15 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/eslint@9.39.5",
+      "bom-ref": "pkg:npm/eslint@10.14.0",
       "name": "eslint",
-      "version": "9.39.5",
+      "version": "10.14.0",
       "scope": "excluded",
       "description": "An AST-based pattern checker for JavaScript.",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "0e0652eb668f2d72a59f120b4bf0180a846f1da65e5dc788ce55cf924186cc9592a30d5a124d256d39715129728c2f2371a2b101d3a74c3cfea35245481b328f"
+          "content": "4f4a4db3191bf482a6b508e1a4adddee758ea45bfe607b8c6d326749532841b945d289ef5df12baeda785758c7b6c40f6a7edd29a1950f4ab55825e7ccc177d4"
         }
       ],
       "licenses": [
@@ -16107,11 +15945,11 @@
           }
         }
       ],
-      "purl": "pkg:npm/eslint@9.39.5",
+      "purl": "pkg:npm/eslint@10.14.0",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/eslint/-/eslint-9.39.5.tgz"
+          "url": "https://registry.npmjs.org/eslint/-/eslint-10.14.0.tgz"
         },
         {
           "type": "website",
@@ -16158,6 +15996,52 @@
         {
           "type": "distribution",
           "url": "https://registry.npmjs.org/espree/-/espree-10.4.0.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/eslint/js/blob/main/packages/espree/README.md"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/eslint/js.git"
+        }
+      ],
+      "properties": [
+        {
+          "name": "wildferret:shipped",
+          "value": "no"
+        },
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/espree@11.2.0",
+      "name": "espree",
+      "version": "11.2.0",
+      "scope": "excluded",
+      "description": "An Esprima-compatible JavaScript parser built on Acorn",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "ee9dc3ad5108a295b50756af0062ee0928758ee6dcd351f624773c078aaa19b966839808f72ba60600028d6a3826521cd38b9fba0e3127749023c1e44bf460cf"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-2-Clause"
+          }
+        }
+      ],
+      "purl": "pkg:npm/espree@11.2.0",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/espree/-/espree-11.2.0.tgz"
         },
         {
           "type": "website",
@@ -16964,15 +16848,15 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/file-entry-cache@8.0.0",
+      "bom-ref": "pkg:npm/file-entry-cache@11.1.5",
       "name": "file-entry-cache",
-      "version": "8.0.0",
+      "version": "11.1.5",
       "scope": "excluded",
-      "description": "Super simple cache for file metadata, useful for process that work o a given series of files and that only need to repeat the job on the changed ones since the previous run of the process",
+      "description": "A lightweight cache for file metadata, ideal for processes that work on a specific set of files and only need to reprocess files that have changed since the last run",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "5d74d4c02be2b1ae6869c34644ff527cdb5804d00c8be44fc011666e564417b37bb301d8412ebf65f93b491c31e03e63dc21f6d7560d45ca350c430d55f6429d"
+          "content": "f8f1531c84c8d3c2481a19cda46348f13f229d4a6065f93718d12a7d3f51db3655da21578370afab34a5fee121b3b4d21ae8d84442c400dc83bd2f058fbf92ed"
         }
       ],
       "licenses": [
@@ -16982,15 +16866,15 @@
           }
         }
       ],
-      "purl": "pkg:npm/file-entry-cache@8.0.0",
+      "purl": "pkg:npm/file-entry-cache@11.1.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/file-entry-cache/-/file-entry-cache-8.0.0.tgz"
+          "url": "https://registry.npmjs.org/file-entry-cache/-/file-entry-cache-11.1.5.tgz"
         },
         {
           "type": "vcs",
-          "url": "jaredwray/file-entry-cache"
+          "url": "git+https://github.com/jaredwray/cacheable.git"
         }
       ],
       "properties": [
@@ -17178,15 +17062,15 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/flat-cache@4.0.1",
+      "bom-ref": "pkg:npm/flat-cache@6.1.23",
       "name": "flat-cache",
-      "version": "4.0.1",
+      "version": "6.1.23",
       "scope": "excluded",
-      "description": "A stupidly simple key/value storage using files to persist some data",
+      "description": "A simple key/value storage using files to persist the data",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "7fb71c14f2b7497147a71d795081b2449fc525072db8a674cd5b8dddfac1a381e72b771acbd5445b447ac8f6051c2d0082a86e90fcca8eadb6b790e6032a86cb"
+          "content": "7fef8163da5393ef7cdf12b514bce52e998cd22d33fa31e6c7740448691444c5ee8d0673d64e70cf05fa8639d0f20a1a0f407eb189c32b5c99e8c4f265f51aa8"
         }
       ],
       "licenses": [
@@ -17196,15 +17080,15 @@
           }
         }
       ],
-      "purl": "pkg:npm/flat-cache@4.0.1",
+      "purl": "pkg:npm/flat-cache@6.1.23",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/flat-cache/-/flat-cache-4.0.1.tgz"
+          "url": "https://registry.npmjs.org/flat-cache/-/flat-cache-6.1.23.tgz"
         },
         {
           "type": "vcs",
-          "url": "jaredwray/flat-cache"
+          "url": "git+https://github.com/jaredwray/cacheable.git"
         }
       ],
       "properties": [
@@ -17861,48 +17745,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/globals@14.0.0",
-      "name": "globals",
-      "version": "14.0.0",
-      "scope": "excluded",
-      "description": "Global identifiers from different JavaScript environments",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "a1a846bee3064253f0fe2bc86018d54ab5807d62c17a4bb9b693c4d9f38f2e2f961df7c859bba1dad0a38724214c13cc7f913d8c3107e053a64d8818c1b2b0b5"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "purl": "pkg:npm/globals@14.0.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/globals/-/globals-14.0.0.tgz"
-        },
-        {
-          "type": "vcs",
-          "url": "sindresorhus/globals"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "pkg:npm/globals@16.5.0",
       "name": "globals",
       "version": "16.5.0",
@@ -18067,15 +17909,15 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/has-flag@4.0.0",
-      "name": "has-flag",
-      "version": "4.0.0",
+      "bom-ref": "pkg:npm/hashery@1.5.1",
+      "name": "hashery",
+      "version": "1.5.1",
       "scope": "excluded",
-      "description": "Check if argv has a specific flag",
+      "description": "Browser Compatible Object Hashing",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "1329094ff4352a34d672da698080207d23b4b4a56e6548e180caf5ee4a93ba6325e807efdc421295e53ba99533a170c54c01d30c2e0d3a81bf67153712f94c3d"
+          "content": "899c8a1bdebf2703f3d4de79be3d887b6bd76e1bb8e34cdf51f26f4b012a11b78b96e93b3676a97c6a9aecb1f498eb270f14c5f39331f3f77247a1dfa9c6e66d"
         }
       ],
       "licenses": [
@@ -18085,15 +17927,15 @@
           }
         }
       ],
-      "purl": "pkg:npm/has-flag@4.0.0",
+      "purl": "pkg:npm/hashery@1.5.1",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/has-flag/-/has-flag-4.0.0.tgz"
+          "url": "https://registry.npmjs.org/hashery/-/hashery-1.5.1.tgz"
         },
         {
           "type": "vcs",
-          "url": "sindresorhus/has-flag"
+          "url": "https://github.com/jaredwray/hashery.git"
         }
       ],
       "properties": [
@@ -18254,6 +18096,98 @@
         {
           "type": "vcs",
           "url": "git@github.com:facebook/hermes.git"
+        }
+      ],
+      "properties": [
+        {
+          "name": "wildferret:shipped",
+          "value": "no"
+        },
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/hookified@1.15.1",
+      "name": "hookified",
+      "version": "1.15.1",
+      "scope": "excluded",
+      "description": "Event Emitting and Middleware Hooks",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "32f1bf725b000ead463ccd8a1a8da7c9f6965729fd9da3e25eba887b88d88d735942ddb7f245b2386aecc9cfc3991010f917bac9ea3ac97ff2a0d086e4a00456"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/hookified@1.15.1",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/hookified/-/hookified-1.15.1.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/jaredwray/hookified#readme"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/jaredwray/hookified.git"
+        }
+      ],
+      "properties": [
+        {
+          "name": "wildferret:shipped",
+          "value": "no"
+        },
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/hookified@2.2.0",
+      "name": "hookified",
+      "version": "2.2.0",
+      "scope": "excluded",
+      "description": "Event Emitting and Middleware Hooks",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "a7f2e017344de457a80f70cb4ba6e451aa5ec9ee84e1223ac89b3a29eb4435dd7c4be141b61a98ab66a62545a9b79cf4110c301de9a27636393aa24610a9b9b8"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/hookified@2.2.0",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/hookified/-/hookified-2.2.0.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/jaredwray/hookified#readme"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/jaredwray/hookified.git"
         }
       ],
       "properties": [
@@ -18471,48 +18405,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/import-fresh@3.3.1",
-      "name": "import-fresh",
-      "version": "3.3.1",
-      "scope": "excluded",
-      "description": "Import a module while bypassing the cache",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "4d1dca7eb4d94d82cf07a8d48dfc7a305f56716ac72fdb2ee5339b2b866462005d58a3ce1684a8408744b93b91f36a66b711f6b29586f61e9eb707ebd692c1a9"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "purl": "pkg:npm/import-fresh@3.3.1",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/import-fresh/-/import-fresh-3.3.1.tgz"
-        },
-        {
-          "type": "vcs",
-          "url": "sindresorhus/import-fresh"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "pkg:npm/imurmurhash@0.1.4",
       "name": "imurmurhash",
       "version": "0.1.4",
@@ -18596,44 +18488,6 @@
         {
           "name": "wildferret:shipped",
           "value": "browser"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/invariant@2.2.4",
-      "name": "invariant",
-      "version": "2.2.4",
-      "scope": "excluded",
-      "description": "invariant",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "a6125f41506e689339ada3a926349f9220fa0696c213836cfff2da5e5eb0198b54058f379d64ba45ff6d5e6d9ef1568aeb42448d895d6cf89ffc0d81d42da034"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "purl": "pkg:npm/invariant@2.2.4",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/invariant/-/invariant-2.2.4.tgz"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/zertosh/invariant"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
         }
       ]
     },
@@ -19100,44 +18954,6 @@
         {
           "name": "wildferret:shipped",
           "value": "no"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/js-yaml@4.3.2",
-      "name": "js-yaml",
-      "version": "4.3.2",
-      "scope": "excluded",
-      "description": "YAML 1.2 parser and serializer",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "48534ebd227e0e07fff409fdd38631f828129483c2908a5aa38aa8e7596979edb94c845e8dd1f7ae1478119306a0dc77fd33f73bec335ae893165e2ca9b96dcc"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "purl": "pkg:npm/js-yaml@4.3.2",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/js-yaml/-/js-yaml-4.3.2.tgz"
-        },
-        {
-          "type": "vcs",
-          "url": "nodeca/js-yaml"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
         },
         {
           "name": "cdx:npm:package:development",
@@ -19220,52 +19036,6 @@
         {
           "type": "vcs",
           "url": "https://github.com/mathiasbynens/jsesc.git"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/json-buffer@3.0.1",
-      "name": "json-buffer",
-      "version": "3.0.1",
-      "scope": "excluded",
-      "description": "JSON parse & stringify that supports binary via bops & base64",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "e1b57905f4769aa7d04c99be579b4f3dd7fe669ba1888bd3b8007983c91cad7399a534ff430c15456072c17d68cebea512e3dd6c7c70689966f46ea6236b1f49"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "purl": "pkg:npm/json-buffer@3.0.1",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/json-buffer/-/json-buffer-3.0.1.tgz"
-        },
-        {
-          "type": "website",
-          "url": "https://github.com/dominictarr/json-buffer"
-        },
-        {
-          "type": "vcs",
-          "url": "git://github.com/dominictarr/json-buffer.git"
         }
       ],
       "properties": [
@@ -19545,15 +19315,15 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/keyv@4.5.4",
+      "bom-ref": "pkg:npm/keyv@5.6.0",
       "name": "keyv",
-      "version": "4.5.4",
+      "version": "5.6.0",
       "scope": "excluded",
       "description": "Simple key-value storage with support for multiple backends",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "a3154790747f1097f608d5e75b144b5ba9a0ec9c82094706d03b441a62f672d528d4f3538a7d4f52297eafffb8af93295600bf7e7d648ecc7b9a34ae8caa88a7"
+          "content": "0980c3dd23adb07b725de10e458471daa06da432458d14c65d4b66344306cb360e2a3d53137b7271d961a3b900d547f1f4e616673839d901411802d38abcc34b"
         }
       ],
       "licenses": [
@@ -19563,11 +19333,11 @@
           }
         }
       ],
-      "purl": "pkg:npm/keyv@4.5.4",
+      "purl": "pkg:npm/keyv@5.6.0",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/keyv/-/keyv-4.5.4.tgz"
+          "url": "https://registry.npmjs.org/keyv/-/keyv-5.6.0.tgz"
         },
         {
           "type": "website",
@@ -20295,53 +20065,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/lightningcss-android-arm64@1.32.0",
-      "name": "lightningcss-android-arm64",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "60aeff0a54ede2400ad2fa3ac375fe3e79b40f671fdaf3c76e139776836d8b519ad1a9753f84c1661c23013be33702c40429cabe325cda34201d71f4344c2502"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/lightningcss-android-arm64@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss-android-arm64/-/lightningcss-android-arm64-1.32.0.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "android"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "arm64"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "pkg:npm/lightningcss-android-arm64@1.33.0",
       "name": "lightningcss-android-arm64",
       "version": "1.33.0",
@@ -20380,60 +20103,6 @@
         {
           "name": "wildferret:manifest",
           "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/lightningcss-darwin-arm64@1.32.0",
-      "name": "lightningcss-darwin-arm64",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "description": "A CSS parser, transformer, and minifier written in Rust",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "473786f49bb96da83606fd7f97095526f044deae93b57b247592cb0b27e0e69b7e1cbcfd06a94808eecb64ced51cd4d39ffe4f4611c50528e4e65738726b1c3d"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MPL-2.0"
-          }
-        }
-      ],
-      "purl": "pkg:npm/lightningcss-darwin-arm64@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss-darwin-arm64/-/lightningcss-darwin-arm64-1.32.0.tgz"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/parcel-bundler/lightningcss.git"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "darwin"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "arm64"
         }
       ]
     },
@@ -20489,53 +20158,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/lightningcss-darwin-x64@1.32.0",
-      "name": "lightningcss-darwin-x64",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "53e42c069da6fecdb0aa95184ffeb09e56a07596ed65d9dd4a6badfcd26a94270c2d35a9e66b82ac80fe2b9509ea3a83d8116c85e8c26179e23c36cd87bdd5f3"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/lightningcss-darwin-x64@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss-darwin-x64/-/lightningcss-darwin-x64-1.32.0.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "darwin"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "x64"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "pkg:npm/lightningcss-darwin-x64@1.33.0",
       "name": "lightningcss-darwin-x64",
       "version": "1.33.0",
@@ -20566,53 +20188,6 @@
         {
           "name": "wildferret:os",
           "value": "darwin"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "x64"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/lightningcss-freebsd-x64@1.32.0",
-      "name": "lightningcss-freebsd-x64",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "2424e281e74492c664ded1d34ed86731d55f19feb5164cbc262d84e188d44c4417d78c62cbf953cd79eed6fc2265eddb61ed2af92a6c487fc24de0d72ba5878a"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/lightningcss-freebsd-x64@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss-freebsd-x64/-/lightningcss-freebsd-x64-1.32.0.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "freebsd"
         },
         {
           "name": "wildferret:cpu",
@@ -20669,53 +20244,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/lightningcss-linux-arm-gnueabihf@1.32.0",
-      "name": "lightningcss-linux-arm-gnueabihf",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "c7aae79e945ad862f4cd03a4b7aaedb376033f376e2e95afc0017a10c8571556570f8b4fac190416acc6a30cc2b085ac3e3a922beb723443835015de7951d293"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/lightningcss-linux-arm-gnueabihf@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss-linux-arm-gnueabihf/-/lightningcss-linux-arm-gnueabihf-1.32.0.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "linux"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "arm"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "pkg:npm/lightningcss-linux-arm-gnueabihf@1.33.0",
       "name": "lightningcss-linux-arm-gnueabihf",
       "version": "1.33.0",
@@ -20759,53 +20287,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/lightningcss-linux-arm64-gnu@1.32.0",
-      "name": "lightningcss-linux-arm64-gnu",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "d279ccca8c8e2d12577db30e8a569245c2c7dc9c39cfd1c33467d3fe0c023e06838e7c748bcc3bbc1cc52c54757fa08c2ca17c8156de6e69143777dafe4409a5"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/lightningcss-linux-arm64-gnu@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss-linux-arm64-gnu/-/lightningcss-linux-arm64-gnu-1.32.0.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "linux"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "arm64"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "pkg:npm/lightningcss-linux-arm64-gnu@1.33.0",
       "name": "lightningcss-linux-arm64-gnu",
       "version": "1.33.0",
@@ -20828,53 +20309,6 @@
         {
           "name": "wildferret:shipped",
           "value": "no"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "linux"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "arm64"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/lightningcss-linux-arm64-musl@1.32.0",
-      "name": "lightningcss-linux-arm64-musl",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "529424a1e9ebe14244ce054862923cd250c5bd198f560ea8a9ba0d1dfa07e024087cd03e1cead9ecca3b2993f4d9d0ba2e38213d025e06cbd7849a1dff09c806"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/lightningcss-linux-arm64-musl@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss-linux-arm64-musl/-/lightningcss-linux-arm64-musl-1.32.0.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
         },
         {
           "name": "wildferret:optional",
@@ -20939,53 +20373,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/lightningcss-linux-x64-gnu@1.32.0",
-      "name": "lightningcss-linux-x64-gnu",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "57b42be7622166674a3d5afe56dc3ca3e58bb1025809377c96821fa4368c45619465f04e60425ec89224a862033193f03f1db8a5431fc12c7123ca61aff31b38"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/lightningcss-linux-x64-gnu@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss-linux-x64-gnu/-/lightningcss-linux-x64-gnu-1.32.0.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "linux"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "x64"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "pkg:npm/lightningcss-linux-x64-gnu@1.33.0",
       "name": "lightningcss-linux-x64-gnu",
       "version": "1.33.0",
@@ -21008,53 +20395,6 @@
         {
           "name": "wildferret:shipped",
           "value": "no"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "linux"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "x64"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/lightningcss-linux-x64-musl@1.32.0",
-      "name": "lightningcss-linux-x64-musl",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "6d870ba7e55bd1ac2c89783ff34b8245ecc2607360d7f9779add20cc79d657d5cfd56e6c29ae7f4c274659a47fcc13363de17f1dbb10bff8f651134e895bb15a"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/lightningcss-linux-x64-musl@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss-linux-x64-musl/-/lightningcss-linux-x64-musl-1.32.0.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
         },
         {
           "name": "wildferret:optional",
@@ -21119,53 +20459,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/lightningcss-win32-arm64-msvc@1.32.0",
-      "name": "lightningcss-win32-arm64-msvc",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "f126c2f01478d294ba6da08cf2c6ed6034b011541de099454ce95a0f78161877d385370006734305d6ba79365ea9ba1f6a5209845c74a8ace01c999c3d39c677"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/lightningcss-win32-arm64-msvc@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss-win32-arm64-msvc/-/lightningcss-win32-arm64-msvc-1.32.0.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "win32"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "arm64"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "pkg:npm/lightningcss-win32-arm64-msvc@1.33.0",
       "name": "lightningcss-win32-arm64-msvc",
       "version": "1.33.0",
@@ -21200,53 +20493,6 @@
         {
           "name": "wildferret:cpu",
           "value": "arm64"
-        },
-        {
-          "name": "wildferret:manifest",
-          "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/lightningcss-win32-x64-msvc@1.32.0",
-      "name": "lightningcss-win32-x64-msvc",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "026abd07f4a86587438b5905ae88e7a2a3cbc58850e16a395e22fc11526b56c07c011a02d4f596e951ad4f458a09e9a3cbc682fa5a2e2678d2ed4d7cc776f4e9"
-        }
-      ],
-      "licenses": [],
-      "purl": "pkg:npm/lightningcss-win32-x64-msvc@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss-win32-x64-msvc/-/lightningcss-win32-x64-msvc-1.32.0.tgz"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:optional",
-          "value": "true"
-        },
-        {
-          "name": "wildferret:os",
-          "value": "win32"
-        },
-        {
-          "name": "wildferret:cpu",
-          "value": "x64"
         },
         {
           "name": "wildferret:manifest",
@@ -21294,48 +20540,6 @@
         {
           "name": "wildferret:manifest",
           "value": "not-in-local-store"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/lightningcss@1.32.0",
-      "name": "lightningcss",
-      "version": "1.32.0",
-      "scope": "excluded",
-      "description": "A CSS parser, transformer, and minifier written in Rust",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "357601ce29cdadb95fada3c6cab6cfa03d7d0b587d95f23fd66ce0598bd75137b8d781b3fd7d450f65c165264ceeb453acc03c24bdceb4068689fac82a1439c9"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MPL-2.0"
-          }
-        }
-      ],
-      "purl": "pkg:npm/lightningcss@1.32.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lightningcss/-/lightningcss-1.32.0.tgz"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/parcel-bundler/lightningcss.git"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
         }
       ]
     },
@@ -21463,94 +20667,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/lodash.merge@4.6.2",
-      "name": "lodash.merge",
-      "version": "4.6.2",
-      "scope": "excluded",
-      "description": "The Lodash method `_.merge` exported as a module.",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "d0aa63a97455beb6320ac5f5b3047f5d32b4bdae9542440ce8c368ecfa96efb0728c086801103c11facfd4de3e2a52a3f184b46540ad453fd852e872603ba321"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "purl": "pkg:npm/lodash.merge@4.6.2",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/lodash.merge/-/lodash.merge-4.6.2.tgz"
-        },
-        {
-          "type": "website",
-          "url": "https://lodash.com/"
-        },
-        {
-          "type": "vcs",
-          "url": "lodash/lodash"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/loose-envify@1.4.0",
-      "name": "loose-envify",
-      "version": "1.4.0",
-      "scope": "excluded",
-      "description": "Fast (and loose) selective `process.env` replacer using js-tokens instead of an AST",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "972bb13c6aff59f86b95e9b608bfd472751cd7372a280226043cee918ed8e45ff242235d928ebe7d12debe5c351e03324b0edfeb5d54218e34f04b71452a0add"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "purl": "pkg:npm/loose-envify@1.4.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/loose-envify/-/loose-envify-1.4.0.tgz"
-        },
-        {
-          "type": "website",
-          "url": "https://github.com/zertosh/loose-envify"
-        },
-        {
-          "type": "vcs",
-          "url": "git://github.com/zertosh/loose-envify.git"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "pkg:npm/lru-cache@11.5.3",
       "name": "lru-cache",
       "version": "11.5.3",
@@ -21616,48 +20732,6 @@
         {
           "type": "vcs",
           "url": "git://github.com/isaacs/node-lru-cache.git"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/magic-string@0.30.21",
-      "name": "magic-string",
-      "version": "0.30.21",
-      "scope": "excluded",
-      "description": "Modify strings, generate sourcemaps",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "bddd85e1853211728670b1e8abe4c4c828f1b9e49e1e7171cb28cda7cd328345d5e2f5219c37abfe5bef96a33f6ab0796d740de4adbfde88a7c82472c7c4f609"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "purl": "pkg:npm/magic-string@0.30.21",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/magic-string/-/magic-string-0.30.21.tgz"
-        },
-        {
-          "type": "vcs",
-          "url": "git+https://github.com/Rich-Harris/magic-string.git"
         }
       ],
       "properties": [
@@ -22306,48 +21380,6 @@
         {
           "type": "vcs",
           "url": "git@github.com:isaacs/minimatch"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/minimatch@3.1.5",
-      "name": "minimatch",
-      "version": "3.1.5",
-      "scope": "excluded",
-      "description": "a glob matcher in javascript",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "5608d652c9e74fa9fe35493a799abbef37857695b62d60f33facc51ab09b1d789836e9790f3aa4d871d0e6e147d83356e576e9f3e8d5cda78db7de2cb04125e3"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "ISC"
-          }
-        }
-      ],
-      "purl": "pkg:npm/minimatch@3.1.5",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/minimatch/-/minimatch-3.1.5.tgz"
-        },
-        {
-          "type": "vcs",
-          "url": "git://github.com/isaacs/minimatch.git"
         }
       ],
       "properties": [
@@ -23463,48 +22495,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/parent-module@1.0.1",
-      "name": "parent-module",
-      "version": "1.0.1",
-      "scope": "excluded",
-      "description": "Get the path of the parent module",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "190d84591a5057cfe8f80c3c62ab5f6593df3515996246e2744f64e6ba65fe10b7bed1c705f1a6d887e2eaa595f9ca031a4ad42990311372e8b7991cb11961fa"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "purl": "pkg:npm/parent-module@1.0.1",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/parent-module/-/parent-module-1.0.1.tgz"
-        },
-        {
-          "type": "vcs",
-          "url": "sindresorhus/parent-module"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "pkg:npm/path-browserify@1.0.1",
       "name": "path-browserify",
       "version": "1.0.1",
@@ -24433,6 +23423,52 @@
     },
     {
       "type": "library",
+      "bom-ref": "pkg:npm/qified@0.10.1",
+      "name": "qified",
+      "version": "0.10.1",
+      "scope": "excluded",
+      "description": "Task and Message Queues with Multiple Providers",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "f8ec328208bd2314f578f28669f708f3bb9b4a6c6897ab26c09f910070d0971f7ef5c3f01560e22851423ee5a1afd8a09e51a967dbc340bc3aecde1d71354510"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/qified@0.10.1",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/qified/-/qified-0.10.1.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/jaredwray/qified#readme"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/jaredwray/qified.git"
+        }
+      ],
+      "properties": [
+        {
+          "name": "wildferret:shipped",
+          "value": "no"
+        },
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "bom-ref": "pkg:npm/queue-microtask@1.2.3",
       "name": "queue-microtask",
       "version": "1.2.3",
@@ -24914,48 +23950,6 @@
         {
           "type": "vcs",
           "url": "floatdrop/require-from-string"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/resolve-from@4.0.0",
-      "name": "resolve-from",
-      "version": "4.0.0",
-      "scope": "excluded",
-      "description": "Resolve the path of a module like `require.resolve()` but from a given path",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "a5bfcc6265ecb40932b11171f2988d235b4614d408140def904dc6ab812e035745ea01e9ffebe066ab021896a9bf2f0ddd0fb8a3b170beab8f25c9d9ed1632e2"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "purl": "pkg:npm/resolve-from@4.0.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/resolve-from/-/resolve-from-4.0.0.tgz"
-        },
-        {
-          "type": "vcs",
-          "url": "sindresorhus/resolve-from"
         }
       ],
       "properties": [
@@ -26207,48 +25201,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/strip-json-comments@3.1.1",
-      "name": "strip-json-comments",
-      "version": "3.1.1",
-      "scope": "excluded",
-      "description": "Strip comments from JSON. Lets you use comments in your JSON files!",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "e9f3dcf91e22870a8fe8dfda22fd9fd60307f25395b56407a2a0b8c8aea8483555a1cba602c7c2aa39179ea89832198cc12fe61072e9ed57a196ddea97a9448a"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "purl": "pkg:npm/strip-json-comments@3.1.1",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/strip-json-comments/-/strip-json-comments-3.1.1.tgz"
-        },
-        {
-          "type": "vcs",
-          "url": "sindresorhus/strip-json-comments"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "pkg:npm/styleq@0.2.1",
       "name": "styleq",
       "version": "0.2.1",
@@ -26366,48 +25318,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/supports-color@7.2.0",
-      "name": "supports-color",
-      "version": "7.2.0",
-      "scope": "excluded",
-      "description": "Detect whether a terminal supports color",
-      "hashes": [
-        {
-          "alg": "SHA-512",
-          "content": "aa9080bd197db2db8e1ef78ab27ec79dc251befe74d6a21a70acd094effe2f0c5cf7ed2adb02f2bf80dfbedf34fc33e7da9a8e06c25d0e2a205c647df8ebf047"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "purl": "pkg:npm/supports-color@7.2.0",
-      "externalReferences": [
-        {
-          "type": "distribution",
-          "url": "https://registry.npmjs.org/supports-color/-/supports-color-7.2.0.tgz"
-        },
-        {
-          "type": "vcs",
-          "url": "chalk/supports-color"
-        }
-      ],
-      "properties": [
-        {
-          "name": "wildferret:shipped",
-          "value": "no"
-        },
-        {
-          "name": "cdx:npm:package:development",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "pkg:npm/svgo@4.1.0",
       "name": "svgo",
       "version": "4.1.0",
@@ -26492,15 +25402,15 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/tailwindcss@4.3.3",
+      "bom-ref": "pkg:npm/tailwindcss@4.3.5",
       "name": "tailwindcss",
-      "version": "4.3.3",
+      "version": "4.3.5",
       "scope": "excluded",
       "description": "A utility-first CSS framework for rapidly building custom user interfaces.",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "80e855dcfeee7c4eb64031a0d7355a4e0091f84b4fbfdda4da722155c54a70b9b14f5b1406c406867663d7be63f8ca91b78ccb17b89cfac0988df8713318fb61"
+          "content": "15c424f41b9f7e610724fd86d17981d92a6553568b4c8ee3d3b2ae9e4f94ef8372f978963adcd7cfd6ae8c567f6af9edc357b670ebffdcf920cdf950ee05f6bd"
         }
       ],
       "licenses": [
@@ -26510,11 +25420,11 @@
           }
         }
       ],
-      "purl": "pkg:npm/tailwindcss@4.3.3",
+      "purl": "pkg:npm/tailwindcss@4.3.5",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/tailwindcss/-/tailwindcss-4.3.3.tgz"
+          "url": "https://registry.npmjs.org/tailwindcss/-/tailwindcss-4.3.5.tgz"
         },
         {
           "type": "website",
@@ -30244,9 +29154,9 @@
         "pkg:npm/%40astrojs/react@7.1.4",
         "pkg:npm/%40astryxdesign/cli@0.6.5",
         "pkg:npm/%40astryxdesign/core@0.7.5",
-        "pkg:npm/%40eslint/js@9.39.5",
-        "pkg:npm/%40stylexjs/stylex@0.19.1",
-        "pkg:npm/%40tailwindcss/vite@4.3.3",
+        "pkg:npm/%40eslint/js@10.0.1",
+        "pkg:npm/%40stylexjs/stylex@0.19.2",
+        "pkg:npm/%40tailwindcss/vite@4.3.5",
         "pkg:npm/%40types/dom-chromium-ai@0.0.18",
         "pkg:npm/%40types/node@26.6.6",
         "pkg:npm/%40types/react-dom@19.3.0",
@@ -30257,14 +29167,14 @@
         "pkg:npm/eslint-plugin-astro@1.7.0",
         "pkg:npm/eslint-plugin-react-hooks@7.1.1",
         "pkg:npm/eslint-plugin-react-refresh@0.5.7",
-        "pkg:npm/eslint@9.39.5",
+        "pkg:npm/eslint@10.14.0",
         "pkg:npm/globals@17.14.0",
         "pkg:npm/lefthook@2.2.2",
         "pkg:npm/prettier-plugin-astro@1.1.2",
         "pkg:npm/prettier@3.9.10",
         "pkg:npm/react-dom@19.3.1",
         "pkg:npm/react@19.3.1",
-        "pkg:npm/tailwindcss@4.3.3",
+        "pkg:npm/tailwindcss@4.3.5",
         "pkg:npm/typescript-eslint@8.72.1",
         "pkg:npm/typescript@5.9.3",
         "pkg:npm/vitest@5.0.5",
@@ -30469,7 +29379,7 @@
     {
       "ref": "pkg:npm/%40astryxdesign/core@0.7.5",
       "dependsOn": [
-        "pkg:npm/%40stylexjs/stylex@0.19.1",
+        "pkg:npm/%40stylexjs/stylex@0.19.2",
         "pkg:npm/intl-messageformat@11.2.15",
         "pkg:npm/react-dom@19.3.1",
         "pkg:npm/react@19.3.1"
@@ -30791,6 +29701,19 @@
       "dependsOn": []
     },
     {
+      "ref": "pkg:npm/%40cacheable/memory@2.2.0",
+      "dependsOn": [
+        "pkg:npm/%40cacheable/utils@2.5.0",
+        "pkg:npm/%40keyv/bigmap@1.3.1",
+        "pkg:npm/hookified@1.15.1",
+        "pkg:npm/keyv@5.6.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/%40cacheable/utils@2.5.0",
+      "dependsOn": ["pkg:npm/hashery@1.5.1", "pkg:npm/keyv@5.6.0"]
+    },
+    {
       "ref": "pkg:npm/%40capsizecss/unpack@4.0.1",
       "dependsOn": ["pkg:npm/fontkitten@1.0.3"]
     },
@@ -31011,53 +29934,39 @@
     },
     {
       "ref": "pkg:npm/%40eslint-community/eslint-utils@4.10.1",
-      "dependsOn": ["pkg:npm/eslint-visitor-keys@3.4.3", "pkg:npm/eslint@9.39.5"]
+      "dependsOn": ["pkg:npm/eslint-visitor-keys@3.4.3", "pkg:npm/eslint@10.14.0"]
     },
     {
       "ref": "pkg:npm/%40eslint-community/regexpp@4.12.2",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40eslint/config-array@0.21.2",
+      "ref": "pkg:npm/%40eslint/config-array@0.23.5",
       "dependsOn": [
-        "pkg:npm/%40eslint/object-schema@2.1.7",
+        "pkg:npm/%40eslint/object-schema@3.0.5",
         "pkg:npm/debug@4.4.3",
-        "pkg:npm/minimatch@3.1.5"
+        "pkg:npm/minimatch@10.2.6"
       ]
     },
     {
-      "ref": "pkg:npm/%40eslint/config-helpers@0.4.2",
-      "dependsOn": ["pkg:npm/%40eslint/core@0.17.0"]
+      "ref": "pkg:npm/%40eslint/config-helpers@0.7.0",
+      "dependsOn": ["pkg:npm/%40eslint/core@1.2.1"]
     },
     {
-      "ref": "pkg:npm/%40eslint/core@0.17.0",
+      "ref": "pkg:npm/%40eslint/core@1.2.1",
       "dependsOn": ["pkg:npm/%40types/json-schema@7.0.15"]
     },
     {
-      "ref": "pkg:npm/%40eslint/eslintrc@3.3.7",
-      "dependsOn": [
-        "pkg:npm/ajv@6.15.0",
-        "pkg:npm/debug@4.4.3",
-        "pkg:npm/espree@10.4.0",
-        "pkg:npm/globals@14.0.0",
-        "pkg:npm/ignore@5.3.2",
-        "pkg:npm/import-fresh@3.3.1",
-        "pkg:npm/js-yaml@4.3.2",
-        "pkg:npm/minimatch@3.1.5",
-        "pkg:npm/strip-json-comments@3.1.1"
-      ]
+      "ref": "pkg:npm/%40eslint/js@10.0.1",
+      "dependsOn": ["pkg:npm/eslint@10.14.0"]
     },
     {
-      "ref": "pkg:npm/%40eslint/js@9.39.5",
+      "ref": "pkg:npm/%40eslint/object-schema@3.0.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40eslint/object-schema@2.1.7",
-      "dependsOn": []
-    },
-    {
-      "ref": "pkg:npm/%40eslint/plugin-kit@0.4.1",
-      "dependsOn": ["pkg:npm/%40eslint/core@0.17.0", "pkg:npm/levn@0.4.1"]
+      "ref": "pkg:npm/%40eslint/plugin-kit@0.7.3",
+      "dependsOn": ["pkg:npm/%40eslint/core@1.2.1", "pkg:npm/levn@0.4.1"]
     },
     {
       "ref": "pkg:npm/%40formatjs/fast-memoize@3.1.7",
@@ -31240,6 +30149,14 @@
       ]
     },
     {
+      "ref": "pkg:npm/%40keyv/bigmap@1.3.1",
+      "dependsOn": ["pkg:npm/hashery@1.5.1", "pkg:npm/hookified@1.15.1", "pkg:npm/keyv@5.6.0"]
+    },
+    {
+      "ref": "pkg:npm/%40keyv/serialize@1.1.1",
+      "dependsOn": []
+    },
+    {
       "ref": "pkg:npm/%40napi-rs/wasm-runtime@1.2.4",
       "dependsOn": [
         "pkg:npm/%40emnapi/core@1.11.3",
@@ -31420,96 +30337,92 @@
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40stylexjs/stylex@0.19.1",
-      "dependsOn": [
-        "pkg:npm/css-mediaquery@0.1.2",
-        "pkg:npm/invariant@2.2.4",
-        "pkg:npm/styleq@0.2.1"
-      ]
+      "ref": "pkg:npm/%40stylexjs/stylex@0.19.2",
+      "dependsOn": ["pkg:npm/styleq@0.2.1"]
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/node@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/node@4.3.5",
       "dependsOn": [
         "pkg:npm/%40jridgewell/remapping@2.3.5",
         "pkg:npm/enhanced-resolve@5.26.0",
         "pkg:npm/jiti@2.7.0",
-        "pkg:npm/lightningcss@1.32.0",
-        "pkg:npm/magic-string@0.30.21",
+        "pkg:npm/lightningcss@1.33.0",
+        "pkg:npm/magic-string@1.4.5",
         "pkg:npm/source-map-js@1.2.2",
-        "pkg:npm/tailwindcss@4.3.3"
+        "pkg:npm/tailwindcss@4.3.5"
       ]
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-android-arm64@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-android-arm64@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-darwin-arm64@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-darwin-arm64@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-darwin-x64@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-darwin-x64@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-freebsd-x64@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-freebsd-x64@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-linux-arm-gnueabihf@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-linux-arm-gnueabihf@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-linux-arm64-gnu@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-linux-arm64-gnu@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-linux-arm64-musl@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-linux-arm64-musl@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-linux-x64-gnu@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-linux-x64-gnu@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-linux-x64-musl@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-linux-x64-musl@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-wasm32-wasi@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-wasm32-wasi@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-win32-arm64-msvc@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-win32-arm64-msvc@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide-win32-x64-msvc@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide-win32-x64-msvc@4.3.5",
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/oxide@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/oxide@4.3.5",
       "dependsOn": [
-        "pkg:npm/%40tailwindcss/oxide-android-arm64@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide-darwin-arm64@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide-darwin-x64@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide-freebsd-x64@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide-linux-arm-gnueabihf@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide-linux-arm64-gnu@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide-linux-arm64-musl@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide-linux-x64-gnu@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide-linux-x64-musl@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide-wasm32-wasi@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide-win32-arm64-msvc@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide-win32-x64-msvc@4.3.3"
+        "pkg:npm/%40tailwindcss/oxide-android-arm64@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide-darwin-arm64@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide-darwin-x64@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide-freebsd-x64@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide-linux-arm-gnueabihf@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide-linux-arm64-gnu@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide-linux-arm64-musl@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide-linux-x64-gnu@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide-linux-x64-musl@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide-wasm32-wasi@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide-win32-arm64-msvc@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide-win32-x64-msvc@4.3.5"
       ]
     },
     {
-      "ref": "pkg:npm/%40tailwindcss/vite@4.3.3",
+      "ref": "pkg:npm/%40tailwindcss/vite@4.3.5",
       "dependsOn": [
-        "pkg:npm/%40tailwindcss/node@4.3.3",
-        "pkg:npm/%40tailwindcss/oxide@4.3.3",
-        "pkg:npm/tailwindcss@4.3.3",
+        "pkg:npm/%40tailwindcss/node@4.3.5",
+        "pkg:npm/%40tailwindcss/oxide@4.3.5",
+        "pkg:npm/tailwindcss@4.3.5",
         "pkg:npm/vite@8.3.5"
       ]
     },
@@ -31527,6 +30440,10 @@
     },
     {
       "ref": "pkg:npm/%40types/dom-chromium-ai@0.0.18",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40types/esrecurse@4.3.1",
       "dependsOn": []
     },
     {
@@ -31578,7 +30495,7 @@
         "pkg:npm/%40typescript-eslint/type-utils@8.72.1",
         "pkg:npm/%40typescript-eslint/utils@8.72.1",
         "pkg:npm/%40typescript-eslint/visitor-keys@8.72.1",
-        "pkg:npm/eslint@9.39.5",
+        "pkg:npm/eslint@10.14.0",
         "pkg:npm/ignore@7.0.14",
         "pkg:npm/natural-compare@1.4.0",
         "pkg:npm/ts-api-utils@2.5.0",
@@ -31593,7 +30510,7 @@
         "pkg:npm/%40typescript-eslint/typescript-estree@8.72.1",
         "pkg:npm/%40typescript-eslint/visitor-keys@8.72.1",
         "pkg:npm/debug@4.4.3",
-        "pkg:npm/eslint@9.39.5",
+        "pkg:npm/eslint@10.14.0",
         "pkg:npm/typescript@5.9.3"
       ]
     },
@@ -31624,7 +30541,7 @@
         "pkg:npm/%40typescript-eslint/typescript-estree@8.72.1",
         "pkg:npm/%40typescript-eslint/utils@8.72.1",
         "pkg:npm/debug@4.4.3",
-        "pkg:npm/eslint@9.39.5",
+        "pkg:npm/eslint@10.14.0",
         "pkg:npm/ts-api-utils@2.5.0",
         "pkg:npm/typescript@5.9.3"
       ]
@@ -31655,7 +30572,7 @@
         "pkg:npm/%40typescript-eslint/scope-manager@8.72.1",
         "pkg:npm/%40typescript-eslint/types@8.72.1",
         "pkg:npm/%40typescript-eslint/typescript-estree@8.72.1",
-        "pkg:npm/eslint@9.39.5",
+        "pkg:npm/eslint@10.14.0",
         "pkg:npm/typescript@5.9.3"
       ]
     },
@@ -31799,20 +30716,12 @@
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/ansi-styles@4.3.0",
-      "dependsOn": ["pkg:npm/color-convert@2.0.1"]
-    },
-    {
       "ref": "pkg:npm/ansi-styles@6.2.3",
       "dependsOn": []
     },
     {
       "ref": "pkg:npm/anymatch@3.1.3",
       "dependsOn": ["pkg:npm/normalize-path@3.0.0", "pkg:npm/picomatch@2.3.2"]
-    },
-    {
-      "ref": "pkg:npm/argparse@2.0.1",
-      "dependsOn": []
     },
     {
       "ref": "pkg:npm/aria-query@5.3.2",
@@ -31914,10 +30823,6 @@
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/balanced-match@1.0.2",
-      "dependsOn": []
-    },
-    {
       "ref": "pkg:npm/balanced-match@4.0.4",
       "dependsOn": []
     },
@@ -31932,10 +30837,6 @@
     {
       "ref": "pkg:npm/boolbase@1.0.0",
       "dependsOn": []
-    },
-    {
-      "ref": "pkg:npm/brace-expansion@1.1.21",
-      "dependsOn": ["pkg:npm/balanced-match@1.0.2", "pkg:npm/concat-map@0.0.1"]
     },
     {
       "ref": "pkg:npm/brace-expansion@5.0.12",
@@ -31960,8 +30861,14 @@
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/callsites@3.1.0",
-      "dependsOn": []
+      "ref": "pkg:npm/cacheable@2.5.0",
+      "dependsOn": [
+        "pkg:npm/%40cacheable/memory@2.2.0",
+        "pkg:npm/%40cacheable/utils@2.5.0",
+        "pkg:npm/hookified@1.15.1",
+        "pkg:npm/keyv@5.6.0",
+        "pkg:npm/qified@0.10.1"
+      ]
     },
     {
       "ref": "pkg:npm/caniuse-lite@1.0.30001820",
@@ -31974,10 +30881,6 @@
     {
       "ref": "pkg:npm/chai@6.3.0",
       "dependsOn": []
-    },
-    {
-      "ref": "pkg:npm/chalk@4.1.2",
-      "dependsOn": ["pkg:npm/ansi-styles@4.3.0", "pkg:npm/supports-color@7.2.0"]
     },
     {
       "ref": "pkg:npm/character-entities-html4@2.1.0",
@@ -32016,14 +30919,6 @@
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/color-convert@2.0.1",
-      "dependsOn": ["pkg:npm/color-name@1.1.4"]
-    },
-    {
-      "ref": "pkg:npm/color-name@1.1.4",
-      "dependsOn": []
-    },
-    {
       "ref": "pkg:npm/comma-separated-tokens@2.0.3",
       "dependsOn": []
     },
@@ -32041,10 +30936,6 @@
     },
     {
       "ref": "pkg:npm/commondir@1.0.1",
-      "dependsOn": []
-    },
-    {
-      "ref": "pkg:npm/concat-map@0.0.1",
       "dependsOn": []
     },
     {
@@ -32074,10 +30965,6 @@
     {
       "ref": "pkg:npm/crossws@0.3.5",
       "dependsOn": ["pkg:npm/uncrypto@0.1.3"]
-    },
-    {
-      "ref": "pkg:npm/css-mediaquery@0.1.2",
-      "dependsOn": []
     },
     {
       "ref": "pkg:npm/css-select@6.0.0",
@@ -32257,7 +31144,7 @@
     },
     {
       "ref": "pkg:npm/eslint-compat-utils@0.6.5",
-      "dependsOn": ["pkg:npm/eslint@9.39.5", "pkg:npm/semver@7.8.5"]
+      "dependsOn": ["pkg:npm/eslint@10.14.0", "pkg:npm/semver@7.8.5"]
     },
     {
       "ref": "pkg:npm/eslint-plugin-astro@1.7.0",
@@ -32267,7 +31154,7 @@
         "pkg:npm/%40typescript-eslint/types@8.72.1",
         "pkg:npm/astro-eslint-parser@1.4.0",
         "pkg:npm/eslint-compat-utils@0.6.5",
-        "pkg:npm/eslint@9.39.5",
+        "pkg:npm/eslint@10.14.0",
         "pkg:npm/globals@16.5.0",
         "pkg:npm/postcss-selector-parser@7.1.7",
         "pkg:npm/postcss@8.5.32"
@@ -32278,7 +31165,7 @@
       "dependsOn": [
         "pkg:npm/%40babel/core@7.29.7",
         "pkg:npm/%40babel/parser@7.29.12",
-        "pkg:npm/eslint@9.39.5",
+        "pkg:npm/eslint@10.14.0",
         "pkg:npm/hermes-parser@0.25.1",
         "pkg:npm/zod-validation-error@4.0.2",
         "pkg:npm/zod@4.6.7"
@@ -32286,11 +31173,20 @@
     },
     {
       "ref": "pkg:npm/eslint-plugin-react-refresh@0.5.7",
-      "dependsOn": ["pkg:npm/eslint@9.39.5"]
+      "dependsOn": ["pkg:npm/eslint@10.14.0"]
     },
     {
       "ref": "pkg:npm/eslint-scope@8.4.0",
       "dependsOn": ["pkg:npm/esrecurse@4.3.0", "pkg:npm/estraverse@5.3.0"]
+    },
+    {
+      "ref": "pkg:npm/eslint-scope@9.1.2",
+      "dependsOn": [
+        "pkg:npm/%40types/esrecurse@4.3.1",
+        "pkg:npm/%40types/estree@1.0.10",
+        "pkg:npm/esrecurse@4.3.0",
+        "pkg:npm/estraverse@5.3.0"
+      ]
     },
     {
       "ref": "pkg:npm/eslint-visitor-keys@3.4.3",
@@ -32305,32 +31201,29 @@
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/eslint@9.39.5",
+      "ref": "pkg:npm/eslint@10.14.0",
       "dependsOn": [
         "pkg:npm/%40eslint-community/eslint-utils@4.10.1",
         "pkg:npm/%40eslint-community/regexpp@4.12.2",
-        "pkg:npm/%40eslint/config-array@0.21.2",
-        "pkg:npm/%40eslint/config-helpers@0.4.2",
-        "pkg:npm/%40eslint/core@0.17.0",
-        "pkg:npm/%40eslint/eslintrc@3.3.7",
-        "pkg:npm/%40eslint/js@9.39.5",
-        "pkg:npm/%40eslint/plugin-kit@0.4.1",
+        "pkg:npm/%40eslint/config-array@0.23.5",
+        "pkg:npm/%40eslint/config-helpers@0.7.0",
+        "pkg:npm/%40eslint/core@1.2.1",
+        "pkg:npm/%40eslint/plugin-kit@0.7.3",
         "pkg:npm/%40humanfs/node@0.16.8",
         "pkg:npm/%40humanwhocodes/module-importer@1.0.1",
         "pkg:npm/%40humanwhocodes/retry@0.4.3",
         "pkg:npm/%40types/estree@1.0.10",
         "pkg:npm/ajv@6.15.0",
-        "pkg:npm/chalk@4.1.2",
         "pkg:npm/cross-spawn@7.0.6",
         "pkg:npm/debug@4.4.3",
         "pkg:npm/escape-string-regexp@4.0.0",
-        "pkg:npm/eslint-scope@8.4.0",
-        "pkg:npm/eslint-visitor-keys@4.2.1",
-        "pkg:npm/espree@10.4.0",
+        "pkg:npm/eslint-scope@9.1.2",
+        "pkg:npm/eslint-visitor-keys@5.0.1",
+        "pkg:npm/espree@11.2.0",
         "pkg:npm/esquery@1.7.0",
         "pkg:npm/esutils@2.0.3",
         "pkg:npm/fast-deep-equal@3.1.3",
-        "pkg:npm/file-entry-cache@8.0.0",
+        "pkg:npm/file-entry-cache@11.1.5",
         "pkg:npm/find-up@5.0.0",
         "pkg:npm/glob-parent@6.0.2",
         "pkg:npm/ignore@5.3.2",
@@ -32338,8 +31231,7 @@
         "pkg:npm/is-glob@4.0.3",
         "pkg:npm/jiti@2.7.0",
         "pkg:npm/json-stable-stringify-without-jsonify@1.0.1",
-        "pkg:npm/lodash.merge@4.6.2",
-        "pkg:npm/minimatch@3.1.5",
+        "pkg:npm/minimatch@10.2.6",
         "pkg:npm/natural-compare@1.4.0",
         "pkg:npm/optionator@0.9.4"
       ]
@@ -32350,6 +31242,14 @@
         "pkg:npm/acorn-jsx@5.3.2",
         "pkg:npm/acorn@8.19.0",
         "pkg:npm/eslint-visitor-keys@4.2.1"
+      ]
+    },
+    {
+      "ref": "pkg:npm/espree@11.2.0",
+      "dependsOn": [
+        "pkg:npm/acorn-jsx@5.3.2",
+        "pkg:npm/acorn@8.19.0",
+        "pkg:npm/eslint-visitor-keys@5.0.1"
       ]
     },
     {
@@ -32431,8 +31331,8 @@
       "dependsOn": ["pkg:npm/picomatch@4.0.7"]
     },
     {
-      "ref": "pkg:npm/file-entry-cache@8.0.0",
-      "dependsOn": ["pkg:npm/flat-cache@4.0.1"]
+      "ref": "pkg:npm/file-entry-cache@11.1.5",
+      "dependsOn": ["pkg:npm/flat-cache@6.1.23"]
     },
     {
       "ref": "pkg:npm/fill-range@7.1.1",
@@ -32451,8 +31351,8 @@
       "dependsOn": ["pkg:npm/locate-path@6.0.0", "pkg:npm/path-exists@4.0.0"]
     },
     {
-      "ref": "pkg:npm/flat-cache@4.0.1",
-      "dependsOn": ["pkg:npm/flatted@3.4.4", "pkg:npm/keyv@4.5.4"]
+      "ref": "pkg:npm/flat-cache@6.1.23",
+      "dependsOn": ["pkg:npm/cacheable@2.5.0", "pkg:npm/flatted@3.4.4", "pkg:npm/hookified@1.15.1"]
     },
     {
       "ref": "pkg:npm/flatted@3.4.4",
@@ -32515,10 +31415,6 @@
       "dependsOn": ["pkg:npm/is-glob@4.0.3"]
     },
     {
-      "ref": "pkg:npm/globals@14.0.0",
-      "dependsOn": []
-    },
-    {
       "ref": "pkg:npm/globals@16.5.0",
       "dependsOn": []
     },
@@ -32545,8 +31441,8 @@
       ]
     },
     {
-      "ref": "pkg:npm/has-flag@4.0.0",
-      "dependsOn": []
+      "ref": "pkg:npm/hashery@1.5.1",
+      "dependsOn": ["pkg:npm/hookified@1.15.1"]
     },
     {
       "ref": "pkg:npm/hast-util-to-html@9.0.6",
@@ -32577,6 +31473,14 @@
       "dependsOn": ["pkg:npm/hermes-estree@0.25.1"]
     },
     {
+      "ref": "pkg:npm/hookified@1.15.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/hookified@2.2.0",
+      "dependsOn": []
+    },
+    {
       "ref": "pkg:npm/html-escaper@3.0.3",
       "dependsOn": []
     },
@@ -32597,10 +31501,6 @@
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/import-fresh@3.3.1",
-      "dependsOn": ["pkg:npm/parent-module@1.0.1", "pkg:npm/resolve-from@4.0.0"]
-    },
-    {
       "ref": "pkg:npm/imurmurhash@0.1.4",
       "dependsOn": []
     },
@@ -32610,10 +31510,6 @@
         "pkg:npm/%40formatjs/fast-memoize@3.1.7",
         "pkg:npm/%40formatjs/icu-messageformat-parser@3.5.18"
       ]
-    },
-    {
-      "ref": "pkg:npm/invariant@2.2.4",
-      "dependsOn": ["pkg:npm/loose-envify@1.4.0"]
     },
     {
       "ref": "pkg:npm/iron-webcrypto@1.2.1",
@@ -32660,10 +31556,6 @@
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/js-yaml@4.3.2",
-      "dependsOn": ["pkg:npm/argparse@2.0.1"]
-    },
-    {
       "ref": "pkg:npm/jscodeshift@17.4.0",
       "dependsOn": [
         "pkg:npm/%40babel/core@7.29.7",
@@ -32691,10 +31583,6 @@
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/json-buffer@3.0.1",
-      "dependsOn": []
-    },
-    {
       "ref": "pkg:npm/json-schema-traverse@0.4.1",
       "dependsOn": []
     },
@@ -32719,8 +31607,8 @@
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/keyv@4.5.4",
-      "dependsOn": ["pkg:npm/json-buffer@3.0.1"]
+      "ref": "pkg:npm/keyv@5.6.0",
+      "dependsOn": ["pkg:npm/%40keyv/serialize@1.1.1"]
     },
     {
       "ref": "pkg:npm/kind-of@6.0.3",
@@ -32795,15 +31683,7 @@
       "dependsOn": ["pkg:npm/prelude-ls@1.2.1", "pkg:npm/type-check@0.4.0"]
     },
     {
-      "ref": "pkg:npm/lightningcss-android-arm64@1.32.0",
-      "dependsOn": []
-    },
-    {
       "ref": "pkg:npm/lightningcss-android-arm64@1.33.0",
-      "dependsOn": []
-    },
-    {
-      "ref": "pkg:npm/lightningcss-darwin-arm64@1.32.0",
       "dependsOn": []
     },
     {
@@ -32811,15 +31691,7 @@
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/lightningcss-darwin-x64@1.32.0",
-      "dependsOn": []
-    },
-    {
       "ref": "pkg:npm/lightningcss-darwin-x64@1.33.0",
-      "dependsOn": []
-    },
-    {
-      "ref": "pkg:npm/lightningcss-freebsd-x64@1.32.0",
       "dependsOn": []
     },
     {
@@ -32827,15 +31699,7 @@
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/lightningcss-linux-arm-gnueabihf@1.32.0",
-      "dependsOn": []
-    },
-    {
       "ref": "pkg:npm/lightningcss-linux-arm-gnueabihf@1.33.0",
-      "dependsOn": []
-    },
-    {
-      "ref": "pkg:npm/lightningcss-linux-arm64-gnu@1.32.0",
       "dependsOn": []
     },
     {
@@ -32843,15 +31707,7 @@
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/lightningcss-linux-arm64-musl@1.32.0",
-      "dependsOn": []
-    },
-    {
       "ref": "pkg:npm/lightningcss-linux-arm64-musl@1.33.0",
-      "dependsOn": []
-    },
-    {
-      "ref": "pkg:npm/lightningcss-linux-x64-gnu@1.32.0",
       "dependsOn": []
     },
     {
@@ -32859,15 +31715,7 @@
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/lightningcss-linux-x64-musl@1.32.0",
-      "dependsOn": []
-    },
-    {
       "ref": "pkg:npm/lightningcss-linux-x64-musl@1.33.0",
-      "dependsOn": []
-    },
-    {
-      "ref": "pkg:npm/lightningcss-win32-arm64-msvc@1.32.0",
       "dependsOn": []
     },
     {
@@ -32875,29 +31723,8 @@
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/lightningcss-win32-x64-msvc@1.32.0",
-      "dependsOn": []
-    },
-    {
       "ref": "pkg:npm/lightningcss-win32-x64-msvc@1.33.0",
       "dependsOn": []
-    },
-    {
-      "ref": "pkg:npm/lightningcss@1.32.0",
-      "dependsOn": [
-        "pkg:npm/detect-libc@2.1.2",
-        "pkg:npm/lightningcss-android-arm64@1.32.0",
-        "pkg:npm/lightningcss-darwin-arm64@1.32.0",
-        "pkg:npm/lightningcss-darwin-x64@1.32.0",
-        "pkg:npm/lightningcss-freebsd-x64@1.32.0",
-        "pkg:npm/lightningcss-linux-arm-gnueabihf@1.32.0",
-        "pkg:npm/lightningcss-linux-arm64-gnu@1.32.0",
-        "pkg:npm/lightningcss-linux-arm64-musl@1.32.0",
-        "pkg:npm/lightningcss-linux-x64-gnu@1.32.0",
-        "pkg:npm/lightningcss-linux-x64-musl@1.32.0",
-        "pkg:npm/lightningcss-win32-arm64-msvc@1.32.0",
-        "pkg:npm/lightningcss-win32-x64-msvc@1.32.0"
-      ]
     },
     {
       "ref": "pkg:npm/lightningcss@1.33.0",
@@ -32925,24 +31752,12 @@
       "dependsOn": ["pkg:npm/p-locate@5.0.0"]
     },
     {
-      "ref": "pkg:npm/lodash.merge@4.6.2",
-      "dependsOn": []
-    },
-    {
-      "ref": "pkg:npm/loose-envify@1.4.0",
-      "dependsOn": ["pkg:npm/js-tokens@4.0.0"]
-    },
-    {
       "ref": "pkg:npm/lru-cache@11.5.3",
       "dependsOn": []
     },
     {
       "ref": "pkg:npm/lru-cache@5.1.1",
       "dependsOn": ["pkg:npm/yallist@3.1.1"]
-    },
-    {
-      "ref": "pkg:npm/magic-string@0.30.21",
-      "dependsOn": ["pkg:npm/%40jridgewell/sourcemap-codec@1.6.0"]
     },
     {
       "ref": "pkg:npm/magic-string@1.4.5",
@@ -33039,10 +31854,6 @@
     {
       "ref": "pkg:npm/minimatch@10.2.6",
       "dependsOn": ["pkg:npm/brace-expansion@5.0.12"]
-    },
-    {
-      "ref": "pkg:npm/minimatch@3.1.5",
-      "dependsOn": ["pkg:npm/brace-expansion@1.1.21"]
     },
     {
       "ref": "pkg:npm/mrmime@2.0.1",
@@ -33164,10 +31975,6 @@
       "dependsOn": []
     },
     {
-      "ref": "pkg:npm/parent-module@1.0.1",
-      "dependsOn": ["pkg:npm/callsites@3.1.0"]
-    },
-    {
       "ref": "pkg:npm/path-browserify@1.0.1",
       "dependsOn": []
     },
@@ -33265,6 +32072,10 @@
       "dependsOn": []
     },
     {
+      "ref": "pkg:npm/qified@0.10.1",
+      "dependsOn": ["pkg:npm/hookified@2.2.0"]
+    },
+    {
       "ref": "pkg:npm/queue-microtask@1.2.3",
       "dependsOn": []
     },
@@ -33316,10 +32127,6 @@
     },
     {
       "ref": "pkg:npm/require-from-string@2.0.2",
-      "dependsOn": []
-    },
-    {
-      "ref": "pkg:npm/resolve-from@4.0.0",
       "dependsOn": []
     },
     {
@@ -33527,10 +32334,6 @@
       "dependsOn": ["pkg:npm/ansi-regex@6.5.0"]
     },
     {
-      "ref": "pkg:npm/strip-json-comments@3.1.1",
-      "dependsOn": []
-    },
-    {
       "ref": "pkg:npm/styleq@0.2.1",
       "dependsOn": []
     },
@@ -33541,10 +32344,6 @@
     {
       "ref": "pkg:npm/supports-color@10.2.2",
       "dependsOn": []
-    },
-    {
-      "ref": "pkg:npm/supports-color@7.2.0",
-      "dependsOn": ["pkg:npm/has-flag@4.0.0"]
     },
     {
       "ref": "pkg:npm/svgo@4.1.0",
@@ -33563,7 +32362,7 @@
       "dependsOn": ["pkg:npm/%40pkgr/core@0.3.6"]
     },
     {
-      "ref": "pkg:npm/tailwindcss@4.3.3",
+      "ref": "pkg:npm/tailwindcss@4.3.5",
       "dependsOn": []
     },
     {
@@ -33641,7 +32440,7 @@
         "pkg:npm/%40typescript-eslint/parser@8.72.1",
         "pkg:npm/%40typescript-eslint/typescript-estree@8.72.1",
         "pkg:npm/%40typescript-eslint/utils@8.72.1",
-        "pkg:npm/eslint@9.39.5",
+        "pkg:npm/eslint@10.14.0",
         "pkg:npm/typescript@5.9.3"
       ]
     },

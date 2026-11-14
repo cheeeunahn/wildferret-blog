@@ -60,10 +60,10 @@ If a change moves one of these into the `required` scope, the generated table be
 
 |                                                      | Packages |
 | ---------------------------------------------------- | -------: |
-| Total resolved by the lockfile                       |      697 |
+| Total resolved by the lockfile                       |      672 |
 | Shipped to readers (browser or Worker)               |       11 |
-| Reachable only from devDependencies                  |      353 |
-| Toolchain reachable from `dependencies`, not shipped |      333 |
+| Reachable only from devDependencies                  |      332 |
+| Toolchain reachable from `dependencies`, not shipped |      329 |
 
 ### Shipped npm packages
 
@@ -74,7 +74,7 @@ If a change moves one of these into the `required` scope, the generated table be
 | `@formatjs/fast-memoize`             | 3.1.7   | MIT          | browser  |
 | `@formatjs/icu-messageformat-parser` | 3.5.18  | MIT          | browser  |
 | `@formatjs/icu-skeleton-parser`      | 2.1.11  | MIT          | browser  |
-| `@stylexjs/stylex`                   | 0.19.1  | MIT          | browser  |
+| `@stylexjs/stylex`                   | 0.19.2  | MIT          | browser  |
 | `astro`                              | 7.4.7   | MIT          | browser  |
 | `intl-messageformat`                 | 11.2.15 | BSD-3-Clause | browser  |
 | `react-dom`                          | 19.3.1  | MIT          | browser  |
@@ -98,22 +98,20 @@ If a change moves one of these into the `required` scope, the generated table be
 
 | License                                  | All packages | Shipped |
 | ---------------------------------------- | -----------: | ------: |
-| MIT                                      |          476 |      10 |
-| unknown — not in local store¹            |          126 |       0 |
-| ISC                                      |           29 |       0 |
+| MIT                                      |          465 |      10 |
+| unknown — not in local store¹            |          115 |       0 |
+| ISC                                      |           28 |       0 |
 | Apache-2.0                               |           23 |       0 |
-| BSD-2-Clause                             |           16 |       0 |
+| BSD-2-Clause                             |           18 |       0 |
 | BSD-3-Clause                             |            7 |       1 |
 | BlueOak-1.0.0                            |            4 |       0 |
-| MPL-2.0                                  |            4 |       0 |
 | CC0-1.0                                  |            3 |       0 |
 | MIT OR Apache-2.0                        |            3 |       0 |
+| MPL-2.0                                  |            2 |       0 |
 | 0BSD                                     |            1 |       0 |
 | Apache-2.0 AND LGPL-3.0-or-later AND MIT |            1 |       0 |
-| BSD                                      |            1 |       0 |
 | CC-BY-4.0                                |            1 |       0 |
 | LGPL-3.0-or-later                        |            1 |       0 |
-| Python-2.0                               |            1 |       0 |
 
 ¹ Almost all are platform binaries for other operating systems (e.g. `@img/sharp-linux-x64`), which pnpm never downloads on the machine that ran `pnpm sbom:write`, so their package.json is not in the local store, and no earlier run recorded their licence (a recorded one is carried forward while the SHA-512 matches). The rest are lockfile versions that node_modules has drifted away from. They carry the `wildferret:manifest = not-in-local-store` property in the JSON.
 
