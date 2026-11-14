@@ -60,9 +60,9 @@ If a change moves one of these into the `required` scope, the generated table be
 
 |                                                      | Packages |
 | ---------------------------------------------------- | -------: |
-| Total resolved by the lockfile                       |      684 |
+| Total resolved by the lockfile                       |      675 |
 | Shipped to readers (browser or Worker)               |       20 |
-| Reachable only from devDependencies                  |      340 |
+| Reachable only from devDependencies                  |      331 |
 | Toolchain reachable from `dependencies`, not shipped |      324 |
 
 ### Shipped npm packages
@@ -108,11 +108,11 @@ If a change moves one of these into the `required` scope, the generated table be
 
 | License                                  | All packages | Shipped |
 | ---------------------------------------- | -----------: | ------: |
-| MIT                                      |          476 |      18 |
+| MIT                                      |          467 |      18 |
 | unknown — not in local store¹            |          115 |       0 |
-| ISC                                      |           29 |       1 |
+| ISC                                      |           28 |       1 |
 | Apache-2.0                               |           23 |       0 |
-| BSD-2-Clause                             |           16 |       0 |
+| BSD-2-Clause                             |           18 |       0 |
 | BSD-3-Clause                             |            7 |       1 |
 | BlueOak-1.0.0                            |            4 |       0 |
 | CC0-1.0                                  |            3 |       0 |
@@ -123,7 +123,6 @@ If a change moves one of these into the `required` scope, the generated table be
 | BSD                                      |            1 |       0 |
 | CC-BY-4.0                                |            1 |       0 |
 | LGPL-3.0-or-later                        |            1 |       0 |
-| Python-2.0                               |            1 |       0 |
 
 ¹ Almost all are platform binaries for other operating systems (e.g. `@img/sharp-linux-x64`), which pnpm never downloads on the machine that ran `pnpm sbom:write`, so their package.json is not in the local store, and no earlier run recorded their licence (a recorded one is carried forward while the SHA-512 matches). The rest are lockfile versions that node_modules has drifted away from. They carry the `wildferret:manifest = not-in-local-store` property in the JSON.
 
