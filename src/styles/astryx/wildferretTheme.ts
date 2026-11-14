@@ -1,5 +1,5 @@
 import { defineTheme } from '@astryxdesign/core/theme'
-import { stoneColorTokens, stoneSyntax } from './stoneColors'
+import { indigoAccentTokens, stoneColorTokens, stoneSyntax } from './stoneColors'
 
 // The site's Astryx theme. Its colors, light and dark, are Astryx's shipped
 // "stone" theme (stoneColors.ts); its fonts, type scale and everything else are
@@ -17,7 +17,8 @@ const FONT_FALLBACKS =
 
 export const wildferretTheme = defineTheme({
   name: 'wildferret',
-  tokens: stoneColorTokens,
+  // Stone's colors, with a muted indigo accent of our own on top.
+  tokens: { ...stoneColorTokens, ...indigoAccentTokens },
   syntax: stoneSyntax,
   typography: {
     // Astryx's default ramp starts at 14px, sized for dense app UI. This is a

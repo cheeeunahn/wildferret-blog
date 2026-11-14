@@ -69,7 +69,10 @@ const { article, index, locale } = Astro.props
       {/* min-w-0 lets the column shrink below its content's width, so a long
           title wraps instead of pushing the row wider than the card. */}
       <div class="flex min-w-0 flex-1 flex-col gap-1">
-        <Text type="supporting">{article.category}</Text>
+        {/* The category takes the accent: the list's one touch of color. */}
+        <Text type="supporting" color="accent">
+          {article.category}
+        </Text>
         {/* break-keep: Korean wraps between words, as it does in articles,
             instead of splitting one ("요 / 약해보기"). text-pretty keeps a
             single word from being stranded on the title's last line. */}

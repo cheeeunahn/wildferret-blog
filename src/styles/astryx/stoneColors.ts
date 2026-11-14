@@ -169,3 +169,29 @@ export const stoneColorTokens: Partial<Record<TokenName, TokenValue>> = {
   '--shadow-inset-warning': 'inset 0px 0px 0px 2px #83838a30',
   '--shadow-inset-error': 'inset 0px 0px 0px 2px #83838a30',
 }
+
+/**
+ * Our one change to stone: a muted indigo accent. Stone's accent is its
+ * near-black neutral, so links, the selected tab, focus rings and checks
+ * vanished into the text and the site read as monochrome. This indigo is built
+ * the way stone builds its hues: hue 281 (OKLCH), halfway between stone's blue
+ * (256) and purple (305) ramps, at a low chroma (0.08) for a slight shade; a
+ * dark tone for light mode, a light one for dark mode.
+ *
+ * Contrast: #4d4f81 is 6.9:1 on the light page (#f3f3f5) and #b6bae7 is 10.1:1
+ * on the dark page (#111015), both above WCAG AA for text. Spread after
+ * stoneColorTokens, so it wins.
+ */
+export const indigoAccentTokens: Partial<Record<TokenName, TokenValue>> = {
+  '--color-accent': ['#4d4f81', '#b6bae7'],
+  '--color-text-accent': ['#4d4f81', '#b6bae7'],
+  '--color-icon-accent': ['#4d4f81', '#b6bae7'],
+  // The accent at 10% / 15%: accent fills and text selection.
+  '--color-accent-muted': ['#4d4f811a', '#b6bae726'],
+  // Stone tints its neutral fills with ink; these tint them with the indigo at
+  // the same low strength, so selected, hover and pressed states (the current
+  // nav tab, the active category pill) carry the color too.
+  '--color-neutral': ['#4d4f8114', '#b6bae71f'],
+  '--color-overlay-hover': ['#4d4f810f', '#b6bae714'],
+  '--color-overlay-pressed': ['#4d4f811f', '#b6bae726'],
+}
