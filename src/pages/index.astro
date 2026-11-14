@@ -4,8 +4,9 @@
 import Base from '../layouts/Base.astro'
 import HomeView from '../components/HomeView.astro'
 import { ROOT_LOCALE } from '../shared/i18n'
+import { t } from '../copy/strings'
 ---
 
-<Base locale={ROOT_LOCALE}>
+<Base locale={ROOT_LOCALE} description={t(ROOT_LOCALE.lang).siteDescription}>
   <HomeView locale={ROOT_LOCALE} />
 </Base>

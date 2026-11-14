@@ -1,8 +1,9 @@
 /**
  * Astro does not prefix `<a href>` with the configured `base`, and there is no
- * router <Link> to do it. Route hrefs must go through href() from
- * src/shared/siteUrl.ts; images and in-content links through resolveAssetUrl()
- * from src/shared/assetUrl.ts. See the Linking section of CLAUDE.md.
+ * router <Link> to do it. A route href in a template goes through localeHref()
+ * from src/shared/i18n.ts, which adds the language prefix as well as the base;
+ * images and in-content links go through resolveAssetUrl() from
+ * src/shared/assetUrl.ts. See the Linking section of CLAUDE.md.
  */
 
 // The pass-through set encoded in href(): protocol-relative, any scheme://,
@@ -31,13 +32,13 @@ export default {
     type: 'problem',
     docs: {
       description:
-        'Require href()/resolveAssetUrl() for internal URLs and forbid a hardcoded base path',
+        'Require localeHref()/resolveAssetUrl() for internal URLs and forbid a hardcoded base path',
     },
     messages: {
       bareHref:
-        'Bare internal path "{{path}}". Route hrefs go through href() from src/shared/siteUrl.ts; asset paths through resolveAssetUrl() from src/shared/assetUrl.ts.',
+        'Bare internal path "{{path}}". Route hrefs go through localeHref() from src/shared/i18n.ts, so the reader stays in their language; asset paths through resolveAssetUrl() from src/shared/assetUrl.ts.',
       hardcodedBase:
-        'Hardcoded base path "{{base}}". The base is configurable (astro.config.mjs / BASE_PATH) — let href() or resolveAssetUrl() apply it.',
+        'Hardcoded base path "{{base}}". The base is configurable (astro.config.mjs / BASE_PATH) — let localeHref() or resolveAssetUrl() apply it.',
     },
     schema: [
       {

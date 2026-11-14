@@ -7,7 +7,10 @@ import tailwindcss from '@tailwindcss/vite'
 
 // Served at the root of the Cloudflare static worker, so the default base is '/'.
 // BASE_PATH overrides it for a build that has to live under a path prefix.
-const base = process.env.BASE_PATH ?? '/'
+// The trailing slash is added here because Astro does not add one under
+// trailingSlash: 'ignore', and href()/resolveAssetUrl() append paths straight
+// onto BASE_URL: '/blog' would otherwise turn '/about' into '/blogabout'.
+const base = (process.env.BASE_PATH ?? '/').replace(/\/*$/, '/')
 
 // `client:summarizer`: hydrate only where Chrome's built-in Prompt API
 // exists. Used by the AiSummary island; see src/directives/summarizer.ts.

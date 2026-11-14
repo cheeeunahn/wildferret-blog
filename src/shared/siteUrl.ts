@@ -2,7 +2,8 @@
 // <Link to> (which did) is gone. These helpers own internal route hrefs; images
 // and in-content links go through resolveAssetUrl in ./assetUrl.ts instead.
 //
-// import.meta.env.BASE_URL always ends with '/' — Astro normalizes it.
+// import.meta.env.BASE_URL always ends with '/': astro.config.mjs adds it to
+// BASE_PATH, since Astro does not under trailingSlash: 'ignore'.
 const base = import.meta.env.BASE_URL
 
 /** Internal path → base-prefixed href. External/absolute URLs pass through. */

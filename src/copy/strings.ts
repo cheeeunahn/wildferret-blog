@@ -12,6 +12,7 @@ export interface Strings {
   siteTitle: string
   /** The footer's one line about the author. */
   footerTagline: string
+  /** The home page's meta description. */
   siteDescription: string
   nav: { posts: string; about: string }
   /** Accessible name for the language switcher group. */
