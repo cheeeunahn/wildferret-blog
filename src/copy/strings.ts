@@ -47,8 +47,6 @@ export interface Strings {
     emptyList: string
   }
   article: {
-    /** Reading time, given whole minutes. */
-    readTime: (minutes: number) => string
     coverImageNote: string
     /** Accessible name of the nth carousel slide, 1-based. */
     carouselSlide: (n: number) => string
@@ -107,7 +105,6 @@ const ko: Strings = {
     emptyList: '아직 이 언어로 옮긴 글이 없어요.',
   },
   article: {
-    readTime: (minutes) => `${minutes}분 읽기`,
     coverImageNote: '해당 이미지는 AI로 제작한, 이해를 돕기 위한 예시 이미지입니다.',
     carouselSlide: (n) => `${n}번째 이미지`,
     back: '목록으로 돌아가기',
@@ -157,7 +154,6 @@ const en: Strings = {
     emptyList: 'Nothing has been translated into this language yet.',
   },
   article: {
-    readTime: (minutes) => `${minutes} min read`,
     coverImageNote: 'This image was generated with AI, as an illustrative example.',
     carouselSlide: (n) => `Image ${n}`,
     back: 'Back to all posts',

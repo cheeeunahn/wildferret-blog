@@ -84,9 +84,8 @@ Add a `translations` block to that article's existing entry, after
     },
 ```
 
-`slug`, `date`, `readMinutes`, `category`, and the images are shared across
-languages — never duplicate them into the block. `readMinutes` stays the
-Korean number; it is formatted per language at render time.
+`slug`, `date`, `category`, and the images are shared across
+languages — never duplicate them into the block.
 
 The title and subtitle are translated too, and they are headline copy rather
 than prose — make them read as an English blog title, not as a literal gloss of

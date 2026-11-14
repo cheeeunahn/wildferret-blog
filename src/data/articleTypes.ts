@@ -17,8 +17,6 @@ export type TranslatedLang = Exclude<Lang, 'ko'>
 export interface Article extends ArticleText {
   slug: string
   date: string
-  /** Whole minutes. Rendered per language — never store "12분" here. */
-  readMinutes: number
   category: Category
   /** Full-width hero on the article page. */
   coverImage?: string

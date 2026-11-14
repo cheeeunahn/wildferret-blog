@@ -1,7 +1,6 @@
 ---
 import type { LocalizedArticle } from '../content/service'
 import { localeHref, type Locale } from '../shared/i18n'
-import { t } from '../copy/strings'
 import { resolveAssetUrl } from '../shared/assetUrl'
 import { ClickableCard } from '@astryxdesign/core/ClickableCard'
 import { Heading } from '@astryxdesign/core/Heading'
@@ -14,7 +13,6 @@ interface Props {
 }
 
 const { article, index, locale } = Astro.props
-const strings = t(locale.lang)
 ---
 
 {/* A list row: a square artwork plate on the left, text on the right, one
@@ -93,9 +91,7 @@ const strings = t(locale.lang)
         {/* mt-auto pins the meta to the foot of the row, level with the bottom
             of the artwork when the text is shorter than it. */}
         <div class="mt-auto pt-2">
-          <Text type="supporting">
-            {article.date} · {strings.article.readTime(article.readMinutes)}
-          </Text>
+          <Text type="supporting">{article.date}</Text>
         </div>
       </div>
     </ClickableCard>

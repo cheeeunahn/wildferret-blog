@@ -125,12 +125,10 @@ The header switcher (`src/components/LangSwitcher.astro`) is a native `<details>
 
 Article data lives in `src/data/`; everything that reads it lives in `src/content/service.ts`:
 
-- `articleTypes.ts` — `Article` (`slug`, `title`, `subtitle`, `date`, `readMinutes`, `category`, `coverImage?`, `cardImage?`, `loadContent`, `translations?`) — types only, plus the `CATEGORIES` list
+- `articleTypes.ts` — `Article` (`slug`, `title`, `subtitle`, `date`, `category`, `coverImage?`, `cardImage?`, `loadContent`, `translations?`) — types only, plus the `CATEGORIES` list
 - `article-content/*.ts` — each article exports its Korean content as a template literal string; `article-content/en/*.ts` holds the English versions
 - `articles.ts` — declares metadata and the `loadContent` dynamic imports (newest first). Pure data
 - `src/content/service.ts` — `localizeArticle()`, `articlesIn(lang)`, `langsForSlug(slug)`; covered by `service.test.ts`
-
-`readMinutes` is a **number**, formatted per language (`12분 읽기` / `12 min read`). Never store a unit string like `'12분'` in the data.
 
 **Adding an article:** create a new file in `src/data/article-content/`, export the content string, add a dynamic `loadContent` import in `articles.ts`, and prepend a new entry to the array.
 

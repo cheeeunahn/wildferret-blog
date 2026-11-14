@@ -184,7 +184,7 @@ Write the post in Korean. Its data lives entirely in `src/data/`:
    ```
 2. Add a `loadContent` dynamic import in `src/data/articles.ts`.
 3. Prepend an entry to the `articles` array with its metadata (`slug`, `title`,
-   `subtitle`, `date`, `readMinutes` as a number, `category`, optional
+   `subtitle`, `date`, `category`, optional
    `coverImage` / `cardImage`) and the loader.
 
 Bodies are read at build time in `getStaticPaths`, so a broken `loadContent`

@@ -78,10 +78,8 @@ const carouselArrowClass =
   {/* Article Header */}
   <header class="max-w-[720px] mx-auto px-6 pt-10 sm:pt-14 pb-8">
     <div class="animate-reveal">
-      <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-5">
+      <div class="mb-5">
         <Text type="supporting">{article.date}</Text>
-        <Divider orientation="vertical" className="h-3" />
-        <Text type="supporting">{strings.article.readTime(article.readMinutes)}</Text>
       </div>
 
       <Heading level={1} className="mb-3">
