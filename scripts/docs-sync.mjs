@@ -60,7 +60,7 @@ const HOST_SOURCES = ['src/layouts/Base.astro', 'src/styles/global.css', 'public
  * What the README's project tree shows. Each root is listed from the tracked
  * files under it; a `collapse`d directory is one line (its contents are not
  * structure worth listing), `exclude` drops files, and a directory with a
- * single child is folded into one line (`api/comments.ts`).
+ * single child is folded into one line (`astryx/wildferret.theme.css`).
  */
 export const TREE_ROOTS = [
   { root: 'public', collapse: ['public/assets/images', 'public/assets/audio'] },
@@ -76,7 +76,6 @@ export const TREE_ROOTS = [
   },
   { root: 'eslint-rules', collapse: ['eslint-rules'] },
   { root: 'scripts', collapse: ['scripts'] },
-  { root: 'supabase/migrations', collapse: ['supabase/migrations'] },
 ]
 
 // ---------------------------------------------------------------- blocks ----

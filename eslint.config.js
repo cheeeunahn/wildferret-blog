@@ -40,8 +40,8 @@ export default defineConfig([
     },
     rules: {
       ...localRules,
-      // Comments.tsx renders attacker-supplied text; the moderation trigger is
-      // not an XSS filter. See the Stored XSS section in CLAUDE.md.
+      // AiSummary renders model output, which is untrusted text: React must
+      // escape it. See the AI Summary section in CLAUDE.md.
       'local/no-unescaped-user-html': 'error',
     },
   },
@@ -57,14 +57,12 @@ export default defineConfig([
     extends: [astro.configs['flat/base']],
     rules: {
       ...localRules,
-      // Comments is the second island: client:visible, so the React runtime
-      // loads only when a reader scrolls to the bottom of an article.
-      // CategoryFilter is the third: the home page's Astryx SegmentedControl.
-      // AiSummary is the fourth: client:summarizer, so it loads only in browsers
-      // that have Chrome's built-in Prompt API.
+      // CategoryFilter is the second island: the home page's search and
+      // category pills. AiSummary is the third: client:summarizer, so it loads
+      // only in browsers that have Chrome's built-in Prompt API.
       'local/no-unlisted-island': [
         'error',
-        { allow: ['ThemeToggle', 'Comments', 'CategoryFilter', 'AiSummary'] },
+        { allow: ['ThemeToggle', 'CategoryFilter', 'AiSummary'] },
       ],
     },
   },

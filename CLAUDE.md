@@ -19,7 +19,6 @@ pnpm translation:status       # which articles have no English version yet
 pnpm translate                # write the missing English versions (opens Claude Code)
 pnpm card:status              # which articles have no card thumbnail yet
 pnpm card:generate            # draw the missing card thumbnails with the Codex CLI — see Card Images
-pnpm mint:api-jwt             # mint the Worker's blog_api JWT — see Comments → Environment
 pnpm sbom:write               # regenerate docs/sbom/ (CycloneDX SBOM + summary) after a dependency change
 pnpm docs:status              # are README.md / CLAUDE.md in step with the repo? — see Docs Sync
 pnpm docs:write               # rebuild the generated blocks in both docs
@@ -37,9 +36,9 @@ Astro 7.4 requires **Node 22.23.4+**; pnpm 12 is pinned via `packageManager`. pn
 
 ## Architecture
 
-**Stack:** Astro 7 (static output + one on-demand route, `@astrojs/cloudflare` adapter), React 19 islands, TypeScript 5 (strict), Tailwind CSS 4 (`@tailwindcss/vite`), Astryx design system (`@astryxdesign/core`, pinned — see Design Tokens)
+**Stack:** Astro 7 (static output, `@astrojs/cloudflare` adapter), React 19 islands, TypeScript 5 (strict), Tailwind CSS 4 (`@tailwindcss/vite`), Astryx design system (`@astryxdesign/core`, pinned — see Design Tokens)
 
-Every page is prerendered to a real HTML file at build time. The one exception is `src/pages/api/comments.ts` (`prerender = false`), which runs as Worker code — see Comments. There is no client-side router.
+Every page is prerendered to a real HTML file at build time; no route runs as Worker code (none sets `prerender = false`). There is no client-side router.
 
 **Deployment:** one root-path Cloudflare Worker. `astro.config.mjs` uses `base: '/'`, overridable via the `BASE_PATH` env var for a path-prefixed host. The build writes prerendered pages to `dist/client/` (served as static assets, with `not_found_handling: "404-page"` → `dist/client/404.html`) and the Worker to `dist/server/`; the adapter generates the deployable `dist/server/wrangler.json` from `wrangler.jsonc`. The adapter is pinned to an exact `@astrojs/cloudflare` version in `package.json`; check its `astro` peer range and bump the two together. Sessions are off (`session: false`) so no KV namespace is required, and the adapter is skipped under Vitest (see the comment in `astro.config.mjs`).
 
@@ -60,11 +59,11 @@ The page files are thin: each resolves a `Locale`, then renders a view component
 | Layer              | Folder                                                                 | Holds                                                                                                                                                    |
 | ------------------ | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Presentation       | `src/pages`, `src/layouts`, `src/components`, `src/copy`, `src/styles` | Templates, islands, UI copy (`copy/strings.ts`), Tailwind                                                                                                |
-| Browser client     | `src/client`                                                           | Code an island uses to reach anything outside the page (today: `commentsApi.ts` → `/api/comments`)                                                       |
-| Logic (runtime)    | `src/server`                                                           | Code that runs per request in the Worker (today: `comments/`)                                                                                            |
+| Browser client     | `src/client`                                                           | Code an island uses to reach anything outside the page (today: `summarizer.ts` → Chrome's built-in AI)                                                   |
+| Logic (runtime)    | `src/server`                                                           | Code that runs per request in the Worker (none today; the folder does not exist until a route needs it)                                                  |
 | Logic (build time) | `src/content`                                                          | `service.ts` — every read of article/about data (`articlesIn`, `langsForSlug`, `localizeArticle`, `aboutCopy`); `parser.ts` — the article-content parser |
 | Data               | `src/data`                                                             | Article metadata, bodies, about copy, and their types. No functions beyond `loadContent`                                                                 |
-| Shared             | `src/shared`                                                           | Pure helpers any layer may use: `i18n`, `siteUrl`, `assetUrl`, `moderation`                                                                              |
+| Shared             | `src/shared`                                                           | Pure helpers any layer may use: `i18n`, `siteUrl`, `assetUrl`                                                                                            |
 
 The import rules, enforced by `local/no-cross-layer-import` (zones in `eslint-rules/layer-zones.js`):
 
@@ -72,7 +71,7 @@ The import rules, enforced by `local/no-cross-layer-import` (zones in `eslint-ru
 - `.tsx` components and `src/client` can ship to the browser, so they never import `src/content`, `src/server` or `src/data`.
 - `src/content` never imports presentation; `src/data` imports nothing but `src/shared`; `src/shared` imports nothing from the app.
 
-`src/content` runs at build time (inside `getStaticPaths` and page frontmatter), not on a request server — that is why it is not called `server/`. `src/server/` holds the code that does run per request.
+`src/content` runs at build time (inside `getStaticPaths` and page frontmatter), not on a request server — that is why it is not called `server/`. `src/server/` is where code that runs per request would go; the lint zones for it stay in place so it starts out isolated.
 
 ## Islands policy
 
@@ -82,9 +81,8 @@ This is the rule that is easiest to break by accident.
 - Astryx components (`Heading`, `Text`, `Card`, `Table`, …) are React, but used in `.astro` **without** `client:*` they render to static HTML and ship nothing. Only use display components that way; anything needing a click handler would render dead (switch such features off — `CodeBlock hasCopyButton={false}`, `Text hasTruncateTooltip={false}`). Interactive Astryx controls belong inside a listed island only (see below). Importing one into `ThemeToggle` would put Astryx's ~31 KB button chunk on every page, which is why that toggle stays a native `<button>`.
 - **A static `ClickableCard` does not link on its own.** Its `<a href>` is visually hidden (1px, clipped) and a click on the card navigates through a React `onClick`, which never ships when the card is rendered from `.astro`. `ArticleCard.astro` therefore stretches that anchor over the card with `[&>a]:inset-0! [&>a]:size-auto! [&>a]:m-0! [&>a]:[clip:auto]! [&>a]:z-1!`; the `!` is needed to beat StyleX's high-specificity selectors. Any other static `ClickableCard` needs the same, and after an Astryx upgrade check that its `<a>` is still a direct child. Without an `href` it renders a hidden `<button>` instead, which is just as dead.
 - Not every `.tsx` in `src/components` is an island. `HeroSoundButton.tsx` wraps Astryx's `IconButton` and is rendered **statically** from `FerretHero.astro`. `IconButton` passes `className`, `aria-pressed` and `data-*` through to its `<button>`, and the hero's `is:inline` script drives the button through those attributes.
-- There are exactly **four** hydrated islands, and they hydrate differently on purpose:
+- There are exactly **three** hydrated islands, and they hydrate differently on purpose:
   - `src/components/ThemeToggle.tsx` — `client:only="react"`, because it reads `document.documentElement` in a `useState` initializer, which has no server equivalent. Its fixed-size wrapper in `Base.astro` reserves layout space so the header does not shift on mount. Its accessible name and tooltip arrive as `toLight` / `toDark` props from `strings.theme`.
-  - `src/components/Comments.tsx` — `client:visible` in `ArticleView.astro` (so all three language trees get it from one place). It has no server-hostile code, so the shell prerenders and the React runtime downloads only once a reader scrolls to the bottom of an article. Article pages keep a zero-JS first paint. Do not "simplify" this to `client:load`, which would ship React to every article on load.
   - `src/components/CategoryFilter.tsx` — `client:load` in `HomeView.astro`. The home page's toolbar, laid out after Astryx's Library template: a `TextInput` search and a `ToggleButtonGroup` of category pills. It does not render the cards (they are static HTML outside it); it sets `hidden` on each card that fails the query or category, matching the query against the card's `data-search` text only — reader input is never written into a selector or markup. With no JS, every post stays visible. It also owns a polite `role="status"` region that announces the result count to screen readers. The region is rendered from the start and only its text changes (the effect writes it through a ref, as it writes `hidden`), and nothing is announced until the reader filters. The count labels come from `strings.home.resultsCount`, precomputed per count in `HomeView` as `resultLabels`. React itself was already on the page for ThemeToggle.
   - `src/components/AiSummary.tsx` — `client:summarizer`, a custom directive (`src/directives/summarizer.ts`, registered in `astro.config.mjs`). The button sits in the article header, which is in view on load, so `client:visible` would ship React to every article view — mostly to readers whose browser cannot run it. The directive hydrates only where Chrome's built-in Prompt API (`LanguageModel`) exists; everyone else downloads neither the island nor React. See AI Summary below.
 - The allowlist for the above lives in `eslint.config.js` (the `allow` option on `local/no-unlisted-island`), not in the rule file.
@@ -117,7 +115,7 @@ Language lives in the **URL**, never in client state — every page is a static 
 
 `src/shared/i18n.ts` owns the URL side (`localeHref`, `toLangFreePath`, `switchLangHref`, `canonicalPath`) and is covered by `src/shared/i18n.test.ts`. Note the two spellings of Korean: `LANG_SEGMENTS` maps it to the reader-facing `kr` used in URLs, `HTML_LANGS` to the standards-facing `ko` used in `<html lang>` and `hreflang`.
 
-**All chrome text lives in `src/copy/strings.ts`**, keyed by language behind the `Strings` interface, and about-page copy in `src/data/about.ts` (read through `aboutCopy()` in `src/content/service.ts`). Never put a user-visible literal in a template — a missing key is a type error, but a hardcoded Korean string is a silent leak into `/en/`. The one `is:inline` script that needs translated text (the hero's sound toggle) reads it off `data-*` attributes rather than being templated, so the script stays static. Islands never import `t`: each gets only the strings it renders, as props (`Comments` and `AiSummary` take a `strings` object, `ThemeToggle` and `CategoryFilter` take individual labels). Island props are serialized into the HTML, so a function such as `resultsCount(n)` cannot be passed. Precompute its outputs in the `.astro` parent instead.
+**All chrome text lives in `src/copy/strings.ts`**, keyed by language behind the `Strings` interface, and about-page copy in `src/data/about.ts` (read through `aboutCopy()` in `src/content/service.ts`). Never put a user-visible literal in a template — a missing key is a type error, but a hardcoded Korean string is a silent leak into `/en/`. The one `is:inline` script that needs translated text (the hero's sound toggle) reads it off `data-*` attributes rather than being templated, so the script stays static. Islands never import `t`: each gets only the strings it renders, as props (`AiSummary` takes a `strings` object, `ThemeToggle` and `CategoryFilter` take individual labels). Island props are serialized into the HTML, so a function such as `resultsCount(n)` cannot be passed. Precompute its outputs in the `.astro` parent instead.
 
 The header switcher (`src/components/LangSwitcher.astro`) is a native `<details>` menu of plain links, no island. A small `is:inline` script adds light-dismiss (click outside, Escape); without it the menu still works. It always targets an explicit prefix, so `/en/about ↔ /kr/about` round-trips.
 
@@ -233,7 +231,8 @@ The "AI로 요약하기 / Summarize with AI" button in the article header summar
 - **Korean goes through English.** Chrome's model refuses Korean as input and output, so `pickRoute()` picks `via-en`: Translator `ko→en`, summarize, Translator `en→ko` (streamed). When Chrome takes Korean directly, `pickRoute()` returns `direct` with no code change.
 - **One download per click.** Chrome refuses a second `create()` that needs a download in the same click (`NotAllowedError`). Models are created one at a time and kept across clicks; `NeedsAnotherClick` puts the button into "이어서 불러오기".
 - Summaries are cached in `sessionStorage` under `ai-summary:v2:<lang>:<slug>`. Bump the version when the prompt or format changes, or readers keep seeing the old output for the session.
-- Model output is untrusted text: render it as JSX children only, same as comments.
+- **Model output is untrusted text.** Render it as JSX children only and let React escape it; `local/no-unescaped-user-html` enforces the mechanical half (no `dangerouslySetInnerHTML`, no `formatInline` import in `src/components/`). `ArticleView.astro` renders prose with `set:html={formatInline(...)}`, which emits raw HTML on purpose and is safe only because its input is your own content, so never run any other text through it.
+- The CSP in `public/_headers` is **not** a backstop here: `script-src` must allow `'unsafe-inline'` because Astro emits its island runtime as inline scripts. It still buys `connect-src 'self'`, `object-src`, `base-uri` and `frame-ancestors`.
 
 ## Design Tokens
 
@@ -245,80 +244,13 @@ The site uses **Astryx's default color system** and Astryx typography (ADR 0002;
 
 Entrance motion: `animate-page-enter` on each page's wrapper plus `animate-reveal` (or `animate-reveal-media`) on its children, staggered with `reveal-delay-<n>` (n × 0.1s) or an inline `animation-delay`. They are Tailwind animation tokens (`--animate-*` in `@theme`), not hand-written classes; Tailwind's own `delay-*` is transition-delay, hence the separate name. Do not animate the layout chrome: Astro does real page navigations, so a header entrance would replay on every click.
 
-## Comments
-
-Anonymous, nickname-only comments on article pages, stored in Supabase. Schema and moderation live in `supabase/migrations/`; apply each file in order in the Supabase SQL editor (but see Cutover below for when).
-
-The browser never talks to Supabase. Three layers, one direction:
-
-| Layer    | File                                                        | Role                                                                                                                                             |
-| -------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Browser  | `src/client/commentsApi.ts`                                 | Same-origin `fetch` to `/api/comments`. Holds no URL or key                                                                                      |
-| HTTP     | `src/pages/api/comments.ts` → `src/server/comments/http.ts` | The only non-prerendered route. Status codes, same-origin JSON only, streamed body-size limit (16 KB), `{ reason }` error bodies                 |
-| Logic    | `src/server/comments/service.ts`                            | Validates input (slug must be a published article), re-runs `checkComment()` (the browser cannot be trusted), maps trigger hints to reason codes |
-| Data     | `src/server/comments/repository.ts`                         | The only code that calls PostgREST — plain `fetch`, deliberately **not** `@supabase/supabase-js`                                                 |
-| Database | `supabase/migrations/`                                      | RLS, column grants, and the `moderate_comment()` trigger — the final authority                                                                   |
-
-The wire shape (`Comment`) lives in `src/shared/comments.ts`, because the client and server may not import each other.
-
-- **The Worker connects as `blog_api`, never `service_role`.** `blog_api` (0002) has exactly the privileges anon used to have: `select` on visible rows only, `insert` on the three user columns only. A bug in the Worker therefore still cannot return a hidden comment or set `is_hidden`/`created_at` — the database refuses. Using `service_role` would bypass RLS and make `repository.ts` the only line of defense; do not.
-- **Moderation runs in three places, on purpose.** The browser runs `checkComment()` for instant feedback; the service runs it again because a request can skip the browser; the trigger enforces everything, including the profanity list that neither copy ever sees.
-- **Rejections travel as reason codes, never messages.** The trigger raises with a `hint` (`pii_phone`, `profanity`, `too_fast`, …); the repository keeps only that hint, the service keeps it only if it is a known code, and the API answers `{ "reason": <code> }`. The copy lives in `REJECTION_MESSAGES` (Korean) and `REJECTION_MESSAGES_EN` in `src/shared/moderation.ts`, picked by `messageFor(reason, lang)`. Never forward or render a PostgREST `message`/`details` string — that would make the error path an injection channel.
-- **Statuses:** 200/201 success · 400 malformed request or unknown slug · 403 POST from another origin · 413 body too large · 415 POST not `application/json` · 422 moderation rejection · 429 `too_fast` · 502 database failure · 503 Worker missing its secrets (the island then renders nothing).
-- **The body limit is enforced while reading.** `readBounded()` cancels the stream as soon as it passes 16 KB, so a body with no (or a false) `Content-Length` is never buffered past it. Do not swap it back for `request.text()`.
-- **Only published slugs are accepted.** The route builds the set from `articlesIn('ko')` (metadata only, no bodies) and passes it down. A made-up slug never reaches the database, so it cannot create orphan threads or occupy an article's cooldown.
-- **The trigger's limits are serialized.** The duplicate, cooldown and table-wide checks are look-then-insert; `0004` takes a table-wide advisory lock in a trigger that fires before `moderate_comment` (triggers fire in name order), so concurrent inserts cannot all pass. Apply it in the SQL editor like the others.
-
-### Languages
-
-A post's thread is keyed by `article_slug` **alone**, so one discussion is shared across `/`, `/kr/` and `/en/` rather than split per language. Changing that means re-keying the table, not just the prop.
-
-The island's UI text arrives as a `strings` prop (`Strings['comments']`) and its rejection copy is chosen by a `lang` prop, both passed down from `ArticleView.astro`. It is done this way so the island ships only the strings it renders instead of bundling every language's dictionary — do not `import { t }` inside `Comments.tsx`.
-
-### Stored XSS — the trap in this repo
-
-Comment text is attacker-controlled and stored verbatim. **The moderation trigger is not an XSS filter**: `<script>` passes through it and is stored as text, which is correct, because storage was never the vulnerability. Rendering is.
-
-`ArticleView.astro` renders prose with `set:html={formatInline(...)}`, which emits raw HTML _on purpose_ — that is how `**bold**` works, and it is safe only because its input is your own content. Reusing that parser for comments is the obvious-looking move and would be a textbook stored-XSS hole.
-
-- Render comment `body` and `nickname` as JSX children (`{c.body}`) and let React escape them. **This is the actual defense.** Nickname counts too — it looks like metadata, which is why it gets rendered carelessly.
-- `local/no-unescaped-user-html` enforces the mechanical half (no `dangerouslySetInnerHTML`, no `formatInline` import in `src/components/`).
-- If you ever add markdown to comments, that needs a real sanitizer on the output — not the article parser. If you ever autolink URLs, allowlist `http:`/`https:`; React does not escape a `javascript:` href.
-
-`public/_headers` carries a CSP, but note what it is not: `script-src` must allow `'unsafe-inline'` because Astro emits its island runtime as inline scripts, so the CSP is **not** a backstop against script injection. It still buys `connect-src 'self'` (no exfiltration to any other host — the comment API is same-origin), `object-src`, `base-uri`, and `frame-ancestors`.
-
-### Environment
-
-Three **runtime** Worker secrets, read through `env` from `cloudflare:workers` (typed in `src/env.d.ts`). Nothing is inlined at build time, so the build no longer needs any Supabase variable.
-
-| Secret                     | Value                                                                                                                                                                        |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SUPABASE_URL`             | `https://<project>.supabase.co`                                                                                                                                              |
-| `SUPABASE_PUBLISHABLE_KEY` | The publishable key. The Supabase gateway requires it as `apikey`; after 0003 it grants nothing on its own                                                                   |
-| `SUPABASE_API_JWT`         | A JWT with `role: blog_api`, from `SUPABASE_JWT_SECRET=… pnpm mint:api-jwt` (signed with the project's legacy HS256 JWT secret, which must still be an accepted signing key) |
-
-Production: `npx wrangler secret put <NAME>` for each. Local `pnpm dev`: copy `.dev.vars.example` to `.dev.vars` (gitignored). Never use a `service_role` / secret key for any of these.
-
-The JWT is valid for 365 days by default (`--days` to change). Rotate by minting a new one and putting it again before it expires; rotating the project's JWT secret revokes it immediately.
-
-### Cutover
-
-Order matters, because the old bundle calls PostgREST as anon until the new Worker is live:
-
-1. Apply `0002_blog_api_role.sql` (adds `blog_api`; anon is untouched).
-2. Set the three Worker secrets, and remove the old `PUBLIC_SUPABASE_*` build variables from the Cloudflare build settings.
-3. Deploy, and confirm comments load and post on `/`, `/kr/` and `/en/`.
-4. Apply `0003_revoke_anon.sql`. Confirm that a direct PostgREST call with only the publishable key is now refused.
-
-Rollback: re-grant anon (see the comment at the top of 0003), then revert the deploy.
-
 ## SBOM
 
 `docs/sbom/sbom.cdx.json` (CycloneDX 1.6) is generated by `pnpm sbom:write` (`scripts/sbom.mjs`, tested in `scripts/sbom.test.js`); `docs/sbom/README.md` explains it and carries a generated summary between its `sbom:summary` markers. Re-run it in any PR that changes `pnpm-lock.yaml`, and commit both files. Hand edits to either are overwritten.
 
 - **The lockfile is the source** of what is listed, not `node_modules`. Licences come from each package's own `package.json` in pnpm's virtual store (`node_modules/.pnpm`) at the locked version, so the script needs no network access but does need a `pnpm install` first. That store only holds this OS's platform binaries, so for a package it lacks, the script reuses what the committed `sbom.cdx.json` recorded for the same name@version, provided the SHA-512 still matches the lockfile. Do not hand-edit or delete `sbom.cdx.json` before a re-run: that is where licences of other platforms' binaries survive.
 - **`scope: required` means "served to readers".** The script measures that with a throwaway sourcemap build, because `dependencies` vs `devDependencies` does not say what ships. If a copyleft package (the LGPL libvips under `sharp`, MPL `lightningcss`) ever shows up as shipped, look at it before merging.
-- **CDN fonts and external services are listed by hand** in `EXTERNAL_COMPONENTS` / `EXTERNAL_SERVICES` in the script. Add an entry when `Base.astro` or `global.css` loads something new from another host, or the Worker starts calling a new service. The CSP in `public/_headers` allowlists the same hosts (`style-src`, `font-src`): add a host there when you add one, and remove it when the last load from it goes. Today that is jsDelivr (Pretendard) and pstatic (NanumSquare Neo).
+- **CDN fonts and external services are listed by hand** in `EXTERNAL_COMPONENTS` / `EXTERNAL_SERVICES` in the script. Add an entry when `Base.astro` or `global.css` loads something new from another host, or the site starts calling a new service. The CSP in `public/_headers` allowlists the same hosts (`style-src`, `font-src`): add a host there when you add one, and remove it when the last load from it goes. Today that is jsDelivr (Pretendard) and pstatic (NanumSquare Neo).
 - The output is deterministic and already Prettier-formatted, so an unchanged dependency tree gives an empty diff.
 
 ## Formatting
@@ -331,12 +263,12 @@ Article bodies are template literals, which Prettier leaves alone, so formatting
 
 `pnpm lint` runs ESLint over `src/**/*.{ts,tsx}` **and** `src/**/*.astro`. Alongside the published rule sets, `eslint-rules/` is a repo-local plugin (registered as `local` in `eslint.config.js`) that turns the conventions above into errors:
 
-| Rule                           | Scope          | Enforces                                                                                                                                                                    |
-| ------------------------------ | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `local/no-bare-internal-href`  | ts, tsx, astro | Linking — no bare `href="/about"` / `src="/assets/…"`, no hardcoded base prefix in any string (this half also reaches markdown links inside `article-content/*.ts`)         |
-| `local/no-unlisted-island`     | astro          | Islands policy — `client:*` only on `<ThemeToggle>`, `<Comments>`, `<CategoryFilter>` and `<AiSummary>` (allowlist is the rule's `allow` option, set in `eslint.config.js`) |
-| `local/no-unescaped-user-html` | ts, tsx        | Comments — no `dangerouslySetInnerHTML`; no importing `formatInline` (from `content/parser`) into `src/components/`                                                         |
-| `local/no-cross-layer-import`  | ts, tsx, astro | Layers — the import rules above (zones in `eslint-rules/layer-zones.js`)                                                                                                    |
+| Rule                           | Scope          | Enforces                                                                                                                                                            |
+| ------------------------------ | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `local/no-bare-internal-href`  | ts, tsx, astro | Linking — no bare `href="/about"` / `src="/assets/…"`, no hardcoded base prefix in any string (this half also reaches markdown links inside `article-content/*.ts`) |
+| `local/no-unlisted-island`     | astro          | Islands policy — `client:*` only on `<ThemeToggle>`, `<CategoryFilter>` and `<AiSummary>` (allowlist is the rule's `allow` option, set in `eslint.config.js`)       |
+| `local/no-unescaped-user-html` | ts, tsx        | AI Summary — no `dangerouslySetInnerHTML`; no importing `formatInline` (from `content/parser`) into `src/components/`                                               |
+| `local/no-cross-layer-import`  | ts, tsx, astro | Layers — the import rules above (zones in `eslint-rules/layer-zones.js`)                                                                                            |
 
 **Adding a rule:** write `eslint-rules/<name>.js` exporting the standard `{ meta, create }` object (plain ESM, no build step), register it in `eslint-rules/index.js`, enable it in the right block of `eslint.config.js`, and add `RuleTester` cases to `eslint-rules/rules.test.js` — `pnpm test` runs those alongside the unit tests.
 

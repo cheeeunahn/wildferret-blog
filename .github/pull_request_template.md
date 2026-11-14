@@ -27,7 +27,6 @@
 
 - [ ] Routes: `/` · `/kr/` · `/en/`
 - [ ] Articles (which slugs?)
-- [ ] Comments / Supabase
 - [ ] Build, CI, or deploy (Cloudflare worker)
 
 ## Related issues, PRs, and people
@@ -53,11 +52,6 @@
 - [ ] English version: written by the translate hook/workflow, or left out on purpose
 - [ ] If the Korean was edited after translation, re-ran `/translate-articles <slug>`
 - [ ] Any image with Korean text baked in is listed: it stays Korean on `/en/`
-
-### If this touches comments
-
-- [ ] Comment `body` and `nickname` render as JSX children: no `set:html`, no `formatInline`
-- [ ] Any schema or moderation change has a migration in `supabase/migrations/`
 
 ## Screenshots
 

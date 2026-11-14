@@ -1,7 +1,6 @@
 ---
 import type { LocalizedArticle } from '../content/service'
 import AiSummary from './AiSummary'
-import Comments from './Comments'
 import { formatInline, parseArticleBody } from '../content/parser'
 import { resolveAssetUrl } from '../shared/assetUrl'
 import { localeHref, type Locale } from '../shared/i18n'
@@ -350,21 +349,6 @@ const carouselArrowClass =
       )
     })}
   </article>
-
-  {/* Comments. client:visible, not client:only — the island has no
-        server-hostile code, so the shell prerenders and the React runtime only
-        downloads once a reader actually scrolls this far.
-        Keyed by slug alone, so a post's thread is shared across all three
-        language trees rather than split per language. */}
-  <div class="max-w-[720px] mx-auto px-6 pb-4">
-    <Divider className="mb-10" />
-    <Comments
-      client:visible
-      articleSlug={article.slug}
-      strings={strings.comments}
-      lang={locale.lang}
-    />
-  </div>
 
   {/* Back link */}
   <div class="max-w-[720px] mx-auto px-6 pb-20">

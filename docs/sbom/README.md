@@ -61,34 +61,25 @@ If a change moves one of these into the `required` scope, the generated table be
 |                                                      | Packages |
 | ---------------------------------------------------- | -------: |
 | Total resolved by the lockfile                       |      697 |
-| Shipped to readers (browser or Worker)               |       20 |
+| Shipped to readers (browser or Worker)               |       11 |
 | Reachable only from devDependencies                  |      353 |
-| Toolchain reachable from `dependencies`, not shipped |      324 |
+| Toolchain reachable from `dependencies`, not shipped |      333 |
 
 ### Shipped npm packages
 
-| Package                              | Version | License      | Ships in       |
-| ------------------------------------ | ------- | ------------ | -------------- |
-| `@astrojs/cloudflare`                | 14.4.6  | MIT          | worker         |
-| `@astrojs/internal-helpers`          | 0.13.1  | MIT          | worker         |
-| `@astrojs/react`                     | 7.1.4   | MIT          | browser        |
-| `@astryxdesign/core`                 | 0.7.5   | MIT          | browser        |
-| `@formatjs/fast-memoize`             | 3.1.7   | MIT          | browser        |
-| `@formatjs/icu-messageformat-parser` | 3.5.18  | MIT          | browser        |
-| `@formatjs/icu-skeleton-parser`      | 2.1.11  | MIT          | browser        |
-| `@oslojs/encoding`                   | 1.1.0   | MIT          | worker         |
-| `@stylexjs/stylex`                   | 0.19.1  | MIT          | browser        |
-| `astro`                              | 7.4.7   | MIT          | browser,worker |
-| `clsx`                               | 2.1.1   | MIT          | worker         |
-| `cookie`                             | 2.0.1   | MIT          | worker         |
-| `devalue`                            | 6.0.3   | MIT          | worker         |
-| `html-escaper`                       | 3.0.3   | MIT          | worker         |
-| `intl-messageformat`                 | 11.2.15 | BSD-3-Clause | browser        |
-| `piccolore`                          | 0.1.3   | ISC          | worker         |
-| `react-dom`                          | 19.3.1  | MIT          | browser        |
-| `react`                              | 19.3.1  | MIT          | browser        |
-| `scheduler`                          | 0.28.0  | MIT          | browser        |
-| `zod`                                | 4.6.7   | MIT          | worker         |
+| Package                              | Version | License      | Ships in |
+| ------------------------------------ | ------- | ------------ | -------- |
+| `@astrojs/react`                     | 7.1.4   | MIT          | browser  |
+| `@astryxdesign/core`                 | 0.7.5   | MIT          | browser  |
+| `@formatjs/fast-memoize`             | 3.1.7   | MIT          | browser  |
+| `@formatjs/icu-messageformat-parser` | 3.5.18  | MIT          | browser  |
+| `@formatjs/icu-skeleton-parser`      | 2.1.11  | MIT          | browser  |
+| `@stylexjs/stylex`                   | 0.19.1  | MIT          | browser  |
+| `astro`                              | 7.4.7   | MIT          | browser  |
+| `intl-messageformat`                 | 11.2.15 | BSD-3-Clause | browser  |
+| `react-dom`                          | 19.3.1  | MIT          | browser  |
+| `react`                              | 19.3.1  | MIT          | browser  |
+| `scheduler`                          | 0.28.0  | MIT          | browser  |
 
 ### Loaded from a CDN at runtime
 
@@ -99,18 +90,17 @@ If a change moves one of these into the `required` scope, the generated table be
 
 ### Services
 
-| Service            | Provider   | Used for                                                                                                                           |
-| ------------------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| Supabase PostgREST | Supabase   | Comment storage. Called only by the Worker (src/server/comments/repository.ts) as the blog_api role; the browser never reaches it. |
-| Cloudflare Workers | Cloudflare | Hosts the prerendered pages as static assets and runs the one on-demand route, /api/comments.                                      |
+| Service            | Provider   | Used for                                      |
+| ------------------ | ---------- | --------------------------------------------- |
+| Cloudflare Workers | Cloudflare | Hosts the prerendered pages as static assets. |
 
 ### Licenses (npm packages)
 
 | License                                  | All packages | Shipped |
 | ---------------------------------------- | -----------: | ------: |
-| MIT                                      |          476 |      18 |
+| MIT                                      |          476 |      10 |
 | unknown — not in local store¹            |          126 |       0 |
-| ISC                                      |           29 |       1 |
+| ISC                                      |           29 |       0 |
 | Apache-2.0                               |           23 |       0 |
 | BSD-2-Clause                             |           16 |       0 |
 | BSD-3-Clause                             |            7 |       1 |

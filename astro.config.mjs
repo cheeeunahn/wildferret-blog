@@ -31,8 +31,8 @@ export default defineConfig({
   // The worker resolves extensionless paths to the directory index.
   build: { format: 'directory' },
   trailingSlash: 'ignore',
-  // Every page is still prerendered. The adapter exists for the one route that
-  // opts out with `prerender = false`: /api/comments (src/pages/api/comments.ts).
+  // Every page is prerendered; no route opts out with `prerender = false`. The
+  // adapter is what deploys the site as a Cloudflare Worker serving those files.
   // No sessions: the blog has no logged-in state, and leaving them on makes the
   // adapter require a SESSION KV namespace that nothing would ever read.
   // No image service: images are plain files in public/, never astro:assets.
@@ -63,7 +63,6 @@ export default defineConfig({
           'react-dom/server',
           '@astryxdesign/core/Badge',
           '@astryxdesign/core/Blockquote',
-          '@astryxdesign/core/Button',
           '@astryxdesign/core/Card',
           '@astryxdesign/core/ClickableCard',
           '@astryxdesign/core/CodeBlock',
@@ -75,7 +74,6 @@ export default defineConfig({
           '@astryxdesign/core/Link',
           '@astryxdesign/core/Table',
           '@astryxdesign/core/Text',
-          '@astryxdesign/core/TextArea',
           '@astryxdesign/core/TextInput',
           '@astryxdesign/core/ToggleButton',
           '@astryxdesign/core/TopNav',

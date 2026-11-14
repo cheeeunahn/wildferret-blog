@@ -58,22 +58,10 @@ export interface Strings {
   /** Accessible name and tooltip of the header's theme toggle, by what it switches to. */
   theme: { toLight: string; toDark: string }
   /**
-   * Passed to the Comments island as a prop rather than looked up inside it.
+   * Passed to the AiSummary island as a prop rather than looked up inside it.
    * The island would otherwise have to bundle every language's dictionary to
    * pick one at runtime; this way it ships only the strings it renders.
    */
-  comments: {
-    heading: string
-    loading: string
-    empty: string
-    namePlaceholder: string
-    nameLabel: string
-    bodyPlaceholder: string
-    bodyLabel: string
-    submit: string
-    submitting: string
-  }
-  /** Passed to the AiSummary island as a prop, for the same reason as `comments`. */
   summarizer: {
     button: string
     /** Shown with a percentage while Chrome downloads the on-device model. */
@@ -126,17 +114,6 @@ const ko: Strings = {
   },
   notFound: { title: '페이지를 찾을 수 없습니다', back: '목록으로 돌아가기' },
   theme: { toLight: '밝은 테마로 전환', toDark: '어두운 테마로 전환' },
-  comments: {
-    heading: '댓글',
-    loading: '댓글을 불러오는 중…',
-    empty: '첫 댓글을 남겨보세요.',
-    namePlaceholder: '이름',
-    nameLabel: '이름',
-    bodyPlaceholder: '댓글을 남겨주세요',
-    bodyLabel: '댓글',
-    submit: '댓글 남기기',
-    submitting: '등록 중…',
-  },
   summarizer: {
     button: 'AI로 요약하기',
     downloading: 'AI 모델을 불러오고 있어요',
@@ -187,17 +164,6 @@ const en: Strings = {
   },
   notFound: { title: 'Page not found', back: 'Back to all posts' },
   theme: { toLight: 'Switch to light theme', toDark: 'Switch to dark theme' },
-  comments: {
-    heading: 'Comments',
-    loading: 'Loading comments…',
-    empty: 'Be the first to comment.',
-    namePlaceholder: 'Name',
-    nameLabel: 'Name',
-    bodyPlaceholder: 'Leave a comment',
-    bodyLabel: 'Comment',
-    submit: 'Post comment',
-    submitting: 'Posting…',
-  },
   summarizer: {
     button: 'Summarize with AI',
     downloading: 'Loading the AI model',

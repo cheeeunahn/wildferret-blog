@@ -58,7 +58,7 @@ const SPDX_IDS = new Set([
 
 // What readers' browsers and the Worker use at runtime that no lockfile can
 // see: webfonts loaded from a CDN (Base.astro, global.css) and the services the
-// Worker talks to (src/server/). Keep this list in step with those files.
+// site runs on or calls. Keep this list in step with those files.
 export const EXTERNAL_COMPONENTS = [
   {
     type: 'library',
@@ -104,22 +104,10 @@ export const EXTERNAL_COMPONENTS = [
 
 export const EXTERNAL_SERVICES = [
   {
-    'bom-ref': 'service:supabase-postgrest',
-    provider: { name: 'Supabase' },
-    name: 'Supabase PostgREST',
-    description:
-      'Comment storage. Called only by the Worker (src/server/comments/repository.ts) as the blog_api role; the browser never reaches it.',
-    endpoints: ['https://<project>.supabase.co/rest/v1/blog_user_comments'],
-    authenticated: true,
-    'x-trust-boundary': true,
-    data: [{ flow: 'bi-directional', classification: 'public: nickname and comment text' }],
-  },
-  {
     'bom-ref': 'service:cloudflare-workers',
     provider: { name: 'Cloudflare' },
     name: 'Cloudflare Workers',
-    description:
-      'Hosts the prerendered pages as static assets and runs the one on-demand route, /api/comments.',
+    description: 'Hosts the prerendered pages as static assets.',
     authenticated: false,
     'x-trust-boundary': true,
   },

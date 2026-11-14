@@ -6,11 +6,12 @@
 # maintainable, and a nonce needs a server this site does not have.
 #
 # Be clear about what that costs: this CSP is NOT a backstop against script
-# injection. The defense against stored XSS in comments is React escaping JSX
-# children in Comments.tsx, enforced by local/no-unescaped-user-html — not this
-# header. What the header still buys is real but narrower:
+# injection. The defense against injected markup (the AI summary renders model
+# output) is React escaping JSX children, enforced by
+# local/no-unescaped-user-html — not this header. What the header still buys is
+# real but narrower:
 #   connect-src   an injected script cannot exfiltrate to an arbitrary host —
-#                 only same-origin requests, since comments go through /api
+#                 only same-origin requests
 #   object-src    no <object>/<embed> vector
 #   base-uri      no <base> tag hijacking every relative URL on the page
 #   frame-ancestors  no clickjacking

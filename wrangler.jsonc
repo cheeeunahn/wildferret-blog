@@ -1,11 +1,11 @@
 {
-  // One Worker serving both halves of the site. Every page is prerendered to
-  // dist/client and served as a static asset; only /api/comments runs as code
-  // (src/pages/api/comments.ts). The @astrojs/cloudflare adapter generates the
-  // deployable config (dist/server/wrangler.json) from this file at build time.
+  // One Worker serving the site. Every page is prerendered to dist/client and
+  // served as a static asset; no route runs as code today. The
+  // @astrojs/cloudflare adapter generates the deployable config
+  // (dist/server/wrangler.json) from this file at build time.
   //
-  // Secrets are set with `wrangler secret put`, never committed — see the
-  // Comments > Environment section of CLAUDE.md.
+  // Should a route ever need secrets, set them with `wrangler secret put`,
+  // never commit them.
   "name": "wildferret-blog",
   "main": "@astrojs/cloudflare/entrypoints/server",
   "compatibility_date": "2026-08-13",
