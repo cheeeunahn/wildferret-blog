@@ -26,11 +26,11 @@
     "prepare": "lefthook install"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "14.4.6",
-    "@astrojs/react": "7.1.4",
+    "@astrojs/cloudflare": "14.4.8",
+    "@astrojs/react": "7.1.9",
     "@astryxdesign/core": "0.7.5",
     "@stylexjs/stylex": "0.19.2",
-    "astro": "7.4.7",
+    "astro": "7.4.12",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },
