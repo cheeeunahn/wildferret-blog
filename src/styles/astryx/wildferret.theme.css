@@ -437,7 +437,8 @@
   }
 
   .astryx-text[data-type="prose"] {
-    line-height: 1.75;
+    font-size: 0.9375rem;
+    line-height: 1.9;
   }
 
   .astryx-text[data-type="compact"] {
@@ -446,7 +447,23 @@
   }
 
   .astryx-markdown-list {
-    line-height: 1.75;
+    font-size: 0.9375rem;
+    line-height: 1.9;
+    --text-body-size: 0.9375rem;
+    --text-body-leading: 1.9;
+    --text-code-size: 0.9375rem;
+  }
+
+  .astryx-table-cell {
+    font-size: 0.9375rem;
+  }
+
+  .astryx-table-header-cell {
+    font-size: 0.9375rem;
+  }
+
+  .astryx-code-block {
+    --text-code-size: 0.9375rem;
   }
 
   .astryx-text-input[data-size="lg"] {

@@ -7,6 +7,7 @@
 - Update 2026-11-14: the comment section and its Supabase backend have since been removed from the site ([ADR 0004](../adr/0004-remove-comments.md)). Everything below that mentions comments (the comment-form goal, F1, F6 and its `/en/` built-in strings row, whose only `InternationalizationProvider` wrapped the Comments tree, N1's island list, N3, §6, §7 and the comment rows in Measurements and Verification) is kept as a record of the migration and no longer describes the site. The islands today are ThemeToggle, CategoryFilter and AiSummary.
 - Update 2026-11-14: the home page is now a ruled list of posts with square artwork and no read time, and article prose takes the theme's `prose` Text type instead of `leading-[1.75]` ([ADR 0006](../adr/0006-reading-layout-revisions.md)). §5's ArticleCard, AboutView (its interest badges are gone) and HomeView lines, its note on native lists (article lists now render through Astryx's `Markdown`), and §5a's `.cat-scope [hidden]` rule and `leading-[1.75]` describe the earlier pages.
 - Update 2026-11-14: the article cover image and the image carousel have been removed, since no post used them, so F7's and §5's mentions of the carousel are kept only as a record.
+- Update 2026-11-15: article text is 15px on a 1.9 line height, not 16px on 1.75, and article lists, tables and code blocks take the same 15px size ([ADR 0007](../adr/0007-article-reading-type.md)). The resolution of open question 1 describes the earlier reading size.
 
 ## Background
 
