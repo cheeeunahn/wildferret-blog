@@ -19,6 +19,7 @@
     "docs/adr/0004-remove-comments.md",
     "docs/adr/0005-stone-colors-and-astryx-lint.md",
     "docs/adr/0006-reading-layout-revisions.md",
+    "docs/adr/0007-article-reading-type.md",
     "docs/trd/astryx-design-system.md",
     "eslint-rules/astryx-colors-only.js",
     "eslint-rules/astryx-type-only.js",

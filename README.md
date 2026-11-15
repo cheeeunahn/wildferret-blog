@@ -159,7 +159,8 @@ The site uses **Astryx's** typography and components
 [stone](https://astryx.atmeta.com/themes?theme=stone) theme, light and dark, with a muted
 indigo accent of our own ([ADR 0005](docs/adr/0005-stone-colors-and-astryx-lint.md)). The
 theme in `src/styles/astryx/wildferretTheme.ts` takes those colors from
-`stoneColors.ts`, swaps in the webfont and raises the type scale's base to 16px. Every page shares one 768px column, and the home page is a
+`stoneColors.ts`, swaps in the webfont, raises the type scale's base to 16px, and sets article text at 15px on a 1.9 line height
+([ADR 0007](docs/adr/0007-article-reading-type.md)). Every page shares one 768px column, and the home page is a
 search box, category pills and a ruled list of posts (square artwork left; category, title, a
 two-line summary and the date right), after Astryx's Library template
 ([ADR 0003](docs/adr/0003-library-layout-and-reading-scale.md), revised by

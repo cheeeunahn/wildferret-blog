@@ -3,6 +3,7 @@
 - Status: Proposed (on `fix/scroll-and-ui-tweaks`, PR #64)
 - Date: 2026-11-14
 - Supersedes: [ADR 0003](0003-library-layout-and-reading-scale.md) decision 3 (cards: boxed, with date · read time), the 720px width in decision 5, and the `leading-[1.75]` override in decision 6.
+- Partly superseded by [ADR 0007](0007-article-reading-type.md): `prose` is 15px on a 1.9 line height, not body size on 1.75, and lists, tables and code blocks take that size too (decision 4).
 
 ## Context
 

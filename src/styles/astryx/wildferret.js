@@ -274,7 +274,8 @@ export const wildferretTheme = {
         "lineHeight": "var(--text-display-3-leading)"
       },
       "type:prose": {
-        "lineHeight": "1.75"
+        "fontSize": "0.9375rem",
+        "lineHeight": "1.9"
       },
       "type:compact": {
         "fontSize": "0.9375rem",
@@ -283,7 +284,26 @@ export const wildferretTheme = {
     },
     "markdown-list": {
       "base": {
-        "lineHeight": "1.75"
+        "fontSize": "0.9375rem",
+        "lineHeight": "1.9",
+        "--text-body-size": "0.9375rem",
+        "--text-body-leading": "1.9",
+        "--text-code-size": "0.9375rem"
+      }
+    },
+    "table-cell": {
+      "base": {
+        "fontSize": "0.9375rem"
+      }
+    },
+    "table-header-cell": {
+      "base": {
+        "fontSize": "0.9375rem"
+      }
+    },
+    "code-block": {
+      "base": {
+        "--text-code-size": "0.9375rem"
       }
     },
     "text-input": {

@@ -8,7 +8,7 @@ import '@astryxdesign/core/theme'
 
 declare module '@astryxdesign/core/theme' {
   interface CustomTextTypes {
-    /** Body size with a 1.75 line height, for long Korean prose. */
+    /** 15px on a 1.9 line height, for long Korean prose: the article text. */
     prose: true
     /** 15px, between supporting and body: the about page's rows. */
     compact: true
