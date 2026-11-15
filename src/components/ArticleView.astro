@@ -214,10 +214,10 @@ const toMarkdownList = (items: string[], ordered = false) =>
         )
       }
 
-      if (block.type === 'image') {
-        const { image } = block
-        return (
-          <figure class="my-8 animate-reveal" style={delay(i)}>
+      if (block.type === 'image' || block.type === 'gallery') {
+        const images = block.type === 'image' ? [block.image] : block.images
+        const figure = (image: (typeof images)[number], className: string, style?: string) => (
+          <figure class={className} style={style}>
             <div class="overflow-hidden rounded-(--radius-container) border border-ink-100">
               <img
                 src={resolveAssetUrl(image.src)}
@@ -234,6 +234,17 @@ const toMarkdownList = (items: string[], ordered = false) =>
               </figcaption>
             )}
           </figure>
+        )
+        if (images.length === 1) return figure(images[0], 'my-8 animate-reveal', delay(i))
+        // A gallery stacks on a phone, where two images side by side would be
+        // too small to read, and becomes a row from the sm breakpoint up.
+        return (
+          <div
+            class="my-8 flex flex-col gap-8 sm:flex-row sm:items-start sm:gap-4 animate-reveal"
+            style={delay(i)}
+          >
+            {images.map((image) => figure(image, 'min-w-0 sm:flex-1'))}
+          </div>
         )
       }
 

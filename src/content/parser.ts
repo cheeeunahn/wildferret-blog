@@ -71,6 +71,7 @@ export type ArticleBlock =
   | { type: 'list'; ordered: boolean; items: string[] }
   | { type: 'table'; header: string[]; rows: string[][] }
   | { type: 'image'; image: ArticleImage }
+  | { type: 'gallery'; images: ArticleImage[] }
   | { type: 'paragraph'; text: string }
 
 interface ArticleSummary {
@@ -162,11 +163,11 @@ export function classifyBlock(block: string): ArticleBlock {
     return { type: 'table', header: cells(dataRows[0]), rows: dataRows.slice(1).map(cells) }
   }
 
-  // An image is a block of its own. Several image lines with no blank line
-  // between them would otherwise fall through to a paragraph and print the raw
-  // markup, so fail the build instead.
+  // Image lines written together, with no blank line between them, sit side by
+  // side as one row, each keeping its own alt text and caption. An image line
+  // mixed with text stays a paragraph.
   if (lines.length > 1 && lines.every((l) => parseImageLine(l) !== null)) {
-    throw new Error(`Images must be separated by a blank line, each in its own block:\n${block}`)
+    return { type: 'gallery', images: lines.map((l) => parseImageLine(l)!) }
   }
 
   const image = parseImageLine(block)

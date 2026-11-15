@@ -79,8 +79,14 @@ describe('classifyBlock', () => {
     expect(classifyBlock('그냥 **문단**')).toEqual({ type: 'paragraph', text: '그냥 **문단**' })
   })
 
-  it('fails on consecutive image lines with no blank line between them', () => {
-    expect(() => classifyBlock('![a](/a.png)\n![b](/b.png "캡션")')).toThrow(/blank line/)
+  it('turns consecutive image lines into one side-by-side gallery', () => {
+    expect(classifyBlock('![a](/a.png)\n![b](/b.png "캡션")')).toEqual({
+      type: 'gallery',
+      images: [
+        { alt: 'a', src: '/a.png' },
+        { alt: 'b', src: '/b.png', caption: '캡션' },
+      ],
+    })
   })
 
   it('treats a single-line pipe row and a mixed image block as paragraphs', () => {

@@ -224,7 +224,8 @@ Blocks are separated by blank lines. Supported syntax:
 | `**bold**`, `` `code` ``, `[text](url)` | Inline formatting                                                                        |
 | `## 요약` + `- ` list, opening the body | Summary card (the heading may also be TL;DR or Summary); a `---` after it is dropped     |
 
-Two image lines with no blank line between them fail the build. Parsing and safe
+Two or more image lines with no blank line between them sit side by side as one
+row (stacked on a phone), each with its own caption. Parsing and safe
 inline formatting live in `src/content/parser.ts`.
 
 ### Images and links
