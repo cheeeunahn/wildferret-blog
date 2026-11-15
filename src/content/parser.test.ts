@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest'
+import { articles } from '../data/articles'
 import {
   classifyBlock,
   formatInline,
+  headingId,
   parseArticleBody,
   parseImageLine,
   splitContentIntoBlocks,
@@ -58,8 +60,18 @@ describe('classifyBlock', () => {
       code: 'const a = 1',
     })
     expect(classifyBlock('~~~\nplain\n~~~')).toEqual({ type: 'code', lang: '', code: 'plain' })
-    expect(classifyBlock('## 제목')).toEqual({ type: 'heading', level: 2, text: '제목' })
-    expect(classifyBlock('### 소제목')).toEqual({ type: 'heading', level: 3, text: '소제목' })
+    expect(classifyBlock('## 제목')).toEqual({
+      type: 'heading',
+      level: 2,
+      text: '제목',
+      id: '제목',
+    })
+    expect(classifyBlock('### 소제목')).toEqual({
+      type: 'heading',
+      level: 3,
+      text: '소제목',
+      id: '소제목',
+    })
     expect(classifyBlock('> "인용"')).toEqual({ type: 'quote', text: '인용' })
     expect(classifyBlock('- a\n- **b**')).toEqual({
       type: 'list',
@@ -79,8 +91,14 @@ describe('classifyBlock', () => {
     expect(classifyBlock('그냥 **문단**')).toEqual({ type: 'paragraph', text: '그냥 **문단**' })
   })
 
-  it('fails on consecutive image lines with no blank line between them', () => {
-    expect(() => classifyBlock('![a](/a.png)\n![b](/b.png "캡션")')).toThrow(/blank line/)
+  it('turns consecutive image lines into one side-by-side gallery', () => {
+    expect(classifyBlock('![a](/a.png)\n![b](/b.png "캡션")')).toEqual({
+      type: 'gallery',
+      images: [
+        { alt: 'a', src: '/a.png' },
+        { alt: 'b', src: '/b.png', caption: '캡션' },
+      ],
+    })
   })
 
   it('treats a single-line pipe row and a mixed image block as paragraphs', () => {
@@ -110,6 +128,45 @@ describe('parseArticleBody', () => {
   })
 })
 
+describe('headingId', () => {
+  it('names fragments the way GitHub does, keeping Korean as written', () => {
+    expect(headingId('지시 파일 정리 기준')).toBe('지시-파일-정리-기준')
+    expect(headingId('Appendix: paper summaries')).toBe('appendix-paper-summaries')
+    expect(headingId('Why `AGENTS.md`?')).toBe('why-agentsmd')
+    expect(headingId('???')).toBe('section')
+  })
+
+  it('suffixes a repeated heading so each fragment lands on one place', () => {
+    const ids = parseArticleBody('## 정리\n\n본문\n\n## 정리\n\n### 정리')
+      .blocks.filter((b) => b.type === 'heading')
+      .map((b) => b.id)
+    expect(ids).toEqual(['정리', '정리-1', '정리-2'])
+  })
+})
+
+describe('in-article # links', () => {
+  // A heading renamed without its links would otherwise fail silently: the
+  // click just stays put. Checks every language each post is written in.
+  const versions = articles.flatMap((a) => [
+    { name: a.slug, load: a.loadContent },
+    ...Object.entries(a.translations ?? {}).map(([lang, t]) => ({
+      name: `${lang}/${a.slug}`,
+      load: t.loadContent,
+    })),
+  ])
+
+  it.each(versions)('$name: every #fragment names a heading', async ({ load }) => {
+    const content = await load()
+    const ids = new Set(
+      parseArticleBody(content)
+        .blocks.filter((b) => b.type === 'heading')
+        .map((b) => b.id),
+    )
+    const fragments = [...content.matchAll(/\]\(#([^)\s]+)\)/g)].map((m) => m[1])
+    expect(fragments.filter((f) => !ids.has(decodeURIComponent(f)))).toEqual([])
+  })
+})
+
 describe('formatInline', () => {
   it('renders supported markup while escaping unsafe input and URLs', () => {
     const result = formatInline(
@@ -124,6 +181,7 @@ describe('formatInline', () => {
     expect(result).toContain('--font-family-code')
     expect(result).toContain('assets/image.png"')
     expect(result).toContain('<a href="#"')
+    expect(formatInline('[위로](#지시-파일-정리-기준)')).toContain('href="#지시-파일-정리-기준"')
     expect(result).toContain('&lt;script&gt;alert(1)&lt;/script&gt;')
   })
 })

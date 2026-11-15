@@ -226,7 +226,8 @@ Blocks are separated by blank lines. Supported syntax:
 | `**bold**`, `` `code` ``, `[text](url)` | Inline formatting                                                                        |
 | `## 요약` + `- ` list, opening the body | Summary card (the heading may also be TL;DR or Summary); a `---` after it is dropped     |
 
-Two image lines with no blank line between them fail the build. Parsing and safe
+Two or more image lines with no blank line between them sit side by side as one
+row (stacked on a phone), each with its own caption. Parsing and safe
 inline formatting live in `src/content/parser.ts`.
 
 ### Images and links
@@ -235,7 +236,14 @@ Put images in `public/assets/images/` and reference them in `articles.ts` with a
 leading slash and no base prefix (e.g. `/assets/images/my-image.png`). Every
 asset URL is resolved at render time by `resolveAssetUrl()` in
 `src/shared/assetUrl.ts`, which prepends the base path for relative URLs and
-passes absolute `https://` URLs through unchanged.
+passes absolute `https://` URLs and `#fragment`s through unchanged.
+
+To link to a section of the same post, use its heading's fragment:
+`[지시 파일 정리 기준](#지시-파일-정리-기준)`. Every `##`/`###` heading gets an
+`id` from its text (lowercased, punctuation dropped, spaces as hyphens; Korean
+stays as written), so a translation links to its own heading's fragment.
+Renaming a heading renames its fragment, and `pnpm test` fails on any `#` link
+left pointing at nothing.
 
 Internal _route_ links are a separate concern. Astro does not prefix `<a href>`
 with the base path, and a link must also keep the reader in the language they
