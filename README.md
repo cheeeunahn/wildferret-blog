@@ -297,6 +297,12 @@ Four GitHub Actions are wired up:
 - [`sync-docs.yml`](.github/workflows/sync-docs.yml) updates this README and
   CLAUDE.md after a push that changes the repo's structure.
 
+Dependency updates come from Renovate, configured in
+[`renovate.json`](renovate.json). It opens a PR only once a release is a day
+old, because pnpm 12 refuses to install anything newer, and it groups the
+Astryx packages, and Astro with `wrangler`, so packages that must move together
+arrive in one PR.
+
 The tables of scripts and islands and the project tree above are generated
 from the code, between `<!-- docs:… -->` markers. Edit their descriptions, not
 their rows. The rest of both docs is reviewed by `/sync-docs` whenever files,

@@ -37,6 +37,8 @@ The list is generated from `package.json`, and the pre-push hook fails if it goe
 
 pnpm settings live in `pnpm-workspace.yaml`, because pnpm 11+ ignores the `"pnpm"` field in `package.json`. Its `allowBuilds` must name every dependency with an install script: pnpm 12 fails the install on one it has not been told about. Set `true` only if the package really needs its script.
 
+pnpm 12 also refuses any package published less than a day ago (its default `minimumReleaseAge`), so a lockfile holding one fails `ERR_PNPM_MINIMUM_RELEASE_AGE_VIOLATION` in CI and on Cloudflare. `renovate.json` waits the same day before opening a PR. A version that new is not worth relaxing the policy for: wait it out.
+
 ## What to check, by kind of change
 
 Run what the change needs, not everything:
@@ -52,7 +54,7 @@ If you could not run a check the change needed, say which one and why when you r
 
 ## Architecture
 
-Every page is prerendered to a real HTML file; no route runs as Worker code. The site is one root-path Cloudflare Worker serving those files. `@astrojs/cloudflare` is pinned to an exact version: check its `astro` peer range and bump the two together.
+Every page is prerendered to a real HTML file; no route runs as Worker code. The site is one root-path Cloudflare Worker serving those files. `@astrojs/cloudflare` is pinned to an exact version: check its `astro` peer range and bump the two together. It pulls in `@cloudflare/vite-plugin`, which can need a newer `wrangler` than the lockfile holds; `astro check` then stops with "Unable to load your Astro config", so `pnpm update wrangler` in the same change. `renovate.json` puts Astro and `wrangler` in one group for this reason.
 
 - **Edit the view, not the route.** Each page exists in three trees (see Languages), and the route files are thin wrappers that mount `HomeView`, `AboutView` or `ArticleView` from `src/components/`. The markup lives only in the view.
 - **`404.astro` answers in both languages.** One `dist/client/404.html` serves every miss, `/en/` included.

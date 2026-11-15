@@ -1,0 +1,19 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "description": "pnpm 12 refuses to install a package published less than a day ago (its default minimumReleaseAge), so a PR opened sooner fails every install. Wait the same day, and open no branch until it has passed.",
+  "minimumReleaseAge": "1 day",
+  "internalChecksFilter": "strict",
+  "packageRules": [
+    {
+      "description": "Core and CLI are released together, and `pnpm theme:build` stamps both versions into the generated theme, so they update in one PR.",
+      "matchPackageNames": ["@astryxdesign/**"],
+      "groupName": "astryx"
+    },
+    {
+      "description": "@astrojs/cloudflare pulls in @cloudflare/vite-plugin, which can need a newer wrangler than the lockfile holds, so wrangler moves with Astro.",
+      "matchPackageNames": ["astro", "@astrojs/**", "wrangler"],
+      "groupName": "astro and wrangler"
+    }
+  ]
+}
