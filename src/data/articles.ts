@@ -6,7 +6,7 @@ export const articles: Article[] = [
   {
     slug: 'optimizing-claude-md',
     title: 'CLAUDE.md에는 무엇을 적어야 할까',
-    subtitle: 'AGENTS.md·CLAUDE.md 논문 여섯 편으로 본, 파일에 남길 것과 코드로 옮길 것',
+    subtitle: '에이전트 지시 파일에 넣을 것과 코드에서 테스트로 정의할 것에 대한 고찰',
     date: '2026.11.07',
     category: 'Paper Review',
     cardImage: '/assets/images/optimizing-claude-md-card.webp',
@@ -18,7 +18,7 @@ export const articles: Article[] = [
       en: {
         title: 'What belongs in your CLAUDE.md?',
         subtitle:
-          'What six recent papers suggest keeping in AGENTS.md and CLAUDE.md, and what to turn into code',
+          'Thoughts on what to put in agent instruction files and what to define in the code',
         loadContent: () =>
           import('./article-content/en/optimizing-claude-md').then(
             ({ optimizingClaudeMdContentEn }) => optimizingClaudeMdContentEn,
