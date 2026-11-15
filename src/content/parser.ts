@@ -61,12 +61,13 @@ export function splitContentIntoBlocks(content: string): string[] {
  * markup (`**bold**`, `` `code` ``, links). The renderer passes prose, quotes,
  * table cells and captions through formatInline, and hands list items to
  * Astryx's Markdown (ArticleMarkdown.tsx). Heading and code text is plain and
- * rendered escaped.
+ * rendered escaped. A heading's `id` is its fragment, so `[text](#id)` in the
+ * body or the summary jumps to it.
  */
 export type ArticleBlock =
   | { type: 'divider' }
   | { type: 'code'; lang: string; code: string }
-  | { type: 'heading'; level: 2 | 3; text: string }
+  | { type: 'heading'; level: 2 | 3; text: string; id: string }
   | { type: 'quote'; text: string }
   | { type: 'list'; ordered: boolean; items: string[] }
   | { type: 'table'; header: string[]; rows: string[][] }
@@ -114,10 +115,36 @@ export function parseArticleBody(content: string): ArticleBody {
   let rest = hasSummary ? allBlocks.slice(2) : allBlocks
   if (hasSummary && rest[0] === '---') rest = rest.slice(1)
 
+  // A repeated heading gets -1, -2… so every fragment still lands on one place.
+  const seen = new Map<string, number>()
+  const blocks = rest.map(classifyBlock).map((block) => {
+    if (block.type !== 'heading') return block
+    const n = seen.get(block.id) ?? 0
+    seen.set(block.id, n + 1)
+    return n ? { ...block, id: `${block.id}-${n}` } : block
+  })
+
   return {
     summary: hasSummary ? { label: summaryHeading!, items: bulletItems(allBlocks[1]) } : null,
-    blocks: rest.map(classifyBlock),
+    blocks,
   }
+}
+
+/**
+ * The fragment a heading is linked by, named the way GitHub names heading
+ * anchors: lowercased, punctuation dropped, spaces as hyphens. Korean stays as
+ * written, so `## 지시 파일 정리 기준` is `#지시-파일-정리-기준`. Renaming a
+ * heading renames its fragment; parser.test.ts fails on any in-article
+ * `#` link left pointing at nothing.
+ */
+export function headingId(text: string): string {
+  const id = text
+    .trim()
+    .toLowerCase()
+    .replace(/[^\p{L}\p{M}\p{N}\s-]/gu, '')
+    .trim()
+    .replace(/\s+/g, '-')
+  return id || 'section'
 }
 
 /**
@@ -133,9 +160,14 @@ export function classifyBlock(block: string): ArticleBlock {
     return { type: 'code', lang, code: lines.slice(1, lines.length - 1).join('\n') }
   }
 
-  if (block.startsWith('### '))
-    return { type: 'heading', level: 3, text: block.replace('### ', '') }
-  if (block.startsWith('## ')) return { type: 'heading', level: 2, text: block.replace('## ', '') }
+  if (block.startsWith('### ')) {
+    const text = block.replace('### ', '')
+    return { type: 'heading', level: 3, text, id: headingId(text) }
+  }
+  if (block.startsWith('## ')) {
+    const text = block.replace('## ', '')
+    return { type: 'heading', level: 2, text, id: headingId(text) }
+  }
 
   if (block.startsWith('> ')) {
     return { type: 'quote', text: block.replace('> ', '').replace(/^"/, '').replace(/"$/, '') }
@@ -205,6 +237,7 @@ function escapeHtml(value: string): string {
 }
 
 function toSafeHref(href: string): string {
+  if (href.startsWith('#')) return href
   if (href.startsWith('/')) return resolveAssetUrl(href)
   if (/^https?:\/\//.test(href)) return href
   return '#'

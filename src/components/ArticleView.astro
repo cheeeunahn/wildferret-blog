@@ -165,7 +165,12 @@ const toMarkdownList = (items: string[], ordered = false) =>
 
       if (block.type === 'heading' && block.level === 3) {
         return (
-          <Heading level={3} className="mt-8 mb-4 animate-reveal" style={delayStyle(i)}>
+          <Heading
+            level={3}
+            id={block.id}
+            className="mt-8 mb-4 animate-reveal"
+            style={delayStyle(i)}
+          >
             {block.text}
           </Heading>
         )
@@ -173,7 +178,12 @@ const toMarkdownList = (items: string[], ordered = false) =>
 
       if (block.type === 'heading') {
         return (
-          <Heading level={2} className="mt-10 mb-3 animate-reveal" style={delayStyle(i)}>
+          <Heading
+            level={2}
+            id={block.id}
+            className="mt-10 mb-3 animate-reveal"
+            style={delayStyle(i)}
+          >
             {block.text}
           </Heading>
         )

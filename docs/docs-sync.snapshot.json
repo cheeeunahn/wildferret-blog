@@ -78,6 +78,7 @@
     "src/pages/about.astro",
     "src/pages/article/[slug].astro",
     "src/pages/index.astro",
+    "src/shared/assetUrl.test.ts",
     "src/shared/assetUrl.ts",
     "src/shared/i18n.test.ts",
     "src/shared/i18n.ts",
