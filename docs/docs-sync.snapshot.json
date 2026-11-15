@@ -1,5 +1,6 @@
 {
   "files": [
+    ".claude/commands/check-stale.md",
     ".claude/commands/sync-docs.md",
     ".claude/commands/translate-articles.md",
     ".git-blame-ignore-revs",
@@ -45,6 +46,8 @@
     "scripts/docs-sync.test.js",
     "scripts/sbom.mjs",
     "scripts/sbom.test.js",
+    "scripts/stale-check.mjs",
+    "scripts/stale-check.test.js",
     "scripts/translation-status.mjs",
     "scripts/translation-status.test.js",
     "src/client/summarizer.test.ts",
@@ -109,6 +112,7 @@
     "prepare",
     "preview",
     "sbom:write",
+    "stale:check",
     "test",
     "theme:build",
     "translate",
