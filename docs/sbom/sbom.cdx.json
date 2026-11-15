@@ -25,7 +25,7 @@
       },
       {
         "name": "wildferret:lockfile:sha256",
-        "value": "74ebe0d2403aad37cea3b53a3ee74d49b544e9dae3e2174c0f318f954714bf49"
+        "value": "fe430ecc67dfb199a84321f921d12feef2d57b95e4d89b8642bff282df38bb6e"
       },
       {
         "name": "wildferret:packageManager",
@@ -105,16 +105,16 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40astrojs/astro2tsx@0.1.3",
+      "bom-ref": "pkg:npm/%40astrojs/astro2tsx@0.1.4",
       "group": "@astrojs",
       "name": "astro2tsx",
-      "version": "0.1.3",
+      "version": "0.1.4",
       "scope": "excluded",
       "description": "Convert .astro files to TSX for TypeScript editor tooling",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "18c0c2ec4a349b205403f40b065d2ef8e71e809f0b88185c726359477e0a9a9ad034ff204142655a538e65652cc4d036acd4ba1ae3d87060f22e83e78e69f8fd"
+          "content": "e5d26a6388b50255f172c4851e469e827ae0755b3d27853ddf2fd8174c66be648e70d6154277f875bdc886fa87679bfc6e22cf94f9459a562ca878f4738fd948"
         }
       ],
       "licenses": [
@@ -124,11 +124,11 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40astrojs/astro2tsx@0.1.3",
+      "purl": "pkg:npm/%40astrojs/astro2tsx@0.1.4",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/@astrojs/astro2tsx/-/astro2tsx-0.1.3.tgz"
+          "url": "https://registry.npmjs.org/@astrojs/astro2tsx/-/astro2tsx-0.1.4.tgz"
         },
         {
           "type": "website",
@@ -3850,6 +3850,50 @@
     },
     {
       "type": "library",
+      "bom-ref": "pkg:npm/%40cloudflare/workerd-darwin-64@1.20261113.1",
+      "group": "@cloudflare",
+      "name": "workerd-darwin-64",
+      "version": "1.20261113.1",
+      "scope": "excluded",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "51c4a11f258955935bb88f232f71794195ccac99bba127207b7dc3e69de1032848224a158fbdbe6e2a2bf9571472bd52056921e70dd49a7af1d7bf5613b5afa7"
+        }
+      ],
+      "licenses": [],
+      "purl": "pkg:npm/%40cloudflare/workerd-darwin-64@1.20261113.1",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@cloudflare/workerd-darwin-64/-/workerd-darwin-64-1.20261113.1.tgz"
+        }
+      ],
+      "properties": [
+        {
+          "name": "wildferret:shipped",
+          "value": "no"
+        },
+        {
+          "name": "wildferret:optional",
+          "value": "true"
+        },
+        {
+          "name": "wildferret:os",
+          "value": "darwin"
+        },
+        {
+          "name": "wildferret:cpu",
+          "value": "x64"
+        },
+        {
+          "name": "wildferret:manifest",
+          "value": "not-in-local-store"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "bom-ref": "pkg:npm/%40cloudflare/workerd-darwin-arm64@1.20261023.1",
       "group": "@cloudflare",
       "name": "workerd-darwin-arm64",
@@ -3874,6 +3918,57 @@
         {
           "type": "distribution",
           "url": "https://registry.npmjs.org/@cloudflare/workerd-darwin-arm64/-/workerd-darwin-arm64-1.20261023.1.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/cloudflare/workerd"
+        }
+      ],
+      "properties": [
+        {
+          "name": "wildferret:shipped",
+          "value": "no"
+        },
+        {
+          "name": "wildferret:optional",
+          "value": "true"
+        },
+        {
+          "name": "wildferret:os",
+          "value": "darwin"
+        },
+        {
+          "name": "wildferret:cpu",
+          "value": "arm64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40cloudflare/workerd-darwin-arm64@1.20261113.1",
+      "group": "@cloudflare",
+      "name": "workerd-darwin-arm64",
+      "version": "1.20261113.1",
+      "scope": "excluded",
+      "description": "👷 workerd for macOS ARM 64-bit, Cloudflare's JavaScript/Wasm Runtime",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "6ca7c5729b9e6fd18e834359491e31edda4425932c40ec029345f3b00a17a017c6e28b05450705c6d021ad7bc1d72e38e735c52e1ac490327ff8bbc600c90f4a"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40cloudflare/workerd-darwin-arm64@1.20261113.1",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@cloudflare/workerd-darwin-arm64/-/workerd-darwin-arm64-1.20261113.1.tgz"
         },
         {
           "type": "vcs",
@@ -3945,6 +4040,50 @@
     },
     {
       "type": "library",
+      "bom-ref": "pkg:npm/%40cloudflare/workerd-linux-64@1.20261113.1",
+      "group": "@cloudflare",
+      "name": "workerd-linux-64",
+      "version": "1.20261113.1",
+      "scope": "excluded",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "dd50a75f38bb6a9c0f48cc2489321e11ce73fd45961905c16593470810425cf95abd6091d3a490efbb4ed2b1282a89df8c1196d0c41a1cd67b535a423dee2fde"
+        }
+      ],
+      "licenses": [],
+      "purl": "pkg:npm/%40cloudflare/workerd-linux-64@1.20261113.1",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@cloudflare/workerd-linux-64/-/workerd-linux-64-1.20261113.1.tgz"
+        }
+      ],
+      "properties": [
+        {
+          "name": "wildferret:shipped",
+          "value": "no"
+        },
+        {
+          "name": "wildferret:optional",
+          "value": "true"
+        },
+        {
+          "name": "wildferret:os",
+          "value": "linux"
+        },
+        {
+          "name": "wildferret:cpu",
+          "value": "x64"
+        },
+        {
+          "name": "wildferret:manifest",
+          "value": "not-in-local-store"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "bom-ref": "pkg:npm/%40cloudflare/workerd-linux-arm64@1.20261023.1",
       "group": "@cloudflare",
       "name": "workerd-linux-arm64",
@@ -3989,6 +4128,50 @@
     },
     {
       "type": "library",
+      "bom-ref": "pkg:npm/%40cloudflare/workerd-linux-arm64@1.20261113.1",
+      "group": "@cloudflare",
+      "name": "workerd-linux-arm64",
+      "version": "1.20261113.1",
+      "scope": "excluded",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "a619dbd7af3a1532154abe2ac5014eb7b332896328b6ab155326559d0979efdfdb0aba9669851c4678a43797fa6c1a436f10a4d4ebcebd8cf4ca48d3d65bd8a6"
+        }
+      ],
+      "licenses": [],
+      "purl": "pkg:npm/%40cloudflare/workerd-linux-arm64@1.20261113.1",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@cloudflare/workerd-linux-arm64/-/workerd-linux-arm64-1.20261113.1.tgz"
+        }
+      ],
+      "properties": [
+        {
+          "name": "wildferret:shipped",
+          "value": "no"
+        },
+        {
+          "name": "wildferret:optional",
+          "value": "true"
+        },
+        {
+          "name": "wildferret:os",
+          "value": "linux"
+        },
+        {
+          "name": "wildferret:cpu",
+          "value": "arm64"
+        },
+        {
+          "name": "wildferret:manifest",
+          "value": "not-in-local-store"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "bom-ref": "pkg:npm/%40cloudflare/workerd-windows-64@1.20261023.1",
       "group": "@cloudflare",
       "name": "workerd-windows-64",
@@ -4006,6 +4189,50 @@
         {
           "type": "distribution",
           "url": "https://registry.npmjs.org/@cloudflare/workerd-windows-64/-/workerd-windows-64-1.20261023.1.tgz"
+        }
+      ],
+      "properties": [
+        {
+          "name": "wildferret:shipped",
+          "value": "no"
+        },
+        {
+          "name": "wildferret:optional",
+          "value": "true"
+        },
+        {
+          "name": "wildferret:os",
+          "value": "win32"
+        },
+        {
+          "name": "wildferret:cpu",
+          "value": "x64"
+        },
+        {
+          "name": "wildferret:manifest",
+          "value": "not-in-local-store"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40cloudflare/workerd-windows-64@1.20261113.1",
+      "group": "@cloudflare",
+      "name": "workerd-windows-64",
+      "version": "1.20261113.1",
+      "scope": "excluded",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "5ad41a902008cd4409e9d4033e7ee420694527dca3074a28371d9616a1072d83404fb4cb08dc9a3917a6d9654cdfc4dc79547c7e508fe545a0626ea1b7776523"
+        }
+      ],
+      "licenses": [],
+      "purl": "pkg:npm/%40cloudflare/workerd-windows-64@1.20261113.1",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@cloudflare/workerd-windows-64/-/workerd-windows-64-1.20261113.1.tgz"
         }
       ],
       "properties": [
@@ -21311,15 +21538,15 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/miniflare@5.20261023.3-beta",
+      "bom-ref": "pkg:npm/miniflare@5.20261113.0-beta",
       "name": "miniflare",
-      "version": "5.20261023.3-beta",
+      "version": "5.20261113.0-beta",
       "scope": "excluded",
       "description": "Fun, full-featured, fully-local simulator for Cloudflare Workers",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "b61757ce592dbb9184d68fc19663003de2740aee93bb92e931b465c9f46ba55bcc46b85dea9e764cca9c21309964b573b7550ef765460642c384b3a9af2500c9"
+          "content": "2a0f926ab28d4a7d2592147cf0e1c8dbdac85c9be62acfdcf619b1157bc4a8ad49f5a1eef80165e8275a06afe4de2393c8c6e6da9e21d4718bb3bbd768b60c58"
         }
       ],
       "licenses": [
@@ -21329,11 +21556,11 @@
           }
         }
       ],
-      "purl": "pkg:npm/miniflare@5.20261023.3-beta",
+      "purl": "pkg:npm/miniflare@5.20261113.0-beta",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/miniflare/-/miniflare-5.20261023.3-beta.tgz"
+          "url": "https://registry.npmjs.org/miniflare/-/miniflare-5.20261113.0-beta.tgz"
         },
         {
           "type": "website",
@@ -28294,15 +28521,53 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/wrangler@4.156.0",
+      "bom-ref": "pkg:npm/workerd@1.20261113.1",
+      "name": "workerd",
+      "version": "1.20261113.1",
+      "scope": "excluded",
+      "description": "👷 workerd, Cloudflare's JavaScript/Wasm Runtime",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "1493fc066d638a2253136c69488853f4990c68acd4e78cbd264d2aee7dc12d6c9675436c9f7e50182a8045ca971b03b714692f6a1858a94106d9b27396071f87"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:npm/workerd@1.20261113.1",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/workerd/-/workerd-1.20261113.1.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/cloudflare/workerd"
+        }
+      ],
+      "properties": [
+        {
+          "name": "wildferret:shipped",
+          "value": "no"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/wrangler@4.162.0",
       "name": "wrangler",
-      "version": "4.156.0",
+      "version": "4.162.0",
       "scope": "excluded",
       "description": "Command-line interface for all things Cloudflare Workers",
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "9152c04a1b8b88d804de372b9977329837ff88f2833eb4b10027b9b9eba05bfdf71de341f44f4290a61c86e742781c209ac9e5e24fb5cede0d3bbbea6ff7d1b9"
+          "content": "8d49e5cc72a559d5b83055cf81e61b7b4f9ce284f2fc00197cbfc8533f76d7e759058e67278f318e9bf07dfe5d8d4475317a0945ebf39ed00ffd4f7b4d484f13"
         }
       ],
       "licenses": [
@@ -28310,11 +28575,11 @@
           "expression": "MIT OR Apache-2.0"
         }
       ],
-      "purl": "pkg:npm/wrangler@4.156.0",
+      "purl": "pkg:npm/wrangler@4.162.0",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/wrangler/-/wrangler-4.156.0.tgz"
+          "url": "https://registry.npmjs.org/wrangler/-/wrangler-4.162.0.tgz"
         },
         {
           "type": "website",
@@ -29178,12 +29443,16 @@
         "pkg:npm/typescript-eslint@8.72.1",
         "pkg:npm/typescript@5.9.3",
         "pkg:npm/vitest@5.0.5",
-        "pkg:npm/wrangler@4.156.0"
+        "pkg:npm/wrangler@4.162.0"
       ]
     },
     {
-      "ref": "pkg:npm/%40astrojs/astro2tsx@0.1.3",
-      "dependsOn": ["pkg:npm/%40emnapi/core@1.11.3", "pkg:npm/%40napi-rs/wasm-runtime@1.2.4"]
+      "ref": "pkg:npm/%40astrojs/astro2tsx@0.1.4",
+      "dependsOn": [
+        "pkg:npm/%40emnapi/core@1.11.3",
+        "pkg:npm/%40emnapi/runtime@1.11.3",
+        "pkg:npm/%40napi-rs/wasm-runtime@1.2.4"
+      ]
     },
     {
       "ref": "pkg:npm/%40astrojs/check@0.9.12",
@@ -29205,7 +29474,7 @@
         "pkg:npm/piccolore@0.1.3",
         "pkg:npm/prismjs@1.30.0",
         "pkg:npm/vite@8.3.5",
-        "pkg:npm/wrangler@4.156.0"
+        "pkg:npm/wrangler@4.162.0"
       ]
     },
     {
@@ -29291,7 +29560,7 @@
     {
       "ref": "pkg:npm/%40astrojs/language-server@2.17.3",
       "dependsOn": [
-        "pkg:npm/%40astrojs/astro2tsx@0.1.3",
+        "pkg:npm/%40astrojs/astro2tsx@0.1.4",
         "pkg:npm/%40astrojs/yaml2ts@0.2.4",
         "pkg:npm/%40volar/kit@2.4.30",
         "pkg:npm/%40volar/language-core@2.4.30",
@@ -29736,7 +30005,7 @@
     },
     {
       "ref": "pkg:npm/%40cloudflare/unenv-preset@2.16.2",
-      "dependsOn": ["pkg:npm/unenv@2.0.0-rc.24", "pkg:npm/workerd@1.20261023.1"]
+      "dependsOn": ["pkg:npm/unenv@2.0.0-rc.24", "pkg:npm/workerd@1.20261113.1"]
     },
     {
       "ref": "pkg:npm/%40cloudflare/vite-plugin@1.66.0",
@@ -29745,7 +30014,7 @@
         "pkg:npm/miniflare@5.20261023.1-beta",
         "pkg:npm/unenv@2.0.0-rc.24",
         "pkg:npm/vite@8.3.5",
-        "pkg:npm/wrangler@4.156.0",
+        "pkg:npm/wrangler@4.162.0",
         "pkg:npm/ws@8.22.0"
       ]
     },
@@ -29754,7 +30023,15 @@
       "dependsOn": []
     },
     {
+      "ref": "pkg:npm/%40cloudflare/workerd-darwin-64@1.20261113.1",
+      "dependsOn": []
+    },
+    {
       "ref": "pkg:npm/%40cloudflare/workerd-darwin-arm64@1.20261023.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40cloudflare/workerd-darwin-arm64@1.20261113.1",
       "dependsOn": []
     },
     {
@@ -29762,11 +30039,23 @@
       "dependsOn": []
     },
     {
+      "ref": "pkg:npm/%40cloudflare/workerd-linux-64@1.20261113.1",
+      "dependsOn": []
+    },
+    {
       "ref": "pkg:npm/%40cloudflare/workerd-linux-arm64@1.20261023.1",
       "dependsOn": []
     },
     {
+      "ref": "pkg:npm/%40cloudflare/workerd-linux-arm64@1.20261113.1",
+      "dependsOn": []
+    },
+    {
       "ref": "pkg:npm/%40cloudflare/workerd-windows-64@1.20261023.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40cloudflare/workerd-windows-64@1.20261113.1",
       "dependsOn": []
     },
     {
@@ -31841,12 +32130,12 @@
       ]
     },
     {
-      "ref": "pkg:npm/miniflare@5.20261023.3-beta",
+      "ref": "pkg:npm/miniflare@5.20261113.0-beta",
       "dependsOn": [
         "pkg:npm/%40cspotcode/source-map-support@0.8.1",
         "pkg:npm/sharp@0.35.5",
         "pkg:npm/undici@7.30.1",
-        "pkg:npm/workerd@1.20261023.1",
+        "pkg:npm/workerd@1.20261113.1",
         "pkg:npm/ws@8.21.0",
         "pkg:npm/youch@4.1.0-beta.10"
       ]
@@ -32757,17 +33046,28 @@
       ]
     },
     {
-      "ref": "pkg:npm/wrangler@4.156.0",
+      "ref": "pkg:npm/workerd@1.20261113.1",
+      "dependsOn": [
+        "pkg:npm/%40cloudflare/workerd-darwin-64@1.20261113.1",
+        "pkg:npm/%40cloudflare/workerd-darwin-arm64@1.20261113.1",
+        "pkg:npm/%40cloudflare/workerd-linux-64@1.20261113.1",
+        "pkg:npm/%40cloudflare/workerd-linux-arm64@1.20261113.1",
+        "pkg:npm/%40cloudflare/workerd-windows-64@1.20261113.1"
+      ]
+    },
+    {
+      "ref": "pkg:npm/wrangler@4.162.0",
       "dependsOn": [
         "pkg:npm/%40cloudflare/kv-asset-handler@0.5.0",
         "pkg:npm/%40cloudflare/unenv-preset@2.16.2",
+        "pkg:npm/%40cspotcode/source-map-support@0.8.1",
         "pkg:npm/blake3-wasm@2.1.5",
         "pkg:npm/esbuild@0.28.2",
         "pkg:npm/fsevents@2.3.3",
-        "pkg:npm/miniflare@5.20261023.3-beta",
+        "pkg:npm/miniflare@5.20261113.0-beta",
         "pkg:npm/path-to-regexp@6.3.0",
         "pkg:npm/unenv@2.0.0-rc.24",
-        "pkg:npm/workerd@1.20261023.1"
+        "pkg:npm/workerd@1.20261113.1"
       ]
     },
     {

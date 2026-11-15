@@ -36,6 +36,7 @@
     "pnpm-workspace.yaml",
     "public/_headers",
     "public/favicon.svg",
+    "renovate.json",
     "scripts/auto-card-image.mjs",
     "scripts/auto-sync-docs.mjs",
     "scripts/auto-translate.mjs",
