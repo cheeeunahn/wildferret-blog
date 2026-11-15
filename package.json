@@ -19,6 +19,7 @@
     "docs:status": "node scripts/docs-sync.mjs",
     "docs:write": "node scripts/docs-sync.mjs --write",
     "docs:sync": "claude \"/sync-docs\"",
+    "stale:check": "node scripts/stale-check.mjs",
     "astro": "astro",
     "astryx": "node node_modules/@astryxdesign/cli/clients/cli/bin/astryx.mjs",
     "theme:build": "pnpm astryx theme build src/styles/astryx/wildferretTheme.ts --out src/styles/astryx/wildferret.theme.css",

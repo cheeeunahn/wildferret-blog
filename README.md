@@ -50,6 +50,7 @@ pnpm install   # also installs the lefthook git hooks
 | `pnpm docs:status`        | Is README.md / CLAUDE.md in step with the repo? (`--json` for detail)     |
 | `pnpm docs:write`         | Rebuild the generated blocks in README.md and CLAUDE.md                   |
 | `pnpm docs:sync`          | Review and update both docs after a structural change (opens Claude Code) |
+| `pnpm stale:check`        | Check the staged change for stale comments and unused code (Claude Code)  |
 | `pnpm astro`              | The Astro CLI directly                                                    |
 | `pnpm astryx component X` | Astryx component API docs for `X`                                         |
 | `pnpm theme:build`        | Rebuild `src/styles/astryx/wildferret.theme.css` after a theme edit       |
@@ -111,7 +112,7 @@ docs/
 ├── sbom/                     # Generated SBOM — do not edit by hand
 └── trd/                      # Technical requirements (Astryx migration)
 eslint-rules/                 # Repo-local lint rules (layers, islands, links, XSS, Astryx colors and type)
-scripts/                      # Translation, card images and docs sync (status + hooks), SBOM
+scripts/                      # Translation, card images, docs sync (status + hooks), stale-code check, SBOM
 ```
 
 <!-- docs:layout:end -->
@@ -263,8 +264,10 @@ inline formatter), the content service, i18n, the on-device summarizer, the
 lint rules, and the scripts. Add parser cases when
 extending the supported article syntax.
 
-Git hooks (lefthook) run `eslint --fix` and Prettier on commit, then the
-card-image, translation and docs-sync hooks. Before a push they run the
+Git hooks (lefthook) run `eslint --fix`, Prettier and the stale-code check
+(`scripts/stale-check.mjs`: Claude Code reviews the staged change for comments
+it made untrue and code it left unused) on commit, then the card-image,
+translation and docs-sync hooks. Before a push they run the
 translation check, the docs check (`pnpm docs:status`), `pnpm build` and
 `pnpm test`.
 

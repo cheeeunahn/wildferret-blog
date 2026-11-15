@@ -3,8 +3,9 @@
 # Skip a run with `git commit --no-verify` or `LEFTHOOK=0 git push`.
 
 pre-commit:
-  # piped, not parallel: both jobs rewrite files, so prettier runs after
-  # eslint --fix instead of racing it for the same staged files.
+  # piped, not parallel: eslint and prettier both rewrite files, so prettier
+  # runs after eslint --fix instead of racing it, and stale-check reviews what
+  # they left. A failing job stops the ones after it.
   piped: true
   jobs:
     - name: eslint
@@ -16,6 +17,13 @@ pre-commit:
       glob: '*.{js,mjs,ts,tsx,astro,css,json,jsonc,md,yml,yaml}'
       run: pnpm exec prettier --write --ignore-unknown {staged_files}
       stage_fixed: true
+    # Claude Code reads the staged change for comments it made untrue and code
+    # it left unused, and a finding stops the commit. A commit that touches no
+    # code (docs, article content, generated files) never calls Claude, and the
+    # review lets the commit through if claude is missing or cannot answer.
+    # Skip one commit with STALE_CHECK=0.
+    - name: stale-check
+      run: node scripts/stale-check.mjs
 
 post-commit:
   jobs:

@@ -25,6 +25,7 @@ pnpm sbom:write               # regenerate docs/sbom/ (CycloneDX SBOM + summary)
 pnpm docs:status              # are README.md / CLAUDE.md in step with the repo? — see Docs Sync
 pnpm docs:write               # rebuild the generated blocks in both docs
 pnpm docs:sync                # review and update both docs after a structural change (opens Claude Code)
+pnpm stale:check              # the pre-commit stale-code check, on what is staged now — see Stale-Code Check
 pnpm astro                    # the Astro CLI directly
 pnpm astryx component <Name>  # Astryx component API docs — look props up here, don't guess
 pnpm theme:build              # rebuild src/styles/astryx/wildferret.theme.css after editing the theme
@@ -139,6 +140,16 @@ README.md and this file are kept in step with the repo's shape. `scripts/docs-sy
 - **It sees shape, not behaviour.** A change to what a component does, with nothing added, removed or renamed, goes unnoticed. If it changes a rule stated here, edit the rule in the same PR.
 - **It only scans tracked files,** so stage a new file before `pnpm docs:status`.
 - **Never rewrite an ADR; supersede it.** ADRs are records of decisions as made. A change that reverses one gets a new ADR saying what changed and why, and the old one gets only a "Partly superseded by" line in its header, pointing at the new one. Writing that ADR is a decision for a person, so if a change contradicts one, say so rather than writing it unasked.
+
+## Stale-Code Check
+
+The last pre-commit job, `scripts/stale-check.mjs`, has Claude Code review the staged change for comments it made untrue (including a rule here or in the README) and code it left unused, and stops the commit on a finding. The script decides whether to review; what counts as stale lives in `/check-stale` (`.claude/commands/check-stale.md`). Change the criteria in the command, not the script.
+
+- **A finding is a model's reading, so it can be wrong.** Fix a real one; commit past a false one with `STALE_CHECK=0 git commit`. If the same kind of false alarm keeps coming back, add it to the command's "Do not report" lists.
+- **It fails open.** No `claude` on `PATH`, no login, a 5-minute timeout or an unreadable answer all let the commit through with a "commit not checked" line. A passing hook does not prove the review ran.
+- **Only code is reviewed.** It runs when a staged path matches `REVIEWED` and none of `SKIPPED` (`src/data/`, generated files). The post-commit hooks' own commits touch none of those paths, so they never call Claude. A hook that starts committing code must set `STALE_CHECK=0` in its commit's env. CI, finishing a merge, and a change over 3,000 lines are skipped as well.
+- **Read-only by construction.** Edit and Write are left out of `--tools`, and `--permission-mode dontAsk` refuses any command outside the git allowlist. `--strict-mcp-config` loads no MCP servers, since one that is slow to connect would hold up every commit.
+- **It runs after eslint and prettier** in the piped job list, so it reviews the formatted code, and a lint failure stops the commit before Claude is called.
 
 ## AI Summary
 
