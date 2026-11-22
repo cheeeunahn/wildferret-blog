@@ -28,7 +28,7 @@
   "dependencies": {
     "@astrojs/cloudflare": "14.4.6",
     "@astrojs/react": "7.1.4",
-    "@astryxdesign/core": "0.7.5",
+    "@astryxdesign/core": "0.7.17",
     "@stylexjs/stylex": "0.19.2",
     "astro": "7.4.7",
     "react": "^19.3.1",
@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
-    "@astryxdesign/cli": "0.6.5",
+    "@astryxdesign/cli": "0.7.17",
     "@eslint/js": "^10.0.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/dom-chromium-ai": "^0.0.18",
